@@ -51,9 +51,20 @@
 				z-index:98;
 			}
 		</style>
-		<script type="text/javascript" src="./dialog.js"></script>
+		<script type="text/javascript" src="./AliceWM.js"></script>
+        <script>
+            function openBrowser() {
+                let dialog = AliceWM.create("Bruhmium Browser");
+
+                let iframe = document.createElement("iframe")
+                iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
+                iframe.setAttribute("src", "https://hypertabs.cc")
+
+                dialog.content.appendChild(iframe)
+            }
+        </script>
 	</head>
 	<body>
-		<input type="button" id="showDialog" value="Open Hypertabs browser"/>&nbsp;&nbsp;
+		<input type="button" id="showDialog" value="Open browser" onclick="openBrowser()">
 	</body>
 </html>
