@@ -1,0 +1,59 @@
+body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    margin: 0;
+}
+#sampleDialog{
+    height:200px;
+    width:500px;
+    background:white;
+    border:2px solid black;
+    position:fixed;
+    overflow:hidden;
+    z-index:99;
+    border-radius: 8px;
+}
+
+#sampleDialog #title{
+    background-color: gray;
+    font-weight:bold;
+    color:black;
+    height:20px;
+    padding:2px;
+}
+
+#sampleDialog #content{
+    padding:2px;
+}
+
+#sampleDialog #title:hover{
+    cursor:move;
+    background:white;
+}
+
+#sampleDialog #close{
+    cursor:pointer;
+    position:absolute;
+    color:black;
+    font-weight:bold;
+    top:0;
+    z-index:100;
+}
+
+#sampleDialog #close:hover{
+    color:red;
+}
+
+#overlay{
+    width:100%;
+    height:100%;
+    left:0;
+    top:0;
+    position:fixed;
+    background:gray;
+    opacity:0.5;
+    z-index:98;
+}

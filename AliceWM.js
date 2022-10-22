@@ -31,7 +31,7 @@ var AliceWM = {};
 
     closeContainer.setAttribute("id", "close");
     closeContainer.innerHTML = "X";
-    closeContainer.setAttribute("style", "right: 0")
+    closeContainer.setAttribute("style", "right: 10px")
     
     container.appendChild(titleContainer);
 
