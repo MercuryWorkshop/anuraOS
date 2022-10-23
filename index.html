@@ -2,12 +2,56 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<meta http-equiv="Content-Type" content="text/html">
-		<title>AliceWM Example</title>
-		<link rel="stylesheet" type="text/css" href="example.css">
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<title>Untitled Document</title>
+		<style type="text/css">
+			#sampleDialog {
+				height:200px;
+				width:500px;
+				background:white;
+				border:2px solid black;
+				position:fixed;
+				overflow:hidden;
+				z-index:99;
+			}
+			
+			#sampleDialog #title{
+				background-color: black;
+				font-weight:bold;
+				color:white;
+				height:20px;
+				padding:2px;
+			}
+			
+			#sampleDialog #content{
+				padding:2px;
+			}
+			
+			#sampleDialog #title:hover{
+				cursor:move;
+				background:gray;
+			}
+			
+			#sampleDialog #close{
+				cursor:pointer;
+				position:absolute;
+				color:white;
+				font-weight:bold;
+				top:0;
+				z-index:100;
+			}
+			
+			#overlay{
+				width:100%;
+				height:100%;
+				left:0;
+				top:0;
+				position:fixed;
+				background:gray;
+				opacity:0.5;
+				z-index:98;
+			}
+		</style>
 		<script type="text/javascript" src="./AliceWM.js"></script>
         <script>
             function openBrowser() {
@@ -19,9 +63,19 @@
 
                 dialog.content.appendChild(iframe)
             }
+            function openVMManager() {
+                let dialog = AliceWM.create("Virtual Machine");
+
+                let iframe = document.createElement("iframe")
+                iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
+                iframe.setAttribute("src", "https://copy.sh/v86")
+
+                dialog.content.appendChild(iframe)
+            }
         </script>
 	</head>
 	<body>
 		<input type="button" id="showDialog" value="Open browser" onclick="openBrowser()">
+        <input type="button" id="showDialog" value="Open VM Manager" onclick="openVMManager()">
 	</body>
 </html>

@@ -11,7 +11,9 @@ var AliceWM = {};
  * to show a floating dialog displaying the given dom element
  * @param {Object} title "title of the dialog"
  */
- AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
+
+let windowID = 0;
+AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
     
     // initializing dialog: title, close, content
     var container = document.createElement("div");
@@ -91,7 +93,7 @@ var AliceWM = {};
             container._dragging = false;
         }
     };
-    
+    windowID++;
     return {content: contentContainer};
 };
 
