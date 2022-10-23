@@ -72,10 +72,18 @@
 
                 dialog.content.appendChild(iframe)
             }
+			function openAppManager() {
+				fetch("applicationmanager/launchapp.js")
+					.then(response => response.text())
+					.then((data) => {
+						window.eval(data);
+        })
+            }
         </script>
 	</head>
 	<body>
 		<input type="button" id="showDialog" value="Open browser" onclick="openBrowser()">
         <input type="button" id="showDialog" value="Open VM Manager" onclick="openVMManager()">
+		<input type="button" id="showDialog" value="Open Application Manager" onclick="openAppManager()">
 	</body>
 </html>
