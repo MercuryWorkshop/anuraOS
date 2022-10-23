@@ -69,7 +69,7 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     };
     
     // do the dragging during the mouse move
-    document.onmousemove = function(evt){
+    document.addEventListener('mousemove', (evt) => {
         evt = evt || window.event;
         
         if(container._dragging){
@@ -78,10 +78,10 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
             container.style.top = 
                 (container._originalTop + evt.clientY - container._mouseTop) + "px";
         }
-    };
+    })
     
     // finish the dragging when release the mouse button
-    document.onmouseup = function(evt){
+    document.addEventListener('mouseup', (evt) => {
         evt = evt || window.event;
         
         if(container._dragging){
@@ -92,7 +92,7 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
             
             container._dragging = false;
         }
-    };
+    });
     windowID++;
     return {content: contentContainer};
 };
