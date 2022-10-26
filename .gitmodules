@@ -1,0 +1,3 @@
+[submodule "aboutproxy"]
+	path = aboutproxy
+	url = https://github.com/ProxyDevelopers/aboutproxy
