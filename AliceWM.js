@@ -29,7 +29,7 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     titleContainer.setAttribute("id", "title");
 
     contentContainer.setAttribute("id", "content");
-    contentContainer.setAttribute("style", "width: 100%; height: 100%;")
+    contentContainer.setAttribute("style", "width: 100%; height: calc(100% - 20px); padding:0; margin:0; ")
     
     titleContainer.innerHTML = title;
 
