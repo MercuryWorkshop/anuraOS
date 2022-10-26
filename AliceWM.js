@@ -18,6 +18,8 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     // initializing dialog: title, close, content
     var container = document.createElement("div");
     var titleContainer = document.createElement("div");
+    var left = document.createElement("div");
+    
     var contentContainer = document.createElement("div");
     var closeContainer = document.createElement("span");
     
@@ -96,6 +98,7 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     windowID++;
     return {content: contentContainer};
 };
+
 
 
 /**
