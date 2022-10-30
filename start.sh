@@ -1,3 +1,3 @@
 #!/bin/bash
-python3 main.py > webserver.log &
+python3 -m http.server > webserver.log &
 exec aboutproxy/main.sh > aboutproxy.log
