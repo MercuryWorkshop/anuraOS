@@ -1,3 +1,2 @@
 #!/bin/bash
-python3 -m http.server > webserver.log &
-exec aboutproxy/main.sh > aboutproxy.log
+(trap 'kill 0' SIGINT EXIT; python3 -m http.server > webserver.log & aboutproxy/main.sh > aboutproxy.log & wait)
