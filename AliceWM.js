@@ -31,7 +31,7 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     contentContainer.setAttribute("id", "content");
     contentContainer.setAttribute("style", "width: 100%; height: calc(100% - 20px); padding:0; margin:0; ")
     
-    titleContainer.innerHTML = title;
+    // titleContainer.innerHTML = title;
 
     closeContainer.setAttribute("id", "close");
     closeContainer.innerHTML = "X";
