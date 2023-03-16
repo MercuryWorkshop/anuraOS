@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+#aliceWMwin {
+    user-select: none; /* FUCK ie and safari no one uses them anyways */
+    height:200px;
+    width:500px;
+    background:white;
+    border:2px solid black;
+    position:fixed;
+    overflow:hidden;
+    z-index:91;
+    display: flex; /* FLEXBOX #2 */
+    flex-direction: column;
+}
+
+#aliceWMwin #title{
+    display: flex; /* flexbox #1 */
+    background-color: black;
+    font-weight:bold;
+    color:white;
+    height:32px; /* can't get it to fucking center the icons so i just stole stuff from aboutbrowser */
+    padding:2px;
+    align-items:center;
+}
+
+#aliceWMwin #titleContent {
+    flex: 1;
+}
+
+#aliceWMwin #content{
+    padding:2px;
+    flex: 1;
+}
+
+#aliceWMwin #title:hover{
+    cursor:move;
+}
+
+#aliceWMwin .windowButton {
+    background-color: transparent;
+    color:white;
+    border: none;
+    border-radius: 100%;
+    margin: 2px;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    transition: background-color .2s ease-in-out;
+    font-size:1em;
+}
+
+#aliceWMwin .windowButton:hover {
+    background-color: darkgray;
+}
+
+#aliceWMwin .windowButton:active {
+    background-color: gray;
+}
+
+
+#overlay{
+    width:100%;
+    height:100%;
+    left:0;
+    top:0;
+    right:0;
+    position:fixed;
+    background:gray;
+    opacity:0.5;
+    z-index:98;
+}
+
+body {
+    overflow: hidden;
+    background: url(wallpaper.png) no-repeat center center fixed;
+    user-select: none;
+    font-family: 'Roboto', sans-serif;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  background-color: rgba(22, 22, 22, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+nav li {
+  display: inline-block;
+  margin-right: 20px;
+  padding-top:5px;
+}
+
+#showDialog {
+	width: 40px;
+	height: 40px;
+}
+
