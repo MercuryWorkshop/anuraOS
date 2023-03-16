@@ -1,105 +1,17 @@
 <!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> -->
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-		<title>Untitled Document</title>
-		<style type="text/css">
-			#sampleDialog {
-				height:200px;
-				width:500px;
-				background:white;
-				/* border:2px solid black; */
-				position:fixed;
-				overflow:hidden;
-				z-index:99;
-			}
-			
-			#sampleDialog #title{
-				background-color: black;
-				border-style: solid;
-  				border-width: 1px;
-				border-color: #444;
-				border-radius: 2px;
-				color:white;
-				height:20px;
-				padding:2px;
-			}
-			
-			#sampleDialog #content{
-				/* padding:2px; */
-			}
-			
-			#sampleDialog #title:hover{
-				cursor:move;
-				background:gray;
-			}
-			
-			#sampleDialog #close{
-				cursor:pointer;
-				position:absolute;
-				color:white;
-				top:0;
-				z-index:100;
-			}
-			
-			#overlay{
-				width:100%;
-				height:100%;
-				left:0;
-				top:0;
-				right:0;
-				position:fixed;
-				background:gray;
-				opacity:0.5;
-				z-index:98;
-			}
+        <link rel="stylesheet" href="/anura.css"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-			body {
-				overflow: hidden;
-				background-image: url("wallpaper.png");
-				background-repeat: no-repeat;
-  				background-size: 100%;
-				user-select: none;
-				font-family: 'Roboto', sans-serif;
-			}
+        <title>definitely not chromeos</title>
 
-footer {
-  position: fixed;
-  bottom: 0;
-  width: 99.1%;
-  height: 5%;
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  background-color: rgba(22, 22, 22, 0.8);
-  backdrop-filter: blur(5px);
-}
-
-nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
-
-nav li {
-  display: inline-block;
-  margin-right: 20px;
-  padding-top:5px;
-}
-
-#showDialog {
-	width: 40px;
-	height: 40px;
-}
-
-
-		</style>
-		<script type="text/javascript" src="./AliceWM.js"></script>
+        <script type="text/javascript" src="/AliceWM.js"></script>
         <script>
             function openBrowser() {
                 let dialog = AliceWM.create("AboutBrowser");
