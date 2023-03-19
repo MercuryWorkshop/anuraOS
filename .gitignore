@@ -5,3 +5,12 @@
 /.vscode
 **/.DS_Store
 *.log
+public/usr
+public/bin
+public/sbin
+public/lib64
+public/libx32
+public/debootstrap
+public/etc
+public/lib
+public/var
