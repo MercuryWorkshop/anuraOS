@@ -21,15 +21,23 @@ anura = {
                     console.log("CheerpX could not start. Reason: "+e);
                 }
                 CheerpXApp.create({mounts:[{type:"cheerpOS",dev:"/app",path:"/"},{type:"cheerpOS",dev:"/app",path:"/app"},{type:"cheerpOS",dev:"/str",path:"/data"},{type:"cheerpOS", dev:"/files", path:"/home"},{type:"devs",dev:"",path:"/dev"}]}).then(cxReady, cxFailed);            console.log(script)
-            document.head.appendChild(script)
 
         }
+        document.head.appendChild(script)
         if (localStorage.getItem("")) {
 
         }
         }
     },
-    Version: "0.1.0 alpha"
+    Version: "0.1.0 alpha",
+    x86fs: {
+        read() {
+            
+        },
+        write(path, data) {
+            cheerpjAddStringFile("/files/" + path, data);
+        }
+    }
 
 }
 
