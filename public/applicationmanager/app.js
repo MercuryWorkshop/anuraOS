@@ -3,7 +3,7 @@ function run() {
     fetch(path + "/launchapp.js")
         .then(response => response.text())
         .then((data) => {
-            console.log
             top.window.eval(data);
+            top.window.eval(`loadingScript("${path}")`)
         })
 }

@@ -77,7 +77,7 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     titleContainer.onmousedown = function(evt){
         // probably inefficient but i dont caare
         var allWindows = [...document.querySelectorAll("#aliceWMwin")];
-        console.debug(allWindows);
+        // console.debug(allWindows); // this line is fucking crashing edge for some reason
         for(const wmwindow of allWindows) {
             wmwindow.style.setProperty("z-index", 92);
         }
