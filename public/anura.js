@@ -8,7 +8,7 @@ anura = {
                 {
                     // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix
                     x86 = AliceWM.create("x86 bash window")
-                    console = document.createElement("pre")
+                    let console = document.createElement("pre")
                     console.id = "console"
                     console.style = "width:100%;height:100%;margin:0"
                     x86.content.appendChild(console)
