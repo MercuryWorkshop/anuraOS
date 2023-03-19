@@ -14,3 +14,16 @@ public/debootstrap
 public/etc
 public/lib
 public/var
+public/root
+public/home
+public/sys
+public/dev
+public/proc
+public/run
+public/tmp
+public/boot
+public/index.list
+public/srv
+public/media/index.list
+public/mnt/index.list
+public/opt/index.list
