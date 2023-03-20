@@ -2,7 +2,7 @@ anura = {
     init() {
         if (localStorage.getItem("x86-enabled")) {
             const script = document.createElement('script');
-            script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20220131_700/cx.js"
+            script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230116/cx.js"
             script.onload = () => {
                 async function cxReady(cx) {
                     // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix
@@ -13,11 +13,8 @@ anura = {
 
                     const cxOut = document.createElement("pre");
 
-                    const t = new Terminal({ cursorBlink: true, convertEol: true, fontWeight: 400, fontWeightBold: 700 });
-                    var fitAddon = new FitAddon.FitAddon();
-                    t.loadAddon(fitAddon);
-                    t.open(htermNode);
-                    fitAddon.fit();
+                    const t = new hterm.Terminal({ storage: new lib.Storage.Memory() });
+
                     let cxReadFunc = null;
                     function readData(str) {
                         console.log(str)
@@ -27,16 +24,20 @@ anura = {
                             cxReadFunc(str.charCodeAt(i));
                     }
 
-                    t.onData(readData);
-
                     x86.content.appendChild(htermNode);
 
+                    t.decorate(htermNode);
+                    t.installKeyboard();
                     anura.x86 = cx
 
 
                     const decoder = new TextDecoder("UTF-8");
                     cxReadFunc = cx.setCustomConsole((dat) => {
-                        t.write(new Uint8Array(dat))
+                        console.log(dat)
+                        for (let xc of new Uint8Array(dat.buffer)) {
+                            console.log(xc)
+                            t.io.print(String.fromCodePoint(xc))
+                        }
                     }, t.cols, t.rows)
                     window.t = t;
                     cx.run("/bin/bash", ["--login"], ["HOME=/home/user", "TERM=xterm", "USER=user", "SHELL=/bin/bash", "EDITOR=vim", "LANG=en_US.UTF-8", "LC_ALL=C"]);

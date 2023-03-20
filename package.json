@@ -1,0 +1,22 @@
+{
+  "name": "alicewm",
+  "version": "1.0.0",
+  "description": "Window manager for FrogOS",
+  "main": "hterm_poc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MercuryWorkshop/AliceWM.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MercuryWorkshop/AliceWM/issues"
+  },
+  "homepage": "https://github.com/MercuryWorkshop/AliceWM#readme",
+  "dependencies": {
+    "xterm": "^5.1.0"
+  }
+}

@@ -1,0 +1,212 @@
+diff --git a/.gitignore b/.gitignore
+index 5083852..218a23d 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -27,3 +27,4 @@ public/srv
+ public/media/index.list
+ public/mnt/index.list
+ public/opt/index.list
++node_modules
+diff --git a/.gitmodules b/.gitmodules
+index e9d5230..9316c11 100644
+--- a/.gitmodules
++++ b/.gitmodules
+@@ -1,3 +1,6 @@
+ [submodule "aboutproxy"]
+ 	path = aboutproxy
+ 	url = https://github.com/MercuryWorkshop/aboutproxy
++[submodule "libapps"]
++	path = libapps
++	url = https://chromium.googlesource.com/apps/libapps
+diff --git a/libapps b/libapps
+new file mode 160000
+index 0000000..d52a50b
+--- /dev/null
++++ b/libapps
+@@ -0,0 +1 @@
++Subproject commit d52a50b17fde823691c53196eb3ee03cf644b154
+diff --git a/package-lock.json b/package-lock.json
+index 0e0403e..f25e449 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,6 +1,28 @@
+ {
+-  "name": "AliceWM",
++  "name": "alicewm",
++  "version": "1.0.0",
+   "lockfileVersion": 2,
+   "requires": true,
+-  "packages": {}
++  "packages": {
++    "": {
++      "name": "alicewm",
++      "version": "1.0.0",
++      "license": "ISC",
++      "dependencies": {
++        "xterm": "^5.1.0"
++      }
++    },
++    "node_modules/xterm": {
++      "version": "5.1.0",
++      "resolved": "https://registry.npmjs.org/xterm/-/xterm-5.1.0.tgz",
++      "integrity": "sha512-LovENH4WDzpwynj+OTkLyZgJPeDom9Gra4DMlGAgz6pZhIDCQ+YuO7yfwanY+gVbn/mmZIStNOnVRU/ikQuAEQ=="
++    }
++  },
++  "dependencies": {
++    "xterm": {
++      "version": "5.1.0",
++      "resolved": "https://registry.npmjs.org/xterm/-/xterm-5.1.0.tgz",
++      "integrity": "sha512-LovENH4WDzpwynj+OTkLyZgJPeDom9Gra4DMlGAgz6pZhIDCQ+YuO7yfwanY+gVbn/mmZIStNOnVRU/ikQuAEQ=="
++    }
++  }
+ }
+diff --git a/public/anura.js b/public/anura.js
+index 088dbcd..f36d802 100644
+--- a/public/anura.js
++++ b/public/anura.js
+@@ -4,35 +4,60 @@ anura = {
+             const script = document.createElement('script');
+             script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230116/cx.js"
+             script.onload = () => {
+-                async function cxReady(cx)
+-                {
++                async function cxReady(cx) {
+                     // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix
+                     x86 = AliceWM.create("x86 bash window")
+-                    let console = document.createElement("pre")
++                    let htermNode = document.createElement("div")
++
+                     console.id = "console"
+-                    console.style = "width:100%;height:100%;margin:0"
+-                    x86.content.appendChild(console)
+-                    cx.setConsole(document.getElementById("console"));
++
++                    const cxOut = document.createElement("pre");
++
++                    const t = new Terminal({ cursorBlink: true, convertEol: true, fontWeight: 400, fontWeightBold: 700 });
++                    var fitAddon = new FitAddon.FitAddon();
++                    t.loadAddon(fitAddon);
++                    t.open(htermNode);
++                    fitAddon.fit();
++                    let cxReadFunc = null;
++                    function readData(str) {
++                        console.log(str)
++                        if (cxReadFunc == null)
++                            return;
++                        for (var i = 0; i < str.length; i++)
++                            cxReadFunc(str.charCodeAt(i));
++                    }
++
++                    t.onData(readData);
++
++                    x86.content.appendChild(htermNode);
++
+                     anura.x86 = cx
+-                    cx.run("/bin/bash",  ["--login"], ["HOME=/home/user", "TERM=xterm", "USER=user", "SHELL=/bin/bash", "EDITOR=vim", "LANG=en_US.UTF-8", "LC_ALL=C"]);
++
++
++                    const decoder = new TextDecoder("UTF-8");
++                    cxReadFunc = cx.setCustomConsole((dat) => {
++                        t.write(new Uint8Array(dat))
++                    }, t.cols, t.rows)
++                    window.t = t;
++                    cx.run("/bin/bash", ["--login"], ["HOME=/home/user", "TERM=xterm", "USER=user", "SHELL=/bin/bash", "EDITOR=vim", "LANG=en_US.UTF-8", "LC_ALL=C"]);
++
+                 }
+-                function cxFailed(e)
+-                {
+-                    console.log("CheerpX could not start. Reason: "+e);
++                function cxFailed(e) {
++                    console.log("CheerpX could not start. Reason: " + e);
+                 }
+-                CheerpXApp.create({mounts:[{type:"cheerpOS",dev:"/app",path:"/"},{type:"cheerpOS",dev:"/app",path:"/app"},{type:"cheerpOS",dev:"/str",path:"/data"},{type:"cheerpOS", dev:"/files", path:"/home"},{type:"devs",dev:"",path:"/dev"}]}).then(cxReady, cxFailed);
++                CheerpXApp.create({ mounts: [{ type: "cheerpOS", dev: "/app", path: "/" }, { type: "cheerpOS", dev: "/app", path: "/app" }, { type: "cheerpOS", dev: "/str", path: "/data" }, { type: "cheerpOS", dev: "/files", path: "/home" }, { type: "devs", dev: "", path: "/dev" }] }).then(cxReady, cxFailed);
+ 
+-        }
+-        document.head.appendChild(script)
+-        if (localStorage.getItem("")) {
++            }
++            document.head.appendChild(script)
++            if (localStorage.getItem("")) {
+ 
+-        }
++            }
+         }
+     },
+     Version: "0.1.0 alpha",
+     x86fs: {
+         read() {
+-            
++
+         },
+         write(path, data) {
+             cheerpjAddStringFile("/files/" + path, data);
+@@ -65,5 +90,5 @@ function openAppManager() {
+         .then(response => response.text())
+         .then((data) => {
+             window.eval(data);
+-    })
++        })
+ }
+diff --git a/public/index.html b/public/index.html
+index d5ccc0b..79ed098 100644
+--- a/public/index.html
++++ b/public/index.html
+@@ -1,27 +1,36 @@
+ <!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> -->
+ <!DOCTYPE html>
+ <html>
+-    <head>
+-        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ 
+-        <link rel="stylesheet" href="/anura.css"></script>
+-        <link rel="preconnect" href="https://fonts.googleapis.com">
+-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
++<head>
++    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
++
++    <link rel="stylesheet" href="/anura.css">
++    </script>
++    <link rel="preconnect" href="https://fonts.googleapis.com">
++    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
++        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
++        crossorigin="anonymous" referrerpolicy="no-referrer" />
++
++    <title>definitely not chromeos</title>
++    <link rel="stylesheet" href="xterm.css" />
++    <script src="xterm.js"></script>
++    <script src="xterm-addon-fit.js"></script>
++    <script type="text/javascript" src="/anura.js"></script>
++    <script type="text/javascript" src="/AliceWM.js"></script>
++</head>
++
++<body>
++    <footer>
++        <nav>
++            <ul>
++                <li><input type="image" src="chrome.svg" id="showDialog" onclick="openBrowser()"></li>
++                <li><input type="image" src="linux.png" id="showDialog" onclick="openVMManager()"></li>
++                <li><input type="image" src="settings.png" id="showDialog" onclick="openAppManager()"></li>
++            </ul>
++        </nav>
++    </footer>
++</body>
+ 
+-        <title>definitely not chromeos</title>
+-        <script type="text/javascript" src="/anura.js"></script>
+-        <script type="text/javascript" src="/AliceWM.js"></script>
+-	</head>
+-	<body >
+-		<footer>
+-			<nav>
+-			  <ul>
+-				<li><input type="image" src="chrome.svg" id="showDialog" onclick="openBrowser()"></li>
+-				<li><input type="image" src="linux.png" id="showDialog"  onclick="openVMManager()"></li>
+-				<li><input type="image" src="settings.png" id="showDialog" onclick="openAppManager()"></li>
+-			  </ul>
+-			</nav>
+-		  </footer>
+-	</body>
+ </html>
