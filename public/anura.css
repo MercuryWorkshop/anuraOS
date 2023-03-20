@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
+/* Note from Majikun: PLEASE STOP ADDING BACK STUFF!!!!!!! NO BORDERS OR TITLES!!!!! */
+
 * {
     font-family: 'Roboto', sans-serif;
 }
@@ -9,7 +11,7 @@
     height:200px;
     width:500px;
     background:white;
-    border:2px solid black;
+    /* border:2px solid black; */
     position:fixed;
     overflow:hidden;
     z-index:91;
@@ -18,11 +20,11 @@
 }
 
 #aliceWMwin #title{
-    display: flex; /* flexbox #1 */
+    display: flex;
     background-color: black;
     font-weight:bold;
     color:white;
-    height:32px; /* can't get it to fucking center the icons so i just stole stuff from aboutbrowser */
+    height:32px; 
     padding:2px;
     align-items:center;
 }
@@ -75,7 +77,7 @@
 
 body {
     overflow: hidden;
-    background: url(wallpaper.png) no-repeat center center fixed;
+    background: url(/assets/wallpaper/wallpaper.png) no-repeat center center fixed;
     user-select: none;
     font-family: 'Roboto', sans-serif;
 }
