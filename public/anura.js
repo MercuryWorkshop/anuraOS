@@ -17,7 +17,7 @@ anura = {
                     var fitAddon = new FitAddon.FitAddon();
                     t.loadAddon(fitAddon);
                     t.open(htermNode);
-                    fitAddon.fit();
+                    // fitAddon.fit();
                     let cxReadFunc = null;
                     function readData(str) {
                         console.log(str)

@@ -27,11 +27,8 @@ public/srv
 public/media/index.list
 public/mnt/index.list
 public/opt/index.list
-<<<<<<< Updated upstream
 public/assets/index.list
 public/assets/icons/index.list
 public/assets/wallpaper/index.list
 public/python.app/fonts/index.list
-=======
 node_modules
->>>>>>> Stashed changes
