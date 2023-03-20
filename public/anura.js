@@ -2,7 +2,7 @@ anura = {
     init() {
         if (localStorage.getItem("x86-enabled")) {
             const script = document.createElement('script');
-            script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230116/cx.js"
+            script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20220131_700/cx.js"
             script.onload = () => {
                 async function cxReady(cx)
                 {
