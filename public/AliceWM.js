@@ -9,6 +9,10 @@
  */
 var AliceWM = {};
 
+// no i will not use data properties in the dom element fuck off
+// ok fine i will fine i just realized how much harder it would be
+
+
 /**
  * to show a floating dialog displaying the given dom element
  * @param {Object} title "title of the dialog"
@@ -73,16 +77,19 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
         evt.stopPropagation();
     };
 
-    // start dragging when the mouse clicked in the title area
-    titleContainer.onmousedown = function(evt){
+    // self explanatory everything is self explanatory
+    container.onmousedown = function(evt){
         // probably inefficient but i dont caare
         var allWindows = [...document.querySelectorAll("#aliceWMwin")];
-        // console.debug(allWindows); // this line is fucking crashing edge for some reason
+        console.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
         for(const wmwindow of allWindows) {
             wmwindow.style.setProperty("z-index", 92);
         }
-        titleContainer.parentNode.style.setProperty("z-index", 93); // stay on top
+        titleContainer.parentNode.style.setProperty("z-index", 93);
+    }
 
+    // start dragging when the mouse clicked in the title area
+    titleContainer.onmousedown = function(evt){
         evt = evt || window.event;
 
         container._dragging = true;

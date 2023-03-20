@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # Python http.server that sets Access-Control-Allow-Origin header.
 # https://gist.github.com/razor-x/9542707
 
@@ -24,7 +25,8 @@ if __name__ == "__main__":
     httpd = server(port)
     try:
         os.chdir('public/')
-        print("\nserving from public/ at localhost:" + str(port))
+        print("\nchange dir to aboutproxy and run `npm start` after installing deps if you want to use \"chrome\" in anura")
+        print("serving from public/ at localhost:" + str(port))
         httpd.serve_forever()
     except KeyboardInterrupt:
         print("\n...shutting down http server")
