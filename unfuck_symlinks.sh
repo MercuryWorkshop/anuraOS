@@ -1,0 +1,1 @@
+sudo chroot /public /bin/bash -c "./symlinks -cr ."
