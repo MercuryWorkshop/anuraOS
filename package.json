@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/MercuryWorkshop/AliceWM#readme",
   "dependencies": {
+    "express": "^4.18.2",
+    "ts-node": "^10.9.1",
     "xterm": "^5.1.0"
   }
 }
