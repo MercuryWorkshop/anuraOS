@@ -40,7 +40,7 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     contentContainer.setAttribute("style", "width: 100%; padding:0; margin:0; ")
 
     titleContent.setAttribute("id", "titleContent");
-    // titleContent.innerHTML = title;
+    titleContent.innerHTML = title;
 
     closeContainer.setAttribute("id", "close");
     closeContainer.setAttribute("class", "windowButton");
