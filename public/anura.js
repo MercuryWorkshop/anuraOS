@@ -13,7 +13,7 @@ anura = {
 
                     const cxOut = document.createElement("pre");
 
-                    const t = new Terminal({ cursorBlink: true, convertEol: true, fontWeight: 400, fontWeightBold: 700 });
+                    const t = new Terminal({fontFamily: "monospace" ,cursorBlink: true, convertEol: true, fontWeight: 400, fontWeightBold: 700 });
                     var fitAddon = new FitAddon.FitAddon();
                     t.loadAddon(fitAddon);
                     t.open(htermNode);

@@ -3,7 +3,7 @@
 /* Note from Majikun: PLEASE STOP ADDING BACK STUFF!!!!!!! NO BORDERS OR TITLES!!!!! */
 
 * {
-    font-family: 'Roboto', sans-serif;
+    /* font-family: 'Roboto', sans-serif; */
 }
 
 #aliceWMwin {
@@ -111,3 +111,6 @@ nav li {
 	height: 40px;
 }
 
+.xterm {
+    font-family: monospace !important;
+}
