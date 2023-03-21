@@ -13,7 +13,7 @@ app.use(async (req: Request, res: Response, next: Function) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp")
 
   if (req.path.endsWith("index.list")) {
-    let g = await fs.readdir(__dirname + "/public" + req.path.slice(0, -"index.list".length));
+    let g = await fs.readdir(__dirname + "/rootfs" + req.path.slice(0, -"index.list".length));
     res.send(g.join("\n"));
     return;
   }
@@ -21,6 +21,7 @@ app.use(async (req: Request, res: Response, next: Function) => {
 })
 
 app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/rootfs"));
 
 app.get("/", (req: Request, res: Response) => {
   res.sendFile(__dirname + "public/index.html");

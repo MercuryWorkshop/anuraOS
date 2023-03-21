@@ -1,1 +1,1 @@
-sudo chroot /public /bin/bash -c "./symlinks -cr ."
+sudo chroot rootfs /bin/bash -c "./symlinks -cr ."
