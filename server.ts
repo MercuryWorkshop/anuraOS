@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import createServer from 'bare-server-node';
+import createServer from '@tomphttp/bare-server-node';
 import fs from "fs/promises";
 const app = express();
 const port = 8000;
