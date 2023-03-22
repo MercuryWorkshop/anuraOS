@@ -25,27 +25,7 @@ app.use(async (req: Request, res: Response, next: Function) => {
     return;
   }
   if (bare.shouldRoute(req)) {
-    //
-    //   res.header("Cross-Origin-Embedder-Policy", "require-corp");
-    //
-    //
-    //   let old = res.write.bind(res);
-    //   let write = ((chunk) => {
-    //     console.log("lol test");
-    //     console.log(chunk.toString());
-    //
-    //   }).bind(res);
-    //
-    //
-    //   // let oldsend = res.write;
-    //   // res.write = function(b) {
-    //   // oldsetheader("Cross-Origin-Embedder-Policy", "require-corp");
-    //   // oldsetheader("Access-Control-Allow-Origin", "same-site");
-    //   // oldsetheader("Access-Control-Allow-Origin", "*");
-    //   //
-    //   //   oldsend.call(this, b);
-    //   // }
-    //   res.write = write;
+
     bare.routeRequest(req, res);
     return;
   }
