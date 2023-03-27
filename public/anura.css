@@ -11,7 +11,7 @@
     height:200px;
     width:500px;
     background:white;
-    /* border:2px solid black; */
+    border:2px solid black;
     position:fixed;
     overflow:hidden;
     z-index:91;
