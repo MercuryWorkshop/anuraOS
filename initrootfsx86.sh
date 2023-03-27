@@ -8,3 +8,5 @@ cp symlinks rootfs/symlinks
 ./unfuck_symlinks.sh
 
 sudo chown -R ${SUDO_USER:-$USER} .
+
+mkdir rootfs/data
