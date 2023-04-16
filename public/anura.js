@@ -1,6 +1,6 @@
 anura = {
     init() {
-        if (localStorage.getItem("x86-enabled")) {
+        if (localStorage.getItem("x86-enabled") === "true") {
             const script = document.createElement('script');
             script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230321/cx.js"
             script.onload = () => {
@@ -49,11 +49,23 @@ anura = {
 
             }
             document.head.appendChild(script)
-            if (localStorage.getItem("")) {
-
-            }
+            
         }
+
+        if (localStorage.getItem("use-expirimental-fs") === "true") {
+            const script = document.createElement('script');
+            script.src = "/assets/libs/filer.min.js"
+            script.onload = () => {
+                anura.fs = new Filer.FileSystem({
+                    name: "anura-mainContext",
+                    provider: new Filer.FileSystem.providers.IndexedDB()
+                });
+            }
+            document.head.appendChild(script)
+        }
+        
     },
+    fs: undefined,
     Version: "0.1.0 alpha",
     x86fs: {
         read() {
