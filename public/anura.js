@@ -68,11 +68,16 @@ anura = {
     fs: undefined,
     Version: "0.1.0 alpha",
     x86fs: {
-        read() {
-
+        async read(path) {
+            return await new Promise((resolve,reject)=>{
+                return cheerpOSGetFileBlob([], "/files/" + path, async (blob) => {
+                    resolve(await blob.text())
+                })
+            })
         },
         write(path, data) {
-            cheerpjAddStringFile("/files/" + path, data);
+            cheerpjAddStringFile("/str/" + path, data);
+
         }
     }
 
