@@ -20,7 +20,6 @@ anura = {
                     // fitAddon.fit();
                     let cxReadFunc = null;
                     function readData(str) {
-                        console.log(str)
                         if (cxReadFunc == null)
                             return;
                         for (var i = 0; i < str.length; i++)
@@ -76,8 +75,9 @@ anura = {
             })
         },
         write(path, data) {
-            cheerpjAddStringFile("/str/" + path, data);
-
+            cheerpjAddStringFile(`/str/${path}`, data); 
+            // Depressingly, we can't actually transfer the file to /home without it crashing the users shell //
+            // The user must do it themselves //
         }
     }
 
