@@ -89,6 +89,28 @@ anura = {
             // Depressingly, we can't actually transfer the file to /home without it crashing the users shell //
             // The user must do it themselves //
         }
+    },
+    async python(appname) {
+        return await new Promise((resolve, reject) => {
+            let iframe = document.createElement("iframe")
+            iframe.style = "display: none"
+            iframe.setAttribute("src", "/python.app/lib.html")
+            iframe.id = appname
+            iframe.onload = async function () {
+                console.log("Called from python")
+                let pythonInterpreter = await document.getElementById(appname).contentWindow.loadPyodide({
+                stdin: () => {
+                        let result = prompt();
+                        echo(result);
+                        return result;
+                    },
+                });
+                pythonInterpreter.globals.set('AliceWM', AliceWM)
+                pythonInterpreter.globals.set('anura', anura)
+                resolve(pythonInterpreter)
+            }
+            document.body.appendChild(iframe)
+        })
     }
 
 }
