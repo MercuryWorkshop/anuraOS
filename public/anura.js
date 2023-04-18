@@ -59,12 +59,22 @@ anura = {
                     name: "anura-mainContext",
                     provider: new Filer.FileSystem.providers.IndexedDB()
                 });
+                anura.fs.readFileSync = async (path) => {
+                    return await new Promise((resolve,reject)=>{
+                        return anura.fs.readFile(path, function async(err, data) {
+                            resolve(new TextDecoder('utf8').decode(data))
+                        }) 
+                    })
+                }
             }
             document.head.appendChild(script)
         }
         
     },
     fs: undefined,
+    syncRead: {
+
+    },
     Version: "0.1.0 alpha",
     x86fs: {
         async read(path) {

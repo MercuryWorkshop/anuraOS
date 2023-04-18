@@ -89,6 +89,8 @@
         let await_fut = namespace.get("await_fut");
         let pyconsole = namespace.get("pyconsole");
         let clear_console = namespace.get("clear_console");
+        pyodide.globals.set("anura", window.parent.anura);
+        pyodide.globals.set("AliceWM", window.parent.AliceWM);
         const echo = (msg, ...opts) =>
           term.echo(
             msg
