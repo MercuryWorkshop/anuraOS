@@ -305,8 +305,8 @@
                             row.appendChild(iconContainer)
                             row.appendChild(name)
                             row.appendChild(description)
-                            row.appendChild(size)
                             row.appendChild(date)
+                            row.appendChild(size)
                             // File Manager Associations //
 
                             row.addEventListener("mouseenter", (e) => {
@@ -331,8 +331,21 @@
                             row.appendChild(iconContainer)
                             row.appendChild(name)
                             row.appendChild(description)
-                            row.appendChild(size)
                             row.appendChild(date)
+                            row.appendChild(size)
+                            row.addEventListener("mouseenter", (e) => {
+                                e.currentTarget.classList.add("hover");
+                            });
+                            row.addEventListener("mouseleave", (e) => {
+                                e.currentTarget.classList.remove("hover");
+                            });
+                            row.addEventListener("click", (e) => {
+                                console.log("Clicked")
+                                fs.readFile(`${path}/${file}`, function(err, data)  {
+                                    let fileView = window.parent.AliceWM.create("Text File")
+                                    fileView.content.innerText = data
+                                })
+                            });
                         }
                         table.appendChild(row)
                     });
