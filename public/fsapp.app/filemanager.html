@@ -342,10 +342,56 @@
                             });
                             row.addEventListener("click", (e) => {
                                 console.log("Clicked")
-                                fs.readFile(`${path}/${file}`, function(err, data)  {
-                                    let fileView = window.parent.AliceWM.create("Text File")
-                                    fileView.content.innerText = data
-                                })
+                                // TODO: turn this into a switch statement //
+                                if (file.endsWith(".txt"))
+                                    fs.readFile(`${path}/${file}`, function(err, data)  {
+                                        let fileView = window.parent.AliceWM.create("Text File")
+                                        fileView.content.innerText = data
+                                    })
+                                if (file.endsWith(".mp3"))
+                                    fs.readFile(`${path}/${file}`, function(err, data)  {
+                                        let fileView = window.parent.AliceWM.create("Audio File")
+                                        let bloburl = URL.createObjectURL(new Blob([data]))
+                                        let audio = document.createElement('audio')
+                                        audio.src = bloburl
+                                        audio.setAttribute('controls', '')
+                                        audio.setAttribute("type", "audio/mpeg")
+                                        fileView.content.appendChild(audio)
+                                        console.log(bloburl)
+                                    })
+                                    if (file.endsWith(".wav"))
+                                    fs.readFile(`${path}/${file}`, function(err, data)  {
+                                        let fileView = window.parent.AliceWM.create("Audio File")
+                                        let bloburl = URL.createObjectURL(new Blob([data]))
+                                        let audio = document.createElement('audio')
+                                        audio.src = bloburl
+                                        audio.setAttribute('controls', '')
+                                        audio.setAttribute("type", "audio/wav")
+                                        fileView.content.appendChild(audio)
+                                        console.log(bloburl)
+                                    })
+                                    if (file.endsWith(".ogg"))
+                                    fs.readFile(`${path}/${file}`, function(err, data)  {
+                                        let fileView = window.parent.AliceWM.create("Audio File")
+                                        let bloburl = URL.createObjectURL(new Blob([data]))
+                                        let audio = document.createElement('audio')
+                                        audio.src = bloburl
+                                        audio.setAttribute('controls', '')
+                                        audio.setAttribute("type", "audio/ogg")
+                                        fileView.content.appendChild(audio)
+                                        console.log(bloburl)
+                                    })
+                                    if (file.endsWith(".flac"))
+                                    fs.readFile(`${path}/${file}`, function(err, data)  {
+                                        let fileView = window.parent.AliceWM.create("Audio File")
+                                        let bloburl = URL.createObjectURL(new Blob([data]))
+                                        let audio = document.createElement('audio')
+                                        audio.src = bloburl
+                                        audio.setAttribute('controls', '')
+                                        audio.setAttribute("type", "audio/flac")
+                                        fileView.content.appendChild(audio)
+                                        console.log(bloburl)
+                                    })
                             });
                         }
                         table.appendChild(row)
