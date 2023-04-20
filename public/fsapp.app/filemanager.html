@@ -1,178 +1,23 @@
 <html>
     <head>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-        * {
-            color: #c6d0f5;
-            font-family: 'Roboto', sans-serif;
-        }
-        body {
-            margin: 0;
-        }
-        .container {
-            background-color: #303446;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: row;
-        }
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            flex: 0 0 15em;
-            margin-right: 3em;
-        }
-        .sidebar button {
-            height: 3em;
-            border-bottom-right-radius: 5em;
-            border-top-right-radius: 5em;
-            background-color: #303446;
-            border: none;
-            text-align: left;
-            display:flex;
-            align-items: center;
-        }
-        .sidebar button:hover {
-            background-color: #292c3c;
-        }
-        .sidebar button:active {
-            background-color: #232634;
-        }
-
-        .sidebar img {
-            width: 1.5em;
-            height: 1.5em;
-            margin-right: 1em;
-            margin-left: 0.5em;
-        }
-
-        .fileView {
-            flex-grow:1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .resize-handle {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            background: black;
-            opacity: 0;
-            width: 3px;
-            cursor: col-resize;
-        }
-
-        .hidden-resize-handle {
-            display: none;
-        }
-
-        .resize-handle:hover,
-        .header--being-resized .resize-handle {
-            opacity: 0.5;
-        }
-
-        th:hover .resize-handle {
-            opacity: 0.3;
-        }
-
-        table {
-            flex-grow: 1;
-            overflow: scroll;
-            display: grid;
-            grid-template-columns: min-content 3fr 1fr 1fr 1fr;
-            grid-auto-rows: min-content;
-        }
-
-        tr, thead, tbody {
-            display: contents;
-        }
-
-        th {
-            position: relative;
-        }
-
-        th > tr {
-            margin: 0;
-        }
-
-        tr > * {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            padding-top: 0.5em;
-            padding-bottom: 0.5em;
-        }
-
-        .selected > * {
-            background-color: color-mix(in srgb, #8aadf4, #303446);
-        }
-
-        .hover > * {
-            /*background-color: #414559;*/
-        }
-
-        tr > td > img {
-            width: 1em;
-            height: 1em;
-            margin-right: 1em;
-            margin-top: 0.1em;
-        }
-
-        .topbar {
-            margin-top: 0.3em;
-            margin-right: 1em;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-        }
-
-        .topbar button {
-            border-radius: 1em;
-            border: none;
-            background-color: #303446;
-        }
-
-
-        .topbar button > img {
-            width: 2em;
-            height: 2em;
-            padding: 0.25em;
-        }
-
-        .topbar button:hover {
-            background-color: #292c3c;
-        }
-
-        .topbar button:active {
-            background-color: #232634;
-        }
-
-        .topbar .sep {
-            flex-grow: 1;
-        }
-
-        hr {
-            color: transparent;
-            border-bottom: 1px solid #414559;
-            opacity: 0.25;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="filemanager.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     </head>
     <body>
         <div class="container">
             <div class="sidebar">
-                <button><!-- <img src="data:image/png;base64, "></img>-->Recent</button> 
+                <button><i class="fa-solid fa-clock-rotate-left fa-lg"></i>Recent</button>
                 <hr></hr>
-                <button><!-- <img src="data:image/png;base64, "></img> -->My files</button>
+                <button><i class="fa-solid fa-laptop fa-lg"></i>My files</button>
             </div>
             <div class="fileView">
                 <div class="topbar">
-                <div>My files</div>
+                <div class="breadcrumbs"><button>My files</button><span>></span><button>owo :3</button></div>
                 <div class="sep"></div>
-                <button><!--<img src="data:image/png;base64, "></img>--></button> 
+                <button><i class="fa-solid fa-magnifying-glass fa-lg"></i></button>
+                <button><i class="fa-solid fa-table-cells-large fa-lg"></i></button>
+                <button><i class="fa-solid fa-arrow-up-a-z fa-lg"></i><!--<i class="fa-solid fa-arrow-down-z-a fa-lg"></i> - opposite--></button>
+                <button><i class="fa-solid fa-ellipsis-vertical fa-lg"></i></button>
                 </div>
                 <hr>
                 <table>
@@ -185,10 +30,15 @@
                             <th data-type="modified">Date modified<span class="resize-handle"></span></th>
                         </tr>
                     </thead>
-                    <tbody id="fs">
-                    
-                    </tbody>
+                    <tbody>
+                    <tr>
+                    <td><i class="fa-brands fa-rust"></i></td>
+                    <td>nya.rs</td>
+                    <td>1 MB</td>
+                    <td>Rust source code</td>
+                    <td>Today 17:00</td>
                     </tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -277,91 +127,206 @@
         });
         </script>
         <script>
+            var currentlySelected = [];
+
             window.fs = parent.anura.fs
-            var currentlySelected = document.body;
-            function loadFolder(path) {
+
+            function loadPath(path) {
+                console.debug("loading path: ", path);
                 fs.readdir(path, (err, files) => {
-                let table = document.getElementById("fs")
-                table.innerHTML = ''
-                files.forEach(file => {
-                    let row = document.createElement('tr')
-                    let iconContainer = document.createElement('td')
-                    let icon = document.createElement('img')
-                    let name = document.createElement('td')
-                    let size = document.createElement('td') 
-                    let description = document.createElement('td')
-                    let date = document.createElement('td')
-                    let type = document.createElement('td')
-                    fs.stat(`${path}/${file}`, function(err, stats) {
-                        if (err) throw err;
-                        if (stats.isDirectory()) {
-                            name.innerText = `${file}/`
-                            description.innerText = "Folder"
-                            date.innerText = new Date(stats.mtime/1000).toLocaleString()
-                            icon.src = "folder.png"
-                            size.innerText = stats.size
-                            
-                            iconContainer.appendChild(icon)
-                            row.appendChild(iconContainer)
-                            row.appendChild(name)
-                            row.appendChild(description)
-                            row.appendChild(date)
-                            row.appendChild(size)
-                            // File Manager Associations //
+                    if(err) throw err;
+                    setBreadcrumbs(path);
+                    let table = document.querySelector("tbody");
+                    table.innerHTML = ''
+                    files.forEach(file => {
+                        let row = document.createElement('tr')
+                        let iconContainer = document.createElement('td')
+                        let icon = document.createElement('i')
+                        let name = document.createElement('td')
+                        let size = document.createElement('td')
+                        let description = document.createElement('td')
+                        let date = document.createElement('td')
+                        let type = document.createElement('td')
+                        fs.stat(`${path}/${file}`, function(err, stats) {
+                            if (err) throw err;
+                            if (stats.isDirectory()) {
+                                name.innerText = `${file}/`
+                                description.innerText = "Folder"
+                                date.innerText = new Date(stats.mtime/1000).toLocaleString()
+                                icon.class = '';
+                                size.innerText = stats.size
 
-                            row.addEventListener("mouseenter", (e) => {
-                                e.currentTarget.classList.add("hover");
-                            });
-                            row.addEventListener("mouseleave", (e) => {
-                                e.currentTarget.classList.remove("hover");
-                            });
-                            row.addEventListener("click", (e) => {
-                                console.log("Changing folder " + e)
-                                loadFolder(`${path}/${file}`)
-                            });
-                            
-                        } else {
-                            name.innerText = `${file}`
-                            description.innerText = "Anura File"
-                            icon.src = "file.png"
-                            date.innerText = new Date(stats.mtime/1000).toLocaleString()
-                            size.innerText = stats.size
+                                iconContainer.appendChild(icon)
+                                row.appendChild(iconContainer)
+                                row.appendChild(name)
+                                row.appendChild(description)
+                                row.appendChild(date)
+                                row.appendChild(size)
+                                row.setAttribute("data-type", 'dir');
+                                row.setAttribute("data-path", `${path}/${file}`);
+                            } else {
+                                name.innerText = `${file}`
+                                description.innerText = "Anura File"
+                                icon.class = '';
+                                date.innerText = new Date(stats.mtime/1000).toLocaleString()
+                                size.innerText = stats.size
 
-                            iconContainer.appendChild(icon)
-                            row.appendChild(iconContainer)
-                            row.appendChild(name)
-                            row.appendChild(description)
-                            row.appendChild(date)
-                            row.appendChild(size)
-                            row.addEventListener("mouseenter", (e) => {
-                                e.currentTarget.classList.add("hover");
-                            });
-                            row.addEventListener("mouseleave", (e) => {
-                                e.currentTarget.classList.remove("hover");
-                            });
-                            row.addEventListener("click", (e) => {
-                                console.log("Clicked")
-                                fs.readFile(`${path}/${file}`, function(err, data)  {
-                                    let fileView = window.parent.AliceWM.create("Text File")
-                                    fileView.content.innerText = data
-                                })
-                            });
-                        }
-                        table.appendChild(row)
+                                iconContainer.appendChild(icon)
+                                row.appendChild(iconContainer)
+                                row.appendChild(name)
+                                row.appendChild(description)
+                                row.appendChild(date)
+                                row.appendChild(size)
+                                row.setAttribute("data-type", 'file');
+                                row.setAttribute("data-path", `${path}/${file}`);
+                            }
+                            console.debug("appending");
+                            table.appendChild(row)
+                            if(files[files.length-1] === file) {
+                                reloadListeners();
+                            }
+                        });
                     });
                 });
-                });
-                
-
- 
             }
-            document.querySelector("table").addEventListener("click", (e) => {
-                    if(e.currentTarget === e.target) {
-                        currentlySelected.classList.remove("selected");
-                        currentlySelected = document.body;
+
+            function reloadListeners() {
+                console.debug("reloading listeners");
+                console.debug(document.querySelectorAll('tr'));
+                document.querySelectorAll('tr').forEach((row) => {
+                    if(row.parentNode.nodeName.toLowerCase() !== "thead") {
+                        console.debug("adding listeners to ", row);
+                        row.addEventListener("mouseenter", (e) => {
+                            e.currentTarget.classList.add("hover");
+                        });
+                        row.addEventListener("mouseleave", (e) => {
+                            e.currentTarget.classList.remove("hover");
+                        });
+                        row.addEventListener("click", (e) => {
+                            if(currentlySelected.includes(e.currentTarget)) {
+                                fileAction(currentlySelected);
+                                currentlySelected.forEach((row)=>{row.classList.remove("selected")});
+                                currentlySelected = [];
+                                return;
+                            }
+                            if(!e.shiftKey) {
+                                if(!e.ctrlKey) {
+                                    currentlySelected.forEach((row)=>{row.classList.remove("selected")});
+                                    currentlySelected = [];
+                                }
+                                e.currentTarget.classList.add("selected");
+                                currentlySelected.push(e.currentTarget);
+                            } else {
+                                if(currentlySelected.length == 0) {
+                                    e.currentTarget.classList.add("selected");
+                                    currentlySelected.push(e.currentTarget);
+                                } else {
+                                    var arr = Array.from(document.querySelectorAll('tr')).filter(row => row.parentNode.nodeName.toLowerCase() !== "thead")
+                                    var firstI = arr.indexOf(currentlySelected[currentlySelected.length - 1])
+                                    var lastI = arr.indexOf(e.currentTarget)
+                                    var first = Math.min(firstI, lastI);
+                                    var last = Math.max(firstI, lastI);
+                                    for(var i = first; i <= last; i++) {
+                                        if(!currentlySelected.includes(arr[i])) {
+                                            currentlySelected.push(arr[i]);
+                                            arr[i].classList.add("selected");
+                                        }
+                                    }
+                                }
+                            }
+                        });
                     }
                 });
-            loadFolder('/')
+            }
+
+            function fileAction(selected) {
+                if(selected.length == 1) {
+                    var fileSelected = selected[0];
+                    if(fileSelected.getAttribute("data-type") == "file") {
+                        console.debug("Clicked on file");
+                        fs.readFile(fileSelected.getAttribute("data-path"), function(err, data)  {
+                            let fileView = window.parent.AliceWM.create("File Viewer");
+                            fileView.content.innerText = data;
+                        })
+                    } else if(fileSelected.getAttribute("data-type") == "dir") {
+                        console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
+                        loadPath(fileSelected.getAttribute("data-path"));
+                    } else {
+                        console.warn("Unknown filetype ", fileSelected.getAttribute("data-type"), " doing nothing!");
+                    }
+                } else {
+                    console.error("raff please implement");
+                }
+            }
+
+            function setBreadcrumbs(path) {
+                path = path.replace(/(\/)\1+/g, '$1')
+                var pathSplit = path.split("/");
+                console.log(pathSplit);
+                pathSplit[0] = "My files";
+                var breadcrumbs = document.querySelector(".breadcrumbs");
+                breadcrumbs.setAttribute("data-current-path", path);
+                breadcrumbs.innerHTML = '';
+                if(pathSplit.length == 2 && pathSplit[0] == "My files" && pathSplit[1] == "") {
+                    var breadcrumb = document.createElement("button");
+                    breadcrumb.innerText = "My files";
+                    breadcrumb.addEventListener("click", () => {
+                        loadPath('/');
+                    });
+                    breadcrumbs.appendChild(breadcrumb);
+                    return;
+                }
+                for(var i = 0; i<pathSplit.length; i++) {
+                    console.log(i);
+                    var breadcrumb = document.createElement("button");
+                    breadcrumb.innerText = pathSplit[i];
+                    var index = i;
+                    breadcrumb.addEventListener("click", () => {
+                        loadPath('/' + pathSplit.slice(1, index).join('/'));
+                    });
+                    breadcrumbs.appendChild(breadcrumb)
+                    if(pathSplit[i] !== pathSplit[pathSplit.length-1]) {
+                        var breadcrumbSpan = document.createElement("span");
+                        breadcrumbSpan.innerText = ">";
+                        breadcrumbs.appendChild(breadcrumbSpan);
+                    }
+                }
+            }
+
+            document.querySelector("table").addEventListener("click", (e) => {
+                if(e.currentTarget === e.target) {
+                    currentlySelected.forEach((row)=>{row.classList.remove("selected")});
+                    currentlySelected = [];
+                }
+            });
+            document.addEventListener("contextmenu", (e) => {
+                if(e.shiftKey) {
+                    return;
+                }
+                e.preventDefault();
+                var contextmenu = document.querySelector("#contextMenu");
+                contextmenu.style.left = e.pageX + "px";
+                contextmenu.style.top = e.pageY + "px";
+                contextmenu.style.removeProperty("display");
+            });
+
+            document.addEventListener("click", (e) => {
+                if(e.target !== document.querySelector("#contextMenu") || !document.querySelector("#contextMenu").contains(e.target)) {
+                    document.querySelector("#contextMenu").style.setProperty("display", "none");
+                }
+            });
+
+            loadPath('/');
         </script>
+        <div style="display: none;" id="contextMenu">
+            <button>Get info</button>
+            <button>Pin to shelf</button>
+            <hr></hr>
+            <button>Cut</button>
+            <button>Copy</button>
+            <button>Paste</button>
+            <hr></hr>
+            <button>New folder</button>
+        </div>
     </body>
 </html>
