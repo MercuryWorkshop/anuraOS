@@ -2,6 +2,7 @@
     <head>
     <link rel="stylesheet" href="filemanager.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/libfileview.app/fileHandler.js"></script>
     </head>
     <body>
         <div class="container">
@@ -244,10 +245,7 @@
                     var fileSelected = selected[0];
                     if(fileSelected.getAttribute("data-type") == "file") {
                         console.debug("Clicked on file");
-                        fs.readFile(fileSelected.getAttribute("data-path"), function(err, data)  {
-                            let fileView = window.parent.AliceWM.create("File Viewer");
-                            fileView.content.innerText = data;
-                        })
+                        openFile(fileSelected.getAttribute("data-path"))
                     } else if(fileSelected.getAttribute("data-type") == "dir") {
                         console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
                         loadPath(fileSelected.getAttribute("data-path"));
