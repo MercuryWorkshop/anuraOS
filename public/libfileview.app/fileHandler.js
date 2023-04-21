@@ -18,8 +18,54 @@ window.openFile = function (path) {
             break;
         case 'mp4':
             openVideo(path, 'video/mp4')
+            break;
+        case 'mov':
+            openVideo(path, 'video/mp4')
+            break;
+        case 'webm':
+            openVideo(path, 'video/webm')
+            break;
+        case 'gif':
+            openImage(path, 'image/gif')
+            break;
+        case 'png':
+            openImage(path, 'image/png')
+            break;
+        case 'jpg':
+        case 'jpeg':
+            openImage(path, 'image/jpeg')
+            break;
+        case 'pdf':
+            openPDF(path)
+            break;
+            
 
     }
+}
+
+function openImage(path, mimetype) {
+    fs.readFile(path, function(err, data) {
+        let fileView = window.parent.AliceWM.create("Image File")
+        let bloburl = URL.createObjectURL(new Blob([data]))
+        let image = document.createElement('img')
+        image.setAttribute("type", mimetype)
+        image.src = bloburl
+        image.style = "width: 100%; height: 100%;"
+        fileView.content.appendChild(image)
+    })
+}
+
+function openPDF(path) {
+    alert('Holy shit why are you trying to view a pdf...')
+    fs.readFile(path, function(err, data) {
+        let fileView = window.parent.AliceWM.create("PDF File")
+        let bloburl = URL.createObjectURL(new Blob([data], { type: "application/pdf" }))
+        let doc = document.createElement('embed')
+        doc.setAttribute("type", "application/pdf")
+        doc.src = bloburl
+        doc.style = "width: 100%; height: 100%;"
+        fileView.content.appendChild(doc)
+    })
 }
 
 function openAudio(path, mimetype) {
