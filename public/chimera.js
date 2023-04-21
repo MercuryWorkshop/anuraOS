@@ -1,4 +1,4 @@
-anura = {
+chimera = {
     init() {
         if (localStorage.getItem("x86-enabled") === "true") {
             const script = document.createElement('script');
@@ -30,7 +30,7 @@ anura = {
 
                     x86.content.appendChild(htermNode);
 
-                    anura.x86 = cx
+                    chimera.x86 = cx
 
 
                     const decoder = new TextDecoder("UTF-8");
@@ -55,13 +55,13 @@ anura = {
             const script = document.createElement('script');
             script.src = "/assets/libs/filer.min.js"
             script.onload = () => {
-                anura.fs = new Filer.FileSystem({
-                    name: "anura-mainContext",
+                chimera.fs = new Filer.FileSystem({
+                    name: "chimera-mainContext",
                     provider: new Filer.FileSystem.providers.IndexedDB()
                 });
-                anura.fs.readFileSync = async (path) => {
+                chimera.fs.readFileSync = async (path) => {
                     return await new Promise((resolve,reject)=>{
-                        return anura.fs.readFile(path, function async(err, data) {
+                        return chimera.fs.readFile(path, function async(err, data) {
                             resolve(new TextDecoder('utf8').decode(data))
                         }) 
                     })
@@ -106,7 +106,7 @@ anura = {
                     },
                 });
                 pythonInterpreter.globals.set('AliceWM', AliceWM)
-                pythonInterpreter.globals.set('anura', anura)
+                pythonInterpreter.globals.set('chimera', chimera)
                 resolve(pythonInterpreter)
             }
             document.body.appendChild(iframe)
@@ -115,7 +115,7 @@ anura = {
 
 }
 
-anura.init()
+chimera.init()
 function openBrowser() {
     let dialog = AliceWM.create("AboutBrowser");
 
@@ -187,8 +187,8 @@ document.body.setAttribute('draggable', 'true');
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="color-scheme" content="light only" />
     <meta name="description" content="stuff" />
-    <meta property="og:site_name" content="anurathingyidksoyeah" />
-    <meta property="og:title" content="anurathingyidksoyeah" />
+    <meta property="og:site_name" content="chimerathingyidksoyeah" />
+    <meta property="og:title" content="chimerathingyidksoyeah" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="stuff" />
     <meta property="og:image:type" content="image/jpeg" />
@@ -925,7 +925,7 @@ document.body.setAttribute('draggable', 'true');
     <div id="wrapper">
       <div id="main">
         <div class="inner">
-          <p id="text01">anura wallpaper editor</p>
+          <p id="text01">chimera wallpaper editor</p>
           <hr id="divider02" />
           <p id="text02">solid colors</p>
           <ul id="buttons01" class="buttons">
