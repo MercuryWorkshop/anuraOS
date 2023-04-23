@@ -16,4 +16,4 @@ iframe.setAttribute("src", "https://hypertabs.cc")
 dialog.content.appendChild(iframe)
 ```
 
-run server with `npm start`
+run server with `npm run start`

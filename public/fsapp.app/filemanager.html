@@ -2,6 +2,8 @@
     <head>
     <link rel="stylesheet" href="filemanager.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/libfileview.app/fileHandler.js"></script>
+    <script src="/assets/libs/filer.min.js"></script> <!-- in any sane case this wouldn't be required. This isn't a sane case, Buffer doesn't work without importing this -->
     </head>
     <body>
         <div class="container">
@@ -129,7 +131,7 @@
         <script>
             var currentlySelected = [];
 
-            window.fs = parent.anura.fs
+            window.fs = parent.chimera.fs
 
             function loadPath(path) {
                 console.debug("loading path: ", path);
@@ -159,14 +161,15 @@
                                 iconContainer.appendChild(icon)
                                 row.appendChild(iconContainer)
                                 row.appendChild(name)
+                                row.appendChild(size)
                                 row.appendChild(description)
                                 row.appendChild(date)
-                                row.appendChild(size)
+                                
                                 row.setAttribute("data-type", 'dir');
                                 row.setAttribute("data-path", `${path}/${file}`);
                             } else {
                                 name.innerText = `${file}`
-                                description.innerText = "Anura File"
+                                description.innerText = "Chimera File"
                                 icon.class = '';
                                 date.innerText = new Date(stats.mtime/1000).toLocaleString()
                                 size.innerText = stats.size
@@ -174,9 +177,10 @@
                                 iconContainer.appendChild(icon)
                                 row.appendChild(iconContainer)
                                 row.appendChild(name)
+                                row.appendChild(size)
                                 row.appendChild(description)
                                 row.appendChild(date)
-                                row.appendChild(size)
+                                
                                 row.setAttribute("data-type", 'file');
                                 row.setAttribute("data-path", `${path}/${file}`);
                             }
@@ -241,13 +245,12 @@
 
             function fileAction(selected) {
                 if(selected.length == 1) {
+                    // SINGLE FILE SELECTION //
+
                     var fileSelected = selected[0];
                     if(fileSelected.getAttribute("data-type") == "file") {
                         console.debug("Clicked on file");
-                        fs.readFile(fileSelected.getAttribute("data-path"), function(err, data)  {
-                            let fileView = window.parent.AliceWM.create("File Viewer");
-                            fileView.content.innerText = data;
-                        })
+                        openFile(fileSelected.getAttribute("data-path"))
                     } else if(fileSelected.getAttribute("data-type") == "dir") {
                         console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
                         loadPath(fileSelected.getAttribute("data-path"));
@@ -255,7 +258,9 @@
                         console.warn("Unknown filetype ", fileSelected.getAttribute("data-type"), " doing nothing!");
                     }
                 } else {
-                    console.error("raff please implement");
+                    // MULTIPLE FILE SELECTION //
+
+                    console.error("raff please implement"); 
                 }
             }
 
@@ -315,18 +320,50 @@
                     document.querySelector("#contextMenu").style.setProperty("display", "none");
                 }
             });
+            function newFolder(path) {
+                if (path === undefined) {
+                    path = document.querySelector(".breadcrumbs").getAttribute("data-current-path") + '/' + prompt('Folder Name: ')
+                }
+                fs.mkdir(path)
+                reload()
+            }
+            function reload() {
+                loadPath(document.querySelector(".breadcrumbs").getAttribute("data-current-path"))
+            }
+            function reload() {
+                loadPath(document.querySelector(".breadcrumbs").getAttribute("data-current-path"))
+            }
 
+            function upload() {
+                
+                let fauxput = document.createElement('input') // fauxput - fake input that isn't shown or ever added to page TODO: think of a better name for this variable
+                fauxput.type = 'file'
+                fauxput.onchange = async (e) => {
+                    const file = await e.target.files[0]
+                    const content = await file.arrayBuffer()
+                    fs.writeFile(`${document.querySelector(".breadcrumbs").getAttribute("data-current-path")}/${file.name}`, Filer.Buffer.from(content), function (err) {
+                        reload();
+                    })
+                }
+                fauxput.click()
+            }
+            function deleteFile() {
+                
+            }
             loadPath('/');
+
         </script>
         <div style="display: none;" id="contextMenu">
             <button>Get info</button>
             <button>Pin to shelf</button>
+            <button onclick="reload()">Refresh</button>
             <hr></hr>
             <button>Cut</button>
             <button>Copy</button>
             <button>Paste</button>
+            <button onclick="upload()">Upload from PC</button>
             <hr></hr>
-            <button>New folder</button>
+            <button onclick="newFolder()">New folder</button>
         </div>
     </body>
 </html>
