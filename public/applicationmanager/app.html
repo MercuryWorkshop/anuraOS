@@ -2,11 +2,84 @@
 <html>
     <Head>
         <script src="app.js"></script>
+        <style>
+            body {
+                color: white;
+                background-color: black;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+            .title {
+                color: white;
+            }
+
+            .sub {
+                color: lightgray;
+            }
+            
+            input {
+                border-top-left-radius: 25px;
+                border-bottom-left-radius: 25px;
+                color: white;
+                background-color: darkgray;
+                border: none;
+            }
+
+            button {
+                border-top-right-radius: 25px;
+                border-bottom-right-radius: 25px;
+                color: white;
+                background-color: darkgray;
+                border: none;
+            }
+        </style>
     </Head>
     <body>
-        <h1> Application Manager </h1> <br>
-        <p> Application path: <input type="text" name="path" id="path"><button onclick="run()">Run</button></p>
-        
+        <h1 class="title"> Run </h1>
+        <hr>
+        <p class="sub"> Application path: <input type="text" name="path" id="path"></input><button onclick="run()">Go</button></p>
+        <br>
+        <p>Enable Fs</p>
+        <input type="checkbox" id="enablefs" name="enablefs" value="enablefs">
+        <p>Enable x86</p>
+        <input type="checkbox" id="enable86" name="enable86" value="enable86">
+        <script>
+            // const btn = document.querySelector('#btn');
+            //btn.addEventListener('click', (event) => {
+            //    let checkboxes = document.querySelectorAll('input[name="enablefs"]:checked');
+            //    if (checkboxes = true) {
+            //        localStorage['x86-enabled'] = true;
+            //        localStorage['use-expirimental-fs'] = true;
+             //       alert("File System is on.");
+             //   } else if (checkboxes = false) {
+             //       localStorage['x86-enabled'] = false;
+            //        localStorage['use-expirimental-fs'] = false;
+            //        alert("File System is off.");
+            //    };
+            //});  
+            
+            let checkbox = document.getElementById("enablefs");
+            checkbox.addEventListener( "change", () => {
+                if ( checkbox.checked ) {
+                    localStorage['use-expirimental-fs'] = true;
+                    alert('Filesystem enabled. Reload to see effects.')
+                } else {
+                    localStorage['use-expirimental-fs'] = false;
+                    alert('Filesystem disabled. Reload to see effects.')
+                }
+            });
+
+            let x86 = document.getElementById("enable86");
+            x86.addEventListener( "change", () => {
+                if ( x86.checked ) {
+                    localStorage['x86-enabled'] = true;
+                    alert('x86 enabled. Reload to see effects.')
+                } else {
+                    localStorage['x86-enabled'] = false;
+                    alert('x86 disabled. Reload to see effects.')
+                }
+            });
+        </script>
     </body>
 
 </html>
