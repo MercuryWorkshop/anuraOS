@@ -4,19 +4,24 @@ chimera = {
             const script = document.createElement('script');
             script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230321/cx.js"
             script.onload = () => {
-                async function cxReady(cx) {
+
+                function cxReady(cx) {
+                    const t = new hterm.Terminal();
                     // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix
                     x86 = AliceWM.create("x86 bash window")
                     let htermNode = document.createElement("div")
+                    htermNode.style.height = "100%";
+
+
 
                     console.id = "console"
 
                     const cxOut = document.createElement("pre");
 
-                    const t = new Terminal({ fontFamily: "monospace", cursorBlink: true, convertEol: true, fontWeight: 400, fontWeightBold: 700 });
-                    var fitAddon = new FitAddon.FitAddon();
-                    t.loadAddon(fitAddon);
-                    t.open(htermNode);
+                    // const t = new Terminal({ fontFamily: "monospace", cursorBlink: true, convertEol: true, fontWeight: 400, fontWeightBold: 700 });
+                    // var fitAddon = new FitAddon.FitAddon();
+                    // t.loadAddon(fitAddon);
+                    // t.open(htermNode);
                     // fitAddon.fit();
                     let cxReadFunc = null;
                     function readData(str) {
@@ -26,19 +31,41 @@ chimera = {
                             cxReadFunc(str.charCodeAt(i));
                     }
 
-                    t.onData(readData);
+                    // t.onData(readData);
 
                     x86.content.appendChild(htermNode);
 
+                    t.decorate(htermNode);
                     chimera.x86 = cx
 
 
                     const decoder = new TextDecoder("UTF-8");
-                    cxReadFunc = cx.setCustomConsole((dat) => {
-                        t.write(new Uint8Array(dat))
-                    }, t.cols, t.rows)
+                    t.onTerminalReady = () => {
+                        let io = t.io.push();
+                        cxReadFunc = cx.setCustomConsole((dat) => {
+                            io.print(new TextDecoder().decode(dat).replaceAll("\n", "\r\n"))
+                        }, t.cols, t.rows)
+                        io.onVTKeystroke = (str) => {
+                            readData(str)
+                        };
+                        io.sendString = (str) => {
+                            console.log(str);
+                            readData(str)
+                        };
+                        io.onTerminalResize = (cols, rows) => {
+                            cxReadFunc = cx.setCustomConsole((dat) => {
+                                io.print(new TextDecoder().decode(dat).replaceAll("\n", "\r\n"))
+                            }, cols, rows)
+                        };
+                        cx.run("/bin/bash", ["--login"], ["HOME=/home/user", "TERM=xterm", "USER=user", "SHELL=/bin/bash", "EDITOR=vim", "LANG=en_US.UTF-8", "LC_ALL=C"]);
+
+                        t.installKeyboard();
+
+
+                        htermNode.querySelector("iframe").style.position = "relative";
+                    }
                     window.t = t;
-                    cx.run("/bin/bash", ["--login"], ["HOME=/home/user", "TERM=xterm", "USER=user", "SHELL=/bin/bash", "EDITOR=vim", "LANG=en_US.UTF-8", "LC_ALL=C"]);
+
 
                 }
                 function cxFailed(e) {
@@ -48,7 +75,7 @@ chimera = {
 
             }
             document.head.appendChild(script)
-            
+
         }
 
         if (localStorage.getItem("use-expirimental-fs") === "true") {
@@ -60,16 +87,16 @@ chimera = {
                     provider: new Filer.FileSystem.providers.IndexedDB()
                 });
                 chimera.fs.readFileSync = async (path) => {
-                    return await new Promise((resolve,reject)=>{
+                    return await new Promise((resolve, reject) => {
                         return chimera.fs.readFile(path, function async(err, data) {
                             resolve(new TextDecoder('utf8').decode(data))
-                        }) 
+                        })
                     })
                 }
             }
             document.head.appendChild(script)
         }
-        
+
     },
     fs: undefined,
     syncRead: {
@@ -78,14 +105,14 @@ chimera = {
     Version: "0.1.0 alpha",
     x86fs: {
         async read(path) {
-            return await new Promise((resolve,reject)=>{
+            return await new Promise((resolve, reject) => {
                 return cheerpOSGetFileBlob([], "/files/" + path, async (blob) => {
                     resolve(await blob.text())
                 })
             })
         },
         write(path, data) {
-            cheerpjAddStringFile(`/str/${path}`, data); 
+            cheerpjAddStringFile(`/str/${path}`, data);
             // Depressingly, we can't actually transfer the file to /home without it crashing the users shell //
             // The user must do it themselves //
         }
@@ -96,10 +123,10 @@ chimera = {
             iframe.style = "display: none"
             iframe.setAttribute("src", "/python.app/lib.html")
             iframe.id = appname
-            iframe.onload = async function () {
+            iframe.onload = async function() {
                 console.log("Called from python")
                 let pythonInterpreter = await document.getElementById(appname).contentWindow.loadPyodide({
-                stdin: () => {
+                    stdin: () => {
                         let result = prompt();
                         echo(result);
                         return result;
@@ -141,51 +168,53 @@ function openAppManager() {
             window.eval(data);
         })
 }
-document.addEventListener("contextmenu", function(e){
+document.addEventListener("contextmenu", function(e) {
     e.preventDefault();
     if (document.querySelector(".custom-menu")) return;
-  
+
     const menu = document.createElement("div");
     menu.classList.add("custom-menu");
     menu.style.top = `${e.clientY}px`;
     menu.style.left = `${e.clientX}px`;
 
-const options = [
-  { name: `<span class="material-symbols-outlined"><span class="material-symbols-outlined">
+    const options = [
+        {
+            name: `<span class="material-symbols-outlined"><span class="material-symbols-outlined">
 shelf_auto_hide
-</span></span> Always Show Shelf`, action: function () { } },
-  { name: `<span class="material-symbols-outlined">shelf_position</span>Shelf Position`, action: function () { } },
-  {
-  name: `<span class="material-symbols-outlined">brush</span> Set Wallpaper and Style`,
-  action: function () {
-    const htmlString = ``;
-      
-     const parser = new DOMParser();
-    const htmlDoc = parser.parseFromString(htmlString, 'text/html');
+</span></span> Always Show Shelf`, action: function() { }
+        },
+        { name: `<span class="material-symbols-outlined">shelf_position</span>Shelf Position`, action: function() { } },
+        {
+            name: `<span class="material-symbols-outlined">brush</span> Set Wallpaper and Style`,
+            action: function() {
+                const htmlString = ``;
 
-    const htmlElement = htmlDoc.documentElement;
-    document.body.appendChild(htmlElement);
-  }
-},
+                const parser = new DOMParser();
+                const htmlDoc = parser.parseFromString(htmlString, 'text/html');
 
-];
+                const htmlElement = htmlDoc.documentElement;
+                document.body.appendChild(htmlElement);
+            }
+        },
 
-options.forEach(function (option) {
-  const item = document.createElement("div");
-  item.classList.add("custom-menu-item");
-  item.innerHTML = option.name;
-  item.addEventListener("click", function () {
-    menu.remove();
-    option.action();
-  });
-  menu.appendChild(item);
-});
+    ];
+
+    options.forEach(function(option) {
+        const item = document.createElement("div");
+        item.classList.add("custom-menu-item");
+        item.innerHTML = option.name;
+        item.addEventListener("click", function() {
+            menu.remove();
+            option.action();
+        });
+        menu.appendChild(item);
+    });
 
 
     document.body.appendChild(menu);
 });
 
-document.addEventListener("click", function(){
+document.addEventListener("click", function() {
     if (document.querySelector(".custom-menu")) {
         document.querySelector(".custom-menu").remove();
     }
