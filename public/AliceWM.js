@@ -90,6 +90,13 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
 
     // start dragging when the mouse clicked in the title area
     titleContainer.onmousedown = function(evt){
+        var i, frames;
+        frames = document.getElementsByTagName("iframe");
+        for (i = 0; i < frames.length; ++i)
+        {
+            console.log(frames[i])
+            frames[i].style.pointerEvents = 'none'
+        }
         evt = evt || window.event;
 
         container._dragging = true;
@@ -113,6 +120,12 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
 
     // finish the dragging when release the mouse button
     document.addEventListener('mouseup', (evt) => {
+        var i, frames;
+        frames = document.getElementsByTagName("iframe");
+        for (i = 0; i < frames.length; ++i)
+        {
+            frames[i].style.pointerEvents = 'auto'
+        }
         evt = evt || window.event;
 
         if(container._dragging){
