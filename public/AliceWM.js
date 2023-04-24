@@ -19,8 +19,16 @@ var AliceWM = {};
  */
 
 let windowID = 0;
-AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
-
+AliceWM.create = function(givenWinInfo){ // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
+    wininfo = givenWinInfo;
+    console.log(typeof(givenWinInfo))
+    if (typeof(givenWinInfo) == 'string') {
+        wininfo = {
+            title: givenWinInfo,
+            width: '1000px',
+            height: '500px',
+        }
+    }
     // initializing dialog: title, close, content
     var container = document.createElement("div");
     var titleContainer = document.createElement("div");
@@ -32,7 +40,11 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     var minimizeContainer = document.createElement("button");
 
     container.setAttribute("id", "aliceWMwin");
-    container.setAttribute("style", "resize: both;")
+    // container.setAttribute("style", "resize: both;")
+    container.style.resize = 'both'
+    console.log(wininfo.height)
+    container.style.height = wininfo.height
+    container.style.width = wininfo.width
 
     titleContainer.setAttribute("id", "title");
 
@@ -40,7 +52,7 @@ AliceWM.create = function(title){ // CODE ORIGINALLY FROM https://gist.github.co
     contentContainer.setAttribute("style", "width: 100%; padding:0; margin:0; ")
 
     titleContent.setAttribute("id", "titleContent");
-    titleContent.innerHTML = title;
+    titleContent.innerHTML = wininfo.title;
 
     closeContainer.setAttribute("id", "close");
     closeContainer.setAttribute("class", "windowButton");
