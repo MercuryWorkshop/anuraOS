@@ -1,0 +1,10 @@
+{
+  "name": "glxgears",
+  "package": "chimera.glxgears",
+  "index": "b.html",
+  "wininfo":{
+    "title":"glxgears",
+    "width":"350px",
+    "height":"350px"
+  }
+}

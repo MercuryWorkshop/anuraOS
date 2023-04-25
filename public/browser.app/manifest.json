@@ -1,0 +1,10 @@
+{
+  "name": "browser",
+  "package": "chimera.browser",
+  "index": "../browser.html",
+  "wininfo":{
+    "title":"velocity ripoff",
+    "width":"700px",
+    "height":"500px"
+  }
+}

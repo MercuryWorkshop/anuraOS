@@ -1,0 +1,8 @@
+{
+  "name": "Recursion",
+  "package": "chimera.browser",
+  "index": "../index.html",
+  "wininfo":{
+    "title":"Chimera inside Chimera!"
+  }
+}

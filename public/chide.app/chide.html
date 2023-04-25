@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>rustic-mountain</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.37.1/min/vs/editor/editor.main.js"
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link rel="stylesheet" href="index.css">
+</head>
+<script>
+  monaco.editor.create(document.getElementById('container'), {
+    value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+    language: 'javascript'
+  });
+</script>
+
+<body>
+  <container></container>
+</body>
+
+</html>

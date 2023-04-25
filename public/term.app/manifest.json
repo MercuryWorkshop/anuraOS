@@ -1,0 +1,8 @@
+{
+  "name": "Terminal",
+  "package": "chimera.term",
+  "index": "term.html",
+  "wininfo":{
+    "title":"Terminal"
+  }
+}

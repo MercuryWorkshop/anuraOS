@@ -19,10 +19,10 @@ var AliceWM = {};
  */
 
 let windowID = 0;
-AliceWM.create = function(givenWinInfo){ // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
+AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
     wininfo = givenWinInfo;
-    console.log(typeof(givenWinInfo))
-    if (typeof(givenWinInfo) == 'string') {
+    console.log(typeof (givenWinInfo))
+    if (typeof (givenWinInfo) == 'string') {
         wininfo = {
             title: givenWinInfo,
             width: '1000px',
@@ -79,33 +79,36 @@ AliceWM.create = function(givenWinInfo){ // CODE ORIGINALLY FROM https://gist.gi
     window.center(container);
 
     // binding mouse events
-    closeContainer.onclick = function(evt){
-        if (container._overlay){
+    closeContainer.onclick = function(evt) {
+        if (container._overlay) {
             container._overlay.parentNode.removeChild(container._overlay);
         }
 
         container.parentNode.removeChild(container);
         // calling the callback function to notify the dialog closed
+
+        if (onclose) {
+            onclose();
+        }
         evt.stopPropagation();
     };
 
     // self explanatory everything is self explanatory
-    container.onmousedown = function(evt){
+    container.onmousedown = function(evt) {
         // probably inefficient but i dont caare
         var allWindows = [...document.querySelectorAll("#aliceWMwin")];
         console.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
-        for(const wmwindow of allWindows) {
+        for (const wmwindow of allWindows) {
             wmwindow.style.setProperty("z-index", 92);
         }
         titleContainer.parentNode.style.setProperty("z-index", 93);
     }
 
     // start dragging when the mouse clicked in the title area
-    titleContainer.onmousedown = function(evt){
+    titleContainer.onmousedown = function(evt) {
         var i, frames;
         frames = document.getElementsByTagName("iframe");
-        for (i = 0; i < frames.length; ++i)
-        {
+        for (i = 0; i < frames.length; ++i) {
             console.log(frames[i])
             frames[i].style.pointerEvents = 'none'
         }
@@ -122,7 +125,7 @@ AliceWM.create = function(givenWinInfo){ // CODE ORIGINALLY FROM https://gist.gi
     document.addEventListener('mousemove', (evt) => {
         evt = evt || window.event;
 
-        if(container._dragging){
+        if (container._dragging) {
             container.style.left =
                 (container._originalLeft + evt.clientX - container._mouseLeft) + "px";
             container.style.top =
@@ -134,13 +137,12 @@ AliceWM.create = function(givenWinInfo){ // CODE ORIGINALLY FROM https://gist.gi
     document.addEventListener('mouseup', (evt) => {
         var i, frames;
         frames = document.getElementsByTagName("iframe");
-        for (i = 0; i < frames.length; ++i)
-        {
+        for (i = 0; i < frames.length; ++i) {
             frames[i].style.pointerEvents = 'auto'
         }
         evt = evt || window.event;
 
-        if(container._dragging){
+        if (container._dragging) {
             container.style.left =
                 (container._originalLeft + evt.clientX - container._mouseLeft) + "px";
             container.style.top =
@@ -150,7 +152,7 @@ AliceWM.create = function(givenWinInfo){ // CODE ORIGINALLY FROM https://gist.gi
         }
     });
     windowID++;
-    return {content: contentContainer};
+    return { content: contentContainer };
 };
 
 
@@ -159,8 +161,8 @@ AliceWM.create = function(givenWinInfo){ // CODE ORIGINALLY FROM https://gist.gi
  * place the given dom element in the center of the browser window
  * @param {Object} element
  */
-function center(element){
-    if(element){
+function center(element) {
+    if (element) {
         element.style.left = (window.innerWidth - element.offsetWidth) / 2 + "px";
         element.style.top = (window.innerHeight - element.offsetHeight) / 2 + "px";
     }

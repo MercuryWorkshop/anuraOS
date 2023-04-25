@@ -1,78 +1,14 @@
+const $ = document.querySelector.bind(document);
+
 chimera = {
     init() {
         if (localStorage.getItem("x86-enabled") === "true") {
             const script = document.createElement('script');
             script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230419/cx.js"
-            script.onload = () => {
+            script.onload = async () => {
+                let cx = await CheerpXApp.create({ mounts: [{ type: "cheerpOS", dev: "/app", path: "/" }, { type: "cheerpOS", dev: "/app", path: "/app" }, { type: "cheerpOS", dev: "/str", path: "/data" }, { type: "cheerpOS", dev: "/files", path: "/home" }, { type: "cheerpOS", dev: "/files", path: "/tmp" }, { type: "devs", dev: "", path: "/dev" }] });
 
-                function cxReady(cx) {
-                    const t = new hterm.Terminal();
-                    // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix
-                    x86 = AliceWM.create("x86 bash window")
-                    let htermNode = document.createElement("div")
-                    htermNode.style.height = "100%";
-
-
-
-                    console.id = "console"
-
-                    const cxOut = document.createElement("pre");
-
-                    // const t = new Terminal({ fontFamily: "monospace", cursorBlink: true, convertEol: true, fontWeight: 400, fontWeightBold: 700 });
-                    // var fitAddon = new FitAddon.FitAddon();
-                    // t.loadAddon(fitAddon);
-                    // t.open(htermNode);
-                    // fitAddon.fit();
-                    let cxReadFunc = null;
-                    function readData(str) {
-                        if (cxReadFunc == null)
-                            return;
-                        for (var i = 0; i < str.length; i++)
-                            cxReadFunc(str.charCodeAt(i));
-                    }
-
-                    // t.onData(readData);
-
-                    x86.content.appendChild(htermNode);
-
-                    t.decorate(htermNode);
-                    chimera.x86 = cx
-
-
-                    const decoder = new TextDecoder("UTF-8");
-                    t.onTerminalReady = () => {
-                        let io = t.io.push();
-                        cxReadFunc = cx.setCustomConsole((dat) => {
-                            io.print(new TextDecoder().decode(dat).replaceAll("\n", "\r\n"))
-                        }, t.cols, t.rows)
-                        io.onVTKeystroke = (str) => {
-                            readData(str)
-                        };
-                        io.sendString = (str) => {
-                            console.log(str);
-                            readData(str)
-                        };
-                        io.onTerminalResize = (cols, rows) => {
-                            cxReadFunc = cx.setCustomConsole((dat) => {
-                                io.print(new TextDecoder().decode(dat).replaceAll("\n", "\r\n"))
-                            }, cols, rows)
-                        };
-                        cx.run("/bin/bash", ["--login"], ["HOME=/home/user", "TERM=xterm", "USER=user", "SHELL=/bin/bash", "EDITOR=vim", "LANG=en_US.UTF-8", "LC_ALL=C"]);
-
-                        t.installKeyboard();
-
-
-                        htermNode.querySelector("iframe").style.position = "relative";
-                    }
-                    window.t = t;
-
-
-                }
-                function cxFailed(e) {
-                    console.log("CheerpX could not start. Reason: " + e);
-                }
-                CheerpXApp.create({ mounts: [{ type: "cheerpOS", dev: "/app", path: "/" }, { type: "cheerpOS", dev: "/app", path: "/app" }, { type: "cheerpOS", dev: "/str", path: "/data" }, { type: "cheerpOS", dev: "/files", path: "/home" }, { type: "cheerpOS", dev: "/files", path: "/tmp" }, { type: "devs", dev: "", path: "/dev" }] }).then(cxReady, cxFailed);
-
+                chimera.x86 = cx;
             }
             document.head.appendChild(script)
 
@@ -102,6 +38,7 @@ chimera = {
     syncRead: {
 
     },
+    apps: {},
     Version: "0.1.0 alpha",
     x86fs: {
         async read(path) {
@@ -168,8 +105,63 @@ function openAppManager() {
             window.eval(data);
         })
 }
+
+
+async function registerApp(location) {
+
+
+    let resp = await fetch(`${location}/manifest.json`);
+    let manifest = JSON.parse(await resp.text());
+
+
+    let app = {
+        name: manifest.name,
+        location,
+        manifest,
+        windowinstance: null,
+        async launch() {
+
+            if (this.windowinstance) return;
+            let win = AliceWM.create(this.manifest.wininfo, () => {
+                this.windowinstance = null;
+            });
+            let iframe = document.createElement("iframe")
+            iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
+            iframe.setAttribute("src", `${location}/${manifest.index}`);
+
+            win.content.appendChild(iframe);
+
+
+            this.windowinstance = win;
+        },
+    };
+    let appsContainer = $("#appsView");
+    let shortcut = $("#appTemplate").content.cloneNode(true);
+    shortcut.querySelector(".app-shortcut-name").innerText = manifest.name;
+
+    shortcut.querySelector(".app-shortcut-image").addEventListener("click", () => {
+        app.launch();
+    });
+
+
+
+    appsContainer.appendChild(shortcut);
+
+    chimera.apps[manifest.package] = app;
+    return app;
+}
+
+window.addEventListener("load", () => {
+    registerApp("browser.app");
+    registerApp("term.app");
+    registerApp("glxgears.app");
+    registerApp("recursion.app");
+});
+
+
+
 document.addEventListener("contextmenu", function(e) {
-    if(e.shiftKey) return;
+    if (e.shiftKey) return;
     e.preventDefault();
 
     const menu = document.querySelector(".custom-menu");
@@ -179,12 +171,37 @@ document.addEventListener("contextmenu", function(e) {
 });
 
 document.addEventListener("click", (e) => {
-    if(e.button != 0) return;
+    if (e.button != 0) return;
     document.querySelector(".custom-menu").style.setProperty("display", "none");
 });
 
-// Link to Google Fonts API
+// Link to Google Fonts API  
 const link = document.createElement('link');
 link.rel = 'stylesheet';
 link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200';
 document.head.appendChild(link);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
