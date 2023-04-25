@@ -6,4 +6,4 @@
 	url = https://chromium.googlesource.com/apps/libapps
 [submodule "wsproxy"]
 	path = wsproxy
-	url = https://github.com/stuicey/wsproxy/
+	url = https://github.com/MercuryWorkshop/wsProxy
