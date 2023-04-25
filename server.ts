@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import createServer from '@tomphttp/bare-server-node';
 import fs from "fs/promises";
+
 const app = express();
 const port = 8000;
 const bare = createServer('/bare/');
