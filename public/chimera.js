@@ -2,7 +2,7 @@ chimera = {
     init() {
         if (localStorage.getItem("x86-enabled") === "true") {
             const script = document.createElement('script');
-            script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230321/cx.js"
+            script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230419/cx.js"
             script.onload = () => {
 
                 function cxReady(cx) {
@@ -71,7 +71,7 @@ chimera = {
                 function cxFailed(e) {
                     console.log("CheerpX could not start. Reason: " + e);
                 }
-                CheerpXApp.create({ mounts: [{ type: "cheerpOS", dev: "/app", path: "/" }, { type: "cheerpOS", dev: "/app", path: "/app" }, { type: "cheerpOS", dev: "/str", path: "/data" }, { type: "cheerpOS", dev: "/files", path: "/home" }, { type: "devs", dev: "", path: "/dev" }] }).then(cxReady, cxFailed);
+                CheerpXApp.create({ mounts: [{ type: "cheerpOS", dev: "/app", path: "/" }, { type: "cheerpOS", dev: "/app", path: "/app" }, { type: "cheerpOS", dev: "/str", path: "/data" }, { type: "cheerpOS", dev: "/files", path: "/home" }, { type: "cheerpOS", dev: "/files", path: "/tmp" }, { type: "devs", dev: "", path: "/dev" }] }).then(cxReady, cxFailed);
 
             }
             document.head.appendChild(script)
