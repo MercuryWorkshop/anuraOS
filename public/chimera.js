@@ -169,102 +169,19 @@ function openAppManager() {
         })
 }
 document.addEventListener("contextmenu", function(e) {
+    if(e.shiftKey) return;
     e.preventDefault();
-    if (document.querySelector(".custom-menu")) return;
 
-    const menu = document.createElement("div");
-    menu.classList.add("custom-menu");
+    const menu = document.querySelector(".custom-menu");
+    menu.style.removeProperty("display");
     menu.style.top = `${e.clientY}px`;
     menu.style.left = `${e.clientX}px`;
-
-    const options = [
-        {
-            name: `<span class="material-symbols-outlined"><span class="material-symbols-outlined">
-shelf_auto_hide
-</span></span> Always Show Shelf`, action: function() { }
-        },
-        { name: `<span class="material-symbols-outlined">shelf_position</span>Shelf Position`, action: function() { } },
-        {
-            name: `<span class="material-symbols-outlined">brush</span> Set Wallpaper and Style`,
-            action: function() {
-                const htmlString = ``;
-
-                const parser = new DOMParser();
-                const htmlDoc = parser.parseFromString(htmlString, 'text/html');
-
-                const htmlElement = htmlDoc.documentElement;
-                document.body.appendChild(htmlElement);
-            }
-        },
-
-    ];
-
-    options.forEach(function(option) {
-        const item = document.createElement("div");
-        item.classList.add("custom-menu-item");
-        item.innerHTML = option.name;
-        item.addEventListener("click", function() {
-            menu.remove();
-            option.action();
-        });
-        menu.appendChild(item);
-    });
-
-
-    document.body.appendChild(menu);
 });
 
-document.addEventListener("click", function() {
-    if (document.querySelector(".custom-menu")) {
-        document.querySelector(".custom-menu").remove();
-    }
+document.addEventListener("click", (e) => {
+    if(e.button != 0) return;
+    document.querySelector(".custom-menu").style.setProperty("display", "none");
 });
-
-const style = document.createElement('style');
-style.type = 'text/css';
-style.innerHTML = `
-.custom-menu {
-    position: absolute;
-    border: 1px solid #000000;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 20px;
-    padding: 10px 0;
-    width: 300px;
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
-    z-index: 10000;
-    overflow: hidden;
-}
-.custom-menu-item {
-    padding: 8px 12px;
-    color: #ffffff;
-    cursor: pointer;
-    user-select: none;
-}
-.custom-menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.material-symbols-outlined {
-    font-family: 'Material Symbols Outlined', sans-serif;
-}
-.custom-menu-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  color: #ffffff;
-  cursor: pointer;
-  user-select: none;
-}
-
-.custom-menu-item .material-symbols-outlined {
-  margin-top: 0.05px;
-  margin-right: 5px;
-  padding-left: 1px;
-}
-
-
-`;
-document.head.appendChild(style);
 
 // Link to Google Fonts API
 const link = document.createElement('link');

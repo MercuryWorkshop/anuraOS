@@ -23,6 +23,21 @@
 </head>
 
 <body>
+    <div class="launcher">
+        <div class="topSearchBar">
+            <img src="/assets/icons/googleg.png"></img>
+            <input placeholder="Search your tabs, files, apps, and more...">
+        </div>
+        <div class="recentItemsWrapper">
+            <div class="recentItemsText">Continue where you left off</div>
+        </div>
+        <div class="appsView">
+            <div class="app">
+                <input type="image" src="/assets/icons/chrome.svg" id="showDialog" onclick="openBrowser()">
+                <div>Chrome</div>
+            </div>
+        </div>
+    </div>
     <footer>
         <nav>
             <ul>
@@ -33,6 +48,12 @@
             </ul>
         </nav>
     </footer>
+    <div class="custom-menu" style="display:none;">
+        <div class="custom-menu-item"><span class="material-symbols-outlined"><span class="material-symbols-outlined">shelf_auto_hide</span></span> Always Show Shelf</div>
+        <div class="custom-menu-item"><span class="material-symbols-outlined">shelf_position</span>Shelf Position</div>
+        <div class="extra-menu-wrapper"><div class="custom-menu extra-menu"><div class="custom-menu-item"><span class="material-symbols-outlined">brush</span> Set Wallpaper and Style</div></div></div>
+        <div class="custom-menu-item"><span class="material-symbols-outlined">brush</span> Set Wallpaper and Style</div>
+    </div>
 </body>
 
 </html>
