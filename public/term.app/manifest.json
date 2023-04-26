@@ -1,7 +1,9 @@
 {
   "name": "Terminal",
+  "type": "auto",
   "package": "chimera.term",
   "index": "term.html",
+  "icon": "terminal.svg",
   "wininfo":{
     "title":"Terminal"
   }

@@ -1,5 +1,6 @@
 {
   "name": "browser",
+  "type": "auto",
   "package": "chimera.browser",
   "index": "../browser.html",
   "wininfo":{

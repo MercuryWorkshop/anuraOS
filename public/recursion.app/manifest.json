@@ -1,7 +1,9 @@
 {
   "name": "Recursion",
+  "type": "auto",
   "package": "chimera.browser",
   "index": "../index.html",
+  "icon": "iframe.svg",
   "wininfo":{
     "title":"Chimera inside Chimera!"
   }

@@ -1,0 +1,8 @@
+{
+    "name": "Eruda",
+    "type": "manual",
+    "package": "chimera.debugger",
+    "icon": "inspect.svg",
+    "handler": "launchapp.js"
+  }
+  
