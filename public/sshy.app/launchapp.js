@@ -8,4 +8,3 @@ function loadingScript(currentpath) {
     glxgears.content.appendChild(iframe)
 }
 
-
