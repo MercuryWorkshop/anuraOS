@@ -6,10 +6,12 @@
 	<title>SSHy.us</title>
 
 	<script type="text/javascript">
-		var wsproxyURL = "localhost"
+		var wsproxyURL = window.origin.split("//")[1].split(":")[0] // Get URL
                 var wsproxyEncoding = "base64"
-		var wsproxyPorts = {"ws":8001, "wss":6001}
-		var wsproxyProto = "ws"
+				// wss port here is 443 because if you are using wss you are probably using a deployed ver
+				// So you probably have nginx (will change ws to host port once I merge wsproxy and server.ts)
+		var wsproxyPorts = {"ws":8001, "wss":443} 
+		var wsproxyProto = "wss"
 		
 		var ws, transport, settings, term = null;
                 var fitAddon = null;
