@@ -17,3 +17,5 @@ dialog.content.appendChild(iframe)
 ```
 
 run server with `npm run start`
+
+you will need to symlink your arch of `symlinks.` to `symlinks`
