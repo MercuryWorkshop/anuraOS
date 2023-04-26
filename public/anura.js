@@ -177,7 +177,8 @@ window.addEventListener("load", () => {
     registerApp("term.app");
     registerApp("glxgears.app");
     registerApp("recursion.app");
-    registerApp("eruda.app")
+    registerApp("eruda.app");
+    registerApp("sshy.app")
 });
 
 
