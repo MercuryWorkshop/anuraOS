@@ -4,9 +4,9 @@ const $ = document.querySelector.bind(document);
 
 window.addEventListener("load", async () => {
 
-  let chimera = top.chimera;
+  let anura = top.anura;
 
-  let cx = chimera.x86;
+  let cx = anura.x86;
 
   const t = new hterm.Terminal();
   // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix

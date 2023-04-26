@@ -1,7 +1,7 @@
 {
   "name": "glxgears",
   "type": "auto",
-  "package": "chimera.glxgears",
+  "package": "anura.glxgears",
   "index": "b.html",
   "icon": "glxgears.png",
   "wininfo":{

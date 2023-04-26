@@ -131,7 +131,7 @@
         <script>
             var currentlySelected = [];
 
-            window.fs = parent.chimera.fs
+            window.fs = parent.anura.fs
 
             function loadPath(path) {
                 console.debug("loading path: ", path);
@@ -169,7 +169,7 @@
                                 row.setAttribute("data-path", `${path}/${file}`);
                             } else {
                                 name.innerText = `${file}`
-                                description.innerText = "Chimera File"
+                                description.innerText = "Anura File"
                                 icon.class = '';
                                 date.innerText = new Date(stats.mtime/1000).toLocaleString()
                                 size.innerText = stats.size

@@ -6,7 +6,7 @@ use std::fmt;
 use std::ops::AddAssign;
 
 fn main() {
-    println!("Welcome to chish, the Chimera developer shell.
+    println!("Welcome to chish, the Anura developer shell.
     If you got here by mistake, don't panic!  Just close this window and carry on.
     Type 'help' for a list of commands.
     If you want to customize the look/behavior, you can use the options page.

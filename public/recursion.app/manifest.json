@@ -1,10 +1,10 @@
 {
   "name": "Recursion",
   "type": "auto",
-  "package": "chimera.browser",
+  "package": "anura.browser",
   "index": "../index.html",
   "icon": "iframe.svg",
   "wininfo":{
-    "title":"Chimera inside Chimera!"
+    "title":"Anura inside Anura!"
   }
 }

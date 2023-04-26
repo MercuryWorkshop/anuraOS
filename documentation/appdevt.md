@@ -18,12 +18,12 @@ all of the below is undergoing change. see public/glxgears.app for an example
 <!-- } -->
 <!-- ``` -->
 <!---->
-<!-- from here you can do a variety of things, Applications can directly interface with the x86 subsystem (chimera.x86) or its filesystem (chimera.x86fs) or use the chimera filesystem.  -->
+<!-- from here you can do a variety of things, Applications can directly interface with the x86 subsystem (anura.x86) or its filesystem (anura.x86fs) or use the anura filesystem.  -->
 <!---->
 <!-- You can make a python app with the following logic,  -->
 <!-- ```js -->
 <!-- function loadingScript(currentpath) { -->
-<!--     let py = await chimera.python('APP NAME') -->
+<!--     let py = await anura.python('APP NAME') -->
 <!--     py.runPython(` -->
 <!--     print("Hello World") -->
 <!--     win = AliceWM.create("Window") -->

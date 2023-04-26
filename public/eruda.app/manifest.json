@@ -1,7 +1,7 @@
 {
     "name": "Eruda",
     "type": "manual",
-    "package": "chimera.debugger",
+    "package": "anura.debugger",
     "icon": "inspect.svg",
     "handler": "launchapp.js"
   }

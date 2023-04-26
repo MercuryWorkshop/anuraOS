@@ -1,7 +1,7 @@
 {
   "name": "Terminal",
   "type": "auto",
-  "package": "chimera.term",
+  "package": "anura.term",
   "index": "term.html",
   "icon": "terminal.svg",
   "wininfo":{

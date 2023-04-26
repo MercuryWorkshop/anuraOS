@@ -1,6 +1,6 @@
 const $ = document.querySelector.bind(document);
 
-chimera = {
+anura = {
     init() {
         if (localStorage.getItem("x86-enabled") === "true") {
             const script = document.createElement('script');
@@ -8,7 +8,7 @@ chimera = {
             script.onload = async () => {
                 let cx = await CheerpXApp.create({ mounts: [{ type: "cheerpOS", dev: "/app", path: "/" }, { type: "cheerpOS", dev: "/app", path: "/app" }, { type: "cheerpOS", dev: "/str", path: "/data" }, { type: "cheerpOS", dev: "/files", path: "/home" }, { type: "cheerpOS", dev: "/files", path: "/tmp" }, { type: "devs", dev: "", path: "/dev" }] });
 
-                chimera.x86 = cx;
+                anura.x86 = cx;
             }
             document.head.appendChild(script)
 
@@ -18,13 +18,13 @@ chimera = {
             const script = document.createElement('script');
             script.src = "/assets/libs/filer.min.js"
             script.onload = () => {
-                chimera.fs = new Filer.FileSystem({
-                    name: "chimera-mainContext",
+                anura.fs = new Filer.FileSystem({
+                    name: "anura-mainContext",
                     provider: new Filer.FileSystem.providers.IndexedDB()
                 });
-                chimera.fs.readFileSync = async (path) => {
+                anura.fs.readFileSync = async (path) => {
                     return await new Promise((resolve, reject) => {
-                        return chimera.fs.readFile(path, function async(err, data) {
+                        return anura.fs.readFile(path, function async(err, data) {
                             resolve(new TextDecoder('utf8').decode(data))
                         })
                     })
@@ -77,7 +77,7 @@ chimera = {
                     },
                 });
                 pythonInterpreter.globals.set('AliceWM', AliceWM)
-                pythonInterpreter.globals.set('chimera', chimera)
+                pythonInterpreter.globals.set('anura', anura)
                 resolve(pythonInterpreter)
             }
             document.body.appendChild(iframe)
@@ -89,7 +89,7 @@ chimera = {
 
 }
 
-chimera.init()
+anura.init()
 function openBrowser() {
     let dialog = AliceWM.create("AboutBrowser");
 
@@ -168,7 +168,7 @@ async function registerApp(location) {
 
     appsContainer.appendChild(shortcut);
 
-    chimera.apps[manifest.package] = app;
+    anura.apps[manifest.package] = app;
     return app;
 }
 
