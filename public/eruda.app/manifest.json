@@ -1,8 +1,0 @@
-{
-    "name": "Eruda",
-    "type": "manual",
-    "package": "anura.debugger",
-    "icon": "inspect.svg",
-    "handler": "launchapp.js"
-  }
-  
