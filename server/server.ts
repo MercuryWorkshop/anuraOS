@@ -10,7 +10,7 @@ const app = express();
 const port = 8000;
 const bare = createServer('/bare/');
 
-__dirname = process.cwd()
+__dirname = path.join(process.cwd(), '..');
 
 app.get("/", (req: Request, res: Response) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
