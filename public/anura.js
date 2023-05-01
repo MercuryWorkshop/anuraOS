@@ -82,11 +82,61 @@ anura = {
             }
             document.body.appendChild(iframe)
         })
+    },
+    async registerApp(location) {
+
+
+        let resp = await fetch(`${location}/manifest.json`);
+        let manifest = await resp.json()
+    
+    
+        let app = {
+            name: manifest.name,
+            location,
+            manifest,
+            windowinstance: null,
+            async launch() {
+                if (manifest.type == 'manual') { // This type of application is discouraged for sure but is the most powerful
+                        fetch(`${location}/${manifest.handler}`)
+                            .then(response => response.text())
+                            .then((data) => {
+                                top.window.eval(data);
+                                top.window.eval(`loadingScript("${location}")`)
+                            })
+                } else {
+                    if (this.windowinstance) return;
+                    let win = AliceWM.create(this.manifest.wininfo, () => {
+                        this.windowinstance = null;
+                    });
+    
+                    let iframe = document.createElement("iframe")
+                    iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
+                    iframe.setAttribute("src", `${location}/${manifest.index}`);
+    
+                    win.content.appendChild(iframe);
+    
+    
+                    this.windowinstance = win;
+                }
+            },
+        };
+        let appsContainer = $("#appsView");
+        let shortcut = $("#appTemplate").content.cloneNode(true);
+        shortcut.querySelector(".app-shortcut-name").innerText = manifest.name;
+        if (manifest["icon"]) {
+            shortcut.querySelector(".app-shortcut-image").src = `${location}/${manifest["icon"]}`
+        }
+        shortcut.querySelector(".app-shortcut-image").addEventListener("click", () => {
+            app.launch();
+        });
+    
+    
+    
+        appsContainer.appendChild(shortcut);
+    
+        anura.apps[manifest.package] = app;
+        return app;
     }
-
-
-
-
 }
 
 anura.init()
@@ -116,69 +166,14 @@ function openAppManager() {
         })
 }
 
-
-async function registerApp(location) {
-
-
-    let resp = await fetch(`${location}/manifest.json`);
-    let manifest = await resp.json()
-
-
-    let app = {
-        name: manifest.name,
-        location,
-        manifest,
-        windowinstance: null,
-        async launch() {
-            if (manifest.type == 'manual') { // This type of application is discouraged for sure but is the most powerful
-                    fetch(`${location}/${manifest.handler}`)
-                        .then(response => response.text())
-                        .then((data) => {
-                            top.window.eval(data);
-                            top.window.eval(`loadingScript("${location}")`)
-                        })
-            } else {
-                if (this.windowinstance) return;
-                let win = AliceWM.create(this.manifest.wininfo, () => {
-                    this.windowinstance = null;
-                });
-
-                let iframe = document.createElement("iframe")
-                iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
-                iframe.setAttribute("src", `${location}/${manifest.index}`);
-
-                win.content.appendChild(iframe);
-
-
-                this.windowinstance = win;
-            }
-        },
-    };
-    let appsContainer = $("#appsView");
-    let shortcut = $("#appTemplate").content.cloneNode(true);
-    shortcut.querySelector(".app-shortcut-name").innerText = manifest.name;
-    if (manifest["icon"]) {
-        shortcut.querySelector(".app-shortcut-image").src = `${location}/${manifest["icon"]}`
-    }
-    shortcut.querySelector(".app-shortcut-image").addEventListener("click", () => {
-        app.launch();
-    });
-
-
-
-    appsContainer.appendChild(shortcut);
-
-    anura.apps[manifest.package] = app;
-    return app;
-}
-
 window.addEventListener("load", () => {
-    registerApp("browser.app");
-    registerApp("term.app");
-    registerApp("glxgears.app");
-    registerApp("recursion.app");
-    registerApp("eruda.app");
-    registerApp("sshy.app")
+    anura.registerApp("browser.app");
+    anura.registerApp("term.app");
+    anura.registerApp("glxgears.app");
+    anura.registerApp("recursion.app");
+    anura.registerApp("eruda.app");
+    anura.registerApp("sshy.app");
+    anura.registerApp("fsapp.app");
 });
 
 
