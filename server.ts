@@ -20,6 +20,18 @@ app.use(async (req: Request, res: Response, next: Function) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cross-Origin-Opener-Policy", "same-origin");
 
+  if(bare.shouldRoute(req)) {
+    bare.routeRequest(req, res);
+    return;
+  }
+  next();
+})
+
+app.use(async (req: Request, res: Response, next: Function) => {
+  res.header("Cross-Origin-Embedder-Policy", "require-corp");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cross-Origin-Opener-Policy", "same-origin");
+
   if(req.path.startsWith(__dirname + "/public")) {
     res.sendFile(req.path);
     return;
