@@ -96,6 +96,10 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
         }
         evt.stopPropagation();
     };
+    // const ro = new ResizeObserver(entries => {
+    //     container.setAttribute("maximized", "false")
+    //     ro.unobserve(container);
+    //   });
     
     maximizeContainer.onclick = function(evt) {
         if (container.getAttribute("maximized") === "false") {
@@ -108,9 +112,11 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
             container.style.width = `${width}px`;
             container.style.height = `${height - 53}px`;
             container.setAttribute("maximized", "true") 
+            // ro.observe(container);
         } else {
             container.setAttribute("style", container.getAttribute("old-style"))
             container.setAttribute("maximized", "false")
+            // ro.unobserve(container);
         }
 
     };
@@ -120,10 +126,9 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
         container.setAttribute("maximized", "false")
     }
 
-    const ro = new ResizeObserver(entries => {
-        container.setAttribute("maximized", "false")
-    });
-    ro.observe(container);
+
+
+      
 
     // self explanatory everything is self explanatory
     container.onmousedown = function(evt) {
@@ -134,7 +139,9 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
             wmwindow.style.setProperty("z-index", 92);
         }
         titleContainer.parentNode.style.setProperty("z-index", 93);
-        maximized = false
+
+        // container.setAttribute("maximized", "false")
+        // ro.unobserve(container);
     }
 
     // start dragging when the mouse clicked in the title area
