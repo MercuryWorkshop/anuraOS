@@ -17,7 +17,7 @@ var AliceWM = {};
  * to show a floating dialog displaying the given dom element
  * @param {Object} title "title of the dialog"
  */
-
+windowInformation = {}
 let windowID = 0;
 AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
     wininfo = givenWinInfo;
@@ -29,6 +29,8 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
             height: '500px',
         }
     }
+   
+    
     // initializing dialog: title, close, content
     var container = document.createElement("div");
     var titleContainer = document.createElement("div");
@@ -39,30 +41,32 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
     var maximizeContainer = document.createElement("button");
     var minimizeContainer = document.createElement("button");
 
-    container.setAttribute("id", "aliceWMwin");
+    container.setAttribute("maximized", false) 
+    container.setAttribute("class", "aliceWMwin");
+    container.setAttribute("id", "Window"+windowID)
     // container.setAttribute("style", "resize: both;")
     container.style.resize = 'both'
     console.log(wininfo.height)
     container.style.height = wininfo.height
     container.style.width = wininfo.width
 
-    titleContainer.setAttribute("id", "title");
+    titleContainer.setAttribute("class", "title");
 
-    contentContainer.setAttribute("id", "content");
+    contentContainer.setAttribute("class", "content");
     contentContainer.setAttribute("style", "width: 100%; padding:0; margin:0; ")
 
-    titleContent.setAttribute("id", "titleContent");
+    titleContent.setAttribute("class", "titleContent");
     titleContent.innerHTML = wininfo.title;
 
-    closeContainer.setAttribute("id", "close");
+    closeContainer.setAttribute("class", "close");
     closeContainer.setAttribute("class", "windowButton");
     closeContainer.innerHTML = '<i class="fa-solid fa-xmark fa-fw"></i>';
 
-    maximizeContainer.setAttribute("id", "maximize");
+    maximizeContainer.setAttribute("class", "maximize");
     maximizeContainer.setAttribute("class", "windowButton");
     maximizeContainer.innerHTML = '<i class="fa-solid fa-window-maximize fa-fw"></i>'
 
-    minimizeContainer.setAttribute("id", "minimize");
+    minimizeContainer.setAttribute("class", "minimize");
     minimizeContainer.setAttribute("class", "windowButton");
     minimizeContainer.innerHTML = '<i class="fa-solid fa-window-minimize fa-fw"></i>';
 
@@ -92,16 +96,45 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
         }
         evt.stopPropagation();
     };
+    
+    maximizeContainer.onclick = function(evt) {
+        if (container.getAttribute("maximized") === "false") {
+            container.setAttribute("old-style", container.getAttribute("style")) 
+            const width  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            const height = window.innerHeight|| document.documentElement.clientHeight|| 
+            document.body.clientHeight;
+            container.style.top = 0
+            container.style.left = 0
+            container.style.width = `${width}px`;
+            container.style.height = `${height - 53}px`;
+            container.setAttribute("maximized", "true") 
+        } else {
+            container.setAttribute("style", container.getAttribute("old-style"))
+            container.setAttribute("maximized", "false")
+        }
+
+    };
+
+    container.onresize = function(evt) {
+        console.log("resized")
+        container.setAttribute("maximized", "false")
+    }
+
+    const ro = new ResizeObserver(entries => {
+        container.setAttribute("maximized", "false")
+    });
+    ro.observe(container);
 
     // self explanatory everything is self explanatory
     container.onmousedown = function(evt) {
         // probably inefficient but i dont caare
-        var allWindows = [...document.querySelectorAll("#aliceWMwin")];
+        var allWindows = [...document.querySelectorAll(".aliceWMwin")];
         console.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
         for (const wmwindow of allWindows) {
             wmwindow.style.setProperty("z-index", 92);
         }
         titleContainer.parentNode.style.setProperty("z-index", 93);
+        maximized = false
     }
 
     // start dragging when the mouse clicked in the title area
