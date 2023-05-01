@@ -52,19 +52,18 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
     contentContainer.setAttribute("style", "width: 100%; padding:0; margin:0; ")
 
     titleContent.setAttribute("id", "titleContent");
-    titleContent.innerHTML = wininfo.title;
 
     closeContainer.setAttribute("id", "close");
     closeContainer.setAttribute("class", "windowButton");
-    closeContainer.innerHTML = '<i class="fa-solid fa-xmark fa-fw"></i>';
+    closeContainer.innerHTML = '<span class="material-symbols-outlined">close</span>';
 
     maximizeContainer.setAttribute("id", "maximize");
     maximizeContainer.setAttribute("class", "windowButton");
-    maximizeContainer.innerHTML = '<i class="fa-solid fa-window-maximize fa-fw"></i>'
+    maximizeContainer.innerHTML = '<span class="material-symbols-outlined">maximize</span>'
 
     minimizeContainer.setAttribute("id", "minimize");
     minimizeContainer.setAttribute("class", "windowButton");
-    minimizeContainer.innerHTML = '<i class="fa-solid fa-window-minimize fa-fw"></i>';
+    minimizeContainer.innerHTML = '<span class="material-symbols-outlined">minimize</span>';
 
     titleContainer.appendChild(titleContent);
     titleContainer.appendChild(minimizeContainer);
