@@ -1,0 +1,53 @@
+{
+    "root": true,
+    // "parser": "@typescript-eslint/parser",
+    // "plugins": ["@typescript-eslint"],
+    "env": {
+      "browser": true,
+      "node": true,
+      "es2022": true
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": "latest",
+      "sourceType": "module"
+    },
+    "globals": {
+      "global": true
+    },
+    "rules": {
+      "indent": "off",
+      "quotes": "off",
+      "no-mixed-spaces-and-tabs": "off",
+      "no-lone-blocks": "off",
+      "eqeqeq": "error",
+      "no-duplicate-imports": "off",
+      "prefer-const": "warn",
+      "no-var": "error",
+      "no-spaced-func": "off",
+      "no-undef": "error",
+      "no-const-assign": "error",
+      "no-debugger": "off",
+      "no-fallthrough":"warn",
+      "no-irregular-whitespace": "warn",
+      "no-self-assign":"error",
+      "no-this-before-super":"error",
+      "no-unused-vars":"warn",
+      "camelcase":"warn",
+    //   "@typescript-eslint/consistent-type-imports": "error",
+    //   "@typescript-eslint/no-unused-vars": "error",
+    //   "@typescript-eslint/no-non-null-assertion": "off",
+    //   "@typescript-eslint/ban-ts-comment": "off",
+    //   "@typescript-eslint/no-explicit-any": "off",
+    //   "@typescript-eslint/adjacent-overload-signatures": "off",
+    //   "@typescript-eslint/ban-types": "off",
+      "no-constant-condition": [
+        "error",
+        {
+          "checkLoops": false
+        }
+      ]
+    }
+  }

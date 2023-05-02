@@ -1,0 +1,13 @@
+{
+    "name": "File Manager",
+    "type": "auto",
+    "package": "anura.fsapp",
+    "index": "filemanager.html",
+    "icon": "folder.svg",
+    "wininfo":{
+      "title":"File Manager",
+      "width":"700px",
+      "height":"500px"
+    }
+  }
+  
