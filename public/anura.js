@@ -108,7 +108,7 @@ anura = {
                     win.content.appendChild(iframe);
 
 
-                    this.windowinstance = win;
+                    // this.windowinstance = win;
                 }
             },
         };
@@ -180,7 +180,8 @@ async function registerApp(location) {
                         top.window.eval(`loadingScript("${location}")`)
                     })
             } else {
-                if (this.windowinstance) return;
+                console.log("??");
+                // if (this.windowinstance) return;
                 let win = AliceWM.create(this.manifest.wininfo, () => {
                     this.windowinstance = null;
                 });

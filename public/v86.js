@@ -5,10 +5,15 @@ const encoder = new TextEncoder();
 
 class V86Backend {
   sendQueue = [];
+  nextWrite = null;
   openQueue = [];
   onDataCallbacks = {};
 
   emulator;
+
+  writeLock = false;
+  writeLockQueue = [];
+
   constructor() {
     this.emulator = new V86Starter({
       wasm_path: "/build/v86.wasm",
@@ -45,6 +50,7 @@ class V86Backend {
     this.emulator.add_listener("serial0-output-char", (char) => {
       if (char === "\r") {
         console.log(data);
+
         this._proc_data(data);
         data = "";
         return;
@@ -70,20 +76,39 @@ class V86Backend {
   }
   writepty(TTYn, data) {
     const bytes = encoder.encode(data);
-    if (this.sendQueue.length > 0) {
-      console.log("dropping character: " + data);
+    if (this.writeLock) {
+      // console.log("Dropping Swq" + data);
+      this.writeLockQueue.push([TTYn, data]);
       return;
     }
+    if (this.nextWrite) {
+      // console.log("dropping character: " + data);
+      this.sendQueue.push([TTYn, data]);
+      return;
+    }
+    // console.log("WRITING");
     this.emulator.serial0_send(`w\n${TTYn}\n${bytes.length}\n`);
-    this.sendQueue.push(bytes);
+    this.nextWrite = bytes;
   }
 
   _proc_data(data) {
+    if (data.includes("^F") && this.writeLock) {
+      // console.log("removing write lock");
+      this.writeLock = false;
+      const queued = this.writeLockQueue.shift();
+      if (queued) {
+        this.writepty(queued[0], queued[1])
+      }
+    }
+
+
     const start = data.indexOf("\x05");
     if (start === -1) return; // \005 is our special control code
     data = data.substring(start + 1);
     const parts = data.split(" ");
     if (parts[0] === "r") {
+
+      this.writeLock = true;
       const nPty = parseInt(parts[1]);
       const nBytes = parseInt(parts[2]);
       const addr = parseInt(parts[3]);
@@ -95,12 +120,22 @@ class V86Backend {
       this.onDataCallbacks[nPty](text);
 
       this.emulator.serial0_send("\x06\n"); // ack'd
+      // console.log("ACKING");
+
     } else if (parts[0] === "w") {
       const addr = parseInt(parts[1]);
-      const bytes = this.sendQueue.shift();
+      const bytes = this.nextWrite;
       this.emulator.write_memory(bytes, addr);
 
       this.emulator.serial0_send("\x06\n"); // ack'd
+
+      // console.log("ACKING (w)");
+      setTimeout(() => this.nextWrite = null, 0);
+      const queued = this.sendQueue.shift();
+      if (queued) {
+        this.writepty(queued[0], queued[1])
+      }
+
     } else if (parts[0] === "n") {
       this.openQueue.shift()(parseInt(parts[1]));
       this.emulator.serial0_send("\x06\n"); // ack'd
