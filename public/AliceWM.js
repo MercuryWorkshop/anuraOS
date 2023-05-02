@@ -19,7 +19,7 @@ var AliceWM = {};
  */
 
 let windowID = 0;
-AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
+AliceWM.create = function(givenWinInfo) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
     wininfo = givenWinInfo;
     console.log(typeof (givenWinInfo))
     if (typeof (givenWinInfo) == 'string') {
@@ -86,10 +86,6 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
 
         container.parentNode.removeChild(container);
         // calling the callback function to notify the dialog closed
-
-        if (onclose) {
-            onclose();
-        }
         evt.stopPropagation();
     };
 

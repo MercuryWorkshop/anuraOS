@@ -10,3 +10,5 @@ rootfs/*
 node_modules
 anurax86.tar.gz
 symlinks
+images/
+build/

@@ -3,15 +3,7 @@ const $ = document.querySelector.bind(document);
 anura = {
     init() {
         if (localStorage.getItem("x86-enabled") === "true") {
-            const script = document.createElement('script');
-            script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230419/cx.js"
-            script.onload = async () => {
-                let cx = await CheerpXApp.create({ mounts: [{ type: "cheerpOS", dev: "/app", path: "/" }, { type: "cheerpOS", dev: "/app", path: "/app" }, { type: "cheerpOS", dev: "/str", path: "/data" }, { type: "cheerpOS", dev: "/files", path: "/home" }, { type: "cheerpOS", dev: "/files", path: "/tmp" }, { type: "devs", dev: "", path: "/dev" }] });
-
-                anura.x86 = cx;
-            }
-            document.head.appendChild(script)
-
+            anura.x86 = new V86Backend();
         }
 
         if (localStorage.getItem("use-expirimental-fs") === "true") {
@@ -38,7 +30,7 @@ anura = {
         link.rel = 'stylesheet';
         link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200';
         document.head.appendChild(link);
-    
+
 
     },
     fs: undefined,
@@ -49,14 +41,14 @@ anura = {
     Version: "0.1.0 alpha",
     x86fs: {
         async read(path) {
-            return await new Promise((resolve, reject) => {
-                return cheerpOSGetFileBlob([], "/files/" + path, async (blob) => {
-                    resolve(await blob.text())
-                })
-            })
+            // return await new Promise((resolve, reject) => {
+            //     return cheerpOSGetFileBlob([], "/files/" + path, async (blob) => {
+            //         resolve(await blob.text())
+            //     })
+            // })
         },
         write(path, data) {
-            cheerpjAddStringFile(`/str/${path}`, data);
+            // cheerpjAddStringFile(`/str/${path}`, data);
             // Depressingly, we can't actually transfer the file to /home without it crashing the users shell //
             // The user must do it themselves //
         }
@@ -131,12 +123,12 @@ async function registerApp(location) {
         windowinstance: null,
         async launch() {
             if (manifest.type == 'manual') { // This type of application is discouraged for sure but is the most powerful
-                    fetch(`${location}/${manifest.handler}`)
-                        .then(response => response.text())
-                        .then((data) => {
-                            top.window.eval(data);
-                            top.window.eval(`loadingScript("${location}")`)
-                        })
+                fetch(`${location}/${manifest.handler}`)
+                    .then(response => response.text())
+                    .then((data) => {
+                        top.window.eval(data);
+                        top.window.eval(`loadingScript("${location}")`)
+                    })
             } else {
                 if (this.windowinstance) return;
                 let win = AliceWM.create(this.manifest.wininfo, () => {
@@ -150,7 +142,7 @@ async function registerApp(location) {
                 win.content.appendChild(iframe);
 
 
-                this.windowinstance = win;
+                // this.windowinstance = win;
             }
         },
     };
