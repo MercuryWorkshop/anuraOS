@@ -7,7 +7,7 @@
  *
  * nope nope this code has NOT been stolen rafflesia did NOT make it :thumbsup:
  */
-var AliceWM = {};
+var AliceWM:any = {};
 
 // no i will not use data properties in the dom element fuck off
 // ok fine i will fine i just realized how much harder it would be
@@ -17,10 +17,10 @@ var AliceWM = {};
  * to show a floating dialog displaying the given dom element
  * @param {Object} title "title of the dialog"
  */
-windowInformation = {}
+let windowInformation = {}
 let windowID = 0;
-AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
-    wininfo = givenWinInfo;
+AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
+    let wininfo = givenWinInfo;
     console.log(typeof (givenWinInfo))
     if (typeof (givenWinInfo) == 'string') {
         wininfo = {
@@ -32,7 +32,7 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
    
     
     // initializing dialog: title, close, content
-    var container = document.createElement("div");
+    var container:any = document.createElement("div");
     var titleContainer = document.createElement("div");
     var titleContent = document.createElement("div");
 
@@ -41,7 +41,7 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
     var maximizeContainer = document.createElement("button");
     var minimizeContainer = document.createElement("button");
 
-    container.setAttribute("maximized", false) 
+    container.setAttribute("maximized", "false") 
     container.setAttribute("class", "aliceWMwin");
     container.setAttribute("id", "Window"+windowID)
     // container.setAttribute("style", "resize: both;")
@@ -90,10 +90,6 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
 
         container.parentNode.removeChild(container);
         // calling the callback function to notify the dialog closed
-
-        if (onclose) {
-            onclose();
-        }
         evt.stopPropagation();
     };
     // const ro = new ResizeObserver(entries => {
@@ -101,7 +97,7 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
     //     ro.unobserve(container);
     //   });
     
-    maximizeContainer.onclick = function(evt) {
+    maximizeContainer.onclick = function() {
         if (container.getAttribute("maximized") === "false") {
             container.setAttribute("old-style", container.getAttribute("style")) 
             const width  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -121,7 +117,7 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
 
     };
 
-    container.onresize = function(evt) {
+    container.onresize = function() {
         console.log("resized")
         container.setAttribute("maximized", "false")
     }
@@ -131,14 +127,14 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
       
 
     // self explanatory everything is self explanatory
-    container.onmousedown = function(evt) {
+    container.onmousedown = function(evt:any) {
         // probably inefficient but i dont caare
-        var allWindows = [...document.querySelectorAll(".aliceWMwin")];
+        var allWindows = [...document.querySelectorAll(".aliceWMwin") as any];
         console.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
         for (const wmwindow of allWindows) {
             wmwindow.style.setProperty("z-index", 92);
         }
-        titleContainer.parentNode.style.setProperty("z-index", 93);
+        (titleContainer.parentNode as HTMLElement)!.style.setProperty("z-index", "93");
 
         // container.setAttribute("maximized", "false")
         // ro.unobserve(container);
@@ -150,7 +146,7 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
         frames = document.getElementsByTagName("iframe");
         for (i = 0; i < frames.length; ++i) {
             console.log(frames[i])
-            frames[i].style.pointerEvents = 'none'
+            frames[i]!.style.pointerEvents = 'none'
         }
         evt = evt || window.event;
 
@@ -178,7 +174,7 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
         var i, frames;
         frames = document.getElementsByTagName("iframe");
         for (i = 0; i < frames.length; ++i) {
-            frames[i].style.pointerEvents = 'auto'
+            frames[i]!.style.pointerEvents = 'auto'
         }
         evt = evt || window.event;
 
@@ -201,7 +197,7 @@ AliceWM.create = function(givenWinInfo, onclose) { // CODE ORIGINALLY FROM https
  * place the given dom element in the center of the browser window
  * @param {Object} element
  */
-function center(element) {
+function center(element:HTMLElement) {
     if (element) {
         element.style.left = (window.innerWidth - element.offsetWidth) / 2 + "px";
         element.style.top = (window.innerHeight - element.offsetHeight) / 2 + "px";

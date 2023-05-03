@@ -1,17 +1,13 @@
+declare var Filer:any;
+
 const $ = document.querySelector.bind(document);
 
-anura = {
-    init() {
+
+class Anura {
+    x86: null | V86Backend;
+    constructor() {
         if (localStorage.getItem("x86-enabled") === "true") {
-            const script = document.createElement('script');
-            script.src = "https://cheerpxdemos.leaningtech.com/publicdeploy/20230419/cx.js"
-            script.onload = async () => {
-                let cx = await CheerpXApp.create({ mounts: [{ type: "cheerpOS", dev: "/app", path: "/" }, { type: "cheerpOS", dev: "/app", path: "/app" }, { type: "cheerpOS", dev: "/str", path: "/data" }, { type: "cheerpOS", dev: "/files", path: "/home" }, { type: "cheerpOS", dev: "/files", path: "/tmp" }, { type: "devs", dev: "", path: "/dev" }] });
-
-                anura.x86 = cx;
-            }
-            document.head.appendChild(script)
-
+            this.x86 = new V86Backend();
         }
 
         if (localStorage.getItem("use-expirimental-fs") === "true") {
@@ -22,9 +18,9 @@ anura = {
                     name: "anura-mainContext",
                     provider: new Filer.FileSystem.providers.IndexedDB()
                 });
-                anura.fs.readFileSync = async (path) => {
+                anura.fs.readFileSync = async (path:string) => {
                     return await new Promise((resolve, reject) => {
-                        return anura.fs.readFile(path, function async(err, data) {
+                        return anura.fs.readFile(path, function async(err:any, data:any) {
                             resolve(new TextDecoder('utf8').decode(data))
                         })
                     })
@@ -38,58 +34,56 @@ anura = {
         link.rel = 'stylesheet';
         link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200';
         document.head.appendChild(link);
-    
 
-    },
-    fs: undefined,
-    syncRead: {
 
-    },
-    apps: {},
-    Version: "0.1.0 alpha",
-    x86fs: {
-        async read(path) {
-            return await new Promise((resolve, reject) => {
-                return cheerpOSGetFileBlob([], "/files/" + path, async (blob) => {
-                    resolve(await blob.text())
-                })
-            })
+    }
+    fs:any = undefined
+    syncRead = {}
+    apps:any = {}
+    Version = "0.1.0 alpha"
+    x86fs = {
+        async read(path: string) {
+            // return await new Promise((resolve, reject) => {
+            //     return cheerpOSGetFileBlob([], "/files/" + path, async (blob) => {
+            //         resolve(await blob.text())
+            //     })
+            // })
         },
-        write(path, data) {
-            cheerpjAddStringFile(`/str/${path}`, data);
+        write(path: string, data: string) {
+            // cheerpjAddStringFile(`/str/${path}`, data);
             // Depressingly, we can't actually transfer the file to /home without it crashing the users shell //
             // The user must do it themselves //
         }
-    },
-    async python(appname) {
+    }
+    async python(appname: string) {
         return await new Promise((resolve, reject) => {
             let iframe = document.createElement("iframe")
-            iframe.style = "display: none"
+            iframe.style.display = "none"
             iframe.setAttribute("src", "/python.app/lib.html")
             iframe.id = appname
-            iframe.onload = async function() {
+            iframe.onload = async function () {
                 console.log("Called from python")
-                let pythonInterpreter = await document.getElementById(appname).contentWindow.loadPyodide({
+                let pythonInterpreter = (await document.getElementById(appname)! as unknown as any).contentWindow.loadPyodide({
                     stdin: () => {
                         let result = prompt();
-                        echo(result);
+                        // echo(result);
                         return result;
                     },
                 });
                 pythonInterpreter.globals.set('AliceWM', AliceWM)
-                pythonInterpreter.globals.set('anura', anura)
+                pythonInterpreter.globals.set('anura', this)
                 resolve(pythonInterpreter)
             }
             document.body.appendChild(iframe)
         })
-    },
-    async registerApp(location) {
+    }
+    async registerApp(location:string) {
 
 
         let resp = await fetch(`${location}/manifest.json`);
         let manifest = await resp.json()
-    
-    
+
+
         let app = {
             name: manifest.name,
             location,
@@ -97,26 +91,26 @@ anura = {
             windowinstance: null,
             async launch() {
                 if (manifest.type == 'manual') { // This type of application is discouraged for sure but is the most powerful
-                        fetch(`${location}/${manifest.handler}`)
-                            .then(response => response.text())
-                            .then((data) => {
-                                top.window.eval(data);
-                                top.window.eval(`loadingScript("${location}")`)
-                            })
+                    fetch(`${location}/${manifest.handler}`)
+                        .then(response => response.text())
+                        .then((data) => {
+                            top!.window.eval(data);
+                            top!.window.eval(`loadingScript("${location}")`)
+                        })
                 } else {
                     if (this.windowinstance) return;
                     let win = AliceWM.create(this.manifest.wininfo, () => {
                         this.windowinstance = null;
                     });
-    
-                    let iframe = document.createElement("iframe")
+
+                    let iframe:any = document.createElement("iframe")
                     iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
                     iframe.setAttribute("src", `${location}/${manifest.index}`);
-    
+
                     win.content.appendChild(iframe);
-    
-    
-                    this.windowinstance = win;
+
+
+                    // this.windowinstance = win;
                 }
             },
         };
@@ -129,35 +123,17 @@ anura = {
         shortcut.querySelector(".app-shortcut-image").addEventListener("click", () => {
             app.launch();
         });
-    
-    
-    
+
+
+
         appsContainer.appendChild(shortcut);
-    
-        anura.apps[manifest.package] = app;
+
+        this.apps[manifest.package] = app;
         return app;
     }
 }
+let anura = new Anura();
 
-anura.init()
-function openBrowser() {
-    let dialog = AliceWM.create("AboutBrowser");
-
-    let iframe = document.createElement("iframe")
-    iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
-    iframe.setAttribute("src", "/browser.html")
-
-    dialog.content.appendChild(iframe)
-}
-function openVMManager() {
-    let dialog = AliceWM.create("Virtual Machine");
-
-    let iframe = document.createElement("iframe")
-    iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
-    iframe.setAttribute("src", "https://copy.sh/v86")
-
-    dialog.content.appendChild(iframe)
-}
 function openAppManager() {
     fetch("applicationmanager/launchapp.js")
         .then(response => response.text())
@@ -182,7 +158,7 @@ document.addEventListener("contextmenu", function(e) {
     if (e.shiftKey) return;
     e.preventDefault();
 
-    const menu = document.querySelector(".custom-menu");
+    const menu:any = document.querySelector(".custom-menu");
     menu.style.removeProperty("display");
     menu.style.top = `${e.clientY}px`;
     menu.style.left = `${e.clientX}px`;
@@ -190,5 +166,8 @@ document.addEventListener("contextmenu", function(e) {
 
 document.addEventListener("click", (e) => {
     if (e.button != 0) return;
-    document.querySelector(".custom-menu").style.setProperty("display", "none");
+    (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
 });
+
+
+(window as any).anura = anura;
