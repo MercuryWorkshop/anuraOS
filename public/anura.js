@@ -29,7 +29,7 @@ document.addEventListener("anura-boot-completed", () => {
     if(!localStorage['anura-oobe-completed']) {
         console.debug("starting fake oobe");
         document.querySelector(".oobe").style.removeProperty("display");
-        document.querySelector(".oobe #bottomButtons").addEventListener("click", () => {
+        document.querySelector(".oobe #bottomButtons .preferredButton").addEventListener("click", () => {
             document.dispatchEvent(new Event("anura-oobe-completed"));
             document.querySelector('.oobe').style.setProperty("display", "none");
             // this is a skip button since oobe isn't complete so

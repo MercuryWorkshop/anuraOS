@@ -41,11 +41,11 @@
             </ul>
         </nav>
     </footer>
-    <div class="custom-menu" style="display:none;">
+    <div class="custom-menu" style="display: none;">
         <div class="custom-menu-item"><span class="material-symbols-outlined"><span
                     class="material-symbols-outlined">shelf_auto_hide</span></span> Always Show Shelf</div>
         <div class="custom-menu-item"><span class="material-symbols-outlined">shelf_position</span>Shelf Position</div>
-        <div class="extra-menu-wrapper">
+        <div class="extra-menu-wrapper" id="personalization-extramenu">
             <div class="custom-menu extra-menu">
                 <div class="custom-menu-item"><span class="material-symbols-outlined">brush</span> Set Wallpaper and
                     Style</div>
@@ -56,12 +56,22 @@
     <div class="bootsplash"><img src="/assets/images/bootsplash.png" /></div>
     <div class="oobe" style="display: none;">
         <div id="content">
-            <h1>Welcome to your Chromebook</h1>
-            <div id="subtitle">Fast. Insecure. Effortless.</div>
-            <div id="gridContent">
-                <div id="topButtons">BigBuckBunny Buttons<br>Buttons</div>
-                <img id="animation" src="assets/oobe/welcome.gif" />
-                <button id="bottomButtons">Skip OOBE for now</button>
+            <div class="screen" id="welcome">
+                <h1>Welcome to your Chromebook</h1>
+                <div id="subtitle">Fast. Insecure. Effortless.</div>
+                <div id="gridContent">
+                    <div id="topButtons"><button>Random button</button></div>
+                    <img id="animation" src="assets/oobe/welcome.gif" />
+                    <div id="bottomButtons"><button class="preferredButton">Skip OOBE for now</button></div>
+                </div>
+            </div>
+            <div class="screen" id="downloadingFiles" style="display: none;">
+                <div id="assetsDiv" style="display:none;"></div>
+                <h1>Downloading assets</h1>
+                <div id="subtitle">
+                    For the best experience, ChromeOS needs to download assets so that there is no unstyled content.
+                </div>
+                <img src="/assets/oobe/spinner.gif" /> <!-- Add to assets! -->
             </div>
         </div>
     </div>
