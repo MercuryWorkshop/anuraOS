@@ -1,7 +1,10 @@
-declare var Filer:any;
+declare var Filer: any;
 
 const $ = document.querySelector.bind(document);
 
+let taskbar = new Taskbar();
+let launcher = new Launcher();
+let contextMenu = new ContextMenu();
 
 class Anura {
     x86: null | V86Backend;
@@ -18,9 +21,9 @@ class Anura {
                     name: "anura-mainContext",
                     provider: new Filer.FileSystem.providers.IndexedDB()
                 });
-                anura.fs.readFileSync = async (path:string) => {
+                anura.fs.readFileSync = async (path: string) => {
                     return await new Promise((resolve, reject) => {
-                        return anura.fs.readFile(path, function async(err:any, data:any) {
+                        return anura.fs.readFile(path, function async(err: any, data: any) {
                             resolve(new TextDecoder('utf8').decode(data))
                         })
                     })
@@ -37,9 +40,9 @@ class Anura {
 
 
     }
-    fs:any = undefined
+    fs: any = undefined
     syncRead = {}
-    apps:any = {}
+    apps: any = {}
     Version = "0.1.0 alpha"
     x86fs = {
         async read(path: string) {
@@ -61,7 +64,7 @@ class Anura {
             iframe.style.display = "none"
             iframe.setAttribute("src", "/python.app/lib.html")
             iframe.id = appname
-            iframe.onload = async function () {
+            iframe.onload = async function() {
                 console.log("Called from python")
                 let pythonInterpreter = (await document.getElementById(appname)! as unknown as any).contentWindow.loadPyodide({
                     stdin: () => {
@@ -77,7 +80,7 @@ class Anura {
             document.body.appendChild(iframe)
         })
     }
-    async registerApp(location:string) {
+    async registerApp(location: string) {
 
 
         let resp = await fetch(`${location}/manifest.json`);
@@ -103,7 +106,7 @@ class Anura {
                         this.windowinstance = null;
                     });
 
-                    let iframe:any = document.createElement("iframe")
+                    let iframe: any = document.createElement("iframe")
                     iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
                     iframe.setAttribute("src", `${location}/${manifest.index}`);
 
@@ -114,19 +117,21 @@ class Anura {
                 }
             },
         };
-        let appsContainer = $("#appsView");
-        let shortcut = $("#appTemplate").content.cloneNode(true);
-        shortcut.querySelector(".app-shortcut-name").innerText = manifest.name;
-        if (manifest["icon"]) {
-            shortcut.querySelector(".app-shortcut-image").src = `${location}/${manifest["icon"]}`
-        }
-        shortcut.querySelector(".app-shortcut-image").addEventListener("click", () => {
-            app.launch();
-        });
+        // let appsContainer = $("#appsView");
+        // let shortcut = $("#appTemplate").content.cloneNode(true);
+        // shortcut.querySelector(".app-shortcut-name").innerText = manifest.name;
+        // if (manifest["icon"]) {
+        //     shortcut.querySelector(".app-shortcut-image").src = `${location}/${manifest["icon"]}`
+        // }
+        // shortcut.querySelector(".app-shortcut-image").addEventListener("click", () => {
+        //     app.launch();
+        // });
+        //
 
 
+        // appsContainer.appendChild(shortcut);
 
-        appsContainer.appendChild(shortcut);
+        launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app));
 
         this.apps[manifest.package] = app;
         return app;
@@ -150,24 +155,34 @@ window.addEventListener("load", () => {
     anura.registerApp("eruda.app");
     anura.registerApp("sshy.app");
     anura.registerApp("fsapp.app");
+    anura.registerApp("chide.app");
+
+
+    document.body.appendChild(contextMenu.element);
+    document.body.appendChild(launcher.element);
+    document.body.appendChild(taskbar.element);
+
+    // taskbar.killself()
+    (window as any).taskbar = taskbar;
+
 });
 
 
-
-document.addEventListener("contextmenu", function(e) {
-    if (e.shiftKey) return;
-    e.preventDefault();
-
-    const menu:any = document.querySelector(".custom-menu");
-    menu.style.removeProperty("display");
-    menu.style.top = `${e.clientY}px`;
-    menu.style.left = `${e.clientX}px`;
-});
-
-document.addEventListener("click", (e) => {
-    if (e.button != 0) return;
-    (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
-});
-
+//
+// document.addEventListener("contextmenu", function(e) {
+//     if (e.shiftKey) return;
+//     e.preventDefault();
+//
+//     const menu: any = document.querySelector(".custom-menu");
+//     menu.style.removeProperty("display");
+//     menu.style.top = `${e.clientY}px`;
+//     menu.style.left = `${e.clientX}px`;
+// });
+//
+// document.addEventListener("click", (e) => {
+//     if (e.button != 0) return;
+//     (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
+// });
+//
 
 (window as any).anura = anura;

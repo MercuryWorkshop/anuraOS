@@ -4,8 +4,8 @@ const $ = document.querySelector.bind(document);
 
 window.addEventListener("load", async () => {
 
+  /** @type {Anura} */
   let anura = top.anura;
-
 
   const t = new hterm.Terminal();
   // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix

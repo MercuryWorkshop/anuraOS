@@ -2,20 +2,38 @@
 <html>
 
 <head>
-  <title>rustic-mountain</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.37.1/min/vs/editor/editor.main.js"
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="dist/bundle.js"></script>
   <link rel="stylesheet" href="index.css">
 </head>
+<style>
+  #container {
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+  }
+
+  #monaco-container{
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+</style>
 <script>
-  monaco.editor.create(document.getElementById('container'), {
-    value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
-    language: 'javascript'
-  });
+
+
 </script>
 
 <body>
-  <container></container>
+  <div id="container">
+    <div id="monaco-container">
+
+    </div>
+  </div>
 </body>
 
 </html>
