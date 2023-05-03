@@ -1,0 +1,10 @@
+{
+  "name": "Set up Linux apps",
+  "type": "auto",
+  "package": "anura.crostini",
+  "index": "index.html",
+  "wininfo": {
+    "height": "640px",
+    "width": "640px"
+  }
+}

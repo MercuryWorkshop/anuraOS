@@ -1,6 +1,9 @@
 import express, { Request, Response } from "express";
 import createServer from '@tomphttp/bare-server-node';
-import fs from "fs/promises";
+
+const read = require('fs-readdir-recursive');
+
+let files = read('public'); 
 
 const app = express();
 const port = 8000;
@@ -9,10 +12,18 @@ const bare = createServer('/bare/');
 
 app.get("/", (req: Request, res: Response) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
-
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cross-Origin-Opener-Policy", "same-origin");
   res.sendFile(__dirname + "/public/index.html");
+});
+
+app.get("/anura-filestocache", (req: Request, res: Response) => {
+  res.header("Cross-Origin-Embedder-Policy", "require-corp");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Cross-Origin-Opener-Policy", "same-origin");
+
+  res.contentType("application/json");
+  res.send(JSON.stringify(files));
 });
 
 app.use(async (req: Request, res: Response, next: Function) => {

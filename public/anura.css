@@ -2,8 +2,8 @@
 
 /* Note from Majikun: PLEASE STOP ADDING BACK STUFF!!!!!!! NO BORDERS OR TITLES!!!!! */
 
-* {
-    /* font-family: 'Roboto', sans-serif; */
+body {
+    --oobe-bg: #fff;
 }
 
 #aliceWMwin {
@@ -234,4 +234,80 @@ nav li {
     position: relative;
     left: 303px;
     bottom: 0.75em;
+}
+
+.bootsplash {
+    background-color: black;
+    z-index: 9999999999;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display:  flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.bootsplash > img {
+    width: 300px;
+    height: 80px;
+}
+
+.oobe {
+    background-color: var(--oobe-bg);
+    z-index: 999999999;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.oobe #content {
+    padding: 79.6px 40px 23.8px 40px;
+    width: 1040px;
+    height: 680px;
+    box-sizing: border-box;
+}
+
+.oobe #content h1 {
+    margin: 48px 0 0 0;
+}
+
+.oobe #content #subtitle {
+    margin: 16px 0 64px 0;
+    font-size: 24px;
+}
+
+.oobe #content #gridContent {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.oobe #content #gridContent #topButtons {
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
+.oobe #content #gridContent #bottomButtons {
+    align-self: end;
+    justify-self: start;
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+    background-color: rgb(26, 115, 232);
+    border-radius: 16px;
+    border-style: none;
+    color: white;
+}
+
+.oobe #content #gridContent #animation {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 2;
 }
