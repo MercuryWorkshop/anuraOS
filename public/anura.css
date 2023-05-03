@@ -6,7 +6,7 @@ body {
     --oobe-bg: #fff;
 }
 
-#aliceWMwin {
+.aliceWMwin {
     user-select: none; /* FUCK ie and safari no one uses them anyways */
     height:200px;
     width:500px;
@@ -18,7 +18,7 @@ body {
     flex-direction: column;
 }
 
-#aliceWMwin #title{
+.aliceWMwin .title{
     display: flex;
     background-color: white;
     font-weight:bold;
@@ -28,20 +28,20 @@ body {
     align-items:center;
 }
 
-#aliceWMwin #titleContent {
+.aliceWMwin .titleContent {
     flex: 1;
 }
 
-#aliceWMwin #content{
+.aliceWMwin .content{
     padding:2px;
     flex: 1;
 }
 
-#aliceWMwin #title:hover{
+.aliceWMwin .title:hover{
     cursor:move;
 }
 
-#aliceWMwin .windowButton {
+.aliceWMwin .windowButton {
     background-color: transparent;
     color:black;
     border: none;
@@ -57,11 +57,11 @@ body {
     font-size: 16px;
 }
 
-#aliceWMwin .windowButton:hover {
+.aliceWMwin .windowButton:hover {
     background-color: darkgray;
 }
 
-#aliceWMwin .windowButton:active {
+.aliceWMwin .windowButton:active {
     background-color: gray;
 }
 
