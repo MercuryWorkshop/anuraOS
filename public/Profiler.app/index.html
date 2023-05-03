@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profiler</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.3.2/dist/chart.min.css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+    }
+
+   
+      
+    
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0062cc;
+    }
+
+    p {
+      margin-top: 1rem;
+      font-size: 1.25rem;
+    }
+
+    h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+canvas {
+  margin-top: 0;
+}
+
+    .process-list {
+      margin-top: 2rem;
+      border: 1px solid #ccc;
+      border-radius: 0.25rem;
+      padding: 1rem;
+    }
+
+    .process-list h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .process-list table {
+      width: 100%;
+      border-collapse: collapse;
+
+    
+    }
+
+    canvas {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+    .process-list table th,
+    .process-list table td {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    .process-list table th {
+      background-color: #f2f2f2;
+    }
+    p {
+  margin-top: 0;
+}
+  </style>
+</head>
+<body>
+  <h1>Profiler</h1>
+  <canvas id="response-time-chart"></canvas>
+  <canvas id="cpu-usage-chart"></canvas>
+  <canvas id="ram-usage-chart"></canvas>
+  <script>
+    const frames = window.frames;
+    const processes = [];
+    for (let i = 0; i < frames.length; i++) {
+      const frame = frames[i];
+      const frameTitle = frame.document.title;
+      const frameTiming = frame.performance.timing;
+      const cpuUsage = Math.round((frameTiming.domComplete - frameTiming.domLoading) / 1000);
+      const memoryUsage = Math.round((frameTiming.domComplete - frameTiming.domLoading) / 1000000);
+      processes.push({ title: frameTitle, cpuUsage, memoryUsage });
+    }
+
+    const processListBody = document.getElementById('process-list-body');
+    processes.forEach(process => {
+      const tr = document.createElement('tr');
+      const titleTd = document.createElement('td');
+      titleTd.textContent = process.title;
+      tr.appendChild(titleTd);
+      const cpuUsageTd = document.createElement('td');
+      cpuUsageTd.textContent = process.cpuUsage;
+      tr.appendChild(cpuUsageTd);
+      const memoryUsageTd = document.createElement('td');
+      memoryUsageTd.textContent = process.memoryUsage;
+      tr.appendChild(memoryUsageTd);
+      processListBody.appendChild(tr);
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2/dist/chart.min.js"></script>
+  <script>
+    // Get response time data from the server
+    fetch('/response-time-data')
+      .then(res => res.json())
+      .then(data => {
+        // Create a chart of the response time data
+        const ctx = document.getElementById('response-time-chart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              label: 'Response Time (ms)',
+              data: data.values,
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      });
+
+    // Create the CPU usage chart
+    const cpuUsageData = [];
+    const cpuUsageChart = new Chart(document.getElementById('cpu-usage-chart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'CPU Usage (%)',
+          data: [],
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Update the CPU usage chart every second
+    setInterval(() => {
+      const cpuUsage = performance.now();
+      cpuUsageData.push(cpuUsage);
+      if (cpuUsageData.length > 20) {
+        cpuUsageData.shift();
+      }
+      cpuUsageChart.data.labels = Array.from({length: cpuUsageData.length}, (v, k) => k + 1);
+      cpuUsageChart.data.datasets[0].data = cpuUsageData.map((value, index, array) => {
+        if (index === 0) {
+          return 0;
+        }
+        const diff = value - array[index - 1];
+        const duration = diff / 1000;
+        const fps = 1 / duration;
+        return Math.round(fps * 1000) / 10;
+      });
+      cpuUsageChart.update();
+    }, 1000);
+
+    // Create the RAM usage chart
+    const ramUsageData = [];
+    const ramUsageChart = new Chart(document.getElementById('ram-usage-chart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'RAM Usage (MB)',
+          data: [],
+          borderColor: 'rgba(255, 206, 86, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    // Update the RAM usage chart every second
+    setInterval(() => {
+      const ramUsage = performance.memory.usedJSHeapSize / 1000000;
+      ramUsageData.push(ramUsage);
+      if (ramUsageData.length > 20) {
+        ramUsageData.shift();
+      }
+      ramUsageChart.data.labels = Array.from({length: ramUsageData.length}, (v, k) => k + 1);
+      ramUsageChart.data.datasets[0].data = ramUsageData;
+      ramUsageChart.update();
+    }, 1000);
+  </script>
+</body>
+</html>
