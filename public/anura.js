@@ -138,4 +138,18 @@ document.addEventListener("anura-oobe-completed", () => {
     });
 
     window.anura = anura;
+
+    appsContainer.appendChild(shortcut);
+
+    anura.apps[manifest.package] = app;
+    return app;
+}
+
+window.addEventListener("load", () => {
+    registerApp("browser.app");
+    registerApp("term.app");
+    registerApp("glxgears.app");
+    registerApp("recursion.app");
+    registerApp("eruda.app");
+    registerApp("sshy.app")
 });
