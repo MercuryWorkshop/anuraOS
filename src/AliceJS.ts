@@ -7,11 +7,19 @@ class React {
 
     let elm: HTMLElement = document.createElement(type);
     if (props) {
-      console.table(props);
       for (let name in props) {
+        let prop = props[name];
+        if (name === "class") {
+          elm.className = prop;
+          continue;
+        }
+        if (typeof prop === "function" && name.startsWith("on")) {
+          elm.addEventListener(name[2]?.toLowerCase() + name.substring(3), prop);
+        }
+
+
         (elm as any)[name] = props[name];
       }
-      elm.className = props["class"];
     }
 
     for (let child of children) {
@@ -25,3 +33,4 @@ class React {
     return elm;
   }
 }
+
