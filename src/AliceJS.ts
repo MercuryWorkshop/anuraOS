@@ -8,6 +8,20 @@ class React {
     let elm: HTMLElement = document.createElement(type);
     if (props) {
       for (let name in props) {
+        let prop = props[name];
+        if (name === "class") {
+          elm.className = prop;
+          continue;
+        }
+        if (typeof prop === "function" && name.startsWith("on")) {
+          elm.addEventListener(name[2]?.toLowerCase() + name.substring(3), prop);
+          continue;
+        }
+        if (name.startsWith("bind")) {
+          let propname = name.substring(5);
+          prop[propname] = elm;
+          continue;
+        }
         (elm as any)[name] = props[name];
       }
       elm.className = props["class"];
@@ -24,3 +38,14 @@ class React {
     return elm;
   }
 }
+<<<<<<< HEAD
+=======
+
+// class Component {
+//   element: HTMLElement;
+//   constructor() {
+//
+//
+//   }
+// }
+>>>>>>> 038b288 (add binding)
