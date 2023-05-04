@@ -1,39 +1,74 @@
-<!-- <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> -->
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-
     <link rel="stylesheet" href="/anura.css">
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
-        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+          integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <title>definitely not chromeos</title>
-    <script type="text/javascript" src="/build/libv86.js"></script>
-
-
-    <script type="text/javascript" src="lib/v86.js"></script>
-    <script type="text/javascript" src="lib/AliceWM.js"></script>
-    <script type="text/javascript" src="lib/AliceJS.js"></script>
-    <script type="text/javascript" src="lib/Taskbar.js"></script>
-    <script type="text/javascript" src="lib/ContextMenu.js"></script>
-    <script type="text/javascript" src="lib/Launcher.js"></script>
-
-    <script type="text/javascript" src="lib/Anura.js"></script>
-
-
-
-    <!-- <script type="text/javascript" src="/dist.js"></script> -->
-    <!-- prod only ^ -->
+   <script type="text/javascript" src="/anura.js"></script>
+    <script type="text/javascript" src="/AliceWM.js"></script>
 </head>
-
 <body>
+<a href="#" id="launcher-button"><img src="/assets/icons/launcher.png"></a>
+<div class="launcher">
+    <div class="topSearchBar">
+        <img src="/assets/icons/googleg.png">
+        <input placeholder="Search your tabs, files, apps, and more...">
+    </div>
+    <div class="recentItemsWrapper">
+        <div class="recentItemsText">Continue where you left off</div>
+    </div>
+    <div id="appsView" class="appsView">
+        <template id="appTemplate">
+            <div class="app">
+                <input class="app-shortcut-image" type="image" src="/assets/icons/chrome.svg" id="showDialog">
+                <div class="app-shortcut-name">Chrome</div>
+            </div>
+        </template>
+    </div>
+</div>
+<footer>
+    <nav>
+        <ul>
+            <li><input type="image" src="/assets/icons/chrome.svg" id="showDialog" onclick="openBrowser()"></li>
+            <li><input type="image" src="/assets/icons/linux.png" id="showDialog" onclick="openVMManager()"></li>
+            <li><input type="image" src="/assets/icons/settings.png" id="showDialog" onclick="openAppManager()"></li>
+        </ul>
+    </nav>
+</footer>
+<div class="custom-menu" style="display:none;">
+    <div class="custom-menu-item"><span class="material-symbols-outlined"><span
+                    class="material-symbols-outlined">shelf_auto_hide</span></span> Always Show Shelf
+    </div>
+    <div class="custom-menu-item"><span class="material-symbols-outlined">shelf_position</span>Shelf Position</div>
+    <div class="extra-menu-wrapper">
+        <div class="custom-menu extra-menu">
+            <div class="custom-menu-item"><span class="material-symbols-outlined">brush</span> Set Wallpaper and
+                Style
+            </div>
+        </div>
+    </div>
+    <div class="custom-menu-item"><span class="material-symbols-outlined">brush</span> Set Wallpaper and Style</div>
+</div>
 
+<!-- JavaScript for the launcher -->
+<script>
+    const launcherButton = document.getElementById("launcher-button");
+    const launcherDiv = document.querySelector(".launcher");
+
+    launcherButton.addEventListener("click", () => {
+        launcherDiv.classList.toggle("active");
+    });
+
+    document.addEventListener("click", (event) => {
+        if (!launcherDiv.contains(event.target) && !launcherButton.contains(event.target)) {
+            launcherDiv.classList.remove("active");
+        }
+    });
+</script>
 </body>
-
 </html>
