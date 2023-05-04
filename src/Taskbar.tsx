@@ -9,9 +9,9 @@ class Taskbar {
       {/* r58 i'm begging you please extract the asset for whatever this thing is or make an svg i don't feel like doing it and 1/2 stack was using a fucking image :skull: */}
       <nav>
         <ul>
-          <li><input type="image" src="/assets/icons/chrome.svg" id="showDialog" onclick="openBrowser()" /></li >
-          <li><input type="image" src="/assets/icons/linux.png" id="showDialog" onclick="openVMManager()" /></li>
-          <li><input type="image" src="/assets/icons/settings.png" id="showDialog" onclick="openAppManager()" />
+          <li><input type="image" src="/assets/icons/chrome.svg" id="showDialog" onClick="openBrowser()" /></li >
+          <li><input type="image" src="/assets/icons/linux.png" id="showDialog" onClick="openVMManager()" /></li>
+          <li><input type="image" src="/assets/icons/settings.png" id="showDialog" onClick={() => { openAppManager() }} />
           </li>
         </ul >
       </nav >

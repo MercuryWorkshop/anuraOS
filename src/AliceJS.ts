@@ -24,7 +24,6 @@ class React {
         }
         (elm as any)[name] = props[name];
       }
-      elm.className = props["class"];
     }
 
     for (let child of children) {
@@ -38,14 +37,3 @@ class React {
     return elm;
   }
 }
-<<<<<<< HEAD
-=======
-
-// class Component {
-//   element: HTMLElement;
-//   constructor() {
-//
-//
-//   }
-// }
->>>>>>> 038b288 (add binding)
