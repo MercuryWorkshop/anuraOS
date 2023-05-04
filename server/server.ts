@@ -31,6 +31,7 @@ app.use(async (req: Request, res: Response, next: Function) => {
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/build"));
+app.use("/apps",express.static(__dirname + "/apps"));
 app.use(express.static(__dirname + "/aboutproxy/static"));
 
 

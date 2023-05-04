@@ -117,22 +117,9 @@ class Anura {
                 }
             },
         };
-        // let appsContainer = $("#appsView");
-        // let shortcut = $("#appTemplate").content.cloneNode(true);
-        // shortcut.querySelector(".app-shortcut-name").innerText = manifest.name;
-        // if (manifest["icon"]) {
-        //     shortcut.querySelector(".app-shortcut-image").src = `${location}/${manifest["icon"]}`
-        // }
-        // shortcut.querySelector(".app-shortcut-image").addEventListener("click", () => {
-        //     app.launch();
-        // });
-        //
-
-
-        // appsContainer.appendChild(shortcut);
 
         launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app));
-
+        taskbar.addShortcut(`${location}/${manifest.icon}`,app.launch.bind(app));
         this.apps[manifest.package] = app;
         return app;
     }
@@ -148,14 +135,15 @@ function openAppManager() {
 }
 
 window.addEventListener("load", () => {
-    anura.registerApp("browser.app");
-    anura.registerApp("term.app");
-    anura.registerApp("glxgears.app");
-    anura.registerApp("recursion.app");
-    anura.registerApp("eruda.app");
-    anura.registerApp("sshy.app");
-    anura.registerApp("fsapp.app");
-    anura.registerApp("chide.app");
+    anura.registerApp("apps/browser.app");
+    anura.registerApp("apps/term.app");
+    anura.registerApp("apps/glxgears.app");
+    anura.registerApp("apps/recursion.app");
+    anura.registerApp("apps/eruda.app");
+    // anura.registerApp("apps/sshy.app");
+    // ssh will be reworked later
+    anura.registerApp("apps/fsapp.app");
+    anura.registerApp("apps/chide.app");
 
 
     document.body.appendChild(contextMenu.element);
@@ -172,13 +160,13 @@ window.addEventListener("load", () => {
 // document.addEventListener("contextmenu", function(e) {
 //     if (e.shiftKey) return;
 //     e.preventDefault();
-//
+
 //     const menu: any = document.querySelector(".custom-menu");
 //     menu.style.removeProperty("display");
 //     menu.style.top = `${e.clientY}px`;
 //     menu.style.left = `${e.clientX}px`;
 // });
-//
+
 // document.addEventListener("click", (e) => {
 //     if (e.button != 0) return;
 //     (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");

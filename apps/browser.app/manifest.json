@@ -2,7 +2,7 @@
   "name": "browser",
   "type": "auto",
   "package": "anura.browser",
-  "index": "../browser.html",
+  "index": "../../browser.html",
   "wininfo":{
     "title":"velocity ripoff",
     "width":"700px",

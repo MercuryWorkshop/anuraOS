@@ -13,8 +13,9 @@ class React {
           elm.className = prop;
           continue;
         }
+
         if (typeof prop === "function" && name.startsWith("on")) {
-          elm.addEventListener(name[2]?.toLowerCase() + name.substring(3), prop);
+          elm.addEventListener(name.substring(3), prop);
           continue;
         }
         if (name.startsWith("bind")) {
