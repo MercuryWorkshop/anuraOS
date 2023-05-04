@@ -165,17 +165,25 @@ nav li {
     left: 303px;
     bottom: 0.75em;
 }
-#launcher-button {
-    position: fixed;
-    bottom: -25px; 
-    right: 1225px;
-    width: 60px;
-    height: 60px;
-    margin: 10px;
-    z-index: 9999;
+#launcher-button-container {
+    position: absolute;
+    height: 100%;
+    aspect-ratio: 1/1;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+#launcher-button{
+    background-color: gray;
+
     opacity: 0.5;
     border-radius: 50%;
-  }
+    height: 65%;
+    width: 65%;
+
+}
   
   #launcher-button img {
     border-radius: 50%;

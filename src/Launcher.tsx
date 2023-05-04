@@ -18,6 +18,11 @@ class Launcher {
 
   }
 
+
+  toggleVisible() {
+    this.element.classList.toggle("active")
+  }
+
   addShortcut(name: string, svg: string, onclick: () => void) {
     let shortcut = this.shortcutElement(name, svg);
     shortcut.addEventListener("click", onclick);
