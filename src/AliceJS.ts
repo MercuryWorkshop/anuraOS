@@ -15,6 +15,12 @@ class React {
         }
         if (typeof prop === "function" && name.startsWith("on")) {
           elm.addEventListener(name[2]?.toLowerCase() + name.substring(3), prop);
+          continue;
+        }
+        if (name.startsWith("bind")) {
+          let propname = name.substring(5);
+          prop[propname] = elm;
+          continue;
         }
 
 
@@ -34,3 +40,10 @@ class React {
   }
 }
 
+// class Component {
+//   element: HTMLElement;
+//   constructor() {
+//
+//
+//   }
+// }
