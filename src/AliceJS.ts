@@ -7,7 +7,6 @@ class React {
 
     let elm: HTMLElement = document.createElement(type);
     if (props) {
-      console.table(props);
       for (let name in props) {
         (elm as any)[name] = props[name];
       }

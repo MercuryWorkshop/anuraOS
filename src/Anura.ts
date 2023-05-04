@@ -5,12 +5,13 @@ const $ = document.querySelector.bind(document);
 let taskbar = new Taskbar();
 let launcher = new Launcher();
 let contextMenu = new ContextMenu();
+let bootsplash = new Bootsplash();
 
 class Anura {
     x86: null | V86Backend;
     constructor() {
         if (localStorage.getItem("x86-enabled") === "true") {
-            this.x86 = new V86Backend();
+            //this.x86 = new V86Backend(); //lemme fix my shit first
         }
 
         if (localStorage.getItem("use-expirimental-fs") === "true") {
@@ -31,14 +32,6 @@ class Anura {
             }
             document.head.appendChild(script)
         }
-
-        // Link to Google Fonts API for some reason (make this not link to external server soon)
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200';
-        document.head.appendChild(link);
-
-
     }
     fs: any = undefined
     syncRead = {}
@@ -58,31 +51,7 @@ class Anura {
             // The user must do it themselves //
         }
     }
-    async python(appname: string) {
-        return await new Promise((resolve, reject) => {
-            let iframe = document.createElement("iframe")
-            iframe.style.display = "none"
-            iframe.setAttribute("src", "/python.app/lib.html")
-            iframe.id = appname
-            iframe.onload = async function() {
-                console.log("Called from python")
-                let pythonInterpreter = (await document.getElementById(appname)! as unknown as any).contentWindow.loadPyodide({
-                    stdin: () => {
-                        let result = prompt();
-                        // echo(result);
-                        return result;
-                    },
-                });
-                pythonInterpreter.globals.set('AliceWM', AliceWM)
-                pythonInterpreter.globals.set('anura', this)
-                resolve(pythonInterpreter)
-            }
-            document.body.appendChild(iframe)
-        })
-    }
     async registerApp(location: string) {
-
-
         let resp = await fetch(`${location}/manifest.json`);
         let manifest = await resp.json()
 
@@ -149,11 +118,6 @@ function openAppManager() {
 
 window.addEventListener("load", () => {
     anura.registerApp("browser.app");
-    anura.registerApp("term.app");
-    anura.registerApp("glxgears.app");
-    anura.registerApp("recursion.app");
-    anura.registerApp("eruda.app");
-    anura.registerApp("sshy.app");
     anura.registerApp("fsapp.app");
     anura.registerApp("chide.app");
 
@@ -161,6 +125,7 @@ window.addEventListener("load", () => {
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
     document.body.appendChild(taskbar.element);
+    document.body.appendChild(bootsplash.element);
 
     // taskbar.killself()
     (window as any).taskbar = taskbar;

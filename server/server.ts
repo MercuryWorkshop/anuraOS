@@ -2,12 +2,15 @@ import express, { Request, Response } from "express";
 import createServer from '@tomphttp/bare-server-node';
 
 const read = require('fs-readdir-recursive');
+const path = require('path');
 
 let files = read('public'); 
 
 const app = express();
 const port = 8000;
 const bare = createServer('/bare/');
+
+__dirname = path.join(__dirname, '..');
 
 app.get("/", (req: Request, res: Response) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");

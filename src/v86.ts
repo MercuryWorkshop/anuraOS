@@ -17,7 +17,7 @@ class V86Backend {
 
   constructor() {
     this.emulator = new V86Starter({
-      wasm_path: "/build/v86.wasm",
+      wasm_path: "/lib/v86.wasm",
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       // screen_container: document.getElementById("screen_container"),
