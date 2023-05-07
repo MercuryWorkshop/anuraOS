@@ -6,7 +6,7 @@ const app = express();
 const port = 8000;
 const bare = createServer('/bare/');
 
-__dirname = "/home/ce/Documents/GitHub/AliceWM"
+__dirname = process.cwd()
 
 app.get("/", (req: Request, res: Response) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
