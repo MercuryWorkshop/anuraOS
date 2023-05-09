@@ -1,7 +1,9 @@
 class OobeView {
+  content: HTMLElement;
+
   element = (
-  <div class="oobe" style="display: none;">
-    <div id="content">
+  <div class="oobe">
+    <div bind:content={this} id="content">
     </div>
   </div>
   )

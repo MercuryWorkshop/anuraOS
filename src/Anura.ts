@@ -6,6 +6,8 @@ let taskbar = new Taskbar();
 let launcher = new Launcher();
 let contextMenu = new ContextMenu();
 let bootsplash = new Bootsplash();
+let oobeview = new OobeView();
+let oobewelcomestep = new OobeWelcomeStep();
 
 class Anura {
     x86: null | V86Backend;
@@ -37,6 +39,12 @@ class Anura {
     syncRead = {}
     apps: any = {}
     Version = "0.1.0 alpha"
+    logger = {
+        log: Function = console.log.bind(console, "anuraOS:"),
+        debug: Function = console.debug.bind(console, "anuraOS:"),
+        warn: Function = console.warn.bind(console, "anuraOS:"),
+        error: Function = console.error.bind(console, "anuraOS:")
+    }
     x86fs = {
         async read(path: string) {
             // return await new Promise((resolve, reject) => {
@@ -105,6 +113,8 @@ class Anura {
         this.apps[manifest.package] = app;
         return app;
     }
+
+    
 }
 let anura = new Anura();
 
@@ -116,7 +126,24 @@ function openAppManager() {
         })
 }
 
-window.addEventListener("load", () => {
+const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds))
+
+window.addEventListener("load", async () => {
+    document.body.appendChild(bootsplash.element);
+
+    await sleep(2000);
+
+    bootsplash.element.remove();
+    anura.logger.debug("boot completed");
+    document.dispatchEvent(new Event("anura-boot-completed"));
+});
+
+document.addEventListener("anura-boot-completed", async () => {
+    document.body.appendChild(oobeview.element);
+    oobeview.content.appendChild(oobewelcomestep.element);
+});
+
+document.addEventListener("anura-login-completed", () => {
     anura.registerApp("browser.app");
     anura.registerApp("fsapp.app");
     anura.registerApp("chide.app");
@@ -125,11 +152,9 @@ window.addEventListener("load", () => {
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
     document.body.appendChild(taskbar.element);
-    document.body.appendChild(bootsplash.element);
 
     // taskbar.killself()
     (window as any).taskbar = taskbar;
-
 });
 
 
