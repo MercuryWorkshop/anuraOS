@@ -4,7 +4,7 @@ class Taskbar {
   element = (
     <footer>
       <div id="launcher-button-container">
-        <div id="launcher-button" on:click={() => { launcher.toggleVisible() }}></div>
+        <div id="launcher-button" on:click={() => { launcher.toggleVisible() }}><img src="/assets/icons/launcher.svg" style="height:100%;width:100%"></img></div>
       </div>
       {/* r58 i'm begging you please extract the asset for whatever this thing is or make an svg i don't feel like doing it and 1/2 stack was using a fucking image :skull: */}
       <nav>

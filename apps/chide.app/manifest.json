@@ -3,6 +3,7 @@
     "type": "auto",
     "package": "anura.ide",
     "index": "chide.html",
+    "icon": "visual-studio-code.svg",
     "wininfo":{
       "title":"chIDE",
       "width":"700px",

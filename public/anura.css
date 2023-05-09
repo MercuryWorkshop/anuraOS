@@ -176,9 +176,7 @@ nav li {
 
   }
 #launcher-button{
-    background-color: gray;
-
-    opacity: 0.5;
+    background-color: rgba(128,128,128,0.5);
     border-radius: 50%;
     height: 65%;
     width: 65%;

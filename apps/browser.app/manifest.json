@@ -3,6 +3,7 @@
   "type": "auto",
   "package": "anura.browser",
   "index": "../../browser.html",
+  "icon": "chrome.svg",
   "wininfo":{
     "title":"velocity ripoff",
     "width":"700px",
