@@ -128,6 +128,11 @@ nav li {
     backdrop-filter: blur(5px);
     display: flex;
     flex-direction: column;
+    display: none;
+}
+
+.launcher.active {
+    display: block;
 }
 
 .launcher .topSearchBar {
@@ -186,6 +191,7 @@ nav li {
 .launcher .appsView .app div {
     height: 1em;
 }
+
 
 .custom-menu {
     position: absolute;
@@ -274,28 +280,8 @@ nav li {
       transform: translateY(100%);
     }
 }
-.launcher {
-    position: absolute;
-    width: min(70%, 33.5em);
-    height: min(80%, 40em);
-    background-color: rgba(22, 22, 22, 0.8);
-    border-radius: 1em;
-    bottom: 4em;
-    backdrop-filter: blur(5px);
-    display: flex;
-    flex-direction: column;
-    transform: translateY(100%);
-    transition: opacity 0.3s ease-in, visibility 0s 0.3s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;
-    visibility: hidden;
-  }
-  
-  .launcher.active {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0%);
-    transition: opacity 0.3s ease-in, visibility 0s 0s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+
+
 
 .bootsplash {
     background-color: black;
