@@ -123,6 +123,24 @@ class Anura {
         this.apps[manifest.package] = app;
         return app;
     }
+    notifications = {
+        async send(content: string, icon: string) {
+
+            const container = document.getElementById("notif-container")
+            let notificationElement = document.createElement("div");
+
+            // some stuff, assigning icon and text, and CSS classes, here
+
+            container?.appendChild(notificationElement);
+
+            setTimeout(function(){
+                notificationElement?.remove();
+            }, 5000);
+
+        }
+
+    }
+
 }
 let anura = new Anura();
 
