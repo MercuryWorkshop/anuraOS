@@ -39,7 +39,7 @@ class Anura {
     fs: any = undefined
     syncRead = {}
     apps: any = {}
-    Version = "0.1.0 alpha"
+    Version = "0.2.0 alpha"
     logger = {
         log: Function = console.log.bind(console, "anuraOS:"),
         debug: Function = console.debug.bind(console, "anuraOS:"),
@@ -63,7 +63,6 @@ class Anura {
     async registerApp(location: string) {
         let resp = await fetch(`${location}/manifest.json`);
         let manifest = await resp.json()
-
 
         let app = {
             name: manifest.name,
@@ -89,33 +88,15 @@ class Anura {
                     iframe.setAttribute("src", `${location}/${manifest.index}`);
 
                     win.content.appendChild(iframe);
-
-
-                    // this.windowinstance = win;
                 }
             },
         };
-        // let appsContainer = $("#appsView");
-        // let shortcut = $("#appTemplate").content.cloneNode(true);
-        // shortcut.querySelector(".app-shortcut-name").innerText = manifest.name;
-        // if (manifest["icon"]) {
-        //     shortcut.querySelector(".app-shortcut-image").src = `${location}/${manifest["icon"]}`
-        // }
-        // shortcut.querySelector(".app-shortcut-image").addEventListener("click", () => {
-        //     app.launch();
-        // });
-        //
-
-
-        // appsContainer.appendChild(shortcut);
 
         launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app));
 
         this.apps[manifest.package] = app;
         return app;
     }
-
-    
 }
 let anura = new Anura();
 
@@ -157,15 +138,12 @@ document.addEventListener("anura-login-completed", () => {
     anura.registerApp("fsapp.app");
     anura.registerApp("chide.app");
 
-
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
     document.body.appendChild(taskbar.element);
 
-    // taskbar.killself()
     (window as any).taskbar = taskbar;
 });
-
 
 //
 // document.addEventListener("contextmenu", function(e) {
