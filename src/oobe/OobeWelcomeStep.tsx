@@ -8,7 +8,7 @@ class OobeWelcomeStep {
       <div id="gridContent">
           <div id="topButtons"><button>Random button</button></div>
           <img id="animation" src="assets/oobe/welcome.gif" />
-          <div id="bottomButtons"><button bind:nextButton = {this} class="preferredButton">Skip OOBE for now</button></div>
+          <div id="bottomButtons"><button bind:nextButton = {this} class="preferredButton">Next</button></div>
       </div>
   </div>
   )

@@ -143,23 +143,20 @@ document.addEventListener("anura-login-completed", () => {
     document.body.appendChild(taskbar.element);
 
     (window as any).taskbar = taskbar;
+
+    document.addEventListener("contextmenu", function(e) {
+        if (e.shiftKey) return;
+        e.preventDefault();
+        const menu: any = document.querySelector(".custom-menu");
+        menu.style.removeProperty("display");
+        menu.style.top = `${e.clientY}px`;
+        menu.style.left = `${e.clientX}px`;
+    });
+
+    document.addEventListener("click", (e) => {
+        if (e.button != 0) return;
+        (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
+    });
+
 });
-
-//
-// document.addEventListener("contextmenu", function(e) {
-//     if (e.shiftKey) return;
-//     e.preventDefault();
-//
-//     const menu: any = document.querySelector(".custom-menu");
-//     menu.style.removeProperty("display");
-//     menu.style.top = `${e.clientY}px`;
-//     menu.style.left = `${e.clientX}px`;
-// });
-//
-// document.addEventListener("click", (e) => {
-//     if (e.button != 0) return;
-//     (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
-// });
-//
-
 (window as any).anura = anura;
