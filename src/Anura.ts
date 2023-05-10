@@ -8,6 +8,7 @@ let contextMenu = new ContextMenu();
 let bootsplash = new Bootsplash();
 let oobeview = new OobeView();
 let oobewelcomestep = new OobeWelcomeStep();
+let oobeassetsstep = new OobeAssetsStep();
 
 class Anura {
     x86: null | V86Backend;
@@ -141,6 +142,14 @@ window.addEventListener("load", async () => {
 document.addEventListener("anura-boot-completed", async () => {
     document.body.appendChild(oobeview.element);
     oobeview.content.appendChild(oobewelcomestep.element);
+    oobewelcomestep.nextButton.addEventListener("click", () => {
+        oobewelcomestep.element.remove();
+        oobeview.content.appendChild(oobeassetsstep.element);
+        oobeassetsstep.nextButton.addEventListener("click", () => {
+            oobeview.element.remove();
+            document.dispatchEvent(new Event("anura-login-completed"));
+        });
+    });
 });
 
 document.addEventListener("anura-login-completed", () => {

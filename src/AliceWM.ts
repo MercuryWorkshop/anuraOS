@@ -21,7 +21,7 @@ let windowInformation = {}
 let windowID = 0;
 AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
     let wininfo = givenWinInfo;
-    console.log(typeof (givenWinInfo))
+    anura.logger.debug(typeof (givenWinInfo))
     if (typeof (givenWinInfo) == 'string') {
         wininfo = {
             title: givenWinInfo,
@@ -117,7 +117,7 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
     };
 
     container.onresize = function() {
-        console.log("resized")
+        anura.logger.debug("resized")
         container.setAttribute("maximized", "false")
     }
 
@@ -129,7 +129,7 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
     container.onmousedown = function(evt:any) {
         // probably inefficient but i dont caare
         var allWindows = [...document.querySelectorAll(".aliceWMwin") as any];
-        console.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
+        anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
         for (const wmwindow of allWindows) {
             wmwindow.style.setProperty("z-index", 92);
         }
@@ -144,7 +144,7 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
         var i, frames;
         frames = document.getElementsByTagName("iframe");
         for (i = 0; i < frames.length; ++i) {
-            console.log(frames[i])
+            anura.logger.debug(frames[i])
             frames[i]!.style.pointerEvents = 'none'
         }
         evt = evt || window.event;
