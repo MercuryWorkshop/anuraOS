@@ -1,0 +1,10 @@
+{
+  "name": "VNC Client",
+  "type": "auto",
+  "package": "anura.vnc",
+  "index": "vnc_lite.html",
+  "icon": "terminal.svg",
+  "wininfo":{
+    "title":"VNC Client"
+  }
+}
