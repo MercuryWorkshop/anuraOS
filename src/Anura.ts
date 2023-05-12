@@ -158,6 +158,7 @@ window.addEventListener("load", () => {
     anura.registerApp("apps/glxgears.app");
     anura.registerApp("apps/recursion.app");
     anura.registerApp("apps/eruda.app");
+    anura.registerApp("apps/vnc.app");
     // anura.registerApp("apps/sshy.app");
     // ssh will be reworked later
     anura.registerApp("apps/fsapp.app");
