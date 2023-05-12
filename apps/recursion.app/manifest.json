@@ -3,7 +3,7 @@
   "type": "auto",
   "package": "anura.browser",
   "index": "../index.html",
-  "icon": "iframe.svg",
+  "icon": "./public/assets/icons/recursion.png",
   "wininfo":{
     "title":"Anura inside Anura!"
   }

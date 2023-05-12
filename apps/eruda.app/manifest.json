@@ -2,7 +2,7 @@
     "name": "Eruda",
     "type": "manual",
     "package": "anura.debugger",
-    "icon": "inspect.svg",
+    "icon": "./public/assets/icons/search.png",
     "handler": "launchapp.js"
   }
   

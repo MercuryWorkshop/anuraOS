@@ -3,7 +3,7 @@
   "type": "auto",
   "package": "anura.term",
   "index": "term.html",
-  "icon": "terminal.svg",
+  "icon": "./public/assets/icons/terminal.png",
   "wininfo":{
     "title":"Terminal"
   }
