@@ -14,7 +14,7 @@ class Anura {
     x86: null | V86Backend;
     constructor() {
         if (localStorage.getItem("x86-enabled") === "true") {
-            //this.x86 = new V86Backend(); //lemme fix my shit first
+            this.x86 = new V86Backend(); //lemme fix my shit first
         }
 
         if (localStorage.getItem("use-expirimental-fs") === "true") {
@@ -94,6 +94,8 @@ class Anura {
 
         launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app));
 
+        taskbar.addShortcut(`${location}/${manifest.icon}`,app.launch.bind(app));
+
         this.apps[manifest.package] = app;
         return app;
     }
@@ -134,9 +136,9 @@ document.addEventListener("anura-boot-completed", async () => {
 });
 
 document.addEventListener("anura-login-completed", () => {
-    anura.registerApp("browser.app");
-    anura.registerApp("fsapp.app");
-    anura.registerApp("chide.app");
+    anura.registerApp("apps/browser.app");
+    anura.registerApp("apps/fsapp.app");
+    anura.registerApp("apps/chide.app");
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
