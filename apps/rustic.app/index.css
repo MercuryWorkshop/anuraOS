@@ -1,0 +1,12 @@
+body,
+html {
+    height: 100vh;
+    width: 100vw;
+    margin: 0px;
+
+}
+
+#canvas {
+    height: 90%;
+    aspect-ratio: 1 / 1;
+}

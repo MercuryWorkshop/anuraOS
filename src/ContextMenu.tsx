@@ -16,4 +16,7 @@ class ContextMenu {
   constructor() {
 
   }
+  show(){
+    
+  }
 }

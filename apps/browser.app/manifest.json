@@ -1,0 +1,12 @@
+{
+  "name": "AboutBrowser",
+  "type": "auto",
+  "package": "anura.browser",
+  "index": "../../browser.html",
+  "icon": "chrome.svg",
+  "wininfo":{
+    "title":"AboutBrowser",
+    "width":"700px",
+    "height":"500px"
+  }
+}

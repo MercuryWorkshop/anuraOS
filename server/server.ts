@@ -10,7 +10,7 @@ const app = express();
 const port = 8000;
 const bare = createServer('/bare/');
 
-__dirname = path.join(__dirname, '..');
+__dirname = process.cwd()
 
 app.get("/", (req: Request, res: Response) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
@@ -73,6 +73,7 @@ app.use(async (req: Request, res: Response, next: Function) => {
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/build"));
+app.use("/apps",express.static(__dirname + "/apps"));
 app.use(express.static(__dirname + "/aboutproxy/static"));
 
 

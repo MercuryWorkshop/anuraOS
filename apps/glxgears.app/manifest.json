@@ -1,0 +1,12 @@
+{
+  "name": "glxgears",
+  "type": "auto",
+  "package": "anura.glxgears",
+  "index": "b.html",
+  "icon": "glxgears.png",
+  "wininfo":{
+    "title":"glxgears",
+    "width":"350px",
+    "height":"350px"
+  }
+}

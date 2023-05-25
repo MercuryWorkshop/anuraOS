@@ -118,79 +118,7 @@ nav li {
     font-family: monospace !important;
 }
 
-.launcher {
-    position: absolute;
-    width: min(70%, 35em);
-    height: min(80%, 40em);
-    background-color: rgba(22, 22, 22, 0.8);
-    border-radius: 1em;
-    bottom: 4em;
-    backdrop-filter: blur(5px);
-    display: flex;
-    flex-direction: column;
-    display: none;
-}
 
-.launcher.active {
-    display: block;
-}
-
-.launcher .topSearchBar {
-    display: flex;
-    flex-direction: row;
-    padding: 1em;
-    align-items: center;
-}
-
-.launcher .topSearchBar img {
-    width: 1em;
-    height: 1em;
-    margin-right: 1em;
-}
-
-.launcher .topSearchBar input {
-    flex-grow: 1;
-    background: transparent;
-    border: none;
-}
-
-.launcher .recentItemsWrapper {
-    padding: 1em;
-    font-size: 12px;
-    border-top: 1px solid rgb(22 22 22 / 50%);
-}
-
-.launcher .recentItemsWrapper .recentItemsText {
-    margin-left: 4em;
-    margin-right: 4em;
-    color: #fff;
-    border-bottom: 1px solid rgb(22 22 22 / 50%);
-    padding: 1em 0em;
-}
-
-.launcher .appsView {
-    padding: 1em;
-    font-size: 12px;
-    flex-grow: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-auto-rows: 8em;
-}
-
-.launcher .appsView .app {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #fff;
-}
-
-.launcher .appsView .app input[type=image] {
-    margin-bottom: 0.5em;
-}
-
-.launcher .appsView .app div {
-    height: 1em;
-}
 
 
 .custom-menu {
@@ -241,7 +169,6 @@ nav li {
     left: 303px;
     bottom: 0.75em;
 }
-
 #launcher-button-container {
     position: absolute;
     height: 100%;
@@ -250,21 +177,22 @@ nav li {
     display: flex;
     align-items: center;
     justify-content: center;
-}
 
-#launcher-button {
-    background-color: gray;
-    opacity: 0.5;
+  }
+#launcher-button{
+    background-color: rgba(128,128,128,0.5);
     border-radius: 50%;
     height: 65%;
     width: 65%;
-}
 
-#launcher-button img {
+}
+  
+  #launcher-button img {
     border-radius: 50%;
-}
-
-@keyframes slide-in {
+  }
+  
+  
+  @keyframes slide-in {
     from {
       transform: translateY(100%);
     }
@@ -272,111 +200,82 @@ nav li {
       transform: translateY(-5%);
     }
   }
-@keyframes slide-out {
+  @keyframes slide-out {
     from {
       transform: translateY(0%);
     }
     to {
       transform: translateY(100%);
     }
-}
-
-
-
-.bootsplash {
-    background-color: black;
-    z-index: 9999999999;
+  }
+  .launcher {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    display:  flex;
-    justify-content: center;
-    align-content: center;
-    flex-wrap: wrap;
-}
-
-.bootsplash > img {
-    width: 300px;
-    height: 80px;
-}
-
-.oobe {
-    background-color: var(--oobe-bg);
-    z-index: 999999999;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
+    width: min(70%, 33.5em);
+    height: min(80%, 40em);
+    background-color: rgba(22, 22, 22, 0.8);
+    border-radius: 1em;
+    bottom: 4em;
+    backdrop-filter: blur(5px);
     display: flex;
-    justify-content: center;
-    align-content: center;
-    flex-wrap: wrap;
-}
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: opacity 0.3s ease-in, visibility 0s 0.3s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .launcher.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0%);
+    transition: opacity 0.3s ease-in, visibility 0s 0s, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-.oobe #content {
-    padding: 79.6px 40px 23.8px 40px;
-    width: 1040px;
-    height: 680px;
-    box-sizing: border-box;
+.launcher .topSearchBar {
+    display: flex;
+    flex-direction: row;
+    padding: 1em;
+    align-items: center;
 }
-
-.oobe #content .screen {
-    width: 100%;
-    height: 100%;
+.launcher .topSearchBar img {
+    width: 1em;
+    height: 1em;
+    margin-right: 1em;
 }
-
-.oobe .screen h1 {
-    margin: 48px 0 0 0;
+.launcher .topSearchBar input {
+    flex-grow: 1;
+    background: transparent;
+    border: none;
 }
-
-.oobe .screen #subtitle {
-    margin: 16px 0 64px 0;
-    font-size: 24px;
+.launcher .recentItemsWrapper {
+    padding: 1em;
+    font-size: 12px;
+    border-top: 1px solid rgb(22 22 22 / 50%);
 }
-
-.oobe .screen #gridContent {
+.launcher .recentItemsWrapper .recentItemsText {
+    margin-left: 4em;
+    margin-right: 4em;
+    color: #fff;
+    border-bottom: 1px solid rgb(22 22 22 / 50%);
+    padding: 1em 0em;
+}
+.launcher .appsView {
+    padding: 1em;
+    font-size: 12px;
+    flex-grow: 1;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-auto-rows: 8em;
 }
-
-.oobe .screen #gridContent #topButtons {
-    grid-column: 1 / span 1;
-    grid-row: 1 / span 1;
+.launcher .appsView .app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
 }
-
-.oobe .screen #gridContent #bottomButtons {
-    align-self: end;
-    justify-self: start;
-    grid-column: 1 / span 1;
-    grid-row: 2 / span 1;
+.launcher .appsView .app input[type=image] {
+    margin-bottom: 0.5em;
 }
-
-.oobe .screen .preferredButton {
-    background-color: rgb(26, 115, 232);
-    border-radius: 16px;
-    border-style: none;
-    color: white;
-    height: 2em;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
-.oobe .screen button {
-    background-color: var(--oobe-bg);
-    border-radius: 16px;
-    border: 1px solid gray;
-    color: rgb(26,115,232);
-    height: 2em;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
-.oobe #welcome.screen #animation {
-    grid-column: 2 / span 1;
-    grid-row: 1 / span 2;
-    margin-left: auto
+.launcher .appsView .app div {
+    height: 1em;
 }

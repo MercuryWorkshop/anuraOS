@@ -1,0 +1,369 @@
+<html>
+    <head>
+    <link rel="stylesheet" href="filemanager.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="/apps/libfileview.app/fileHandler.js"></script>
+    <script src="/assets/libs/filer.min.js"></script> <!-- in any sane case this wouldn't be required. This isn't a sane case, Buffer doesn't work without importing this -->
+    </head>
+    <body>
+        <div class="container">
+            <div class="sidebar">
+                <button><i class="fa-solid fa-clock-rotate-left fa-lg"></i>Recent</button>
+                <hr></hr>
+                <button><i class="fa-solid fa-laptop fa-lg"></i>My files</button>
+            </div>
+            <div class="fileView">
+                <div class="topbar">
+                <div class="breadcrumbs"><button>My files</button><span>></span><button>owo :3</button></div>
+                <div class="sep"></div>
+                <button><i class="fa-solid fa-magnifying-glass fa-lg"></i></button>
+                <button><i class="fa-solid fa-table-cells-large fa-lg"></i></button>
+                <button><i class="fa-solid fa-arrow-up-a-z fa-lg"></i><!--<i class="fa-solid fa-arrow-down-z-a fa-lg"></i> - opposite--></button>
+                <button><i class="fa-solid fa-ellipsis-vertical fa-lg"></i></button>
+                </div>
+                <hr>
+                <table>
+                    <thead>
+                        <tr>
+                            <th data-type="icon">Icon<span class="resize-handle hidden-resize-handle"></span></th>
+                            <th data-type="name">Name<span class="resize-handle"></span></th>
+                            <th data-type="size">Size<span class="resize-handle"></span></th>
+                            <th data-type="type">Type<span class="resize-handle"></span></th>
+                            <th data-type="modified">Date modified<span class="resize-handle"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                    <td><i class="fa-brands fa-rust"></i></td>
+                    <td>nya.rs</td>
+                    <td>1 MB</td>
+                    <td>Rust source code</td>
+                    <td>Today 17:00</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+        // implementing it myself was too hard so i just stole it from https://codepen.io/adam-lynch/pen/GaqgXP
+
+        const min = 150;
+        // The max (fr) values for grid-template-columns
+        const columnTypeToRatioMap = {
+            'icon': 0.1,
+            'name': 3,
+            'size': 1,
+            'type': 1,
+            'modified': 1
+        };
+
+        const table = document.querySelector('table');
+        /*
+        The following will soon be filled with column objects containing
+        the header element and their size value for grid-template-columns
+        */
+        const columns = [];
+        let headerBeingResized;
+
+        // The next three functions are mouse event callbacks
+
+        // Where the magic happens. I.e. when they're actually resizing
+        const onMouseMove = (e) => requestAnimationFrame(() => {
+            console.log('onMouseMove');
+
+            (window.getSelection ? window.getSelection() : document.selection).empty()
+
+            // Calculate the desired width
+            horizontalScrollOffset = document.documentElement.scrollLeft;
+            const width = (horizontalScrollOffset + e.clientX) - headerBeingResized.offsetLeft;
+
+            // Update the column object with the new size value
+            const column = columns.find(({ header }) => header === headerBeingResized);
+            column.size = Math.max(min, width) + 'px'; // Enforce our minimum
+
+            // For the other headers which don't have a set width, fix it to their computed width
+            columns.forEach((column) => {
+                if(column.size.startsWith('minmax')){ // isn't fixed yet (it would be a pixel value otherwise)
+                    column.size = parseInt(column.header.clientWidth, 10) + 'px';
+                }
+            });
+
+            /*
+                Update the column sizes
+                Reminder: grid-template-columns sets the width for all columns in one value
+            */
+            table.style.gridTemplateColumns = columns
+                .map(({ header, size }) => size)
+                .join(' ');
+        });
+
+        // Clean up event listeners, classes, etc.
+        const onMouseUp = () => {
+            console.log('onMouseUp');
+
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+            headerBeingResized.classList.remove('header--being-resized');
+            headerBeingResized = null;
+            };
+
+            // Get ready, they're about to resize
+            const initResize = ({ target }) => {
+            console.log('initResize');
+
+            headerBeingResized = target.parentNode;
+            window.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('mouseup', onMouseUp);
+            headerBeingResized.classList.add('header--being-resized');
+        };
+
+        // Let's populate that columns array and add listeners to the resize handles
+        document.querySelectorAll('th').forEach((header) => {
+            const max = columnTypeToRatioMap[header.dataset.type] + 'fr';
+            columns.push({
+                header,
+                // The initial size value for grid-template-columns:
+                size: `minmax(${min}px, ${max})`,
+            });
+            header.querySelector('.resize-handle').addEventListener('mousedown', initResize);
+        });
+        </script>
+        <script>
+            var currentlySelected = [];
+
+            window.fs = parent.anura.fs
+
+            function loadPath(path) {
+                console.debug("loading path: ", path);
+                fs.readdir(path, (err, files) => {
+                    if(err) throw err;
+                    setBreadcrumbs(path);
+                    let table = document.querySelector("tbody");
+                    table.innerHTML = ''
+                    files.forEach(file => {
+                        let row = document.createElement('tr')
+                        let iconContainer = document.createElement('td')
+                        let icon = document.createElement('i')
+                        let name = document.createElement('td')
+                        let size = document.createElement('td')
+                        let description = document.createElement('td')
+                        let date = document.createElement('td')
+                        let type = document.createElement('td')
+                        fs.stat(`${path}/${file}`, function(err, stats) {
+                            if (err) throw err;
+                            if (stats.isDirectory()) {
+                                name.innerText = `${file}/`
+                                description.innerText = "Folder"
+                                date.innerText = new Date(stats.mtime/1000).toLocaleString()
+                                icon.class = '';
+                                size.innerText = stats.size
+
+                                iconContainer.appendChild(icon)
+                                row.appendChild(iconContainer)
+                                row.appendChild(name)
+                                row.appendChild(size)
+                                row.appendChild(description)
+                                row.appendChild(date)
+                                
+                                row.setAttribute("data-type", 'dir');
+                                row.setAttribute("data-path", `${path}/${file}`);
+                            } else {
+                                name.innerText = `${file}`
+                                description.innerText = "Anura File"
+                                icon.class = '';
+                                date.innerText = new Date(stats.mtime/1000).toLocaleString()
+                                size.innerText = stats.size
+
+                                iconContainer.appendChild(icon)
+                                row.appendChild(iconContainer)
+                                row.appendChild(name)
+                                row.appendChild(size)
+                                row.appendChild(description)
+                                row.appendChild(date)
+                                
+                                row.setAttribute("data-type", 'file');
+                                row.setAttribute("data-path", `${path}/${file}`);
+                            }
+                            console.debug("appending");
+                            table.appendChild(row)
+                            if(files[files.length-1] === file) {
+                                reloadListeners();
+                            }
+                        });
+                    });
+                });
+            }
+
+            function reloadListeners() {
+                console.debug("reloading listeners");
+                console.debug(document.querySelectorAll('tr'));
+                document.querySelectorAll('tr').forEach((row) => {
+                    if(row.parentNode.nodeName.toLowerCase() !== "thead") {
+                        console.debug("adding listeners to ", row);
+                        row.addEventListener("mouseenter", (e) => {
+                            e.currentTarget.classList.add("hover");
+                        });
+                        row.addEventListener("mouseleave", (e) => {
+                            e.currentTarget.classList.remove("hover");
+                        });
+                        row.addEventListener("click", (e) => {
+                            if(currentlySelected.includes(e.currentTarget)) {
+                                fileAction(currentlySelected);
+                                currentlySelected.forEach((row)=>{row.classList.remove("selected")});
+                                currentlySelected = [];
+                                return;
+                            }
+                            if(!e.shiftKey) {
+                                if(!e.ctrlKey) {
+                                    currentlySelected.forEach((row)=>{row.classList.remove("selected")});
+                                    currentlySelected = [];
+                                }
+                                e.currentTarget.classList.add("selected");
+                                currentlySelected.push(e.currentTarget);
+                            } else {
+                                if(currentlySelected.length == 0) {
+                                    e.currentTarget.classList.add("selected");
+                                    currentlySelected.push(e.currentTarget);
+                                } else {
+                                    var arr = Array.from(document.querySelectorAll('tr')).filter(row => row.parentNode.nodeName.toLowerCase() !== "thead")
+                                    var firstI = arr.indexOf(currentlySelected[currentlySelected.length - 1])
+                                    var lastI = arr.indexOf(e.currentTarget)
+                                    var first = Math.min(firstI, lastI);
+                                    var last = Math.max(firstI, lastI);
+                                    for(var i = first; i <= last; i++) {
+                                        if(!currentlySelected.includes(arr[i])) {
+                                            currentlySelected.push(arr[i]);
+                                            arr[i].classList.add("selected");
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+            function fileAction(selected) {
+                if(selected.length == 1) {
+                    // SINGLE FILE SELECTION //
+
+                    var fileSelected = selected[0];
+                    if(fileSelected.getAttribute("data-type") == "file") {
+                        console.debug("Clicked on file");
+                        openFile(fileSelected.getAttribute("data-path"))
+                    } else if(fileSelected.getAttribute("data-type") == "dir") {
+                        console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
+                        loadPath(fileSelected.getAttribute("data-path"));
+                    } else {
+                        console.warn("Unknown filetype ", fileSelected.getAttribute("data-type"), " doing nothing!");
+                    }
+                } else {
+                    // MULTIPLE FILE SELECTION //
+
+                    console.error("raff please implement"); 
+                }
+            }
+
+            function setBreadcrumbs(path) {
+                path = path.replace(/(\/)\1+/g, '$1')
+                var pathSplit = path.split("/");
+                console.log(pathSplit);
+                pathSplit[0] = "My files";
+                var breadcrumbs = document.querySelector(".breadcrumbs");
+                breadcrumbs.setAttribute("data-current-path", path);
+                breadcrumbs.innerHTML = '';
+                if(pathSplit.length == 2 && pathSplit[0] == "My files" && pathSplit[1] == "") {
+                    var breadcrumb = document.createElement("button");
+                    breadcrumb.innerText = "My files";
+                    breadcrumb.addEventListener("click", () => {
+                        loadPath('/');
+                    });
+                    breadcrumbs.appendChild(breadcrumb);
+                    return;
+                }
+                for(var i = 0; i<pathSplit.length; i++) {
+                    console.log(i);
+                    var breadcrumb = document.createElement("button");
+                    breadcrumb.innerText = pathSplit[i];
+                    var index = i;
+                    breadcrumb.addEventListener("click", () => {
+                        loadPath('/' + pathSplit.slice(1, index).join('/'));
+                    });
+                    breadcrumbs.appendChild(breadcrumb)
+                    if(pathSplit[i] !== pathSplit[pathSplit.length-1]) {
+                        var breadcrumbSpan = document.createElement("span");
+                        breadcrumbSpan.innerText = ">";
+                        breadcrumbs.appendChild(breadcrumbSpan);
+                    }
+                }
+            }
+
+            document.querySelector("table").addEventListener("click", (e) => {
+                if(e.currentTarget === e.target) {
+                    currentlySelected.forEach((row)=>{row.classList.remove("selected")});
+                    currentlySelected = [];
+                }
+            });
+            document.addEventListener("contextmenu", (e) => {
+                if(e.shiftKey) {
+                    return;
+                }
+                e.preventDefault();
+                var contextmenu = document.querySelector("#contextMenu");
+                contextmenu.style.left = e.pageX + "px";
+                contextmenu.style.top = e.pageY + "px";
+                contextmenu.style.removeProperty("display");
+            });
+
+            document.addEventListener("click", (e) => {
+                if(e.target !== document.querySelector("#contextMenu") || !document.querySelector("#contextMenu").contains(e.target)) {
+                    document.querySelector("#contextMenu").style.setProperty("display", "none");
+                }
+            });
+            function newFolder(path) {
+                if (path === undefined) {
+                    path = document.querySelector(".breadcrumbs").getAttribute("data-current-path") + '/' + prompt('Folder Name: ')
+                }
+                fs.mkdir(path)
+                reload()
+            }
+            function reload() {
+                loadPath(document.querySelector(".breadcrumbs").getAttribute("data-current-path"))
+            }
+            function reload() {
+                loadPath(document.querySelector(".breadcrumbs").getAttribute("data-current-path"))
+            }
+
+            function upload() {
+                
+                let fauxput = document.createElement('input') // fauxput - fake input that isn't shown or ever added to page TODO: think of a better name for this variable
+                fauxput.type = 'file'
+                fauxput.onchange = async (e) => {
+                    const file = await e.target.files[0]
+                    const content = await file.arrayBuffer()
+                    fs.writeFile(`${document.querySelector(".breadcrumbs").getAttribute("data-current-path")}/${file.name}`, Filer.Buffer.from(content), function (err) {
+                        reload();
+                    })
+                }
+                fauxput.click()
+            }
+            function deleteFile() {
+                
+            }
+            loadPath('/');
+
+        </script>
+        <div style="display: none;" id="contextMenu">
+            <button>Get info</button>
+            <button>Pin to shelf</button>
+            <button onclick="reload()">Refresh</button>
+            <hr></hr>
+            <button>Cut</button>
+            <button>Copy</button>
+            <button>Paste</button>
+            <button onclick="upload()">Upload from PC</button>
+            <hr></hr>
+            <button onclick="newFolder()">New folder</button>
+        </div>
+    </body>
+</html>
