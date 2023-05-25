@@ -93,28 +93,10 @@ class Anura {
         };
 
         launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app));
-        taskbar.addShortcut(`${location}/${manifest.icon}`,app.launch.bind(app));
+
         this.apps[manifest.package] = app;
         return app;
     }
-    notifications = {
-        async send(content: string, icon: string) {
-
-            const container = document.getElementById("notif-container")
-            let notificationElement = document.createElement("div");
-
-            // some stuff, assigning icon and text, and CSS classes, here
-
-            container?.appendChild(notificationElement);
-
-            setTimeout(function(){
-                notificationElement?.remove();
-            }, 5000);
-
-        }
-
-    }
-
 }
 let anura = new Anura();
 
@@ -126,17 +108,35 @@ function openAppManager() {
         })
 }
 
-window.addEventListener("load", () => {
-    anura.registerApp("apps/browser.app");
-    anura.registerApp("apps/term.app");
-    anura.registerApp("apps/glxgears.app");
-    anura.registerApp("apps/recursion.app");
-    anura.registerApp("apps/eruda.app");
-    anura.registerApp("apps/vnc.app");
-    // anura.registerApp("apps/sshy.app");
-    // ssh will be reworked later
-    anura.registerApp("apps/fsapp.app");
-    anura.registerApp("apps/chide.app");
+const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds))
+
+window.addEventListener("load", async () => {
+    document.body.appendChild(bootsplash.element);
+
+    await sleep(2000);
+
+    bootsplash.element.remove();
+    anura.logger.debug("boot completed");
+    document.dispatchEvent(new Event("anura-boot-completed"));
+});
+
+document.addEventListener("anura-boot-completed", async () => {
+    document.body.appendChild(oobeview.element);
+    oobeview.content.appendChild(oobewelcomestep.element);
+    oobewelcomestep.nextButton.addEventListener("click", () => {
+        oobewelcomestep.element.remove();
+        oobeview.content.appendChild(oobeassetsstep.element);
+        oobeassetsstep.nextButton.addEventListener("click", () => {
+            oobeview.element.remove();
+            document.dispatchEvent(new Event("anura-login-completed"));
+        });
+    });
+});
+
+document.addEventListener("anura-login-completed", () => {
+    anura.registerApp("browser.app");
+    anura.registerApp("fsapp.app");
+    anura.registerApp("chide.app");
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
@@ -159,23 +159,4 @@ window.addEventListener("load", () => {
     });
 
 });
-
-
-//
-// document.addEventListener("contextmenu", function(e) {
-//     if (e.shiftKey) return;
-//     e.preventDefault();
-
-//     const menu: any = document.querySelector(".custom-menu");
-//     menu.style.removeProperty("display");
-//     menu.style.top = `${e.clientY}px`;
-//     menu.style.left = `${e.clientX}px`;
-// });
-
-// document.addEventListener("click", (e) => {
-//     if (e.button != 0) return;
-//     (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
-// });
-//
-
 (window as any).anura = anura;
