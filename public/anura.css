@@ -10,19 +10,21 @@ body {
     user-select: none; /* FUCK ie and safari no one uses them anyways */
     height:200px;
     width:500px;
-    background:white;
+    background: white;
     position:fixed;
     overflow:hidden;
     z-index:91;
     display: flex; /* FLEXBOX #2 */
+    border: 2px solid black;
     flex-direction: column;
+
 }
 
 .aliceWMwin .title{
     display: flex;
-    background-color: white;
+    background-color: black;
     font-weight:bold;
-    color:white;
+    color: white;
     height:24px; 
     padding:2px;
     align-items:center;
@@ -43,7 +45,7 @@ body {
 
 .aliceWMwin .windowButton {
     background-color: transparent;
-    color:black;
+    color: white;
     border: none;
     border-radius: 100%;
     margin: 2px;

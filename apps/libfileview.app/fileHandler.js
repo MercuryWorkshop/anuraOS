@@ -71,6 +71,8 @@ function openPDF(path) {
 function openAudio(path, mimetype) {
     fs.readFile(path, function(err, data) {
         let fileView = window.parent.AliceWM.create("Audio File")
+        fileView.content.parentElement.style.width = "300px"
+        fileView.content.parentElement.style.height = "83px"
         let bloburl = URL.createObjectURL(new Blob([data]))
         let audio = document.createElement('audio')
         audio.src = bloburl
@@ -87,6 +89,7 @@ function openVideo(path, mimetype) {
         let source = document.createElement('source')
         source.src = bloburl
         video.setAttribute('controls', '')
+        video.setAttribute('autoplay', '')
         source.setAttribute("type", mimetype)
         video.style = "width: 100%; height: 100%;"
         video.appendChild(source)

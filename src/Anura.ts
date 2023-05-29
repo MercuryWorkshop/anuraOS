@@ -137,6 +137,11 @@ document.addEventListener("anura-boot-completed", async () => {
 
 document.addEventListener("anura-login-completed", () => {
     anura.registerApp("apps/browser.app");
+    anura.registerApp("apps/term.app");
+    anura.registerApp("apps/glxgears.app");
+    anura.registerApp("apps/eruda.app");
+    anura.registerApp("apps/vnc.app");
+    anura.registerApp("apps/sshy.app"); // ssh will be reworked later
     anura.registerApp("apps/fsapp.app");
     anura.registerApp("apps/chide.app");
 

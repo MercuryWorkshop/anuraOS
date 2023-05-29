@@ -1,8 +1,9 @@
 #!/bin/bash
 if [ -d "wsproxy" ]; then
-    ts-node server/server.ts &
+    cd server
+    ts-node server.ts &
     MAINANURAPID=$!
-    cd wsproxy
+    cd ../wsproxy
     PORT="8001" node index.js
     kill $MAINANURAPID
 else
