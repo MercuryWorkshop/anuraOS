@@ -143,7 +143,7 @@ document.addEventListener("anura-login-completed", () => {
     anura.registerApp("apps/vnc.app");
     anura.registerApp("apps/sshy.app"); // ssh will be reworked later
     anura.registerApp("apps/fsapp.app");
-    anura.registerApp("apps/chide.app");
+    anura.registerApp("apps/chideNew.app");
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
