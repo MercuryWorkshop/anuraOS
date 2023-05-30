@@ -151,64 +151,124 @@ int main() {
   pty_t *ptys = malloc(0);
 
   int num_ptys = 0;
-
   size_t count = 0;
+
+  int write_intent = 0;
+  int read_intent = 0;
+  int new_intent = 0;
+
+  int read_nbytes = 0;
+  int write_nbytes = 0;
+
+  uintptr_t read_intent_phys_addr;
+  uintptr_t read_nbytes_phys_addr;
+
+  uintptr_t write_nbytes_phys_addr;
+  uintptr_t write_intent_phys_addr;
+  uintptr_t new_intent_phys_addr;
+  virt_to_phys_user(&read_intent_phys_addr, pid, (uintptr_t)&read_intent);
+  virt_to_phys_user(&write_intent_phys_addr, pid, (uintptr_t)&write_intent);
+  virt_to_phys_user(&new_intent_phys_addr, pid, (uintptr_t)&new_intent);
+  virt_to_phys_user(&read_nbytes_phys_addr, pid, (uintptr_t)&read_nbytes);
+  virt_to_phys_user(&write_nbytes_phys_addr, pid, (uintptr_t)&write_nbytes);
+
+  printf("\005i %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
+         write_intent_phys_addr, new_intent_phys_addr, read_nbytes_phys_addr,
+         write_nbytes_phys_addr);
+
+  read_nbytes = 100;
+
+  printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
+         read_nbytes, write_nbytes);
+  wait_for_ack();
+  printf("%d\n", __LINE__);
   while (1) {
-    ioctl(STDIN_FILENO, FIONREAD, &count);
-    if (count > 0) {
-      // the main input loop. the host will write to the serial console what
-      // pty# it wants to write to, then the size of the data it wants to write
+    //  ioctl(STDIN_FILENO, FIONREAD, &count);
+    //  if (count > 0) {
+    //    // the main input loop. the host will write to the serial console what
+    //    // pty# it wants to write to, then the size of the data it wants to
+    //    write
+    //
+    //    char req;
+    //    scanf("%c", &req);
+    //    if (req == 'w') {
+    //
+    //    } else if (req == 'n') {
+    //
+    //
+    //    } else if (req == 'c') {
+    //      int pty_index;
+    //      scanf("%i", &pty_index);
+    //
+    //      pty_t *pty = ptys + pty_index * sizeof(pty_t);
+    //      pty->closed = true;
+    //    }
+    //  }
 
-      char req;
-      scanf("%c", &req);
-      if (req == 'w') {
-        int pty_index;
-        scanf("%i", &pty_index);
-        int in_count;
-        scanf("%i", &in_count);
+    if (write_intent > 0) {
 
-        pty_t *pty = ptys + pty_index * sizeof(pty_t);
+      printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
+             read_nbytes, write_nbytes);
+      printf("%d\n", __LINE__);
+      int pty_index = write_intent - 1;
 
-        char *shared_in_buffer = malloc(in_count);
-        // this is the buffer that will now be written to by the host after this
+      int in_count = write_nbytes;
 
-        uintptr_t buffer_phys_addr;
-        virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_in_buffer);
+      pty_t *pty = ptys + pty_index * sizeof(pty_t);
 
-        printf("\005w %lu\n", buffer_phys_addr);
-        wait_for_ack();
-        write(pty->master, shared_in_buffer, in_count);
-        free(shared_in_buffer);
-      } else if (req == 'n') {
+      char *shared_in_buffer = malloc(in_count);
+      // this is the buffer that will now be written to by the host after this
 
-        char *argstr = getl(); // this one is used to flush the newline.
-                               // not good practice but i don't really care
-        free(argstr);
-        argstr = getl();
-        // char argstr[1024];
-        // scanf("%s", argstr);
-        // printf("a: %s\n", argstr);
-        char *argv[] = {"/bin/bash", "-c", argstr, NULL};
+      uintptr_t buffer_phys_addr;
+      virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_in_buffer);
 
-        num_ptys += 1;
-        ptys = realloc(ptys, num_ptys * sizeof(pty_t));
+      printf("\005w %lu\n", buffer_phys_addr);
+      wait_for_ack();
+      write(pty->master, shared_in_buffer, in_count);
+      free(shared_in_buffer);
+      write_intent = 0;
+    }
+    if (new_intent > 0) {
+      //
+      // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
+      //        read_nbytes, write_nbytes);
+      printf("%d\n", __LINE__);
+      char *argstr = getl(); // this one is used to flush the newline.
+                             // not good practice but i don't really care
+      free(argstr);
+      argstr = getl();
+      // char argstr[1024];
+      // scanf("%s", argstr);
+      printf("a: %s\n", argstr);
+      char *argv[] = {"/bin/bash", "-c", argstr, NULL};
 
-        pty_t *pty = ptys + ((num_ptys - 1) * sizeof(pty_t));
-        alloc_aty(pty, argv, NULL);
-        free(argstr);
+      num_ptys += 1;
+      ptys = realloc(ptys, num_ptys * sizeof(pty_t));
 
-        printf("\005n %i\n", num_ptys - 1);
-        wait_for_ack();
-      } else if (req == 'c') {
-        int pty_index;
-        scanf("%i", &pty_index);
+      pty_t *pty = ptys + ((num_ptys - 1) * sizeof(pty_t));
+      alloc_aty(pty, argv, NULL);
+      free(argstr);
 
-        pty_t *pty = ptys + pty_index * sizeof(pty_t);
-        pty->closed = true;
-      }
+      virt_to_phys_user(&read_intent_phys_addr, pid, (uintptr_t)&read_intent);
+      virt_to_phys_user(&write_intent_phys_addr, pid, (uintptr_t)&write_intent);
+      virt_to_phys_user(&new_intent_phys_addr, pid, (uintptr_t)&new_intent);
+      virt_to_phys_user(&read_nbytes_phys_addr, pid, (uintptr_t)&read_nbytes);
+      virt_to_phys_user(&write_nbytes_phys_addr, pid, (uintptr_t)&write_nbytes);
+      printf("\005i %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
+             write_intent_phys_addr, new_intent_phys_addr,
+             read_nbytes_phys_addr, write_nbytes_phys_addr);
+      wait_for_ack();
+
+      printf("\005n %i\n", num_ptys - 1);
+      wait_for_ack();
+      new_intent = 0;
     }
 
     for (int i = 0; i < num_ptys; i++) {
+
+      // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
+      //        read_nbytes, write_nbytes);
+      // printf("%d\n", __LINE__);
       pty_t *pty = ptys + i * sizeof(pty_t);
       if (pty->closed == true)
         continue;
@@ -223,11 +283,20 @@ int main() {
 
       count = read(pty->master, shared_out_buffer, count);
 
+      printf("want you to read: %lu bytes\n", count);
+
       uintptr_t buffer_phys_addr;
       virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_out_buffer);
-
-      printf("\005r %i %lu %lu\n", i, count, buffer_phys_addr);
+      read_intent = i + 1;
+      read_nbytes = count;
+      //
+      // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
+      //        read_nbytes, write_nbytes);
+      printf("\005r %lu\n", buffer_phys_addr);
       wait_for_ack();
     }
+
+    printf("end!\n");
+    wait_for_ack();
   }
 }

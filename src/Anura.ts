@@ -94,7 +94,7 @@ class Anura {
 
         launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app));
 
-        taskbar.addShortcut(`${location}/${manifest.icon}`,app.launch.bind(app));
+        taskbar.addShortcut(`${location}/${manifest.icon}`, app.launch.bind(app));
 
         this.apps[manifest.package] = app;
         return app;
@@ -123,16 +123,16 @@ window.addEventListener("load", async () => {
 });
 
 document.addEventListener("anura-boot-completed", async () => {
-    document.body.appendChild(oobeview.element);
-    oobeview.content.appendChild(oobewelcomestep.element);
-    oobewelcomestep.nextButton.addEventListener("click", () => {
-        oobewelcomestep.element.remove();
-        oobeview.content.appendChild(oobeassetsstep.element);
-        oobeassetsstep.nextButton.addEventListener("click", () => {
-            oobeview.element.remove();
-            document.dispatchEvent(new Event("anura-login-completed"));
-        });
-    });
+    // document.body.appendChild(oobeview.element);
+    // oobeview.content.appendChild(oobewelcomestep.element);
+    // oobewelcomestep.nextButton.addEventListener("click", () => {
+    //     oobewelcomestep.element.remove();
+    //     oobeview.content.appendChild(oobeassetsstep.element);
+    //     oobeassetsstep.nextButton.addEventListener("click", () => {
+    //         oobeview.element.remove();
+    document.dispatchEvent(new Event("anura-login-completed"));
+    //     });
+    // });
 });
 
 document.addEventListener("anura-login-completed", () => {
