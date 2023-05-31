@@ -5,7 +5,7 @@
     "index": "filemanager.html",
     "icon": "files.png",
     "wininfo":{
-      "title":"File Manager",
+      "title":"",
       "width":"700px",
       "height":"500px"
     }

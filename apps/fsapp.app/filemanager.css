@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 * {
-    color: #c6d0f5;
+    color: #ffffff;
     font-family: 'Roboto', sans-serif;
     user-select: none;
 }
@@ -8,7 +8,7 @@ body {
     margin: 0;
 }
 .container {
-    background-color: #303446;
+    background-color: #202124;
     width: 100%;
     height: 100%;
     display: flex;
@@ -24,17 +24,17 @@ body {
     height: 3em;
     border-bottom-right-radius: 5em;
     border-top-right-radius: 5em;
-    background-color: #303446;
+    background-color: #202124;
     border: none;
     text-align: left;
     display:flex;
     align-items: center;
 }
 .sidebar button:hover {
-    background-color: #292c3c;
+    background-color: #2d2e31;
 }
 .sidebar button:active {
-    background-color: #232634;
+    background-color: #3f4d63;
 }
 
 .sidebar i {
@@ -79,6 +79,8 @@ table {
     display: grid;
     grid-template-columns: min-content 3fr 1fr 1fr 1fr;
     grid-auto-rows: min-content;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 tr, thead, tbody {
@@ -128,7 +130,7 @@ tr > td > i {
 .topbar button {
     border-radius: 1em;
     border: none;
-    background-color: #303446;
+    background-color: #202124;
     height: 2.25em;
 }
 

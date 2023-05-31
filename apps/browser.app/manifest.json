@@ -5,7 +5,7 @@
   "index": "../../browser.html",
   "icon": "chrome.svg",
   "wininfo":{
-    "title":"AboutBrowser",
+    "title":"",
     "width":"700px",
     "height":"500px"
   }
