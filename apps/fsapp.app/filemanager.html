@@ -132,6 +132,7 @@
             var currentlySelected = [];
 
             window.fs = parent.anura.fs
+            window.Buffer = parent.anura.browserfs.Buffer
 
             function loadPath(path) {
                 console.debug("loading path: ", path);
@@ -341,7 +342,7 @@
                 fauxput.onchange = async (e) => {
                     const file = await e.target.files[0]
                     const content = await file.arrayBuffer()
-                    fs.writeFile(`${document.querySelector(".breadcrumbs").getAttribute("data-current-path")}/${file.name}`, Filer.Buffer.from(content), function (err) {
+                    fs.writeFile(`${document.querySelector(".breadcrumbs").getAttribute("data-current-path")}/${file.name}`, Buffer.from(content), function (err) {
                         reload();
                     })
                 }
