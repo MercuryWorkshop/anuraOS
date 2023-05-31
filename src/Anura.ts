@@ -144,7 +144,8 @@ document.addEventListener("anura-login-completed", () => {
     anura.registerApp("apps/sshy.app"); // ssh will be reworked later
     anura.registerApp("apps/fsapp.app");
     anura.registerApp("apps/chideNew.app");
-    anura.registerApp("apps/webretro.app");
+    anura.registerApp("apps/python.app")
+    // anura.registerApp("apps/webretro.app"); nothing here
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
