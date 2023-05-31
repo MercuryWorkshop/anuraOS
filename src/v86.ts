@@ -25,12 +25,12 @@ class V86Backend {
       wasm_path: "/lib/v86.wasm",
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
-      // screen_container: document.getElementById("screen_container"),
-      // bzimage_initrd_from_filesystem: true,
+      screen_container: document.getElementById("screen_container"),
+      bzimage_initrd_from_filesystem: true,
       // bzimage: {
-      //     url: "/images/bzimage",
-      //     size: 6126336,
-      //     async: false,
+      //   url: "/images/bzimage",
+      //   size: 6126336,
+      //   async: false,
       // },
       cmdline: "rw init=/bin/systemd root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
       filesystem: {
@@ -39,7 +39,7 @@ class V86Backend {
         },
         baseurl: "/images/deb-root-flat/",
       },
-      initial_state: { url: "/images/debian-state-base.bin" },
+      // initial_state: { url: "/images/debian-state-base.bin" },
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
       network_relay_url: "ws://relay.widgetry.org/",
@@ -76,7 +76,7 @@ class V86Backend {
   }
   openpty(command: string, onData: (string: string) => void) {
     this.emulator.write_memory([1], this.new_intent_phys_addr);
-    this.emulator.serial0_send(`\x06\n${command}\n`);
+    this.emulator.serial0_send(`${command}\n`);
     return new Promise((resolve) => {
       this.openQueue.push((number: number) => {
         this.onDataCallbacks[number] = onData;
@@ -128,7 +128,6 @@ class V86Backend {
 
     switch (parts.shift()) {
       case "i": {
-        parts.shift();
         // @ts-ignore
         [this.read_intent_phys_addr,
         // @ts-ignore
@@ -157,7 +156,10 @@ class V86Backend {
         this.emulator.write_memory(bytes, addr);
       }
       case "n": {
-        this.openQueue.shift()!(parseInt(parts[0]!));
+        let func = this.openQueue.shift();
+        if (func) {
+          func(parseInt(parts[0]!));
+        }
       }
     }
 
@@ -212,8 +214,13 @@ class V86Backend {
 
 }
 async function a() {
-  anura.x86!.emulator.create_file("/hook.c", new TextEncoder().encode(atob(await navigator.clipboard.readText())));
-
-  anura.x86!.emulator.serial0_send("\x03\n");
+  let emulator = anura.x86!.emulator;
+  emulator.serial0_send("\x03\n");
+  emulator.serial0_send("rm /hook.c\n");
+  emulator.serial0_send("rm /hook\n");
+  await new Promise(resolve => setTimeout(resolve, 300));
+  emulator.create_file("/hook.c", new TextEncoder().encode(atob(await navigator.clipboard.readText())));
+  await new Promise(resolve => setTimeout(resolve, 300));
   anura.x86!.emulator.serial0_send("gcc /hook.c -o /hook -lutil\n");
+  anura.x86!.emulator.serial0_send("/hook\n");
 }

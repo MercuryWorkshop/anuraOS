@@ -13,7 +13,7 @@
 #include <sys/wait.h>
 #include <unistd.h> /* pread, sysconf */
 
-#define SHARED_BUFFER_MAX_SIZE 1024
+#define SHARED_BUFFER_MAX_SIZE 64
 
 typedef struct {
   uint64_t pfn : 55;
@@ -155,12 +155,12 @@ int main() {
   int num_ptys = 0;
   size_t count = 0;
 
-  int write_intent = 0;
-  int read_intent = 0;
-  int new_intent = 0;
+  volatile int write_intent = 0;
+  volatile int read_intent = 0;
+  volatile int new_intent = 0;
 
-  int read_nbytes = 0;
-  int write_nbytes = 0;
+  volatile int read_nbytes = 0;
+  volatile int write_nbytes = 0;
 
   uintptr_t read_intent_phys_addr;
   uintptr_t read_nbytes_phys_addr;
@@ -209,9 +209,9 @@ int main() {
 
     if (write_intent > 0) {
 
-      printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
-             read_nbytes, write_nbytes);
-      printf("%d\n", __LINE__);
+      // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
+      //        read_nbytes, write_nbytes);
+      // printf("%d\n", __LINE__);
       int pty_index = write_intent - 1;
 
       int in_count = write_nbytes;
@@ -234,7 +234,7 @@ int main() {
       //
       // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
       //        read_nbytes, write_nbytes);
-      printf("%d\n", __LINE__);
+      // printf("%d\n", __LINE__);
       char *argstr = getl(); // this one is used to flush the newline.
                              // not good practice but i don't really care
       free(argstr);
@@ -278,10 +278,10 @@ int main() {
 
       if (count < 1)
         continue;
-      printf("total avail: %lu bytes\n", count);
+      // printf("total avail: %lu bytes\n", count);
       if (count > SHARED_BUFFER_MAX_SIZE)
         count = SHARED_BUFFER_MAX_SIZE;
-      int fd = open("/dev/zero", O_RDWR);
+      // int fd = open("/dev/zero", O_RDWR);
       char shared_out_buffer[count];
       // shared_buffer is the pointer that can be read by the host
 
@@ -300,7 +300,10 @@ int main() {
       wait_for_ack();
     }
 
-    // printf("\005 a\n");
+    // printf("akc\n");
+    //
+    // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
+    //        read_nbytes, write_nbytes);
     // wait_for_ack();
   }
 }

@@ -3,6 +3,8 @@ class Taskbar {
 
   element = (
     <footer>
+
+      <div id="screen_container"></div>
       <div id="launcher-button-container">
         <div id="launcher-button" on:click={() => { launcher.toggleVisible() }}><img src="/assets/icons/launcher.svg" style="height:100%;width:100%"></img></div>
       </div>
@@ -19,7 +21,7 @@ class Taskbar {
   );
   constructor() {
   }
-  addShortcut(svg:string,launch:()=>void){
+  addShortcut(svg: string, launch: () => void) {
     let elm = (<li>
       <input type="image" src={svg} id="showDialog" on:click={launch} />
     </li>);
