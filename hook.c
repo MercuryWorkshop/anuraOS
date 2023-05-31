@@ -146,7 +146,9 @@ void wait_for_ack() {
 
 int main() {
   pid_t pid = getpid();
-  // printf("pid: %u\n", pid);
+  printf("pid: %u\n", pid);
+
+  printf("p: %lu\n", sysconf(_SC_PAGE_SIZE));
 
   pty_t *ptys = malloc(0);
 
@@ -273,8 +275,10 @@ int main() {
       if (pty->closed == true)
         continue;
       ioctl(pty->master, FIONREAD, &count);
+
       if (count < 1)
         continue;
+      printf("total avail: %lu bytes\n", count);
       if (count > SHARED_BUFFER_MAX_SIZE)
         count = SHARED_BUFFER_MAX_SIZE;
       int fd = open("/dev/zero", O_RDWR);
@@ -296,7 +300,7 @@ int main() {
       wait_for_ack();
     }
 
-    printf("end!\n");
-    wait_for_ack();
+    // printf("\005 a\n");
+    // wait_for_ack();
   }
 }

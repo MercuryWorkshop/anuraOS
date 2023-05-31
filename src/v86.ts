@@ -5,16 +5,21 @@ const encoder = new TextEncoder();
 
 
 class V86Backend {
-  sendQueue: [number, string][] = [];
-  nextWrite: Uint8Array | null = null;
+  sendQueue: Uint8Array[] = [];
+  // nextWrite: Uint8Array | null = null;
   openQueue: { (number: number): void; }[] = [];
   onDataCallbacks: { [key: number]: (string: string) => void } = {};
+  read_intent_phys_addr: number;
+  write_intent_phys_addr: number;
+  new_intent_phys_addr: number;
+  read_nbytes_phys_addr: number;
+  write_nbytes_phys_addr: number;
 
   emulator;
-
-  writeLock = false;
-  writeLockQueue: [number, string][] = [];
-
+  //
+  // writeLock = false;
+  // writeLockQueue: [number, string][] = [];
+  //
   constructor() {
     this.emulator = new V86Starter({
       wasm_path: "/lib/v86.wasm",
@@ -70,8 +75,8 @@ class V86Backend {
     this.emulator.serial0_send(`c\n${TTYn}`);
   }
   openpty(command: string, onData: (string: string) => void) {
-    this.emulator.serial0_send(`n\n${command}\n`);
-
+    this.emulator.write_memory([1], this.new_intent_phys_addr);
+    this.emulator.serial0_send(`\x06\n${command}\n`);
     return new Promise((resolve) => {
       this.openQueue.push((number: number) => {
         this.onDataCallbacks[number] = onData;
@@ -81,19 +86,24 @@ class V86Backend {
   }
   writepty(TTYn: number, data: string) {
     const bytes = encoder.encode(data);
-    if (this.writeLock) {
-      // console.log("Dropping Swq" + data);
-      this.writeLockQueue.push([TTYn, data]);
-      return;
-    }
-    if (this.nextWrite) {
-      // console.log("dropping character: " + data);
-      this.sendQueue.push([TTYn, data]);
-      return;
-    }
+    // if (this.writeLock) {
+    //   // console.log("Dropping Swq" + data);
+    //   this.writeLockQueue.push([TTYn, data]);
+    //   return;
+    // }
+    // if (this.nextWrite) {
+    //   // console.log("dropping character: " + data);
+    //   this.sendQueue.push([TTYn, data]);
+    //   return;
+    // }
     // console.log("WRITING");
-    this.emulator.serial0_send(`w\n${TTYn}\n${bytes.length}\n`);
-    this.nextWrite = bytes;
+    // this.emulator.serial0_send(`w\n${TTYn}\n${bytes.length}\n`);
+    // this.nextWrite = bytes;
+    this.emulator.write_memory([TTYn + 1], this.write_intent_phys_addr);
+    // let bytes = encoder.encode(data);
+    this.emulator.write_memory([bytes.length], this.write_nbytes_phys_addr);
+
+    this.sendQueue.push(bytes);
   }
 
   _proc_data(data: string) {
@@ -107,12 +117,52 @@ class V86Backend {
     // }
     //
 
+
     const start = data.indexOf("\x05");
     if (start === -1) return; // \005 is our special control code
     data = data.substring(start + 1);
     const parts = data.split(" ");
 
     console.log("parts: " + parts);
+
+
+    switch (parts.shift()) {
+      case "i": {
+        parts.shift();
+        // @ts-ignore
+        [this.read_intent_phys_addr,
+        // @ts-ignore
+        this.write_intent_phys_addr, this.new_intent_phys_addr, this.read_nbytes_phys_addr,
+        // @ts-ignore
+        this.write_nbytes_phys_addr] = parts.map(p => parseInt(p));
+        break;
+      }
+      case "r": {
+        let addr = parseInt(parts[0]!);
+
+        let n_bytes = this.read_uint(this.read_nbytes_phys_addr);
+        let n_tty = this.read_uint(this.read_intent_phys_addr) - 1;
+
+        // console.log(`${n_bytes} from ${n_tty} at ${addr}`);
+        let mem = this.emulator.read_memory(addr, n_bytes);
+        let text = decoder.decode(mem);
+
+        console.log(`text from pty#${n_tty} : ${text}`);
+        this.onDataCallbacks[n_tty]!(text);
+        break;
+      }
+      case "w": {
+        let addr = parseInt(parts[0]!);
+        let bytes = this.sendQueue.shift();
+        this.emulator.write_memory(bytes, addr);
+      }
+      case "n": {
+        this.openQueue.shift()!(parseInt(parts[0]!));
+      }
+    }
+
+    this.emulator.serial0_send("\x06\n"); // ack'd
+
     // if (parts[0] === "r" && parts.length >= 3) {
     //
     //   this.writeLock = true;
@@ -151,6 +201,12 @@ class V86Backend {
     //   callback(parseInt(parts[1]!));
     //   this.emulator.serial0_send("\x06\n"); // ack'd
     // }
+  }
+  read_uint(addr: number) {
+    let array = this.emulator.read_memory(addr, 4);
+    let arrbuf = array.buffer.slice(array.byteOffset, array.byteLength + array.byteOffset);
+    let view = new DataView(arrbuf);
+    return view.getUint32(0, true);
   }
 
 
