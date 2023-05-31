@@ -1,0 +1,12 @@
+{
+  "name": "python",
+  "type": "auto",
+  "package": "anura.python",
+  "index": "console.html",
+  "icon": "python.png",
+  "wininfo":{
+    "title":"Python REPL",
+    "width":"700px",
+    "height":"500px"
+  }
+}

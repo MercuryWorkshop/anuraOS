@@ -59,15 +59,15 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
 
     closeContainer.setAttribute("class", "close");
     closeContainer.setAttribute("class", "windowButton");
-    closeContainer.innerHTML = '<img src="/assets/window/close.svg" height="16px">';
+    closeContainer.innerHTML = '<img src="/assets/window/close.svg" height="12px">';
 
     maximizeContainer.setAttribute("class", "maximize");
     maximizeContainer.setAttribute("class", "windowButton");
-    maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="16px">'
+    maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px">'
 
     minimizeContainer.setAttribute("class", "minimize");
     minimizeContainer.setAttribute("class", "windowButton");
-    minimizeContainer.innerHTML = '<img src="/assets/window/minimize.svg" height="16px">';
+    minimizeContainer.innerHTML = '<img src="/assets/window/minimize.svg" height="12px">';
 
     titleContainer.appendChild(titleContent);
     titleContainer.appendChild(minimizeContainer);
@@ -107,12 +107,12 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
             container.style.width = `${width}px`;
             container.style.height = `${height - 53}px`;
             container.setAttribute("maximized", "true") 
-            maximizeContainer.innerHTML = '<img src="/assets/window/restore.svg" height="16px">'
+            maximizeContainer.innerHTML = '<img src="/assets/window/restore.svg" height="12px">'
             // ro.observe(container);
         } else {
             container.setAttribute("style", container.getAttribute("old-style"))
             container.setAttribute("maximized", "false")
-            maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="16px">'
+            maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px">'
             // ro.unobserve(container);
         }
 
