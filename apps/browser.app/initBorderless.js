@@ -15,7 +15,7 @@ function loadingScript(currentpath) {
 
         let container = browser.content.parentElement
 
-        // someone pls add code to fix drawing
+        container.querySelector(".title").style["background-color"] = "rgba(0, 0, 0, 0)"
     } 
 
 }

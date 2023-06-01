@@ -29,6 +29,7 @@ body {
     height:24px; 
     padding:2px;
     align-items:center;
+    z-index: 1;
 }
 
 .aliceWMwin .titleContent {
@@ -53,7 +54,7 @@ body {
     aspect-ratio: 1 / 1;
     flex-shrink: 0;
     transition: background-color .2s ease-in-out;
-    z-index: 1;
+    z-index: 2;
     
 }
 
