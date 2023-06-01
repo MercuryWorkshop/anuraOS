@@ -38,9 +38,26 @@ window.openFile = function (path) {
         case 'pdf':
             openPDF(path)
             break;
-            
+        case 'py':
+            runPython(path)
+            break;
 
     }
+}
+
+async function runPython(path) {
+    let pythonInterpreter = await window.parent.anura.python("test")
+    fs.readFile(path, async function(err, data)  {
+        let fileView = window.parent.AliceWM.create("Python Output")
+        function handleOutput (out) {
+            fileView.content.innerText += out
+            console.log("Intercepted output: " + out)
+        }
+        let pythonInterpreter = await window.parent.anura.python("test")
+        pythonInterpreter.window.console.log = handleOutput
+        pythonInterpreter.runPython(new TextDecoder().decode(data))
+    })
+    
 }
 
 function openImage(path, mimetype) {

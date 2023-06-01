@@ -99,6 +99,32 @@ class Anura {
         this.apps[manifest.package] = app;
         return app;
     }
+    async python(appname: string) {
+        return await new Promise((resolve, reject) => {
+            let iframe = document.createElement("iframe")
+            iframe.setAttribute("style", "display: none")
+            iframe.setAttribute("src", "/apps/python.app/lib.html")
+            iframe.id = appname
+            iframe.onload = async function () {
+                console.log("Called from python")
+                //@ts-ignore
+                let pythonInterpreter = await document.getElementById(appname).contentWindow.loadPyodide({
+                stdin: () => {
+                        let result = prompt();
+                        //@ts-ignore
+                        echo(result);
+                        return result;
+                    },
+                });
+                pythonInterpreter.globals.set('AliceWM', AliceWM)
+                pythonInterpreter.globals.set('anura', anura)
+                //@ts-ignore
+                pythonInterpreter.window = document.getElementById(appname).contentWindow;
+                resolve(pythonInterpreter)
+            }
+            document.body.appendChild(iframe)
+        })
+    }
 }
 
 function openAppManager() {
