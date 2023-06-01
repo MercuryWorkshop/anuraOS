@@ -1,12 +1,8 @@
 {
   "name": "AboutBrowser",
-  "type": "auto",
+  "type": "manual",
   "package": "anura.browser",
   "index": "../../browser.html",
   "icon": "chrome.svg",
-  "wininfo":{
-    "title":"",
-    "width":"700px",
-    "height":"500px"
-  }
+  "handler": "initBorderless.js"
 }
