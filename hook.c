@@ -117,9 +117,9 @@ int virt_to_phys_user(uintptr_t *paddr, pid_t pid, uintptr_t vaddr) {
       (entry.pfn * sysconf(_SC_PAGE_SIZE)) + (vaddr % sysconf(_SC_PAGE_SIZE));
   return 0;
 }
-void alloc_aty(pty_t *pty, char *argv[], char *envp[]) {
+void alloc_aty(pty_t *pty, char *argv[], char *envp[], struct winsize *winp) {
   int master, slave;
-  openpty(&master, &slave, NULL, NULL, NULL);
+  openpty(&master, &slave, NULL, NULL, winp);
 
   pid_t child = fork();
   if (child == 0) {
@@ -145,6 +145,9 @@ void wait_for_ack() {
 }
 
 int main() {
+
+  // THIS IS USERSPACE DMA BITCH!! WE COMPILE IN THIS MUTHAFUCKER BETTER TAKE YO
+  // SENSITIVE ASS BACK TO KERNEL DRIVER
   pid_t pid = getpid();
   printf("pid: %u\n", pid);
 
@@ -159,24 +162,37 @@ int main() {
   volatile int read_intent = 0;
   volatile int new_intent = 0;
 
+  volatile int s_rows = 0;
+  volatile int s_cols = 0;
+  volatile int resize_intent = 0;
+
   volatile int read_nbytes = 0;
   volatile int write_nbytes = 0;
 
   uintptr_t read_intent_phys_addr;
   uintptr_t read_nbytes_phys_addr;
 
+  uintptr_t s_rows_phys_addr;
+  uintptr_t s_cols_phys_addr;
+  uintptr_t resize_intent_phys_addr;
+
   uintptr_t write_nbytes_phys_addr;
   uintptr_t write_intent_phys_addr;
   uintptr_t new_intent_phys_addr;
+
   virt_to_phys_user(&read_intent_phys_addr, pid, (uintptr_t)&read_intent);
   virt_to_phys_user(&write_intent_phys_addr, pid, (uintptr_t)&write_intent);
   virt_to_phys_user(&new_intent_phys_addr, pid, (uintptr_t)&new_intent);
   virt_to_phys_user(&read_nbytes_phys_addr, pid, (uintptr_t)&read_nbytes);
   virt_to_phys_user(&write_nbytes_phys_addr, pid, (uintptr_t)&write_nbytes);
 
-  printf("\005i %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
+  virt_to_phys_user(&s_rows_phys_addr, pid, (uintptr_t)&s_rows);
+  virt_to_phys_user(&s_cols_phys_addr, pid, (uintptr_t)&s_cols);
+  virt_to_phys_user(&resize_intent_phys_addr, pid, (uintptr_t)&resize_intent);
+  printf("\005i %lu %lu %lu %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
          write_intent_phys_addr, new_intent_phys_addr, read_nbytes_phys_addr,
-         write_nbytes_phys_addr);
+         write_nbytes_phys_addr, s_rows_phys_addr, s_cols_phys_addr,
+         resize_intent_phys_addr);
 
   read_nbytes = 100;
 
@@ -206,6 +222,15 @@ int main() {
     //      pty->closed = true;
     //    }
     //  }
+    if (resize_intent > 0) {
+      pty_t *pty = ptys + (resize_intent - 1) * sizeof(pty_t);
+      struct winsize winp;
+      winp.ws_col = s_cols;
+      winp.ws_row = s_rows;
+      ioctl(pty->slave, TIOCSWINSZ, &winp);
+      printf("resizing: %i %i\n", s_cols, s_rows);
+      resize_intent = 0;
+    }
 
     if (write_intent > 0) {
 
@@ -241,24 +266,36 @@ int main() {
       argstr = getl();
       // char argstr[1024];
       // scanf("%s", argstr);
-      printf("a: %s\n", argstr);
+      // printf("a: %s\n", argstr);
       char *argv[] = {"/bin/bash", "-c", argstr, NULL};
 
       num_ptys += 1;
       ptys = realloc(ptys, num_ptys * sizeof(pty_t));
 
       pty_t *pty = ptys + ((num_ptys - 1) * sizeof(pty_t));
-      alloc_aty(pty, argv, NULL);
+
+      struct winsize winp;
+      winp.ws_col = s_cols;
+      winp.ws_row = s_rows;
+      alloc_aty(pty, argv, NULL, &winp);
       free(argstr);
+
+      // don't know why but the kernel loves to rearrange addrs after realloc()
 
       virt_to_phys_user(&read_intent_phys_addr, pid, (uintptr_t)&read_intent);
       virt_to_phys_user(&write_intent_phys_addr, pid, (uintptr_t)&write_intent);
       virt_to_phys_user(&new_intent_phys_addr, pid, (uintptr_t)&new_intent);
       virt_to_phys_user(&read_nbytes_phys_addr, pid, (uintptr_t)&read_nbytes);
       virt_to_phys_user(&write_nbytes_phys_addr, pid, (uintptr_t)&write_nbytes);
-      printf("\005i %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
+
+      virt_to_phys_user(&s_rows_phys_addr, pid, (uintptr_t)&s_rows);
+      virt_to_phys_user(&s_cols_phys_addr, pid, (uintptr_t)&s_cols);
+      virt_to_phys_user(&resize_intent_phys_addr, pid,
+                        (uintptr_t)&resize_intent);
+      printf("\005i %lu %lu %lu %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
              write_intent_phys_addr, new_intent_phys_addr,
-             read_nbytes_phys_addr, write_nbytes_phys_addr);
+             read_nbytes_phys_addr, write_nbytes_phys_addr, s_rows_phys_addr,
+             s_cols_phys_addr, resize_intent_phys_addr);
       wait_for_ack();
 
       printf("\005n %i\n", num_ptys - 1);
@@ -287,7 +324,7 @@ int main() {
 
       count = read(pty->master, shared_out_buffer, count);
 
-      printf("want you to read: %lu bytes\n", count);
+      // printf("want you to read: %lu bytes\n", count);
 
       uintptr_t buffer_phys_addr;
       virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_out_buffer);
@@ -299,11 +336,5 @@ int main() {
       printf("\005r %lu\n", buffer_phys_addr);
       wait_for_ack();
     }
-
-    // printf("akc\n");
-    //
-    // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
-    //        read_nbytes, write_nbytes);
-    // wait_for_ack();
   }
 }

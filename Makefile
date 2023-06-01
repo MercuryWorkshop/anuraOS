@@ -10,7 +10,7 @@ rootfs:
 	echo "not implemented yet, harass coolelectronics if you want the image files"
 
 v86:
-	cd v86; make all
+	cd v86; make build/libv86.js
 	mv v86/build public
 	cp -r v86/bios public
 	

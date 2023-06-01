@@ -8,6 +8,7 @@ window.addEventListener("load", async () => {
   let anura = top.anura;
 
   const t = new hterm.Terminal();
+  top.t = t;
   // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix
 
   let htermNode = $("#terminal");
@@ -23,7 +24,7 @@ window.addEventListener("load", async () => {
   t.onTerminalReady = async () => {
     let io = t.io.push();
 
-    const pty = await anura.x86.openpty("bash", (data) => {
+    const pty = await anura.x86.openpty("TERM=xterm bash", t.screenSize.height, t.screenSize.width, (data) => {
       io.print(data);
     });
 
@@ -34,12 +35,9 @@ window.addEventListener("load", async () => {
 
     io.onVTKeystroke = writeData;
     io.sendString = writeData;
-    // io.onTerminalResize = (cols, rows) => {
-    //   cxReadFunc = cx.setCustomConsole((dat) => {
-    //     io.print(new TextDecoder().decode(dat).replaceAll("\n", "\r\n"))
-    //   }, cols, rows)
-    // };
-    // cx.run("/bin/bash", ["--login"], ["HOME=/home/user", "TERM=xterm", "USER=user", "SHELL=/bin/bash", "EDITOR=vim", "LANG=en_US.UTF-8", "LC_ALL=C"]);
+    io.onTerminalResize = (cols, rows) => {
+      anura.x86.resizepty(pty, cols, rows);
+    }
 
     t.installKeyboard();
 

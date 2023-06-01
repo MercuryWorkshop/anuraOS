@@ -14,6 +14,9 @@ class V86Backend {
   new_intent_phys_addr: number;
   read_nbytes_phys_addr: number;
   write_nbytes_phys_addr: number;
+  s_rows_phys_addr: number;
+  s_cols_phys_addr: number;
+  resize_intent_phys_addr: number;
 
   emulator;
   //
@@ -21,27 +24,32 @@ class V86Backend {
   // writeLockQueue: [number, string][] = [];
   //
   constructor() {
-    // let screen_container = document.getElementById("div");
-    // document.body.appendChild(screen_container);
+    let screen_container = document.createElement("div");
+    screen_container.style.position = "fixed";
+    screen_container.style.width = "900px";
+    screen_container.style.height = "900px";
+    document.body.appendChild(screen_container!);
+    screen_container.appendChild(document.createElement("canvas"));
+    screen_container.appendChild(document.createElement("div"));
     this.emulator = new V86Starter({
       wasm_path: "/lib/v86.wasm",
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
-      // screen_container,
-      // bzimage_initrd_from_filesystem: true,
+      screen_container,
+      bzimage_initrd_from_filesystem: true,
       // bzimage: {
       //   url: "/images/bzimage",
       //   size: 6126336,
       //   async: false,
       // },
-      cmdline: "rw init=/bin/bash root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
+      cmdline: "rw init=/bin/systemd root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
       filesystem: {
         basefs: {
           url: "/images/deb-fs.json",
         },
         baseurl: "/images/deb-root-flat/",
       },
-      initial_state: { url: "/images/debian-state-base.bin" },
+      // initial_state: { url: "/images/debian-state-base.bin" },
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
       network_relay_url: "ws://relay.widgetry.org/",
@@ -61,7 +69,7 @@ class V86Backend {
 
     this.emulator.add_listener("serial0-output-char", (char: string) => {
       if (char === "\r") {
-        // console.log(data);
+        console.log(data);
 
         this._proc_data(data);
         data = "";
@@ -76,8 +84,12 @@ class V86Backend {
   closepty(TTYn: number) {
     this.emulator.serial0_send(`c\n${TTYn}`);
   }
-  openpty(command: string, onData: (string: string) => void) {
-    this.emulator.write_memory([1], this.new_intent_phys_addr);
+  openpty(command: string, cols: number, rows: number, onData: (string: string) => void) {
+    this.write_uint(1, this.new_intent_phys_addr);
+    this.write_uint(rows, this.s_rows_phys_addr);
+    this.write_uint(cols, this.s_cols_phys_addr);
+
+
     this.emulator.serial0_send(`${command}\n`);
     return new Promise((resolve) => {
       this.openQueue.push((number: number) => {
@@ -85,6 +97,11 @@ class V86Backend {
         resolve(number);
       })
     });
+  }
+  resizepty(TTYn: number, cols: number, rows: number) {
+    this.write_uint(rows, this.s_rows_phys_addr);
+    this.write_uint(cols, this.s_cols_phys_addr);
+    this.write_uint(TTYn + 1, this.resize_intent_phys_addr);
   }
   writepty(TTYn: number, data: string) {
     const bytes = encoder.encode(data);
@@ -94,9 +111,9 @@ class V86Backend {
       return;
     }
 
-    this.emulator.write_memory([TTYn + 1], this.write_intent_phys_addr);
+    this.write_uint(TTYn + 1, this.write_intent_phys_addr);
 
-    this.emulator.write_memory([bytes.length], this.write_nbytes_phys_addr);
+    this.write_uint(bytes.length, this.write_nbytes_phys_addr);
 
     this.nextWrite = bytes;
   }
@@ -122,12 +139,12 @@ class V86Backend {
 
     switch (parts.shift()) {
       case "i": {
-        // @ts-ignore
+        // @ts-ignore, temporary of course
         [this.read_intent_phys_addr,
         // @ts-ignore
         this.write_intent_phys_addr, this.new_intent_phys_addr, this.read_nbytes_phys_addr,
         // @ts-ignore
-        this.write_nbytes_phys_addr] = parts.map(p => parseInt(p));
+        this.write_nbytes_phys_addr, this.s_rows_phys_addr, this.s_cols_phys_addr, this.resize_intent_phys_addr] = parts.map(p => parseInt(p));
         break;
       }
       case "r": {
@@ -136,7 +153,6 @@ class V86Backend {
         let n_bytes = this.read_uint(this.read_nbytes_phys_addr);
         let n_tty = this.read_uint(this.read_intent_phys_addr) - 1;
 
-        // console.log(`${n_bytes} from ${n_tty} at ${addr}`);
         let mem = this.emulator.read_memory(addr, n_bytes);
         let text = decoder.decode(mem);
 
@@ -149,7 +165,7 @@ class V86Backend {
         this.emulator.write_memory(this.nextWrite, addr);
         this.nextWrite = null;
 
-        this.emulator.write_memory([0], this.write_intent_phys_addr);
+        this.write_uint(0, this.write_intent_phys_addr);
 
         let queued = this.sendQueue.shift();
         if (queued) {
@@ -166,50 +182,15 @@ class V86Backend {
 
     this.emulator.serial0_send("\x06\n"); // ack'd
 
-    // if (parts[0] === "r" && parts.length >= 3) {
-    //
-    //   this.writeLock = true;
-    //   const nPty = parseInt(parts[1]!);
-    //   const nBytes = parseInt(parts[2]!);
-    //   const addr = parseInt(parts[3]!);
-    //
-    //   // console.log(`${n_bytes} from ${n_tty} at ${addr}`);
-    //   const mem = this.emulator.read_memory(addr, nBytes);
-    //   const text = decoder.decode(mem);
-    //   // console.log(`text from pty#${n_tty} : ${text}`);
-    //   let callback = this.onDataCallbacks[nPty];
-    //   if (!callback) return;
-    //   callback(text);
-    //
-    //   this.emulator.serial0_send("\x06\n"); // ack'd
-    //   // console.log("ACKING");
-    //
-    // } else if (parts[0] === "w") {
-    //   const addr = parseInt(parts[1]!);
-    //   const bytes = this.nextWrite;
-    //   this.emulator.write_memory(bytes, addr);
-    //
-    //   this.emulator.serial0_send("\x06\n"); // ack'd
-    //
-    //   // console.log("ACKING (w)");
-    //   setTimeout(() => this.nextWrite = null, 0);
-    //   const queued = this.sendQueue.shift();
-    //   if (queued) {
-    //     this.writepty(queued[0], queued[1])
-    //   }
-    //
-    // } else if (parts[0] === "n") {
-    //   let callback = this.openQueue.shift();
-    //   if (!callback) return;
-    //   callback(parseInt(parts[1]!));
-    //   this.emulator.serial0_send("\x06\n"); // ack'd
-    // }
   }
   read_uint(addr: number) {
-    let array = this.emulator.read_memory(addr, 4);
-    let arrbuf = array.buffer.slice(array.byteOffset, array.byteLength + array.byteOffset);
-    let view = new DataView(arrbuf);
-    return view.getUint32(0, true);
+    let b = this.emulator.read_memory(addr, 4);
+    return b[0] + (b[1] << 8) + (b[2] << 16) + (b[3] << 24);
+    // it's as shrimple as that
+  }
+  write_uint(i: number, addr: number) {
+    let bytes = [i, i >> 8, i >> 16, i >> 24].map(a => a % 256);
+    this.emulator.write_memory(bytes, addr);
   }
 
 
