@@ -21,18 +21,20 @@ class V86Backend {
   // writeLockQueue: [number, string][] = [];
   //
   constructor() {
+    let screen_container = document.getElementById("div");
+    // document.body.appendChild(screen_container);
     this.emulator = new V86Starter({
       wasm_path: "/lib/v86.wasm",
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
-      screen_container: document.getElementById("screen_container"),
+      screen_container,
       bzimage_initrd_from_filesystem: true,
       // bzimage: {
       //   url: "/images/bzimage",
       //   size: 6126336,
       //   async: false,
       // },
-      cmdline: "rw init=/bin/systemd root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
+      cmdline: "rw init=/bin/bash root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
       filesystem: {
         basefs: {
           url: "/images/deb-fs.json",

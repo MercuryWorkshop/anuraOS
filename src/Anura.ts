@@ -100,7 +100,6 @@ class Anura {
         return app;
     }
 }
-let anura = new Anura();
 
 function openAppManager() {
     fetch("applicationmanager/launchapp.js")
@@ -110,12 +109,16 @@ function openAppManager() {
         })
 }
 
+let anura: Anura;
 const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds))
 
 window.addEventListener("load", async () => {
     document.body.appendChild(bootsplash.element);
 
     await sleep(2000);
+    anura = new Anura();
+    (window as any).anura = anura;
+
 
     bootsplash.element.remove();
     anura.logger.debug("boot completed");
@@ -168,4 +171,3 @@ document.addEventListener("anura-login-completed", () => {
     });
 
 });
-(window as any).anura = anura;
