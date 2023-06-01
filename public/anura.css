@@ -126,19 +126,25 @@ nav li {
 .launcher {
     position: absolute;
     width: min(70%, 35em);
-    height: min(80%, 40em);
+    height: min(60%, 30em);
     background-color: rgba(22, 22, 22, 0.8);
     border-radius: 1em;
     bottom: 4em;
     backdrop-filter: blur(5px);
     display: flex;
     flex-direction: column;
-    display: none;
+    display: block;
+    transition: all .1s ease-out;
+    opacity: 0;
+    z-index: -1;
 }
 
 .launcher.active {
     display: block;
+    opacity: 1;
+    height: min(80%, 40em);
     z-index: 9999;
+    transition: all .1s ease-in;
 }
 
 .launcher .topSearchBar {
