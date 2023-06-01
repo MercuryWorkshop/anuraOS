@@ -228,7 +228,7 @@ int main() {
       wait_for_ack();
       write(pty->master, shared_in_buffer, in_count);
       free(shared_in_buffer);
-      write_intent = 0;
+      // write_intent = 0;
     }
     if (new_intent > 0) {
       //

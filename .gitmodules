@@ -9,7 +9,7 @@
 	url = https://github.com/herenow/wsProxy
 [submodule "v86"]
 	path = v86
-	url = https://github.com/MercuryWorkshop/v86
+	url = https://github.com/r58Playz/v86
 [submodule "apps/webretro.app/webretro"]
 	path = apps/webretro.app/webretro
 	url = https://github.com/BinBashBanana/webretro
