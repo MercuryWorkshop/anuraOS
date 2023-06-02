@@ -10,6 +10,7 @@ let oobeview = new OobeView();
 let oobewelcomestep = new OobeWelcomeStep();
 let oobeassetsstep = new OobeAssetsStep();
 
+
 class Anura {
     x86: null | V86Backend;
     constructor() {
@@ -27,6 +28,8 @@ class Anura {
                     })
                 })
             }
+            
+
         }
     }
     fs: any = undefined
