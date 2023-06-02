@@ -13,9 +13,7 @@ let oobeassetsstep = new OobeAssetsStep();
 class Anura {
     x86: null | V86Backend;
     constructor() {
-        if (localStorage.getItem("x86-enabled") === "true") {
-            this.x86 = new V86Backend(); //lemme fix my shit first
-        }
+
 
         if (localStorage.getItem("use-expirimental-fs") === "true") {
             this.fs = new Filer.FileSystem({
@@ -66,17 +64,17 @@ class Anura {
             windowinstance: null,
             async launch() {
                 if (manifest.type == 'manual') { // This type of application is discouraged for sure but is the most powerful
-                    fetch(`${location}/${manifest.handler}`)
-                        .then(response => response.text())
-                        .then((data) => {
-                            top!.window.eval(data);
-                            top!.window.eval(`loadingScript("${location}")`)
-                        })
+                    let req = await fetch(`${location}/${manifest.handler}`)
+                    let data = await req.text();
+                    top!.window.eval(data);
+                    // top!.window.eval(`loadingScript("${location}",)`)
+                    // @ts-ignore
+                    loadingScript(location, app);
                 } else {
-                    if (this.windowinstance) return;
-                    let win = AliceWM.create(this.manifest.wininfo, () => {
-                        this.windowinstance = null;
+                    // if (this.windowinstance) return;
+                    let win = AliceWM.create(this.manifest.wininfo, (_: any) => {
                     });
+                    this.windowinstance = win;
 
                     let iframe: any = document.createElement("iframe")
                     iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
@@ -100,11 +98,11 @@ class Anura {
             iframe.setAttribute("style", "display: none")
             iframe.setAttribute("src", "/apps/python.app/lib.html")
             iframe.id = appname
-            iframe.onload = async function () {
+            iframe.onload = async function() {
                 console.log("Called from python")
                 //@ts-ignore
                 let pythonInterpreter = await document.getElementById(appname).contentWindow.loadPyodide({
-                stdin: () => {
+                    stdin: () => {
                         let result = prompt();
                         //@ts-ignore
                         echo(result);
@@ -159,7 +157,7 @@ document.addEventListener("anura-boot-completed", async () => {
     // });
 });
 
-document.addEventListener("anura-login-completed", () => {
+document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/browser.app");
     anura.registerApp("apps/term.app");
     anura.registerApp("apps/glxgears.app");
@@ -169,6 +167,13 @@ document.addEventListener("anura-login-completed", () => {
     anura.registerApp("apps/fsapp.app");
     anura.registerApp("apps/chideNew.app");
     anura.registerApp("apps/python.app")
+
+    if (localStorage.getItem("x86-enabled") === "true") {
+        let mgr = await anura.registerApp("apps/x86mgr.app");
+        await mgr.launch();
+        anura.x86 = new V86Backend(); //lemme fix my shit first
+
+    }
     // anura.registerApp("apps/webretro.app"); nothing here
 
     document.body.appendChild(contextMenu.element);

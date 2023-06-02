@@ -23,20 +23,15 @@ class V86Backend {
   // writeLock = false;
   // writeLockQueue: [number, string][] = [];
   //
+
   constructor() {
-    let screen_container = document.createElement("div");
-    screen_container.style.position = "fixed";
-    screen_container.style.width = "900px";
-    screen_container.style.height = "900px";
-    document.body.appendChild(screen_container!);
-    screen_container.appendChild(document.createElement("canvas"));
-    screen_container.appendChild(document.createElement("div"));
+
     this.emulator = new V86Starter({
       wasm_path: "/lib/v86.wasm",
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
-      screen_container,
-      bzimage_initrd_from_filesystem: true,
+      screen_container: anura.apps["anura.x86mgr"].windowinstance.content.querySelector("div"),
+      // bzimage_initrd_from_filesystem: true,
       // bzimage: {
       //   url: "/images/bzimage",
       //   size: 6126336,
@@ -49,7 +44,7 @@ class V86Backend {
         },
         baseurl: "/images/deb-root-flat/",
       },
-      // initial_state: { url: "/images/debian-state-base.bin" },
+      initial_state: { url: "/images/debian-state-base.bin" },
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
       network_relay_url: "ws://relay.widgetry.org/",
