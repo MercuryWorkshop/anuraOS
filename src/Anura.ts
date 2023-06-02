@@ -18,22 +18,17 @@ class Anura {
         }
 
         if (localStorage.getItem("use-expirimental-fs") === "true") {
-            const script = document.createElement('script');
-            script.src = "/assets/libs/filer.min.js"
-            script.onload = () => {
-                anura.fs = new Filer.FileSystem({
-                    name: "anura-mainContext",
-                    provider: new Filer.FileSystem.providers.IndexedDB()
-                });
-                anura.fs.readFileSync = async (path: string) => {
-                    return await new Promise((resolve, reject) => {
-                        return anura.fs.readFile(path, function async(err: any, data: any) {
-                            resolve(new TextDecoder('utf8').decode(data))
-                        })
+            this.fs = new Filer.FileSystem({
+                name: "anura-mainContext",
+                provider: new Filer.FileSystem.providers.IndexedDB()
+            });
+            this.fs.readFileSync = async (path: string) => {
+                return await new Promise((resolve, reject) => {
+                    return anura.fs.readFile(path, function async(err: any, data: any) {
+                        resolve(new TextDecoder('utf8').decode(data))
                     })
-                }
+                })
             }
-            document.head.appendChild(script)
         }
     }
     fs: any = undefined

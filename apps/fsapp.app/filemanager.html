@@ -155,7 +155,7 @@
                             if (stats.isDirectory()) {
                                 name.innerText = `${file}/`
                                 description.innerText = "Folder"
-                                date.innerText = new Date(stats.mtime/1000).toLocaleString()
+                                date.innerText = new Date(stats.mtime).toLocaleString()
                                 icon.class = '';
                                 size.innerText = stats.size
 
@@ -172,7 +172,7 @@
                                 name.innerText = `${file}`
                                 description.innerText = "Anura File"
                                 icon.class = '';
-                                date.innerText = new Date(stats.mtime/1000).toLocaleString()
+                                date.innerText = new Date(stats.mtime).toLocaleString()
                                 size.innerText = stats.size
 
                                 iconContainer.appendChild(icon)
