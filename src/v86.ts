@@ -25,6 +25,20 @@ class V86Backend {
   //
 
   constructor() {
+    var fs = new Filer.FileSystem({
+      name: "anura-mainContext",
+      provider: new Filer.FileSystem.providers.IndexedDB()
+    });
+    var Path = Filer.Path;
+    var Buffer = Filer.Buffer;
+    var sh = new fs.Shell();
+    //@ts-ignore
+    window.fs = fs;
+    //@ts-ignore
+    window.path = Path;
+    //@ts-ignore
+    window.sh = sh;
+    window.Buffer = Buffer;
 
     this.emulator = new V86Starter({
       wasm_path: "/lib/v86.wasm",
@@ -37,17 +51,18 @@ class V86Backend {
       //   size: 6126336,
       //   async: false,
       // },
-      cmdline: "rw init=/bin/systemd root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
-      filesystem: {
-        basefs: {
-          url: "/images/deb-fs.json",
-        },
-        baseurl: "/images/deb-root-flat/",
+      bzimage: {
+        url: "/images/buildroot-bzimage.bin",
+        size: 5166352,
+        async: false,
       },
-      initial_state: { url: "/images/debian-state-base.bin" },
+      cmdline: "tsc=reliable mitigations=off random.trust_cpu=on",
+      // cmdline: "rw init=/bin/systemd root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
+      filesystem: {fs, sh, Path, Buffer},
+      // initial_state: { url: "/images/debian-state-base.bin" },
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
-      network_relay_url: "ws://relay.widgetry.org/",
+      // network_relay_url: "ws://relay.widgetry.org/",
       autostart: true,
       // uart1: true,
       // uart2: true,
