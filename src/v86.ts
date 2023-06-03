@@ -52,13 +52,17 @@ class V86Backend {
       //   async: false,
       // },
       bzimage: {
-        url: "/images/buildroot-bzimage.bin",
-        size: 5166352,
+        url: "/images/bzImage",
+        // size: 11967680,
         async: false,
       },
+      // hda: {
+      //   // url: "images/deb.bin",
+      //   buffer: ffs,
+      // },
       cmdline: "tsc=reliable mitigations=off random.trust_cpu=on",
       // cmdline: "rw init=/bin/systemd root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
-      filesystem: {fs, sh, Path, Buffer},
+      filesystem: { fs, sh, Path, Buffer },
       // initial_state: { url: "/images/debian-state-base.bin" },
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
@@ -215,4 +219,61 @@ async function a() {
   await new Promise(resolve => setTimeout(resolve, 300));
   anura.x86!.emulator.serial0_send("gcc /hook.c -o /hook -lutil\n");
   anura.x86!.emulator.serial0_send("/hook\n");
+}
+
+async function icopier() {
+  let r = await fetch("/images/deb-fs.json");
+  let resp = await r.json();
+  function extractFolder(element: any, path: any) {
+    let isFolder = false
+    console.log(`${path}/${element[0]}`)
+    if (typeof (element[6]) == 'object') {
+      isFolder = true
+    }
+    // console.log("Folder: " + isFolder)
+    // if (isFolder) {
+    //   element[6].forEach((elementInFolder: any) => {
+    //     extractFolder(elementInFolder, `${path}/${element[0]}`)
+    //   });
+    // }
+    if (!isFolder) { // fetch and commit to FS
+      fetch(`images/deb-root-flat/${path}/${element[6]}`)
+        .then(response => response.arrayBuffer())
+        .then(response => {
+          anura.fs.writeFile(`${path}/${element[0]}`, Filer.Buffer.from(response), function(err: any) {
+            console.log("comitted to fs")
+          })
+          Filer.Buffer.from(response)
+        })
+    }
+  }
+  resp.fsroot.forEach(async (element: any) => {
+    let isFolder = false
+    console.log(`/${element[0]}`)
+    if (typeof (element[6]) == 'object') {
+      isFolder = true
+    }
+    console.log("Folder: " + isFolder)
+    if (isFolder) {
+      element[6].forEach((elementInFolder: any) => {
+        extractFolder(elementInFolder, `/${element[0]}`)
+      });
+    }
+    if (!isFolder) { // fetch and commit to FS
+      let r = await fetch(`images/deb-root-flat/${element[6]}`);
+      if (!r.ok) {
+        r = await fetch(`images/deb-root/${element[6]}`);
+        if (!r.ok) {
+          console.error("errore!");
+        }
+      }
+      let buf = await r.arrayBuffer();
+
+      anura.fs.writeFile(`/${element[0]}`, Filer.Buffer.from(buf), function(err: any) {
+        console.log("comitted to fs")
+      })
+      // Filer.Buffer.from(res)
+    }
+  });
+
 }
