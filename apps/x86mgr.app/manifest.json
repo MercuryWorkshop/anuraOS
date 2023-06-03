@@ -3,6 +3,6 @@
   "type": "manual",
   "package": "anura.x86mgr",
   "index": "index.html",
-  "icon": "term.png",
+  "icon": "xorg.svg",
   "handler": "launch.js"
 }
