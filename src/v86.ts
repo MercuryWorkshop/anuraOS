@@ -24,7 +24,7 @@ class V86Backend {
   // writeLockQueue: [number, string][] = [];
   //
 
-  constructor() {
+  constructor(dbr: File) {
     var fs = new Filer.FileSystem({
       name: "anura-mainContext",
       provider: new Filer.FileSystem.providers.IndexedDB()
@@ -45,28 +45,33 @@ class V86Backend {
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       screen_container: anura.apps["anura.x86mgr"].windowinstance.content.querySelector("div"),
-      // bzimage_initrd_from_filesystem: true,
-      // bzimage: {
-      //   url: "/images/bzimage",
-      //   size: 6126336,
-      //   async: false,
-      // },
+      bzimage_initrd_from_filesystem: true,
       bzimage: {
         url: "/images/bzImage",
-        // size: 11967680,
-        async: false,
       },
-      // hda: {
-      //   // url: "images/deb.bin",
-      //   buffer: ffs,
+      // initrd: {
+      //
+      //   url: "/images/rootfs/boot/initramfs-virt",
       // },
-      cmdline: "tsc=reliable mitigations=off random.trust_cpu=on",
-      // cmdline: "rw init=/bin/systemd root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
+      // bzimage: {
+      //   url: "/images/rootfs/boot/vmlinuz-virt",
+      //   // size: 11967680,
+      //   async: false,
+      // },
+      hda: {
+        // url: "images/deb.bin",
+        buffer: dbr,
+        async: true,
+      },
+      cmdline: "tsc=reliable  mitigations=off random.trust_cpu=on",
+
+      // cmdline: "rw init=/bin/sh root=/dev/sda rootfstype=ext4 tsc=reliable  mitigations=off random.trust_cpu=on",
+      // cmdline: "rw init=/bin/shsrs root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
       filesystem: { fs, sh, Path, Buffer },
       // initial_state: { url: "/images/debian-state-base.bin" },
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
-      // network_relay_url: "ws://relay.widgetry.org/",
+      network_relay_url: "ws://relay.widgetry.org/",
       autostart: true,
       // uart1: true,
       // uart2: true,
@@ -224,56 +229,85 @@ async function a() {
 async function icopier() {
   let r = await fetch("/images/deb-fs.json");
   let resp = await r.json();
-  function extractFolder(element: any, path: any) {
-    let isFolder = false
-    console.log(`${path}/${element[0]}`)
+  let threads = 0;
+
+  function count(element: any): number {
     if (typeof (element[6]) == 'object') {
-      isFolder = true
-    }
-    // console.log("Folder: " + isFolder)
-    // if (isFolder) {
-    //   element[6].forEach((elementInFolder: any) => {
-    //     extractFolder(elementInFolder, `${path}/${element[0]}`)
-    //   });
-    // }
-    if (!isFolder) { // fetch and commit to FS
-      fetch(`images/deb-root-flat/${path}/${element[6]}`)
-        .then(response => response.arrayBuffer())
-        .then(response => {
-          anura.fs.writeFile(`${path}/${element[0]}`, Filer.Buffer.from(response), function(err: any) {
-            console.log("comitted to fs")
-          })
-          Filer.Buffer.from(response)
-        })
+      let n = 0;
+      for (let elementInFolder of element[6]) {
+        n += count(elementInFolder);
+      }
+      return n;
+    } else {
+      return 1;
     }
   }
-  resp.fsroot.forEach(async (element: any) => {
+
+
+  let current = 0;
+  async function extractFolder(element: any, path: any, dolinks: boolean) {
+    anura.fs.mkdir(path, () => { });
     let isFolder = false
-    console.log(`/${element[0]}`)
+    // console.log(`${path}/${element[0]}`)
     if (typeof (element[6]) == 'object') {
       isFolder = true
     }
-    console.log("Folder: " + isFolder)
-    if (isFolder) {
-      element[6].forEach((elementInFolder: any) => {
-        extractFolder(elementInFolder, `/${element[0]}`)
-      });
-    }
-    if (!isFolder) { // fetch and commit to FS
-      let r = await fetch(`images/deb-root-flat/${element[6]}`);
-      if (!r.ok) {
-        r = await fetch(`images/deb-root/${element[6]}`);
-        if (!r.ok) {
-          console.error("errore!");
-        }
-      }
-      let buf = await r.arrayBuffer();
 
-      anura.fs.writeFile(`/${element[0]}`, Filer.Buffer.from(buf), function(err: any) {
-        console.log("comitted to fs")
-      })
-      // Filer.Buffer.from(res)
+    let octal = element[3].toString(8);
+
+    let permission = element[3].toString(8).substring(octal.length - 3);
+    let mode = element[3].toString(8).substring(0, octal.length - 3);
+    // console.log("Folder: " + isFolder)
+    if (isFolder) {
+      // console.log(element[0]);
+      for (let elementInFolder of element[6]) {
+        await extractFolder(elementInFolder, `${path}/${element[0]}`, dolinks)
+      }
     }
+    // console.log(`m: ${mode}, ${permission}`)
+    if (!isFolder) { // fetch and commit to FS
+      current += 1;
+      if (current % 200 == 0) {
+        console.log(`${current / max * 100}%`)
+      }
+      if (mode.startsWith("12")) {
+        if (dolinks) {
+          let dest = element[6].startsWith("/") ? element[6] : `${path}/${element[6]}`;
+          console.log(`symlining ${path}/${element[0]} to ${dest}`)
+          anura.fs.symlink(`${dest}`, `${path}/${element[0]}`, function(err: any) {
+            if (err) {
+              console.log(err)
+            }
+          });
+        }
+      } else if (!dolinks) {
+        let resp = await fetch(`images/deb-root-flat/${element[6]}`);
+        let buf = await resp.arrayBuffer();
+        // console.log(`${path}/${element[0]}`);
+        anura.fs.writeFile(`${path}/${element[0]}`, Filer.Buffer.from(buf), function(err: any) {
+          if (err) {
+            console.error(err);
+          }
+          anura.fs.chmod(`${path}/${element[0]}`, permission, (err: string | null) => {
+            if (err) {
+              console.error(err);
+            }
+          });
+        });
+      }
+    }
+  }
+
+  let max = 0;
+  resp.fsroot.forEach(async (element: any) => {
+    max += count(element);
+  });
+  console.log(max + " total");
+  resp.fsroot.forEach(async (element: any) => {
+    extractFolder(element, "/", false);
+  });
+  resp.fsroot.forEach(async (element: any) => {
+    extractFolder(element, "/", true);
   });
 
 }

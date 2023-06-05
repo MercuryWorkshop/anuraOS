@@ -1,5 +1,11 @@
 
 function loadingScript(currentpath, app) {
+  if (app.windowinstance) {
+    app.windowinstance.focus();
+    return;
+  }
+
+
   let win = AliceWM.create({ "title": "", "width": "700px", "height": "500px" })
   app.windowinstance = win;
 

@@ -28,7 +28,7 @@ class Anura {
                     })
                 })
             }
-            
+
 
         }
     }
@@ -141,7 +141,6 @@ window.addEventListener("load", async () => {
     anura = new Anura();
     (window as any).anura = anura;
 
-
     bootsplash.element.remove();
     anura.logger.debug("boot completed");
     document.dispatchEvent(new Event("anura-boot-completed"));
@@ -174,7 +173,90 @@ document.addEventListener("anura-login-completed", async () => {
     if (localStorage.getItem("x86-enabled") === "true") {
         let mgr = await anura.registerApp("apps/x86mgr.app");
         await mgr.launch();
-        anura.x86 = new V86Backend(); //lemme fix my shit first
+
+        let slice_size = 2 ** 17 * 32; //this should be optimal
+
+        let finp: HTMLInputElement = React.createElement("input", { type: "file", id: "input" }) as unknown as HTMLInputElement;
+        document.body.appendChild(finp);
+
+
+
+        const request = indexedDB.open("image", 2);
+        request.onupgradeneeded = (event: any) => {
+            const db: IDBDatabase = event.target.result;
+
+            db.createObjectStore("parts");
+        };
+        let db: IDBDatabase = (await new Promise(r => request.onsuccess = r) as any).target.result;
+
+
+        (window as any).file2 = async (f: File) => {
+            let trn = db.transaction("parts", "readwrite").objectStore("parts");
+            trn.put(f.size, "size");
+
+            let i = 0;
+            while (i * slice_size < f.size) {
+
+                let buf = await f.slice(i * slice_size, (i + 1) * slice_size).arrayBuffer();
+                await new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(buf, i).onsuccess = r);
+                i++;
+
+                if (i % 10 == 0) {
+                    console.log(i / (f.size / slice_size));
+                }
+            }
+        }
+
+
+        let size = (await new Promise(r => db.transaction("parts").objectStore("parts").get("size").onsuccess = r) as any).target.result;
+        console.log(size);
+
+
+        const fakefile = {
+            size,
+            slice: async (start: number, end: number) => {
+                let starti = Math.floor(start / slice_size);
+                let endi = Math.floor(end / slice_size);
+
+
+
+
+
+                let i = starti;
+
+
+                let buf = null;
+
+                while (i <= endi) {
+                    let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+                    let slice = part.slice(Math.max(0, start - (i * slice_size)), end - (i * slice_size));
+                    if (buf == null) {
+                        buf = slice;
+                    } else {
+                        buf = catBufs(buf, slice);
+                    }
+
+                    i++;
+                }
+
+
+
+
+                return new Blob([buf!]);
+
+            }
+        };
+        (window as any).fakefile = fakefile;
+        // @ts-ignore
+        fakefile.__proto__ = File.prototype;
+
+        // console.log(fakefile.size)
+
+        // finp.addEventListener("change", e => {
+        anura.x86 = new V86Backend(fakefile as any);
+
+
+        // })
 
     }
     // anura.registerApp("apps/webretro.app"); nothing here
@@ -200,3 +282,9 @@ document.addEventListener("anura-login-completed", async () => {
     });
 
 });
+function catBufs(buffer1: ArrayBuffer, buffer2: ArrayBuffer): ArrayBuffer {
+    var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
+    tmp.set(new Uint8Array(buffer1), 0);
+    tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
+    return tmp.buffer;
+}
