@@ -233,7 +233,11 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/sshy.app"); // ssh will be reworked later
     anura.registerApp("apps/fsapp.app");
     anura.registerApp("apps/chideNew.app");
-    anura.registerApp("apps/python.app")
+    anura.registerApp("apps/python.app");
+    // anura.registerApp("games.app");
+    // if you want to use the games app, uncomment this, clone the repo in /apps 
+    // and rename it to games.app
+    // the games app is too large and unneccesary for ordinary developers
 
     if ((await (await (fetch('/fs/')))).status === 404) {
         
@@ -288,10 +292,12 @@ document.addEventListener("anura-login-completed", async () => {
 
 
         const fakefile = {
-            size,
+            size: size,
             slice: async (start: number, end: number) => {
                 let starti = Math.floor(start / slice_size);
                 let endi = Math.floor(end / slice_size);
+
+                // console.log(`${start}-${end}`);
 
 
 
@@ -319,6 +325,47 @@ document.addEventListener("anura-login-completed", async () => {
 
                 return new Blob([buf!]);
 
+            },
+            save: async () => {
+
+                // this can be greatly optimized. first bunch together everything that shares a slice, do changes, then put() in once sweep
+                const buf_size = 256;
+                for (let [offset, buffer] of anura.x86?.emulator.disk_images.hda.block_cache) {
+                    let start = offset * buf_size;
+
+
+                    let starti = Math.floor(start / slice_size);
+                    let endi = Math.floor((start + buf_size) / slice_size);
+                    console.log(start);
+
+
+
+                    let i = starti;
+
+
+                    while (i <= endi) {
+                        let slice = buffer.slice(0, Math.min(buf_size, slice_size - start));
+
+
+
+                        let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+                        let tmpb = new Uint8Array(part);
+
+                        if ((start % slice_size) + 256 > slice_size) {
+                            console.error("data corruption");
+                        }
+
+
+                        tmpb.set(slice, start % slice_size);
+
+                        await new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(tmpb.buffer, i).onsuccess = r);
+
+                        i++;
+                    }
+                }
+                console.log("x");
+                return "h";
+
             }
         };
         (window as any).fakefile = fakefile;
@@ -338,6 +385,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
+    document.body.appendChild(launcher.clickoffChecker);
     document.body.appendChild(taskbar.element);
 
     (window as any).taskbar = taskbar;
@@ -354,6 +402,11 @@ document.addEventListener("anura-login-completed", async () => {
     document.addEventListener("click", (e) => {
         if (e.button != 0) return;
         (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
+    });
+    
+    // This feels wrong but it works and makes TSC happy
+    launcher.clickoffChecker?.addEventListener('click', () => {
+        launcher.toggleVisible();
     });
 
 });

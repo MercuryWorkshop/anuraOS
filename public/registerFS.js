@@ -26,7 +26,7 @@ if ('serviceWorker' in navigator) {
 
   // Deal with first-run install, if necessary
   wb.addEventListener('installed', (event) => {
-    if(!event.isUpdate) {
+    if (!event.isUpdate) {
       serverInstall();
     }
   });

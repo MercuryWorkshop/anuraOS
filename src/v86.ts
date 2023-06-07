@@ -58,11 +58,11 @@ class V86Backend {
       //   // size: 11967680,
       //   async: false,
       // },
-      hda: {
-        // url: "images/deb.bin",
-        buffer: dbr,
-        async: true,
-      },
+      // hda: {
+      //   // url: "images/deb.bin",
+      //   buffer: dbr,
+      //   async: true,
+      // },
       cmdline: "tsc=reliable  mitigations=off random.trust_cpu=on",
 
       // cmdline: "rw init=/bin/sh root=/dev/sda rootfstype=ext4 tsc=reliable  mitigations=off random.trust_cpu=on",
