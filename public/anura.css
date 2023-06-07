@@ -147,6 +147,23 @@ nav li {
     transition: all .1s ease-in;
 }
 
+.clickoffChecker {
+    display: none;
+}
+
+.clickoffChecker.active {
+    position: absolute;
+    width: 100%;
+    /* TODO: make this not be a magic number later with css variables */
+    height: calc(100% - 49px);
+    z-index: 9998;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    bottom: 49px;
+    display: block;
+}
+
 .launcher .topSearchBar {
     display: flex;
     flex-direction: row;
@@ -319,7 +336,8 @@ nav li {
     float: right;
     bottom:  72px;
     right: 10px;
-  }
+    z-index: 9997;
+}
   
 .notif {
     position: relative;
@@ -343,7 +361,7 @@ nav li {
     padding-bottom: 10px;
 }
 .notif-title {
-    font-size: 36px;
+    font-size: 24px;
     padding-left: 10px;
     padding-top: 10px;
 }

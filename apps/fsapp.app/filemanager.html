@@ -284,7 +284,14 @@
                         
                     } else if(fileSelected.getAttribute("data-type") == "dir") {
                         if (fileSelected.getAttribute("data-path").split('.').slice('-1')[0] == "app") {
-                            window.parent.anura.registerApp(`/fs${fileSelected.getAttribute("data-path")}`.replace('//', '/'))
+                            try {
+                                await window.parent.anura.registerApp(`/fs${fileSelected.getAttribute("data-path")}`.replace('//', '/'))
+                                new window.parent.anura.notification({title: "Application Installed for Session", description: `Application ${fileSelected.getAttribute("data-path").replace('//', '/')} has been installed temporarily, it will go away on refresh`, timeout: 50000}).show()
+                            } catch (e) {
+                                new window.parent.anura.notification({title: "Application Install Error", description: `Application had an error installing: ${e}`, timeout: 50000}).show()    
+                            }
+                            
+                            
                         } else {
                             console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
                             loadPath(fileSelected.getAttribute("data-path"));

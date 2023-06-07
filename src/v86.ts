@@ -208,6 +208,7 @@ class V86Backend {
       },
       // cmdline: "tsc=reliable  mitigations=off random.trust_cpu=on",
 
+
       // cmdline: "rw init=/bin/sh root=/dev/sda rootfstype=ext4 tsc=reliable  mitigations=off random.trust_cpu=on",
       cmdline: "rw init=/bin/systemd root=/dev/sda rootfstype=ext2 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
       filesystem: { fs, sh, Path, Buffer },

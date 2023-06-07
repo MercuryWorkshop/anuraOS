@@ -148,7 +148,7 @@ class Anura {
         callback() {
             return null;
         }
-        show() {
+        async show() {
             let id = crypto.randomUUID()
             // initializing the elements
             let notifContainer = document.getElementsByClassName('notif-container')[0]
@@ -234,15 +234,26 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/fsapp.app");
     anura.registerApp("apps/chideNew.app");
     anura.registerApp("apps/python.app");
-    // anura.registerApp("apps/games.app");
+
+    // anura.registerApp("games.app");
     // if you want to use the games app, uncomment this, clone the repo in /apps 
     // and rename it to games.app
     // the games app is too large and unneccesary for ordinary developers
 
+    if ((await (await (fetch('/fs/')))).status === 404) {
+        
+        let notif = new anura.notification({title: "Anura Error", description: "Anura has encountered an error with the Filesystem HTTP bridge, click this notification to restart", timeout: 50000})
+        notif.callback = function () {
+            window.location.reload()
+            return null;
+        }
+        notif.show()
+    }
+
+  
+
 
     // v86 stable. can enable it by default now
-
-    // if (localStorage.getItem("x86-enabled") === "true") {
     let mgr = await anura.registerApp("apps/x86mgr.app");
     await mgr.launch();
 
@@ -252,14 +263,9 @@ document.addEventListener("anura-login-completed", async () => {
 
     anura.x86 = await InitV86Backend();
 
-
-    // })
-
-    // }
-    // anura.registerApp("apps/webretro.app"); nothing here
-
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
+    document.body.appendChild(launcher.clickoffChecker);
     document.body.appendChild(taskbar.element);
 
     (window as any).taskbar = taskbar;
@@ -276,6 +282,11 @@ document.addEventListener("anura-login-completed", async () => {
     document.addEventListener("click", (e) => {
         if (e.button != 0) return;
         (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
+    });
+    
+    // This feels wrong but it works and makes TSC happy
+    launcher.clickoffChecker?.addEventListener('click', () => {
+        launcher.toggleVisible();
     });
 
 });

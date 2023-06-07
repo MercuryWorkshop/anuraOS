@@ -14,6 +14,10 @@ class Launcher {
     </div>
   )
 
+  clickoffChecker = (
+    <div id="clickoffChecker" class="clickoffChecker"></div>
+  )
+
   constructor() {
 
   }
@@ -21,6 +25,7 @@ class Launcher {
 
   toggleVisible() {
     this.element.classList.toggle("active")
+    this.clickoffChecker.classList.toggle("active");
   }
 
   addShortcut(name: string, svg: string, onclick: () => void) {
