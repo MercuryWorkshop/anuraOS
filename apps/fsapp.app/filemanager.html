@@ -284,7 +284,7 @@
                         
                     } else if(fileSelected.getAttribute("data-type") == "dir") {
                         if (fileSelected.getAttribute("data-path").split('.').slice('-1')[0] == "app") {
-                            window.parent.anura.registerApp(`/fs/${fileSelected.getAttribute("data-path")}`)
+                            window.parent.anura.registerApp(`/fs${fileSelected.getAttribute("data-path")}`.replace('//', '/'))
                         } else {
                             console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
                             loadPath(fileSelected.getAttribute("data-path"));
