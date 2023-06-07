@@ -131,9 +131,12 @@
         </script>
         <script>
             var currentlySelected = [];
+            var clipboard = []
+            var removeAfterPaste = false
 
             window.fs = parent.anura.fs
             window.Buffer = Filer.Buffer
+            let sh = new fs.Shell()
 
             function loadPath(path) {
                 console.debug("loading path: ", path);
@@ -376,7 +379,39 @@
                 fauxput.click()
             }
             function deleteFile() {
-                
+                if (currentlySelected.length == 0) {
+                    alert("BUG: You have no files selected, right clicking does not select files")   
+                }
+                currentlySelected.forEach(async item => {
+                    await sh.rm(item.getAttribute("data-path"), { recursive: true }, function(err) {
+                        if(err) throw err;
+                        reload()
+                    })
+                    
+                })
+            }
+            function copy() {
+                clipboard = currentlySelected
+                removeAfterPaste = false
+            }
+            function cut() {
+                clipboard = currentlySelected
+                removeAfterPaste = true
+            }
+            function paste() {
+                const path = document.querySelector(".breadcrumbs").getAttribute("data-current-path")
+                if (!removeAfterPaste) { // copy
+                    alert("Copy Paste is not Implimented, please use cut")
+                }
+                if (removeAfterPaste) {  // cut
+                    clipboard.forEach(item => {
+                        itemName = item.getAttribute("data-path")
+                        fs.rename(itemName, `${path}/${itemName.split("/").slice("-1")[0]}`, function(err) {
+                            if(err) throw err;
+                            reload()
+                        });
+                    })
+                }
             }
             loadPath('/');
 
@@ -386,9 +421,10 @@
             <button>Pin to shelf</button>
             <button onclick="reload()">Refresh</button>
             <hr></hr>
-            <button>Cut</button>
-            <button>Copy</button>
-            <button>Paste</button>
+            <button onclick="cut()">Cut</button>
+            <button onclick="copy()">Copy</button>
+            <button  onclick="paste()">Paste</button>
+            <button onclick="deleteFile()">Delete</button>
             <button onclick="upload()">Upload from PC</button>
             <hr></hr>
             <button onclick="newFolder()">New folder</button>
