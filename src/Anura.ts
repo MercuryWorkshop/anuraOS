@@ -251,7 +251,7 @@ document.addEventListener("anura-login-completed", async () => {
                     let endi = Math.floor((start + buf_size) / slice_size);
 
                     if (endi != starti) {
-                        console.error("this could cause corruption!");
+                        alert("odd corruption edge case! i don't think this should happen, if it does ping coolelectronics");
                     }
 
                     let i = starti;
