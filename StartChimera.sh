@@ -1,4 +1,8 @@
 #!/bin/bash
+if ! [ -z ${idiot+x} ]; then
+  echo "idiot envvar is set, compiling typescript..."
+  tsc 
+fi 
 if [ -d "wsproxy" ]; then
     cd server
     ts-node server.ts &
