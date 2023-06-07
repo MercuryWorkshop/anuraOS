@@ -168,7 +168,11 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/sshy.app"); // ssh will be reworked later
     anura.registerApp("apps/fsapp.app");
     anura.registerApp("apps/chideNew.app");
-    anura.registerApp("apps/python.app")
+    anura.registerApp("apps/python.app");
+    // anura.registerApp("games.app");
+    // if you want to use the games app, uncomment this, clone the repo in /apps 
+    // and rename it to games.app
+    // the games app is too large and unneccesary for ordinary developers
 
     if (localStorage.getItem("x86-enabled") === "true") {
         let mgr = await anura.registerApp("apps/x86mgr.app");
