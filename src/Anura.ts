@@ -310,6 +310,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
+    document.body.appendChild(launcher.clickoffChecker);
     document.body.appendChild(taskbar.element);
 
     (window as any).taskbar = taskbar;
@@ -326,6 +327,11 @@ document.addEventListener("anura-login-completed", async () => {
     document.addEventListener("click", (e) => {
         if (e.button != 0) return;
         (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
+    });
+    
+    // This feels wrong but it works and makes TSC happy
+    launcher.clickoffChecker?.addEventListener('click', () => {
+        launcher.toggleVisible();
     });
 
 });
