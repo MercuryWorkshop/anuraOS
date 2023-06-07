@@ -16,20 +16,24 @@ class Anura {
     constructor() {
 
 
-        if (localStorage.getItem("use-expirimental-fs") === "true") {
-            this.fs = new Filer.FileSystem({
-                name: "anura-mainContext",
-                provider: new Filer.FileSystem.providers.IndexedDB()
-            });
-            this.fs.readFileSync = async (path: string) => {
-                return await new Promise((resolve, reject) => {
-                    return anura.fs.readFile(path, function async(err: any, data: any) {
-                        resolve(new TextDecoder('utf8').decode(data))
-                    })
+        // File System Initialization //
+        this.fs = new Filer.FileSystem({
+            name: "anura-mainContext",
+            provider: new Filer.FileSystem.providers.IndexedDB()
+        });
+        this.fs.readFileSync = async (path: string) => {
+            return await new Promise((resolve, reject) => {
+                return anura.fs.readFile(path, function async(err: any, data: any) {
+                    resolve(new TextDecoder('utf8').decode(data))
                 })
-            }
+            })
+        }
 
-
+        // Notification Container //
+        { 
+            let notif = document.createElement('div')
+            notif.className = "notif-container"
+            document.body.appendChild(notif)
         }
     }
     fs: any = undefined
@@ -120,6 +124,67 @@ class Anura {
             }
             document.body.appendChild(iframe)
         })
+    }
+    notification = class {
+        constructor(params: any) {
+            if (params) {
+                if (params.title) {
+                    this.title = params.title
+                }
+                if (params.description) {
+                    this.description = params.description
+                }
+                if (params.timeout) {
+                    this.timeout = params.timeout
+                }
+                if (params.callback) {
+                    this.callback = this.callback
+                }
+            }
+        }
+        title = "Anura Notification"
+        description = "Anura Description"
+        timeout = 2000
+        callback() {
+            return null;
+        }
+        show() {
+            let id = crypto.randomUUID()
+            // initializing the elements
+            let notifContainer = document.getElementsByClassName('notif-container')[0]
+            let notif = document.createElement('div')
+            notif.className = "notif"
+            let notifBody = document.createElement('div')
+            notifBody.className = "notif-body"
+            let notifTitle = document.createElement('div')
+            notifTitle.className = "notif-title"
+            let notifDesc = document.createElement('div')
+            notifDesc.className = "notif-description"
+
+            // assign relevant values
+            notifTitle.innerText = this.title
+            notifDesc.innerText = this.description
+            notif.id = id
+
+            let callback = this.callback
+            notif.onclick = function (){
+                const oldNotif = document.getElementById(id)!
+                notifContainer?.removeChild(oldNotif)
+                callback()
+            }
+            
+            // adding the elements to the list
+            notifBody.appendChild(notifTitle)
+            notifBody.appendChild(notifDesc)
+            notif.appendChild(notifBody)
+            notifContainer?.appendChild(notif)
+
+            // remove afyer period
+            setTimeout(() => {
+                const oldNotif = document.getElementById(id)!
+                notifContainer?.removeChild(oldNotif)
+            }, this.timeout);
+        }
     }
 }
 
