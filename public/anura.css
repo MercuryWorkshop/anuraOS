@@ -313,3 +313,37 @@ nav li {
     width: 300px;
     height: 80px;
 }
+
+.notif-container {
+    position: absolute;
+    float: right;
+    bottom:  72px;
+    right: 10px;
+  }
+  
+.notif {
+    position: relative;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    background-color: #222222;
+    border-radius: 10px;
+    color:  white;
+    min-height:  90px;
+    width: 400px;
+    margin: 10px; 
+} 
+  
+.notif-body {
+    margin: 0;
+    margin-top: 0;
+} 
+  
+.notif-description {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+}
+.notif-title {
+    font-size: 36px;
+    padding-left: 10px;
+    padding-top: 10px;
+}
