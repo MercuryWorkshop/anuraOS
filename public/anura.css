@@ -319,7 +319,8 @@ nav li {
     float: right;
     bottom:  72px;
     right: 10px;
-  }
+    z-index: 9997;
+}
   
 .notif {
     position: relative;
