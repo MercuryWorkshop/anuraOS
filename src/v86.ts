@@ -4,19 +4,162 @@ const encoder = new TextEncoder();
 
 
 
+
+
+const SLICE_SIZE = 2 ** 17 * 32;
+const BUF_SIZE = 256;
+
+async function InitV86Backend(): Promise<V86Backend> {
+  // all right! time to explain what goes on here
+
+
+
+  const request = indexedDB.open("image", 2);
+  request.onupgradeneeded = (event: any) => {
+    const db: IDBDatabase = event.target.result;
+
+    db.createObjectStore("parts");
+  };
+  let db: IDBDatabase = (await new Promise(r => request.onsuccess = r) as any).target.result;
+
+
+
+  // loads a local file into indexedDB
+  // can be optimized somewhat significantly with promise.all
+  (window as any).loadfile = async (f: File) => {
+    let trn = db.transaction("parts", "readwrite").objectStore("parts");
+    trn.put(f.size, "size");
+
+    let i = 0;
+    while (i * SLICE_SIZE < f.size) {
+
+      let buf = await f.slice(i * SLICE_SIZE, (i + 1) * SLICE_SIZE).arrayBuffer();
+      await new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(buf, i).onsuccess = r);
+      i++;
+
+      console.log(i / (f.size / SLICE_SIZE));
+    }
+  }
+
+  // the rootfs is an EXT2 binary blob, stored with indexedDB, in parts of SLICE_SIZE
+
+
+  let size = (await new Promise(r => db.transaction("parts").objectStore("parts").get("size").onsuccess = r) as any).target.result;
+
+
+  // next, we create a fake "file". this exists to fool v86 into dynamically loading from indexedDB instead
+  // this part is very simple, just grab the parts from indexedDB when v86 wants them
+  //
+  // can be optimized *very* slightly with promise.all
+  const fakefile = {
+    size: size,
+    slice: async (start: number, end: number) => {
+      let starti = Math.floor(start / SLICE_SIZE);
+      let endi = Math.floor(end / SLICE_SIZE);
+      let i = starti;
+
+      let buf = null;
+      while (i <= endi) {
+        let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+        if (!part) {
+          i++;
+          continue;
+        }
+        let slice = part.slice(Math.max(0, start - (i * SLICE_SIZE)), end - (i * SLICE_SIZE));
+        if (buf == null) {
+          buf = slice;
+        } else {
+          buf = catBufs(buf, slice);
+        }
+
+        i++;
+      }
+      return new Blob([buf!]);
+
+    },
+
+    // when a "file" is loaded with v86, it keeps around a "block_cache" so it can write on top of the drive in ram
+    // normally changes don't persist, but this function will take the changes made in the cache and propagate them back to indexedDB
+    save: async () => {
+
+
+      let part_cache: any = {};
+      for (let [offset, buffer] of anura.x86?.emulator.disk_images.hda.block_cache) {
+        let start = offset * BUF_SIZE;
+        let starti = Math.floor(start / SLICE_SIZE);
+        let i = starti;
+
+
+
+        let offset_rel_to_slice = (start % SLICE_SIZE);
+
+
+        let end = SLICE_SIZE - offset_rel_to_slice;
+
+
+        let slice = buffer.slice(0, Math.min(BUF_SIZE, end));
+        let tmpb: Uint8Array = part_cache[i];
+        if (!tmpb) {
+          let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+          tmpb = new Uint8Array(part);
+          part_cache[i] = tmpb;
+        }
+        tmpb.set(slice, start % SLICE_SIZE);
+
+        if (end < 256) {
+          i += 1;
+
+          let slice = buffer.slice(end, BUF_SIZE);
+          let tmpb: Uint8Array = part_cache[i];
+          if (!tmpb) {
+            let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+            tmpb = new Uint8Array(part);
+            part_cache[i] = tmpb;
+          }
+          tmpb.set(slice, 0);
+        }
+
+      }
+
+
+      let promises = [];
+
+      for (let i in part_cache) {
+        promises.push(new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(part_cache[i].buffer, parseInt(i)).onsuccess = r));
+      }
+      await Promise.all(promises);
+
+      console.log("done saving rootfs");
+    }
+  };
+
+
+
+  // @ts-ignore
+  fakefile.__proto__ = File.prototype;
+
+
+  return new V86Backend(fakefile);
+
+}
+
+
 class V86Backend {
-  sendQueue: [string, number][] = [];
-  nextWrite: Uint8Array | null = null;
-  openQueue: { (number: number): void; }[] = [];
-  onDataCallbacks: { [key: number]: (string: string) => void } = {};
-  read_intent_phys_addr: number;
-  write_intent_phys_addr: number;
-  new_intent_phys_addr: number;
-  read_nbytes_phys_addr: number;
-  write_nbytes_phys_addr: number;
-  s_rows_phys_addr: number;
-  s_cols_phys_addr: number;
-  resize_intent_phys_addr: number;
+  private sendQueue: [string, number][] = [];
+  private nextWrite: Uint8Array | null = null;
+  private openQueue: { (number: number): void; }[] = [];
+  private onDataCallbacks: { [key: number]: (string: string) => void } = {};
+
+  private read_intent_phys_addr: number;
+  private write_intent_phys_addr: number;
+  private new_intent_phys_addr: number;
+  private read_nbytes_phys_addr: number;
+  private write_nbytes_phys_addr: number;
+  private s_rows_phys_addr: number;
+  private s_cols_phys_addr: number;
+  private resize_intent_phys_addr: number;
+
+  virt_hda: FakeFile;
 
   emulator;
   //
@@ -24,30 +167,30 @@ class V86Backend {
   // writeLockQueue: [number, string][] = [];
   //
 
-  constructor(dbr: File) {
-    var fs = new Filer.FileSystem({
-      name: "anura-mainContext",
-      provider: new Filer.FileSystem.providers.IndexedDB()
-    });
+  constructor(virt_hda: FakeFile) {
+    this.virt_hda = virt_hda;
+
+    var fs = anura.fs;
     var Path = Filer.Path;
     var Buffer = Filer.Buffer;
     var sh = new fs.Shell();
-    //@ts-ignore
-    window.fs = fs;
-    //@ts-ignore
-    window.path = Path;
-    //@ts-ignore
-    window.sh = sh;
-    window.Buffer = Buffer;
 
     this.emulator = new V86Starter({
       wasm_path: "/lib/v86.wasm",
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       screen_container: anura.apps["anura.x86mgr"].windowinstance.content.querySelector("div"),
-      bzimage_initrd_from_filesystem: true,
+      // bzimage_initrd_from_filesystem: true,
+      // bzimage: {
+      //   url: "/images/bzImage",
+      // },
+      //
+      initrd: {
+        url: "/images/deb-root/initrd.img",
+      },
       bzimage: {
-        url: "/images/bzImage",
+        url: "/images/deb-root/vmlinuz",
+        async: false,
       },
       // initrd: {
       //
@@ -58,33 +201,37 @@ class V86Backend {
       //   // size: 11967680,
       //   async: false,
       // },
-      // hda: {
-      //   // url: "images/deb.bin",
-      //   buffer: dbr,
-      //   async: true,
-      // },
-      cmdline: "tsc=reliable  mitigations=off random.trust_cpu=on",
+      hda: {
+        // url: "images/deb.bin",
+        buffer: virt_hda,
+        async: true,
+      },
+      // cmdline: "tsc=reliable  mitigations=off random.trust_cpu=on",
+
 
       // cmdline: "rw init=/bin/sh root=/dev/sda rootfstype=ext4 tsc=reliable  mitigations=off random.trust_cpu=on",
-      // cmdline: "rw init=/bin/shsrs root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
+      cmdline: "rw init=/bin/systemd root=/dev/sda rootfstype=ext2 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
       filesystem: { fs, sh, Path, Buffer },
       // initial_state: { url: "/images/debian-state-base.bin" },
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
-      network_relay_url: "ws://relay.widgetry.org/",
+      network_relay_url: "ws://localhost:8082/",
       autostart: true,
-      // uart1: true,
-      // uart2: true,
-      // uart3: true,
-    });
 
-    // this is a temporary workaround to a bug where v86 inhibits mouse events, causing large swaths of AliceWM logic to break
-    // this will mess up if you want to start an x server later
-    // setTimeout(() => this.emulator.mouse_adapter.destroy(), 1000);
+    });
 
     let data = "";
 
 
+    // temporary, needs to be fixed later
+    setInterval(() => {
+      this.virt_hda.save();
+    }, 1000 * 90);
+
+    window.addEventListener("beforeunload", async (event) => {
+      event.preventDefault();
+      await this.virt_hda.save();
+    });
 
     this.emulator.add_listener("serial0-output-char", (char: string) => {
       if (char === "\r") {
@@ -158,12 +305,12 @@ class V86Backend {
 
     switch (parts.shift()) {
       case "i": {
-        // @ts-ignore, temporary of course
+
+        let arr: any[] = parts.map(p => parseInt(p));
+
         [this.read_intent_phys_addr,
-        // @ts-ignore
         this.write_intent_phys_addr, this.new_intent_phys_addr, this.read_nbytes_phys_addr,
-        // @ts-ignore
-        this.write_nbytes_phys_addr, this.s_rows_phys_addr, this.s_cols_phys_addr, this.resize_intent_phys_addr] = parts.map(p => parseInt(p));
+        this.write_nbytes_phys_addr, this.s_rows_phys_addr, this.s_cols_phys_addr, this.resize_intent_phys_addr] = arr;
         break;
       }
       case "r": {
@@ -310,4 +457,9 @@ async function icopier() {
     extractFolder(element, "/", true);
   });
 
+}
+interface FakeFile {
+  slice: (start: number, end: number) => Promise<Blob>;
+  save: () => Promise<void>;
+  size: number;
 }

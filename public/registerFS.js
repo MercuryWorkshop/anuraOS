@@ -18,6 +18,7 @@ function serverInstall() {
 /**
  * Register the nohost service worker, passing `route` or other options.
  */
+
 if ('serviceWorker' in navigator) {
   const wb = new Workbox('/nohost-sw.js?debug');
 

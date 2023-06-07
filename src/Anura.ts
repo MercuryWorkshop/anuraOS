@@ -30,7 +30,7 @@ class Anura {
         }
 
         // Notification Container //
-        { 
+        {
             let notif = document.createElement('div')
             notif.className = "notif-container"
             document.body.appendChild(notif)
@@ -167,12 +167,12 @@ class Anura {
             notif.id = id
 
             let callback = this.callback
-            notif.onclick = function (){
+            notif.onclick = function() {
                 const oldNotif = document.getElementById(id)!
                 notifContainer?.removeChild(oldNotif)
                 callback()
             }
-            
+
             // adding the elements to the list
             notifBody.appendChild(notifTitle)
             notifBody.appendChild(notifDesc)
@@ -234,6 +234,7 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/fsapp.app");
     anura.registerApp("apps/chideNew.app");
     anura.registerApp("apps/python.app");
+
     // anura.registerApp("games.app");
     // if you want to use the games app, uncomment this, clone the repo in /apps 
     // and rename it to games.app
@@ -249,139 +250,18 @@ document.addEventListener("anura-login-completed", async () => {
         notif.show()
     }
 
-    if (localStorage.getItem("x86-enabled") === "true") {
-        let mgr = await anura.registerApp("apps/x86mgr.app");
-        await mgr.launch();
-
-        let slice_size = 2 ** 17 * 32; //this should be optimal
-
-        let finp: HTMLInputElement = React.createElement("input", { type: "file", id: "input" }) as unknown as HTMLInputElement;
-        document.body.appendChild(finp);
+  
 
 
-
-        const request = indexedDB.open("image", 2);
-        request.onupgradeneeded = (event: any) => {
-            const db: IDBDatabase = event.target.result;
-
-            db.createObjectStore("parts");
-        };
-        let db: IDBDatabase = (await new Promise(r => request.onsuccess = r) as any).target.result;
+    // v86 stable. can enable it by default now
+    let mgr = await anura.registerApp("apps/x86mgr.app");
+    await mgr.launch();
 
 
-        (window as any).file2 = async (f: File) => {
-            let trn = db.transaction("parts", "readwrite").objectStore("parts");
-            trn.put(f.size, "size");
+    let finp: HTMLInputElement = React.createElement("input", { type: "file", id: "input" }) as unknown as HTMLInputElement;
+    document.body.appendChild(finp);
 
-            let i = 0;
-            while (i * slice_size < f.size) {
-
-                let buf = await f.slice(i * slice_size, (i + 1) * slice_size).arrayBuffer();
-                await new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(buf, i).onsuccess = r);
-                i++;
-
-                if (i % 10 == 0) {
-                    console.log(i / (f.size / slice_size));
-                }
-            }
-        }
-
-
-        let size = (await new Promise(r => db.transaction("parts").objectStore("parts").get("size").onsuccess = r) as any).target.result;
-        console.log(size);
-
-
-        const fakefile = {
-            size: size,
-            slice: async (start: number, end: number) => {
-                let starti = Math.floor(start / slice_size);
-                let endi = Math.floor(end / slice_size);
-
-                // console.log(`${start}-${end}`);
-
-
-
-
-
-                let i = starti;
-
-
-                let buf = null;
-
-                while (i <= endi) {
-                    let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
-                    let slice = part.slice(Math.max(0, start - (i * slice_size)), end - (i * slice_size));
-                    if (buf == null) {
-                        buf = slice;
-                    } else {
-                        buf = catBufs(buf, slice);
-                    }
-
-                    i++;
-                }
-
-
-
-
-                return new Blob([buf!]);
-
-            },
-            save: async () => {
-
-                // this can be greatly optimized. first bunch together everything that shares a slice, do changes, then put() in once sweep
-                const buf_size = 256;
-                for (let [offset, buffer] of anura.x86?.emulator.disk_images.hda.block_cache) {
-                    let start = offset * buf_size;
-
-
-                    let starti = Math.floor(start / slice_size);
-                    let endi = Math.floor((start + buf_size) / slice_size);
-                    console.log(start);
-
-
-
-                    let i = starti;
-
-
-                    while (i <= endi) {
-                        let slice = buffer.slice(0, Math.min(buf_size, slice_size - start));
-
-
-
-                        let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
-                        let tmpb = new Uint8Array(part);
-
-                        if ((start % slice_size) + 256 > slice_size) {
-                            console.error("data corruption");
-                        }
-
-
-                        tmpb.set(slice, start % slice_size);
-
-                        await new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(tmpb.buffer, i).onsuccess = r);
-
-                        i++;
-                    }
-                }
-                console.log("x");
-                return "h";
-
-            }
-        };
-        (window as any).fakefile = fakefile;
-        // @ts-ignore
-        fakefile.__proto__ = File.prototype;
-
-        // console.log(fakefile.size)
-
-        // finp.addEventListener("change", e => {
-        anura.x86 = new V86Backend(fakefile as any);
-
-
-        // })
-
-    }
-    // anura.registerApp("apps/webretro.app"); nothing here
+    anura.x86 = await InitV86Backend();
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);

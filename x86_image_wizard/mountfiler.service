@@ -1,0 +1,10 @@
+[Unit]
+Description=Mount Filer
+After=basic.target
+StartLimitIntervalSec=0
+[Service]
+Type=oneshot
+ExecStart=/bin/bash mount -t 9p host9p /home
+
+[Install]
+WantedBy=multi-user.target
