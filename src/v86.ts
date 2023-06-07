@@ -45,9 +45,17 @@ class V86Backend {
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       screen_container: anura.apps["anura.x86mgr"].windowinstance.content.querySelector("div"),
-      bzimage_initrd_from_filesystem: true,
+      // bzimage_initrd_from_filesystem: true,
+      // bzimage: {
+      //   url: "/images/bzImage",
+      // },
+      //
+      initrd: {
+        url: "/images/deb-root/initrd.img",
+      },
       bzimage: {
-        url: "/images/bzImage",
+        url: "/images/deb-root/vmlinuz",
+        async: false,
       },
       // initrd: {
       //
@@ -58,15 +66,15 @@ class V86Backend {
       //   // size: 11967680,
       //   async: false,
       // },
-      // hda: {
-      //   // url: "images/deb.bin",
-      //   buffer: dbr,
-      //   async: true,
-      // },
-      cmdline: "tsc=reliable  mitigations=off random.trust_cpu=on",
+      hda: {
+        // url: "images/deb.bin",
+        buffer: dbr,
+        async: true,
+      },
+      // cmdline: "tsc=reliable  mitigations=off random.trust_cpu=on",
 
       // cmdline: "rw init=/bin/sh root=/dev/sda rootfstype=ext4 tsc=reliable  mitigations=off random.trust_cpu=on",
-      // cmdline: "rw init=/bin/shsrs root=host9p 8250.nr_uarts=10 spectre_v2=off pti=off",
+      cmdline: "rw init=/bin/systemd root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
       filesystem: { fs, sh, Path, Buffer },
       // initial_state: { url: "/images/debian-state-base.bin" },
       bios: { url: "/bios/seabios.bin" },

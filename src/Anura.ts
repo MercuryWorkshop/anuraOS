@@ -201,9 +201,7 @@ document.addEventListener("anura-login-completed", async () => {
                 await new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(buf, i).onsuccess = r);
                 i++;
 
-                if (i % 10 == 0) {
-                    console.log(i / (f.size / slice_size));
-                }
+                console.log(i / (f.size / slice_size));
             }
         }
 
@@ -217,20 +215,15 @@ document.addEventListener("anura-login-completed", async () => {
             slice: async (start: number, end: number) => {
                 let starti = Math.floor(start / slice_size);
                 let endi = Math.floor(end / slice_size);
-
-                // console.log(`${start}-${end}`);
-
-
-
-
-
                 let i = starti;
 
-
                 let buf = null;
-
                 while (i <= endi) {
                     let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+                    if (!part) {
+                        i++;
+                        continue;
+                    }
                     let slice = part.slice(Math.max(0, start - (i * slice_size)), end - (i * slice_size));
                     if (buf == null) {
                         buf = slice;
@@ -240,53 +233,41 @@ document.addEventListener("anura-login-completed", async () => {
 
                     i++;
                 }
-
-
-
-
                 return new Blob([buf!]);
 
             },
             save: async () => {
 
-                // this can be greatly optimized. first bunch together everything that shares a slice, do changes, then put() in once sweep
                 const buf_size = 256;
+
+                let part_cache: any = {};
                 for (let [offset, buffer] of anura.x86?.emulator.disk_images.hda.block_cache) {
                     let start = offset * buf_size;
-
-
                     let starti = Math.floor(start / slice_size);
                     let endi = Math.floor((start + buf_size) / slice_size);
-                    console.log(start);
 
-
+                    if (endi != starti) {
+                        console.error("this could cause corruption!");
+                    }
 
                     let i = starti;
-
-
-                    while (i <= endi) {
-                        let slice = buffer.slice(0, Math.min(buf_size, slice_size - start));
-
-
-
+                    let slice = buffer.slice(0, Math.min(buf_size, slice_size - (start % slice_size)));
+                    let tmpb: Uint8Array = part_cache[i];
+                    if (!tmpb) {
                         let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
-                        let tmpb = new Uint8Array(part);
-
-                        if ((start % slice_size) + 256 > slice_size) {
-                            console.error("data corruption");
-                        }
-
-
-                        tmpb.set(slice, start % slice_size);
-
-                        await new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(tmpb.buffer, i).onsuccess = r);
-
-                        i++;
+                        tmpb = new Uint8Array(part);
+                        part_cache[i] = tmpb;
                     }
+                    tmpb.set(slice, start % slice_size);
                 }
-                console.log("x");
-                return "h";
 
+
+                let promises = [];
+
+                for (let i in part_cache) {
+                    promises.push(new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(part_cache[i].buffer, parseInt(i)).onsuccess = r));
+                }
+                await Promise.all(promises);
             }
         };
         (window as any).fakefile = fakefile;
