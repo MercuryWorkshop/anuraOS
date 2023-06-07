@@ -239,8 +239,7 @@ document.addEventListener("anura-login-completed", async () => {
         
         let notif = new anura.notification({title: "Anura Error", description: "Anura has encountered an error with the Filesystem HTTP bridge, click this notification to restart", timeout: 50000})
         notif.callback = function () {
-            // @ts-ignore
-            window.navigation.reload()
+            window.location.reload()
             return null;
         }
         notif.show()
