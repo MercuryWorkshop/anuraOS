@@ -236,12 +236,12 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/python.app")
 
     if ((await (await (fetch('/fs/')))).status === 404) {
-        //@ts-ignore
+        
         let notif = new anura.notification({title: "Anura Error", description: "Anura has encountered an error with the Filesystem HTTP bridge, click this notification to restart", timeout: 50000})
-        //@ts-ignore
         notif.callback = function () {
             // @ts-ignore
             window.navigation.reload()
+            return null;
         }
         notif.show()
     }
