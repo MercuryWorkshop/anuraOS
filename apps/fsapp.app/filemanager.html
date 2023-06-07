@@ -257,7 +257,7 @@
                         console.debug("Clicked on file");
                         if (fileSelected.getAttribute("data-path").split('.').slice('-1')[0] == "zip") {
                             console.debug("Zip file detected, extracting")
-                            const path = fileSelected.getAttribute("data-path").split('.')[0]
+                            const path = fileSelected.getAttribute("data-path").split('.').slice(0,-1).join('.')
                             await fs.mkdir(path)
                             const inputFile = await fs.readFile(fileSelected.getAttribute("data-path"), async function (err, data) {
                                 console.log(data)
@@ -270,7 +270,7 @@
                                     } else {
                                         console.log(zipEntry)
                                         console.log(await zipEntry.async("arraybuffer"))
-                                        fs.writeFile(`${path}/${zipEntry.name}`, await zipEntry.async("arraybuffer"))
+                                        fs.writeFile(`${path}/${zipEntry.name}`, Buffer.from(await zipEntry.async("arraybuffer")))
                                     }
                                 }, function (e) {
                                     console.error(e)
@@ -283,8 +283,13 @@
                         }
                         
                     } else if(fileSelected.getAttribute("data-type") == "dir") {
-                        console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
-                        loadPath(fileSelected.getAttribute("data-path"));
+                        if (fileSelected.getAttribute("data-path").split('.').slice('-1')[0] == "app") {
+                            window.parent.anura.registerApp(`/fs/${fileSelected.getAttribute("data-path")}`)
+                        } else {
+                            console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
+                            loadPath(fileSelected.getAttribute("data-path"));
+                        }
+
                     } else {
                         console.warn("Unknown filetype ", fileSelected.getAttribute("data-type"), " doing nothing!");
                     }
