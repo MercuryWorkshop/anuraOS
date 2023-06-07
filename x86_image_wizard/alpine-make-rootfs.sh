@@ -1,4 +1,7 @@
 #!/bin/sh
+# https://github.com/alpinelinux/alpine-make-rootfs
+# ^^ was modified slightly for supporting i836 architectures
+
 # vim: set ts=4:
 #---help---
 # Usage: alpine-make-rootfs [options] [--] <dest> [<script> [<script-opts...>]]
@@ -87,7 +90,7 @@
 # variable is specified and the option accepts only one argument, then the
 # option takes precedence.
 #
-# https://github.com/alpinelinux/alpine-make-rootfs
+
 #---help---
 set -eu
 
