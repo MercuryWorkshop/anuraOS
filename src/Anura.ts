@@ -213,10 +213,12 @@ document.addEventListener("anura-login-completed", async () => {
 
 
         const fakefile = {
-            size,
+            size: size,
             slice: async (start: number, end: number) => {
                 let starti = Math.floor(start / slice_size);
                 let endi = Math.floor(end / slice_size);
+
+                // console.log(`${start}-${end}`);
 
 
 
@@ -243,6 +245,47 @@ document.addEventListener("anura-login-completed", async () => {
 
 
                 return new Blob([buf!]);
+
+            },
+            save: async () => {
+
+                // this can be greatly optimized. first bunch together everything that shares a slice, do changes, then put() in once sweep
+                const buf_size = 256;
+                for (let [offset, buffer] of anura.x86?.emulator.disk_images.hda.block_cache) {
+                    let start = offset * buf_size;
+
+
+                    let starti = Math.floor(start / slice_size);
+                    let endi = Math.floor((start + buf_size) / slice_size);
+                    console.log(start);
+
+
+
+                    let i = starti;
+
+
+                    while (i <= endi) {
+                        let slice = buffer.slice(0, Math.min(buf_size, slice_size - start));
+
+
+
+                        let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+                        let tmpb = new Uint8Array(part);
+
+                        if ((start % slice_size) + 256 > slice_size) {
+                            console.error("data corruption");
+                        }
+
+
+                        tmpb.set(slice, start % slice_size);
+
+                        await new Promise(r => db.transaction("parts", "readwrite").objectStore("parts").put(tmpb.buffer, i).onsuccess = r);
+
+                        i++;
+                    }
+                }
+                console.log("x");
+                return "h";
 
             }
         };
