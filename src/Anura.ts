@@ -148,7 +148,7 @@ class Anura {
         callback() {
             return null;
         }
-        show() {
+        async show() {
             let id = crypto.randomUUID()
             // initializing the elements
             let notifContainer = document.getElementsByClassName('notif-container')[0]
