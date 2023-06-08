@@ -7,7 +7,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=root
-ExecStart=/bin/anurad
+ExecStart=/bin/anurad-start.sh
 
 [Install]
 WantedBy=multi-user.target

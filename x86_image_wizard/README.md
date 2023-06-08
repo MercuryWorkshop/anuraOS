@@ -2,7 +2,7 @@
 
 
 - step 1. make the rootfs
-    for debian, you can start with ../v86/tools/docker/debian/build-container.sh
+    for debian, you can start with debian/build-debian-bin.sh
 - step 2. init the ram fs
     go into ../src/v86.ts and set bzImage and initrd
 - step 3. anurad

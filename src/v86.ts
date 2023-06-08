@@ -51,6 +51,10 @@ async function InitV86Backend(): Promise<V86Backend> {
   // this part is very simple, just grab the parts from indexedDB when v86 wants them
   //
   // can be optimized *very* slightly with promise.all
+  //
+  //
+
+  let ro_slice_cache: any = {};
   const fakefile = {
     size: size,
     slice: async (start: number, end: number) => {
@@ -60,7 +64,13 @@ async function InitV86Backend(): Promise<V86Backend> {
 
       let buf = null;
       while (i <= endi) {
-        let part: ArrayBuffer = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+
+        let part: ArrayBuffer = ro_slice_cache[i];
+
+        if (!part) {
+          part = (await new Promise(r => db.transaction("parts").objectStore("parts").get(i).onsuccess = r) as any).target.result;
+          ro_slice_cache[i] = part;
+        }
         if (!part) {
           i++;
           continue;
@@ -186,10 +196,10 @@ class V86Backend {
       // },
       //
       initrd: {
-        url: "/images/deb-root/initrd.img",
+        url: "/images/debian-boot/initrd.img-5.10.0-23-686",
       },
       bzimage: {
-        url: "/images/deb-root/vmlinuz",
+        url: "/images/debian-boot/vmlinuz-5.10.0-23-686",
         async: false,
       },
       // initrd: {
