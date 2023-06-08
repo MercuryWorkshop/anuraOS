@@ -13,5 +13,7 @@ if [ -d "wsproxy" ]; then
 else
     echo "wsproxy was not cloned... not starting websocket proxy"
     cd server
-    ts-node server.ts
+    ts-node server.ts &
 fi
+docker rm relay
+docker run --privileged -p 8082:80 --name relay benjamincburns/jor1k-relay:latest

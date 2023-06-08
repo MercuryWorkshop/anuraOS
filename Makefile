@@ -7,13 +7,10 @@ all: v86dirty v86 bundle
 
 clean:
 	cd v86; make clean
-	rm -rf public/lib/libv86.js
-	rm -rf public/lib/v86.wasm
-	rm -rf public/bios
 	rm -rf build/*
 
 rootfs:
-	echo "not implemented yet, harass coolelectronics if you want the image files"
+	cd x86_image_wizard/debian; sh build-debian-bin.sh
 
 v86dirty: 
 	touch v86timestamp # makes it "dirty" and forces recompilation
@@ -24,18 +21,21 @@ v86: libv86.js public/lib/v86.wasm
 
 libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 	cd v86; make build/libv86.js
-	cp v86/build/libv86.js public/lib/libv86.js
+	cp v86/build/libv86.js build/lib/libv86.js
 
 public/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v86/Cargo.toml
 	cd v86; make build/v86.wasm
-	cp v86/build/v86.wasm public/lib/v86.wasm
+	cp v86/build/v86.wasm build/lib/v86.wasm
 
 watch:
-	tsc --watch
+	mkdir -p build/artifacts
+	npx tsc-watch --onSuccess "bash -c 'cp -r src/* build/artifacts'"
 bundle:
+	mkdir -p build/artifacts
+	cp -r src/* build/artifacts
 	tsc
 prod: all
-	npx google-closure-compiler --js "public/lib/libv86.js" "public/assets/libs/filer.min.js" "build/lib/**/*.js" --js_output_file public/dist.js
+	npx google-closure-compiler --js "build/lib/libv86.js" "public/assets/libs/filer.min.js" "build/lib/**/*.js" --js_output_file public/dist.js
 
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -veu
 
-IMAGES="$(dirname "$0")"/../../public/images
+IMAGES="$(dirname "$0")"/../../build/images
 OUT_ROOTFS_TAR="$IMAGES"/debian-rootfs.tar
 OUT_ROOTFS_BIN="$IMAGES"/debian-rootfs.bin
 OUT_ROOTFS_MNT="$IMAGES"/debian-rootfs.mntpoint

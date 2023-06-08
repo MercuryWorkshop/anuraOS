@@ -18,7 +18,7 @@
 
     // Source Map
     "sourceMap": true, // enables the use of source maps for debuggers and error reporting etc
-    "sourceRoot": "/build", // Specify the location where a debugger should locate TypeScript files instead of relative source locations.
+    "sourceRoot": "/artifacts", // Specify the location where a debugger should locate TypeScript files instead of relative source locations.
 
     // Strict Checks
     "alwaysStrict": true, // Ensures that your files are parsed in the ECMAScript strict mode, and emit “use strict” for each source file.
