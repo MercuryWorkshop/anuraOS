@@ -24,11 +24,11 @@ v86: libv86.js public/lib/v86.wasm
 
 libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 	cd v86; make build/libv86.js
-	mv v86/build/libv86.js public/lib/libv86.js
+	cp v86/build/libv86.js public/lib/libv86.js
 
 public/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v86/Cargo.toml
 	cd v86; make build/v86.wasm
-	mv v86/build/v86.wasm public/lib/v86.wasm
+	cp v86/build/v86.wasm public/lib/v86.wasm
 
 watch:
 	tsc --watch
