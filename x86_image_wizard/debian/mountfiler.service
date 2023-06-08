@@ -4,7 +4,7 @@ After=basic.target
 StartLimitIntervalSec=0
 [Service]
 Type=oneshot
-ExecStart=/bin/bash mount -t 9p host9p /root
+ExecStart=/bin/mountfiler.sh
 
 [Install]
 WantedBy=multi-user.target
