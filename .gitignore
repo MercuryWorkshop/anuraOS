@@ -16,4 +16,5 @@ dist/
 bios/
 apps/games.app
 libv86.js
+v86.wasm
 public/dist.js
