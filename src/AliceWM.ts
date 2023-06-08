@@ -129,13 +129,9 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
 
     // self explanatory everything is self explanatory
     container.onmousedown = function(evt:any) {
-        // probably inefficient but i dont caare
-        var allWindows = [...document.querySelectorAll(".aliceWMwin") as any];
-        anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
-        for (const wmwindow of allWindows) {
-            wmwindow.style.setProperty("z-index", 92);
-        }
-        (titleContainer.parentNode as HTMLElement)!.style.setProperty("z-index", "93");
+
+        (titleContainer.parentNode as HTMLElement)!.style.setProperty("z-index", (getHighestZindex() + 1).toString());
+        normalizeZindex()
 
         // container.setAttribute("maximized", "false")
         // ro.unobserve(container);
@@ -193,6 +189,36 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
 };
 
 
+function getHighestZindex() {
+    const allWindows: HTMLElement[] = [...document.querySelectorAll(".aliceWMwin") as any];
+    anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
+    
+    let highestZindex = 0
+    for (const wmwindow of allWindows) {
+        if (Number(wmwindow.style.getPropertyValue("z-index")) >= highestZindex )  
+            highestZindex =  Number(wmwindow.style.getPropertyValue("z-index"))
+    }
+    return highestZindex
+}
+
+async function normalizeZindex() {
+    const allWindows: HTMLElement[] = [...document.querySelectorAll(".aliceWMwin") as any];
+    anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
+    
+    let lowestZindex = 9999
+    for (const wmwindow of allWindows) {
+        if (Number(wmwindow.style.getPropertyValue("z-index")) <= lowestZindex )  
+            lowestZindex =  Number(wmwindow.style.getPropertyValue("z-index"))
+    }
+    
+    let normalizeValue = lowestZindex - 1;
+
+    for (const wmwindow of allWindows) {
+        
+        wmwindow.style.setProperty("z-index", (Number(wmwindow.style.getPropertyValue("z-index")) - normalizeValue).toString())
+        
+    }
+}
 
 /**
  * place the given dom element in the center of the browser window
