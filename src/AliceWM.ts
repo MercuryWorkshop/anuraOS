@@ -7,7 +7,7 @@
  *
  * nope nope this code has NOT been stolen rafflesia did NOT make it :thumbsup:
  */
-var AliceWM:any = {};
+
 
 // no i will not use data properties in the dom element fuck off
 // ok fine i will fine i just realized how much harder it would be
@@ -19,20 +19,44 @@ var AliceWM:any = {};
  */
 let windowInformation = {}
 let windowID = 0;
-AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
-    let wininfo = givenWinInfo;
-    anura.logger.debug(typeof (givenWinInfo))
-    if (typeof (givenWinInfo) == 'string') {
-        wininfo = {
-            title: givenWinInfo,
-            width: '1000px',
-            height: '500px',
-        }
+
+class ContainerData {
+    _dragging: boolean;
+    _originalLeft: number;
+    _originalTop: number;
+    _mouseLeft: number;
+    _mouseTop: number;
+}
+
+class WindowInformation {
+    title: string;
+    width: string;
+    height: string;
+}
+var AliceWM = {
+ create: function(givenWinInfo: string | WindowInformation) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
+    // Default param
+    let wininfo: WindowInformation = {
+        title: "",
+        width: '1000px',
+        height: '500px',
     }
+
+    // Param given in argument
+    if (givenWinInfo instanceof WindowInformation)
+        wininfo = givenWinInfo;
+
+    if (typeof (givenWinInfo) == 'string') // Only title given
+        wininfo.title = givenWinInfo
+    
+
+    anura.logger.debug(typeof (givenWinInfo))
    
     
     // initializing dialog: title, close, content
-    var container:any = document.createElement("div");
+    var container = document.createElement("div");
+    var containerData = new ContainerData()
+
     var titleContainer = document.createElement("div");
     var titleContent = document.createElement("div");
 
@@ -83,11 +107,11 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
 
     // binding mouse events
     closeContainer.onclick = function(evt) {
-        if (container._overlay) {
-            container._overlay.parentNode.removeChild(container._overlay);
-        }
+        // if (containerData._overlay) {
+        //     containerData._overlay.parentNode.removeChild(containerData._overlay);
+        // }
 
-        container.parentNode.removeChild(container);
+        container.parentNode!.removeChild(container);
         // calling the callback function to notify the dialog closed
         evt.stopPropagation();
     };
@@ -98,19 +122,19 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
     
     maximizeContainer.onclick = function() {
         if (container.getAttribute("maximized") === "false") {
-            container.setAttribute("old-style", container.getAttribute("style")) 
+            container.setAttribute("old-style", container.getAttribute("style")!) 
             const width  = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
             const height = window.innerHeight|| document.documentElement.clientHeight|| 
             document.body.clientHeight;
-            container.style.top = 0
-            container.style.left = 0
+            container.style.top = "0"
+            container.style.left = "0"
             container.style.width = `${width}px`;
             container.style.height = `${height - 53}px`;
             container.setAttribute("maximized", "true") 
             maximizeContainer.innerHTML = '<img src="/assets/window/restore.svg" height="12px">'
             // ro.observe(container);
         } else {
-            container.setAttribute("style", container.getAttribute("old-style"))
+            container.setAttribute("style", container.getAttribute("old-style")!)
             container.setAttribute("maximized", "false")
             maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px">'
             // ro.unobserve(container);
@@ -128,7 +152,7 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
       
 
     // self explanatory everything is self explanatory
-    container.onmousedown = function(evt:any) {
+    container.onmousedown = function(evt) {
 
         (titleContainer.parentNode as HTMLElement)!.style.setProperty("z-index", (getHighestZindex() + 1).toString());
         normalizeZindex()
@@ -147,22 +171,22 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
         }
         evt = evt || window.event;
 
-        container._dragging = true;
-        container._originalLeft = container.offsetLeft;
-        container._originalTop = container.offsetTop;
-        container._mouseLeft = evt.clientX;
-        container._mouseTop = evt.clientY;
+        containerData._dragging = true;
+        containerData._originalLeft = container.offsetLeft;
+        containerData._originalTop = container.offsetTop;
+        containerData._mouseLeft = evt.clientX;
+        containerData._mouseTop = evt.clientY;
     };
 
     // do the dragging during the mouse move
     document.addEventListener('mousemove', (evt) => {
         evt = evt || window.event;
 
-        if (container._dragging) {
+        if (containerData._dragging) {
             container.style.left =
-                (container._originalLeft + evt.clientX - container._mouseLeft) + "px";
+                (containerData._originalLeft + evt.clientX - containerData._mouseLeft) + "px";
             container.style.top =
-                (container._originalTop + evt.clientY - container._mouseTop) + "px";
+                (containerData._originalTop + evt.clientY - containerData._mouseTop) + "px";
         }
     })
 
@@ -175,22 +199,23 @@ AliceWM.create = function(givenWinInfo: string | any) { // CODE ORIGINALLY FROM 
         }
         evt = evt || window.event;
 
-        if (container._dragging) {
+        if (containerData._dragging) {
             container.style.left =
-                (container._originalLeft + evt.clientX - container._mouseLeft) + "px";
+                (containerData._originalLeft + evt.clientX - containerData._mouseLeft) + "px";
             container.style.top =
-                (container._originalTop + evt.clientY - container._mouseTop) + "px";
+                (containerData._originalTop + evt.clientY - containerData._mouseTop) + "px";
 
-            container._dragging = false;
+            containerData._dragging = false;
         }
     });
     windowID++;
     return { content: contentContainer };
-};
+}
+}
 
 
 function getHighestZindex() {
-    const allWindows: HTMLElement[] = [...document.querySelectorAll(".aliceWMwin") as any];
+    const allWindows: HTMLElement[] = Array.from(document.querySelectorAll<HTMLTableElement>(".aliceWMwin"))
     anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
     
     let highestZindex = 0
@@ -202,7 +227,7 @@ function getHighestZindex() {
 }
 
 async function normalizeZindex() {
-    const allWindows: HTMLElement[] = [...document.querySelectorAll(".aliceWMwin") as any];
+    const allWindows: HTMLElement[] = Array.from(document.querySelectorAll<HTMLTableElement>(".aliceWMwin"))
     anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
     
     let lowestZindex = 9999

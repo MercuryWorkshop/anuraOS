@@ -79,8 +79,7 @@ class Anura {
                     loadingScript(location, app);
                 } else {
                     // if (this.windowinstance) return;
-                    let win = AliceWM.create(this.manifest.wininfo, (_: any) => {
-                    });
+                    let win = AliceWM.create(this.manifest.wininfo);
                     this.windowinstance = win;
 
                     let iframe: any = document.createElement("iframe")
