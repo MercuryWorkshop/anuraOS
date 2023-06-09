@@ -21,7 +21,7 @@ dd if=/dev/zero "of=$OUT_ROOTFS_BIN" bs=512M count=3
 
 loop=$(sudo losetup -f)
 sudo losetup -P "$loop" "$OUT_ROOTFS_BIN"
-sudo mkfs.ext2 "$loop"
+sudo mkfs.ext4 "$loop"
 mkdir -p "$OUT_ROOTFS_MNT"
 sudo mount "$loop" "$OUT_ROOTFS_MNT"
 
@@ -32,6 +32,7 @@ cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/debian-boot"
 sudo umount "$loop"
 sudo losetup -d "$loop"
 rm "$OUT_ROOTFS_TAR"
+rm -rf "$OUT_ROOTFS_MNT"
 rm anurad.c
 
 echo "done! created"

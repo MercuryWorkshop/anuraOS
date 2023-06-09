@@ -1,10 +1,10 @@
 [Unit]
-Description=Mount Filer
+Description=Run Anura Boot Scripts
 After=basic.target
 StartLimitIntervalSec=0
 [Service]
 Type=oneshot
-ExecStart=/bin/mountfiler.sh
+ExecStart=/bin/anura-boot.sh
 
 [Install]
 WantedBy=multi-user.target

@@ -44,17 +44,17 @@ COPY logind.conf /etc/systemd/logind.conf
 
 #COPY xinitrc /root/.xinitrc
 COPY xorg.conf /etc/X11/
-COPY networking.sh /bin/
 COPY anurad-start.sh /bin/
-COPY mountfiler.sh /bin/
+COPY anura-boot.sh /bin/
 
 
 COPY anurad.c /etc/
 
-RUN chmod u+x /bin/networking.sh /bin/mountfiler.sh /bin/anurad-start.sh
+RUN chmod u+x /bin/anura-boot.sh /bin/anurad-start.sh
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil
-COPY mountfiler.service /etc/systemd/system
+COPY anura-boot.service /etc/systemd/system
 COPY anurad.service /etc/systemd/system
 
 
-
+RUN systemctl enable anurad
+RUN systemctl enable anura-boot

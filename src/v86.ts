@@ -51,10 +51,11 @@ async function InitV86Backend(): Promise<V86Backend> {
   // this part is very simple, just grab the parts from indexedDB when v86 wants them
   //
   // can be optimized *very* slightly with promise.all
-  //
-  //
 
+  // Yes, this causes a memory leak... Too bad!
   let ro_slice_cache: any = {};
+  // extremely large files will crash the tab. don't load extremely lare files i guess
+
   const fakefile = {
     size: size,
     slice: async (start: number, end: number) => {
@@ -139,7 +140,8 @@ async function InitV86Backend(): Promise<V86Backend> {
       }
       await Promise.all(promises);
 
-      console.log("done saving rootfs");
+      let notif = new anura.notification({ title: "x86 Subsystem", description: "Saved root filesystem sucessfully", timeout: 5000 });
+      notif.show();
     }
   };
 
@@ -190,42 +192,26 @@ class V86Backend {
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       screen_container: anura.apps["anura.x86mgr"].windowinstance.content.querySelector("div"),
-      // bzimage_initrd_from_filesystem: true,
-      // bzimage: {
-      //   url: "/images/bzImage",
-      // },
-      //
+
       initrd: {
-        url: "/images/debian-boot/initrd.img-5.10.0-23-686",
+        url: "/images/debian-boot/initrd.img-6.1.0-9-686",
       },
       bzimage: {
-        url: "/images/debian-boot/vmlinuz-5.10.0-23-686",
+        url: "/images/debian-boot/vmlinuz-6.1.0-9-686",
         async: false,
       },
-      // initrd: {
-      //
-      //   url: "/images/rootfs/boot/initramfs-virt",
-      // },
-      // bzimage: {
-      //   url: "/images/rootfs/boot/vmlinuz-virt",
-      //   // size: 11967680,
-      //   async: false,
-      // },
+
       hda: {
-        // url: "images/deb.bin",
         buffer: virt_hda,
         async: true,
       },
-      // cmdline: "tsc=reliable  mitigations=off random.trust_cpu=on",
 
-
-      // cmdline: "rw init=/bin/sh root=/dev/sda rootfstype=ext4 tsc=reliable  mitigations=off random.trust_cpu=on",
-      cmdline: "rw init=/bin/systemd root=/dev/sda rootfstype=ext2 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
+      cmdline: "rw init=/bin/systemd root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
       filesystem: { fs, sh, Path, Buffer },
-      // initial_state: { url: "/images/debian-state-base.bin" },
+
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
-      network_relay_url: "ws://localhost:8082/",
+      network_relay_url: "ws://localhost:8002/",
       autostart: true,
 
     });
@@ -295,17 +281,6 @@ class V86Backend {
   }
 
   async _proc_data(data: string) {
-    // if (data.includes("^F") && this.writeLock) {
-    //   // console.log("removing write lock");
-    //   this.writeLock = false;
-    //   const queued = this.writeLockQueue.shift();
-    //   if (queued) {
-    //     this.writepty(queued[0], queued[1])
-    //   }
-    // }
-    //
-
-
     const start = data.indexOf("\x05");
     if (start === -1) return; // \005 is our special control code
     data = data.substring(start + 1);
@@ -383,91 +358,7 @@ async function a() {
   anura.x86!.emulator.serial0_send("/hook\n");
 }
 
-async function icopier() {
-  let r = await fetch("/images/deb-fs.json");
-  let resp = await r.json();
-  let threads = 0;
 
-  function count(element: any): number {
-    if (typeof (element[6]) == 'object') {
-      let n = 0;
-      for (let elementInFolder of element[6]) {
-        n += count(elementInFolder);
-      }
-      return n;
-    } else {
-      return 1;
-    }
-  }
-
-
-  let current = 0;
-  async function extractFolder(element: any, path: any, dolinks: boolean) {
-    anura.fs.mkdir(path, () => { });
-    let isFolder = false
-    // console.log(`${path}/${element[0]}`)
-    if (typeof (element[6]) == 'object') {
-      isFolder = true
-    }
-
-    let octal = element[3].toString(8);
-
-    let permission = element[3].toString(8).substring(octal.length - 3);
-    let mode = element[3].toString(8).substring(0, octal.length - 3);
-    // console.log("Folder: " + isFolder)
-    if (isFolder) {
-      // console.log(element[0]);
-      for (let elementInFolder of element[6]) {
-        await extractFolder(elementInFolder, `${path}/${element[0]}`, dolinks)
-      }
-    }
-    // console.log(`m: ${mode}, ${permission}`)
-    if (!isFolder) { // fetch and commit to FS
-      current += 1;
-      if (current % 200 == 0) {
-        console.log(`${current / max * 100}%`)
-      }
-      if (mode.startsWith("12")) {
-        if (dolinks) {
-          let dest = element[6].startsWith("/") ? element[6] : `${path}/${element[6]}`;
-          console.log(`symlining ${path}/${element[0]} to ${dest}`)
-          anura.fs.symlink(`${dest}`, `${path}/${element[0]}`, function(err: any) {
-            if (err) {
-              console.log(err)
-            }
-          });
-        }
-      } else if (!dolinks) {
-        let resp = await fetch(`images/deb-root-flat/${element[6]}`);
-        let buf = await resp.arrayBuffer();
-        // console.log(`${path}/${element[0]}`);
-        anura.fs.writeFile(`${path}/${element[0]}`, Filer.Buffer.from(buf), function(err: any) {
-          if (err) {
-            console.error(err);
-          }
-          anura.fs.chmod(`${path}/${element[0]}`, permission, (err: string | null) => {
-            if (err) {
-              console.error(err);
-            }
-          });
-        });
-      }
-    }
-  }
-
-  let max = 0;
-  resp.fsroot.forEach(async (element: any) => {
-    max += count(element);
-  });
-  console.log(max + " total");
-  resp.fsroot.forEach(async (element: any) => {
-    extractFolder(element, "/", false);
-  });
-  resp.fsroot.forEach(async (element: any) => {
-    extractFolder(element, "/", true);
-  });
-
-}
 interface FakeFile {
   slice: (start: number, end: number) => Promise<Blob>;
   save: () => Promise<void>;
