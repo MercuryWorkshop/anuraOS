@@ -36,7 +36,7 @@ class Anura {
             document.body.appendChild(notif)
         }
     }
-    fs: any = undefined
+    fs: any; // No Filer types, needs fixing later
     syncRead = {}
     apps: any = {}
     Version = "0.2.0 alpha"
@@ -82,8 +82,8 @@ class Anura {
                     let win = AliceWM.create(this.manifest.wininfo);
                     this.windowinstance = win;
 
-                    let iframe: any = document.createElement("iframe")
-                    iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
+                    let iframe = document.createElement("iframe")
+                    iframe.setAttribute("style", "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;")
                     iframe.setAttribute("src", `${location}/${manifest.index}`);
 
                     win.content.appendChild(iframe);
