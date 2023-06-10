@@ -41,9 +41,8 @@ var AliceWM = {
         width: '1000px',
         height: '500px',
     }
-
     // Param given in argument
-    if (givenWinInfo instanceof WindowInformation)
+    if (typeof(givenWinInfo) ==  'object')
         wininfo = givenWinInfo;
 
     if (typeof (givenWinInfo) == 'string') // Only title given
