@@ -1,9 +1,11 @@
 # Getting started
 
-To set up an anuraOS instance, you must first install nodejs, ts-node, and debootstrap.
+To set up an anuraOS instance, you must first install nodejs, ts-node, and debootstrap, rustup, and wasm32.
 
 Run `npm install` in both the root of the repo and in /server/.
 
-Run `tsc` after every change to rebuild the files and apply changes.
+Run `make all` for first time setup and `make rootfs` to setup v86 and the terminal app 
 
-TODO: write more about setting up an instance once the makefile has the rootfs bit
+Run `make bundle` after every change to rebuild the files and apply changes.
+
+Finally cd in to server/ and run `npx ts-node server.ts`
