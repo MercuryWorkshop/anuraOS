@@ -222,6 +222,23 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/fsapp.app");
     anura.registerApp("apps/chideNew.app");
     anura.registerApp("apps/python.app");
+    anura.registerApp("apps/workstore.app");
+
+    // Load all persistent sideloaded apps
+    try {
+        anura.fs.readdir("/userApps", (err: Error, files: string[]) => {
+            files.forEach(file => {
+                try {
+                    anura.registerApp("/fs/userApps/" + file)
+                } catch (e) {
+                    anura.logger.error("Anura failed to load an app " + e)
+                }
+                
+            })
+        })
+    } catch (e) {
+        anura.logger.error(e)
+    }
 
     // anura.registerApp("games.app");
     // if you want to use the games app, uncomment this, clone the repo in /apps 
