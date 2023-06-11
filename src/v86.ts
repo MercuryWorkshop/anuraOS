@@ -41,7 +41,7 @@ async function InitV86Backend(): Promise<V86Backend> {
     }
   }
 
-  // the rootfs is an EXT2 binary blob, stored with indexedDB, in parts of SLICE_SIZE
+  // the rootfs is an EXT4 binary blob, stored with indexedDB, in parts of SLICE_SIZE
 
 
   let size = (await new Promise(r => db.transaction("parts").objectStore("parts").get("size").onsuccess = r) as any).target.result;

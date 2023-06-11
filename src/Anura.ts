@@ -2,6 +2,9 @@ declare var Filer: any;
 
 const $ = document.querySelector.bind(document);
 
+const dg: { [key: string]: any } = {};
+
+
 let taskbar = new Taskbar();
 let launcher = new Launcher();
 let contextMenu = new ContextMenu();
@@ -45,20 +48,6 @@ class Anura {
         debug: Function = console.debug.bind(console, "anuraOS:"),
         warn: Function = console.warn.bind(console, "anuraOS:"),
         error: Function = console.error.bind(console, "anuraOS:")
-    }
-    x86fs = {
-        async read(path: string) {
-            // return await new Promise((resolve, reject) => {
-            //     return cheerpOSGetFileBlob([], "/files/" + path, async (blob) => {
-            //         resolve(await blob.text())
-            //     })
-            // })
-        },
-        write(path: string, data: string) {
-            // cheerpjAddStringFile(`/str/${path}`, data);
-            // Depressingly, we can't actually transfer the file to /home without it crashing the users shell //
-            // The user must do it themselves //
-        }
     }
     async registerApp(location: string) {
         let resp = await fetch(`${location}/manifest.json`);
@@ -240,16 +229,16 @@ document.addEventListener("anura-login-completed", async () => {
     // the games app is too large and unneccesary for ordinary developers
 
     if ((await (await (fetch('/fs/')))).status === 404) {
-        
-        let notif = new anura.notification({title: "Anura Error", description: "Anura has encountered an error with the Filesystem HTTP bridge, click this notification to restart", timeout: 50000})
-        notif.callback = function () {
+
+        let notif = new anura.notification({ title: "Anura Error", description: "Anura has encountered an error with the Filesystem HTTP bridge, click this notification to restart", timeout: 50000 })
+        notif.callback = function() {
             window.location.reload()
             return null;
         }
         notif.show()
     }
 
-  
+
 
 
     // v86 stable. can enable it by default now
@@ -282,7 +271,7 @@ document.addEventListener("anura-login-completed", async () => {
         if (e.button != 0) return;
         (document.querySelector(".custom-menu")! as HTMLElement).style.setProperty("display", "none");
     });
-    
+
     // This feels wrong but it works and makes TSC happy
     launcher.clickoffChecker?.addEventListener('click', () => {
         launcher.toggleVisible();
@@ -294,4 +283,8 @@ function catBufs(buffer1: ArrayBuffer, buffer2: ArrayBuffer): ArrayBuffer {
     tmp.set(new Uint8Array(buffer1), 0);
     tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
     return tmp.buffer;
+}
+function dbg(ref: object) {
+    let name = Object.keys(ref)[0]!;
+    dg[name] = name;
 }
