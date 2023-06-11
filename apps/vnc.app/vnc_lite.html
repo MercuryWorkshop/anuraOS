@@ -147,8 +147,8 @@
         status("Connecting");
 
         // Build the websocket URL used to connect
-        let url = "ws://" + window.location.origin.split("//")[1].split(":")[0] + ":8001/" + prompt("Please enter the URL to the VNC Server as HOSTNAME:PORT"); // TODO Detect HTTPS
-
+        let url =  window.location.origin.split("://")[0] == "https" ? 'wss://' : 'ws://' + window.location.origin.split("://")[1] + '/' + prompt("Please enter the URL to the VNC Server as HOSTNAME:PORT"); 
+        
         // Creating a new RFB object will start a new connection
         rfb = new RFB(document.getElementById('screen'), url,
                       { credentials: { password: password } });

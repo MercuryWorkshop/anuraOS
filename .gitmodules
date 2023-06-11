@@ -4,9 +4,6 @@
 [submodule "libapps"]
 	path = libapps
 	url = https://chromium.googlesource.com/apps/libapps
-[submodule "wsproxy"]
-	path = wsproxy
-	url = https://github.com/herenow/wsProxy
 [submodule "v86"]
 	path = v86
 	url = https://github.com/MercuryWorkshop/v86

@@ -7,18 +7,23 @@ import path from "path"
 import { spawn } from "child_process";
 
 
-spawn("node", ["index.js"], {
-  cwd: "../wsproxy/",
-  env: {
-    "PORT": "8001"
-  },
-  stdio: [process.stdout, process.stderr]
-})
+var ws = require('ws');
+var modules = require('./modules');
+var Proxy = require('./proxy');
 
-spawn("docker rm relay; docker run --privileged -p 8002:80 --name relay benjamincburns/jor1k-relay:latest", [], {
-  shell: true,
-  stdio: [process.stdout, null, process.stderr],
-})
+
+// spawn("node", ["index.js"], {
+//   cwd: "../wsproxy/",
+//   env: {
+//     "PORT": "8001"
+//   },
+//   stdio: [process.stdout, process.stderr]
+// })
+
+// spawn("docker rm relay; docker run --privileged -p 8002:80 --name relay bellenottelling/websockproxy:latest", [], {
+//   shell: true,
+//   stdio: [process.stdout, null, process.stderr],
+// })
 
 let files = read('public');
 
@@ -87,10 +92,49 @@ app.use(async (req: Request, res: Response, next: Function) => {
   next();
 });
 
+/**
+ * Before estabilishing a connection
+ */
+function onRequestConnect(info, callback) {
+
+	// Once we get a response from our modules, pass it through
+	modules.method.verify(info, function(res) {
+		callback(res);
+	})
+
+}
+
+
+
+console.log("Starting wsProxy")
+var WebSocketServer = new ws.Server({ noServer: true})
+WebSocketServer.on('connection', ws => {
+  try {
+    new Proxy(ws);
+  } catch (e) {
+    console.error(e)
+  }
+  
+});
+
+
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/build"));
 app.use("/apps", express.static(__dirname + "/apps"));
 app.use(express.static(__dirname + "/aboutproxy/static"));
 
+const server = app.listen(port, () => console.log("Listening on port: ", port));
 
-app.listen(port, () => console.log("Listening on port: ", port));
+server.on("upgrade", (request, socket, head) => {
+  if (bare.shouldRoute(request)) {
+    bare.routeUpgrade(request, socket, head);
+  } else {
+  console.log("websocket connection detected")
+    WebSocketServer.handleUpgrade(request, socket, head, (websocket) => {
+      let fakeWebsocket = websocket
+      fakeWebsocket.upgradeReq = request
+      WebSocketServer.emit("connection", fakeWebsocket, request);
+    
+    })
+  }
+});

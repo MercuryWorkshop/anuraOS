@@ -102,22 +102,7 @@
 
 		// Build the entire websocket url eg (wss://localhost:5999/) based on http protocol
 		function buildWSProxyURL(portPassed) {
-			// Decide if we're using secure ws or not
-			if(window.location.protocol == "https:"){
-				wsproxyProto = "wss"
-			}
-
-			var port
-			if (portPassed){
-				port = ""
-			} else {
-				port =  ':' + wsproxyPorts[wsproxyProto]
-			}
-
-			// Build the wsproxyURL up
-			wsproxyURL = wsproxyProto + '://' + wsproxyURL + port + '/'
-
-			document.getElementById("websockURL").value = wsproxyURL
+			document.getElementById("websockURL").value =  window.location.origin.split("://")[0] == "https" ? 'wss://' : 'ws://' + window.location.origin.split("://")[1] + '/'
 		}
 
 		// Changes the websocket proxy URL ** BEFORE ** connection ONLY
@@ -254,7 +239,7 @@
 			// Initialise the window title
 			document.title = "SSHy Client";
 			// Opens the websocket!
-			wsproxyURL += html_ipaddress + ':' + html_port
+			wsproxyURL =  window.location.origin.split("://")[0] == "https" ? 'wss://' : 'ws://' + window.location.origin.split("://")[1] + '/' + html_ipaddress + ':' + html_port
 
                         if (wsproxyEncoding == 'binary') {
                           ws = new WebSocket(wsproxyURL);
