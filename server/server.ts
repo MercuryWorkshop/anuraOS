@@ -20,10 +20,10 @@ var Proxy = require('./proxy');
 //   stdio: [process.stdout, process.stderr]
 // })
 
-// spawn("docker rm relay; docker run --privileged -p 8002:80 --name relay bellenottelling/websockproxy:latest", [], {
-//   shell: true,
-//   stdio: [process.stdout, null, process.stderr],
-// })
+spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
+  shell: true,
+  stdio: [process.stdout, null, process.stderr],
+})
 
 let files = read('public');
 

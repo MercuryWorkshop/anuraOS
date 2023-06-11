@@ -211,7 +211,7 @@ class V86Backend {
 
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
-      network_relay_url: "ws://localhost:8002/",
+      network_relay_url: "ws://localhost:8001/",
       autostart: true,
 
     });
