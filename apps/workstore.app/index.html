@@ -253,20 +253,18 @@
                                     console.log(zipEntry)
                                     console.log(await zipEntry.async("arraybuffer"))
                                     fs.writeFile(`${path}/${zipEntry.name}`, Buffer.from(await zipEntry.async("arraybuffer")))
+                                    if (zipEntry.name == "manifest.json") {
+                                        await window.parent.anura.registerApp('/fs'+path)
+                                        new window.parent.anura.notification(
+                                        {
+                                            title: "Application Installed for Session", 
+                                            description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`, timeout: 50000
+                                        }).show()
+                                    }
                                 }
                             }, function (e) {
                                 console.error(e)
                             })
-                            try {
-                                await window.parent.anura.registerApp('/fs'+path)
-                                new window.parent.anura.notification(
-                                {
-                                    title: "Application Installed for Session", 
-                                    description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`, timeout: 50000
-                                }).show()
-                            } catch (e) {
-                                console.error(e)
-                            }
                         } catch (e) {
                             console.error(e)
                             try {
