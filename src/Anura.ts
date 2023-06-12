@@ -52,6 +52,10 @@ class Anura {
     async registerApp(location: string) {
         let resp = await fetch(`${location}/manifest.json`);
         let manifest = await resp.json()
+        
+        if (manifest.package in anura.apps) {  //  Application already registered 
+            throw 'Application already installed';
+        }
 
         let app = {
             name: manifest.name,
@@ -260,7 +264,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     // v86 stable. can enable it by default now
     let mgr = await anura.registerApp("apps/x86mgr.app");
-    await mgr.launch();
+    await mgr?.launch();
 
 
     let finp: HTMLInputElement = React.createElement("input", { type: "file", id: "input" }) as unknown as HTMLInputElement;
