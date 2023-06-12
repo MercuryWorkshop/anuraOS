@@ -19,7 +19,7 @@ function serverInstall() {
  * Register the nohost service worker, passing `route` or other options.
  */
 
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && localStorage["use-sw-cache"] === 'true') {
   const wb = new Workbox('/nohost-sw.js?debug');
 
   // Wait on the server to be fully ready to handle routing requests
@@ -34,3 +34,5 @@ if ('serviceWorker' in navigator) {
 
   wb.register();
 }
+
+

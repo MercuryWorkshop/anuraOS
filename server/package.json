@@ -23,6 +23,7 @@
     "express": "^4.18.2",
     "fs-readdir-recursive": "^1.1.0",
     "ts-node": "^10.9.1",
+    "ws": "^8.13.0",
     "xterm": "^5.1.0"
   }
 }
