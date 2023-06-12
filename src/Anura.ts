@@ -13,6 +13,17 @@ let oobeview = new OobeView();
 let oobewelcomestep = new OobeWelcomeStep();
 let oobeassetsstep = new OobeAssetsStep();
 
+type notifParams = {
+    title?: string
+    description?: string
+    timeout?: number
+    callback?: Function
+    closeIndicator?: boolean
+    // COMING SOON (hopefully)
+    // icon?: string
+    // buttons?: Array<{ text: string, callback: Function }>
+
+}
 
 class Anura {
     x86: null | V86Backend;
@@ -114,7 +125,7 @@ class Anura {
         })
     }
     notification = class {
-        constructor(params: any) {
+        constructor(params: notifParams) {
             if (params) {
                 if (params.title) {
                     this.title = params.title
@@ -128,11 +139,15 @@ class Anura {
                 if (params.callback) {
                     this.callback = this.callback
                 }
+                if (params.closeIndicator) {
+                    this.closeIndicator = params.closeIndicator
+                }
             }
         }
-        title = "Anura Notification"
-        description = "Anura Description"
-        timeout = 2000
+        title = "Anura Notification";
+        description = "Anura Description";
+        timeout = 2000;
+        closeIndicator = false;
         callback() {
             return null;
         }
@@ -148,6 +163,13 @@ class Anura {
             notifTitle.className = "notif-title"
             let notifDesc = document.createElement('div')
             notifDesc.className = "notif-description"
+            if (this.closeIndicator) {
+                let closeIndicator = document.createElement('div')
+                closeIndicator.className = "notif-close-indicator"
+                // temporary because im too lazy to make a span item properly, it's hardcoded so it's fine.
+                closeIndicator.innerHTML = `<span class="material-symbols-outlined">close</span>`
+                notif.appendChild(closeIndicator)
+            }
 
             // assign relevant values
             notifTitle.innerText = this.title
@@ -156,8 +178,7 @@ class Anura {
 
             let callback = this.callback
             notif.onclick = function() {
-                const oldNotif = document.getElementById(id)!
-                notifContainer?.removeChild(oldNotif)
+                deleteNotif()
                 callback()
             }
 
@@ -169,9 +190,16 @@ class Anura {
 
             // remove afyer period
             setTimeout(() => {
-                const oldNotif = document.getElementById(id)!
-                notifContainer?.removeChild(oldNotif)
+                deleteNotif()
             }, this.timeout);
+
+            function deleteNotif() {
+                const oldNotif = document.getElementById(id)!
+                oldNotif.style.opacity = "0"
+                setTimeout(() => {
+                    notifContainer?.removeChild(oldNotif)    
+                }, 360);
+            }
         }
     }
 }
@@ -227,6 +255,8 @@ document.addEventListener("anura-login-completed", async () => {
     // Load all persistent sideloaded apps
     try {
         anura.fs.readdir("/userApps", (err: Error, files: string[]) => {
+            // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
+            if (files == undefined) return;
             files.forEach(file => {
                 try {
                     anura.registerApp("/fs/userApps/" + file)
