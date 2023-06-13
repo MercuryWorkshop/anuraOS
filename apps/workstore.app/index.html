@@ -10,9 +10,8 @@
     <body>
         <div class="container">
             <div class="sidebar">
-                <button><i class="fa-solid fa-clock-rotate-left fa-lg"></i>Recent</button>
-                <hr></hr>
-                <button><i class="fa-solid fa-laptop fa-lg"></i>My files</button>
+                <textarea name="" id="repos">https://8000-mercuryworkshop-alicewm-rmklwfllsv5.ws-us99.gitpod.io/</textarea>
+                <button type="button" onclick="loadPathFromUser()">Reload</button>
             </div>
             <div class="fileView">
                 <div class="topbar">
@@ -29,9 +28,8 @@
                         <tr>
                             <th data-type="icon">Icon<span class="resize-handle hidden-resize-handle"></span></th>
                             <th data-type="name">Name<span class="resize-handle"></span></th>
-                            <th data-type="size">Size<span class="resize-handle"></span></th>
                             <th data-type="type">Type<span class="resize-handle"></span></th>
-                            <th data-type="modified">Date modified<span class="resize-handle"></span></th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -48,9 +46,7 @@
         const columnTypeToRatioMap = {
             'icon': 0.1,
             'name': 3,
-            'size': 1,
             'type': 1,
-            'modified': 1
         };
 
         const table = document.querySelector('table');
@@ -145,26 +141,22 @@
                     let iconContainer = document.createElement('td')
                     let icon = document.createElement('img')
                     let name = document.createElement('td')
-                    let size = document.createElement('td')
+                    // let size = document.createElement('td')
                     let description = document.createElement('td')
-                    let date = document.createElement('td')
+                    // let date = document.createElement('td')
                     let type = document.createElement('td')
 
                     name.innerText = app.name
                     description.innerText = "Anura Application"
-                    date.innerText = ""
                     icon.class = '';
                     icon.src = URL.createObjectURL(await (await client.fetch(path + app.icon)).blob())
                     icon.height = '16'
                     icon.width = '16'
-                    size.innerText = ""
 
                     iconContainer.appendChild(icon)
                     row.appendChild(iconContainer)
                     row.appendChild(name)
-                    row.appendChild(size)
                     row.appendChild(description)
-                    row.appendChild(date)
 
                     row.setAttribute("data-type", 'app');
                     row.setAttribute("data-path", `${path}${app.data}`);
@@ -173,10 +165,6 @@
 
                     reloadListeners()
                 })
-                
-
-                   
-
             }
 
             function reloadListeners() {
@@ -237,7 +225,8 @@
                         new window.parent.anura.notification(
                                 {
                                     title: "Anura is installing an app from a repo", 
-                                    description: `Application ${fileSelected.getAttribute("file-name")} is being installed, this may take a while`, timeout: 50000
+                                    description: `Application ${fileSelected.getAttribute("file-name")} is being installed, this may take a while`, 
+                                    timeout: 50000
                                 }).show()
                         console.debug("Clicked on app")
                         console.debug("Zip file detected, extracting")
@@ -258,11 +247,17 @@
                                         new window.parent.anura.notification(
                                         {
                                             title: "Application Installed for Session", 
-                                            description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`, timeout: 50000
+                                            description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`, 
+                                            timeout: 50000
                                         }).show()
                                     }
                                 }
                             }, function (e) {
+                                new window.parent.anura.notification({
+                                    title: "Application ZIP extraction error", 
+                                    description: `Application had an error installing: ${e}`, 
+                                    timeout: 50000
+                                }).show()
                                 console.error(e)
                             })
                         } catch (e) {
@@ -272,80 +267,23 @@
                                 new window.parent.anura.notification(
                                 {
                                     title: "Application Installed for Session", 
-                                    description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`, timeout: 50000
+                                    description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`, 
+                                    timeout: 50000
                                 }).show()
                             } catch (e) {
-                                console.error(e)
+                                new window.parent.anura.notification({
+                                    title: "Application Install Error", 
+                                    description: `Application had an error installing: ${e}`, 
+                                    timeout: 50000
+                                }).show()
                             }
                         }
-                        
-
-
-
-
                         reload()
-                        
-
-                        
-                        
-                    } else if(fileSelected.getAttribute("data-type") == "dir") {
-                        if (fileSelected.getAttribute("data-path").split('.').slice('-1')[0] == "app") {
-                            try {
-                                await window.parent.anura.registerApp(`/fs${fileSelected.getAttribute("data-path")}`.replace('//', '/'))
-                                new window.parent.anura.notification({title: "Application Installed for Session", description: `Application ${fileSelected.getAttribute("data-path").replace('//', '/')} has been installed temporarily, it will go away on refresh`, timeout: 50000}).show()
-                            } catch (e) {
-                                new window.parent.anura.notification({title: "Application Install Error", description: `Application had an error installing: ${e}`, timeout: 50000}).show()    
-                            }
-                            
-                            
-                        } else {
-                            console.debug("Changing folder to ", fileSelected.getAttribute("data-path"));
-                            loadPath(fileSelected.getAttribute("data-path"));
-                        }
-
-                    } else {
-                        console.warn("Unknown filetype ", fileSelected.getAttribute("data-type"), " doing nothing!");
-                    }
-                } else {
-                    // MULTIPLE FILE SELECTION //
-
-                    console.error("raff please implement"); 
+                    } 
                 }
-            }
-
-            function setBreadcrumbs(path) {
-                path = path.replace(/(\/)\1+/g, '$1')
-                var pathSplit = path.split("/");
-                console.log(pathSplit);
-                pathSplit[0] = "My files";
-                var breadcrumbs = document.querySelector(".breadcrumbs");
-                breadcrumbs.setAttribute("data-current-path", path);
-                breadcrumbs.innerHTML = '';
-                if(pathSplit.length == 2 && pathSplit[0] == "My files" && pathSplit[1] == "") {
-                    var breadcrumb = document.createElement("button");
-                    breadcrumb.innerText = "My files";
-                    breadcrumb.addEventListener("click", () => {
-                        loadPath('/');
-                    });
-                    breadcrumbs.appendChild(breadcrumb);
-                    return;
-                }
-                for(var i = 0; i<pathSplit.length; i++) {
-                    console.log(i);
-                    var breadcrumb = document.createElement("button");
-                    breadcrumb.innerText = pathSplit[i];
-                    var index = i;
-                    breadcrumb.addEventListener("click", () => {
-                        loadPath('/' + pathSplit.slice(1, index).join('/'));
-                    });
-                    breadcrumbs.appendChild(breadcrumb)
-                    if(pathSplit[i] !== pathSplit[pathSplit.length-1]) {
-                        var breadcrumbSpan = document.createElement("span");
-                        breadcrumbSpan.innerText = ">";
-                        breadcrumbs.appendChild(breadcrumbSpan);
-                    }
-                }
-            }
+            } 
+            
+            
 
             document.querySelector("table").addEventListener("click", (e) => {
                 if(e.currentTarget === e.target) {
@@ -353,99 +291,23 @@
                     currentlySelected = [];
                 }
             });
-            document.addEventListener("contextmenu", (e) => {
-                if(e.shiftKey) {
-                    return;
-                }
-                e.preventDefault();
-                var contextmenu = document.querySelector("#contextMenu");
-                contextmenu.style.left = e.pageX + "px";
-                contextmenu.style.top = e.pageY + "px";
-                contextmenu.style.removeProperty("display");
-            });
 
-            document.addEventListener("click", (e) => {
-                if(e.target !== document.querySelector("#contextMenu") || !document.querySelector("#contextMenu").contains(e.target)) {
-                    document.querySelector("#contextMenu").style.setProperty("display", "none");
-                }
-            });
-            function newFolder(path) {
-                if (path === undefined) {
-                    path = document.querySelector(".breadcrumbs").getAttribute("data-current-path") + '/' + prompt('Folder Name: ')
-                }
-                fs.mkdir(path)
-                reload()
-            }
-            function reload() {
-                loadPath(document.querySelector(".breadcrumbs").getAttribute("data-current-path"))
-            }
-            function reload() {
-                loadPath(document.querySelector(".breadcrumbs").getAttribute("data-current-path"))
-            }
-
-            function upload() {
-                
-                let fauxput = document.createElement('input') // fauxput - fake input that isn't shown or ever added to page TODO: think of a better name for this variable
-                fauxput.type = 'file'
-                fauxput.onchange = async (e) => {
-                    const file = await e.target.files[0]
-                    const content = await file.arrayBuffer()
-                    fs.writeFile(`${document.querySelector(".breadcrumbs").getAttribute("data-current-path")}/${file.name}`, Buffer.from(content), function (err) {
-                        reload();
-                    })
-                }
-                fauxput.click()
-            }
-            function deleteFile() {
-                if (currentlySelected.length == 0) {
-                    alert("BUG: You have no files selected, right clicking does not select files")   
-                }
-                currentlySelected.forEach(async item => {
-                    await sh.rm(item.getAttribute("data-path"), { recursive: true }, function(err) {
-                        if(err) throw err;
-                        reload()
-                    })
-                    
+            function loadPathFromUser() {
+                document.getElementById('repos').value.split('\n').forEach(repo => {
+                    try {
+                        console.log('Repo being loaded ' + repo)
+                        loadPath(repo);    
+                    } catch (e) {
+                        new window.parent.anura.notification({
+                            title: "Failed to load repo", 
+                            description: `Repo ${repo} failed to load: ${e}`, 
+                            timeout: 50000
+                        }).show()
+                    }
                 })
             }
-            function copy() {
-                clipboard = currentlySelected
-                removeAfterPaste = false
-            }
-            function cut() {
-                clipboard = currentlySelected
-                removeAfterPaste = true
-            }
-            function paste() {
-                const path = document.querySelector(".breadcrumbs").getAttribute("data-current-path")
-                if (!removeAfterPaste) { // copy
-                    alert("Copy Paste is not Implimented, please use cut")
-                }
-                if (removeAfterPaste) {  // cut
-                    clipboard.forEach(item => {
-                        itemName = item.getAttribute("data-path")
-                        fs.rename(itemName, `${path}/${itemName.split("/").slice("-1")[0]}`, function(err) {
-                            if(err) throw err;
-                            reload()
-                        });
-                    })
-                }
-            }
-            loadPath('https://8000-mercuryworkshop-alicewm-rmklwfllsv5.ws-us99.gitpod.io/');
+            loadPathFromUser()
 
         </script>
-        <div style="display: none;" id="contextMenu">
-            <button>Get info</button>
-            <button>Pin to shelf</button>
-            <button onclick="reload()">Refresh</button>
-            <hr></hr>
-            <button onclick="cut()">Cut</button>
-            <button onclick="copy()">Copy</button>
-            <button  onclick="paste()">Paste</button>
-            <button onclick="deleteFile()">Delete</button>
-            <button onclick="upload()">Upload from PC</button>
-            <hr></hr>
-            <button onclick="newFolder()">New folder</button>
-        </div>
     </body>
 </html>
