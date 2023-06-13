@@ -12,16 +12,15 @@ var modules = require('./modules');
 var Proxy = require('./proxy');
 
 
-spawn("node", ["index.js"], {
-  cwd: "../wsproxy/",
-  env: {
-    "PORT": "8001"
-  },
-  shell: true,
-  stdio: [process.stdout, process.stderr]
-})
+// spawn("node", ["index.js"], {
+//   cwd: "../wsproxy/",
+//   env: {
+//     "PORT": "8001"
+//   },
+//   stdio: [process.stdout, process.stderr]
+// })
 
-spawn("docker stop relay; docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
+spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
   shell: true,
   stdio: [process.stdout, null, process.stderr],
 })
