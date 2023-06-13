@@ -199,6 +199,8 @@ class Anura {
 
             function deleteNotif() {
                 const oldNotif = document.getElementById(id)!
+                // do nothing if the notification is already deleted
+                if (oldNotif == null) return; 
                 oldNotif.style.opacity = "0"
                 setTimeout(() => {
                     notifContainer?.removeChild(oldNotif)    
