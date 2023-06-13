@@ -82,6 +82,7 @@ int pagemap_get_entry(PagemapEntry *entry, int pagemap_fd, uintptr_t vaddr) {
     if (ret <= 0) {
       return 1;
     }
+    usleep(1000);
   }
   entry->pfn = data & (((uint64_t)1 << 55) - 1);
   entry->soft_dirty = (data >> 55) & 1;
@@ -140,6 +141,7 @@ void alloc_aty(pty_t *pty, char *argv[], char *envp[], struct winsize *winp) {
 void wait_for_ack() {
   char ack = ' ';
   do {
+    usleep(1000);
     scanf("%c", &ack);
   } while (ack != '\006');
 }
@@ -336,5 +338,6 @@ int main() {
       printf("\005r %lu\n", buffer_phys_addr);
       wait_for_ack();
     }
+    usleep(1000);
   }
 }
