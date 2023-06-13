@@ -25,6 +25,7 @@ var Proxy = require('./proxy');
 try {
   let websocketproxy = new Docker({ socketPath: '/var/run/docker.sock' });
   websocketproxy.run('bellenottelling/websockproxy', [], process.stdout, {
+    name: 'relay',
     HostConfig: {
       Privileged: true,
       PortBindings: {
