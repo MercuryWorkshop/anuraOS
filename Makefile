@@ -36,8 +36,8 @@ bundle:
 	tsc
 
 nohost:
-	mkdir -p build
-	cd nohost; npm i; npm run build; cp -r dist/* ../build/
+	mkdir build
+	cd nohost; npm run build; cp -r dist/* ../build/
 prod: all
 	npx google-closure-compiler --js "build/lib/libv86.js" "public/assets/libs/filer.min.js" "build/lib/**/*.js" --js_output_file public/dist.js
 
