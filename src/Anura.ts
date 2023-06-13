@@ -206,6 +206,17 @@ class Anura {
             }
         }
     }
+    get wsproxyURL() {
+        let url = '';
+        if (location.protocol == 'https:') {
+            url += 'wss://'
+        } else {
+            url += 'ws://'
+        }
+        url += window.location.origin.split("://")[1]
+        url += '/'
+        return localStorage['wsproxy-url'] || url // let user define a systemwide wsproxy url to their prefered instance, fallback to obvious choice
+    }
 }
 
 function openAppManager() {
