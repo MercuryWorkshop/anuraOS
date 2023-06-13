@@ -22,7 +22,7 @@ class Taskbar {
   }
   addShortcut(svg: string, launch: () => void) {
     let elm = (<li>
-      <input type="image" app="among" src={svg} id="showDialog" on:click={launch} />
+      <input type="image" src={svg} id="showDialog" on:click={launch} />
     </li>);
     this.shortcutsTray.appendChild(elm);
   }
