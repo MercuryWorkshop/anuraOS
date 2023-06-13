@@ -137,6 +137,7 @@ nav li {
     transition: all .1s ease-out;
     opacity: 0;
     z-index: -1;
+    visibility: hidden;
 }
 
 .launcher.active {
@@ -145,6 +146,7 @@ nav li {
     height: min(80%, 40em);
     z-index: 9999;
     transition: all .1s ease-in;
+    visibility: visible;
 }
 
 .clickoffChecker {
@@ -341,27 +343,47 @@ nav li {
   
 .notif {
     position: relative;
-    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-    background-color: #222222;
-    border-radius: 10px;
-    color:  white;
-    min-height:  90px;
+    font-family: 'Roboto';
+    background-color: rgba(28, 28, 28, 0.85);;
+    border-radius: 7px;
+    color: white;
+    min-height: 115px;
     width: 400px;
-    margin: 10px; 
+    cursor: pointer;
+    margin: 10px;
+    left: 500px;
+    animation: slideIn 0.5s ease-in-out forwards;
+    opacity: 1;
+    transition: 350ms ease-in-out;
 } 
+
+@keyframes slideIn {
+    from {
+        left: 500px;
+    }
+    to {
+        left: 0px;
+    }
+}
   
 .notif-body {
-    margin: 0;
-    margin-top: 0;
+    margin: 10px;
+    padding-top: 5px;
 } 
   
 .notif-description {
     padding-top: 10px;
     padding-left: 10px;
     padding-bottom: 10px;
+    font-size: 18px;
 }
 .notif-title {
     font-size: 24px;
     padding-left: 10px;
     padding-top: 10px;
+}
+.notif-close-indicator {
+    position: absolute;
+    top: 6px;
+    left: 370px;
 }
