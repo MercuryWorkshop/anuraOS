@@ -25,7 +25,7 @@ class React {
         }
 
 
-        (elm as any)[name] = props[name];
+        elm.setAttribute(name, props[name]);
       }
     }
 

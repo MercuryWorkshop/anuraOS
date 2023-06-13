@@ -28,17 +28,17 @@ class Launcher {
     this.clickoffChecker.classList.toggle("active");
   }
 
-  addShortcut(name: string, svg: string, onclick: () => void) {
-    let shortcut = this.shortcutElement(name, svg);
+  addShortcut(name: string, svg: string, onclick: () => void, appID: string) {
+    let shortcut = this.shortcutElement(name, svg, appID);
     shortcut.addEventListener("click", onclick);
     this.element.querySelector("#appsView").appendChild(shortcut);
   }
 
 
-  shortcutElement(name: string, svg: string): HTMLElement {
+  shortcutElement(name: string, svg: string, appID: string): HTMLElement {
     return (
-      <div class="app">
-        <input class="app-shortcut-image" type="image" src={svg} id="showDialog" />
+      <div class="app" application={appID}>
+        <input class="app-shortcut-image showDialog" type="image" src={svg} />
         <div class="app-shortcut-name">{name}</div>
       </div>
     )

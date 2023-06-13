@@ -95,9 +95,9 @@ class Anura {
             },
         };
 
-        launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app));
+        launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app), manifest.package);
 
-        taskbar.addShortcut(`${location}/${manifest.icon}`, app.launch.bind(app));
+        taskbar.addShortcut(`${location}/${manifest.icon}`, app.launch.bind(app), manifest.package);
 
         this.apps[manifest.package] = app;
         return app;
