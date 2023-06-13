@@ -3,7 +3,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: nohost v86dirty v86 bundle
+all: v86dirty v86 bundle
 
 clean:
 	cd v86; make clean
@@ -34,10 +34,6 @@ bundle:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
 	tsc
-
-nohost:
-	mkdir build
-	cd nohost; npm run build; cp -r dist/* ../build/
 prod: all
 	npx google-closure-compiler --js "build/lib/libv86.js" "public/assets/libs/filer.min.js" "build/lib/**/*.js" --js_output_file public/dist.js
 
