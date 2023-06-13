@@ -12,14 +12,14 @@ var modules = require('./modules');
 var Proxy = require('./proxy');
 
 
-spawn("node", ["index.js"], {
-  cwd: "../wsproxy/",
-  env: {
-    "PORT": "8001"
-  },
-  shell: true,
-  stdio: [process.stdout, process.stderr]
-})
+// spawn("node", ["index.js"], {
+//   cwd: "../wsproxy/",
+//   env: {
+//     "PORT": "8001"
+//   },
+//   shell: true,
+//   stdio: [process.stdout, process.stderr]
+// })
 
 spawn("docker stop relay; docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
   shell: true,
@@ -98,24 +98,24 @@ app.use(async (req: Request, res: Response, next: Function) => {
  */
 function onRequestConnect(info, callback) {
 
-	// Once we get a response from our modules, pass it through
-	modules.method.verify(info, function(res) {
-		callback(res);
-	})
+  // Once we get a response from our modules, pass it through
+  modules.method.verify(info, function(res) {
+    callback(res);
+  })
 
 }
 
 
 
 console.log("Starting wsProxy")
-var WebSocketServer = new ws.Server({ noServer: true})
+var WebSocketServer = new ws.Server({ noServer: true })
 WebSocketServer.on('connection', ws => {
   try {
     new Proxy(ws);
   } catch (e) {
     console.error(e)
   }
-  
+
 });
 
 
@@ -130,12 +130,12 @@ server.on("upgrade", (request, socket, head) => {
   if (bare.shouldRoute(request)) {
     bare.routeUpgrade(request, socket, head);
   } else {
-  console.log("websocket connection detected")
+    console.log("websocket connection detected")
     WebSocketServer.handleUpgrade(request, socket, head, (websocket) => {
       let fakeWebsocket = websocket
       fakeWebsocket.upgradeReq = request
       WebSocketServer.emit("connection", fakeWebsocket, request);
-    
+
     })
   }
 });

@@ -1,5 +1,3 @@
-declare var Filer: any;
-
 const $ = document.querySelector.bind(document);
 
 const dg: { [key: string]: any } = {};
@@ -27,31 +25,45 @@ type notifParams = {
 
 class Anura {
     x86: null | V86Backend;
-    constructor() {
+    settings: Settings;
+    fs: FilerFS;
+    private constructor(fs: FilerFS, settings: Settings) {
+        this.fs = fs;
+        this.settings = settings;
 
-
-        // File System Initialization //
-        this.fs = new Filer.FileSystem({
-            name: "anura-mainContext",
-            provider: new Filer.FileSystem.providers.IndexedDB()
-        });
-        this.fs.readFileSync = async (path: string) => {
-            return await new Promise((resolve, reject) => {
-                return anura.fs.readFile(path, function async(err: any, data: any) {
-                    resolve(new TextDecoder('utf8').decode(data))
-                })
-            })
-        }
-
-        // Notification Container //
         {
             let notif = document.createElement('div')
             notif.className = "notif-container"
             document.body.appendChild(notif)
         }
     }
-    fs: any; // No Filer types, needs fixing later
-    syncRead = {}
+
+    static async new(): Promise<Anura> {
+
+
+        // File System Initialization //
+        let fs = new Filer.FileSystem({
+            name: "anura-mainContext",
+            provider: new Filer.FileSystem.providers.IndexedDB()
+        });
+
+        // don't like this... but whatever 
+        fs.readFileSync = async (path: string) => {
+            return await new Promise((resolve, reject) => {
+                return fs.readFile(path, function async(err: any, data: any) {
+                    resolve(new TextDecoder('utf8').decode(data))
+                })
+            })
+        }
+
+        let settings = await Settings.new(fs);
+
+
+
+        let anuraPartial = new Anura(fs, settings);
+        return anuraPartial;
+    }
+
     apps: any = {}
     Version = "0.2.0 alpha"
     logger = {
@@ -63,7 +75,7 @@ class Anura {
     async registerApp(location: string) {
         let resp = await fetch(`${location}/manifest.json`);
         let manifest = await resp.json()
-        
+
         if (manifest.package in anura.apps) {  //  Application already registered 
             throw 'Application already installed';
         }
@@ -201,7 +213,7 @@ class Anura {
                 const oldNotif = document.getElementById(id)!
                 oldNotif.style.opacity = "0"
                 setTimeout(() => {
-                    notifContainer?.removeChild(oldNotif)    
+                    notifContainer?.removeChild(oldNotif)
                 }, 360);
             }
         }
@@ -222,8 +234,8 @@ const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolv
 window.addEventListener("load", async () => {
     document.body.appendChild(bootsplash.element);
 
-    await sleep(2000);
-    anura = new Anura();
+    // await sleep(2000);
+    anura = await Anura.new();
     (window as any).anura = anura;
 
     bootsplash.element.remove();
@@ -267,7 +279,7 @@ document.addEventListener("anura-login-completed", async () => {
                 } catch (e) {
                     anura.logger.error("Anura failed to load an app " + e)
                 }
-                
+
             })
         })
     } catch (e) {

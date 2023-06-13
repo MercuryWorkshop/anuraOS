@@ -1,4 +1,3 @@
-declare var V86Starter: any;
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
