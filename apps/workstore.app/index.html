@@ -222,7 +222,7 @@
 
                     var fileSelected = selected[0];
                     if(fileSelected.getAttribute("data-type") == "app") {
-                        new window.parent.anura.notification(
+                        new anura.notification(
                                 {
                                     title: "Anura is installing an app from a repo", 
                                     description: `Application ${fileSelected.getAttribute("file-name")} is being installed, this may take a while`, 
@@ -243,8 +243,8 @@
                                     console.log(await zipEntry.async("arraybuffer"))
                                     fs.writeFile(`${path}/${zipEntry.name}`, Buffer.from(await zipEntry.async("arraybuffer")))
                                     if (zipEntry.name == "manifest.json") {
-                                        await window.parent.anura.registerApp('/fs'+path)
-                                        new window.parent.anura.notification(
+                                        await anura.registerApp('/fs'+path)
+                                        new anura.notification(
                                         {
                                             title: "Application Installed for Session", 
                                             description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`, 
@@ -253,7 +253,7 @@
                                     }
                                 }
                             }, function (e) {
-                                new window.parent.anura.notification({
+                                new anura.notification({
                                     title: "Application ZIP extraction error", 
                                     description: `Application had an error installing: ${e}`, 
                                     timeout: 50000
@@ -263,15 +263,15 @@
                         } catch (e) {
                             console.error(e)
                             try {
-                                await window.parent.anura.registerApp('/fs'+path)
-                                new window.parent.anura.notification(
+                                await anura.registerApp('/fs'+path)
+                                new anura.notification(
                                 {
                                     title: "Application Installed for Session", 
                                     description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`, 
                                     timeout: 50000
                                 }).show()
                             } catch (e) {
-                                new window.parent.anura.notification({
+                                new anura.notification({
                                     title: "Application Install Error", 
                                     description: `Application had an error installing: ${e}`, 
                                     timeout: 50000
@@ -298,7 +298,7 @@
                         console.log('Repo being loaded ' + repo)
                         loadPath(repo);    
                     } catch (e) {
-                        new window.parent.anura.notification({
+                        new anura.notification({
                             title: "Failed to load repo", 
                             description: `Repo ${repo} failed to load: ${e}`, 
                             timeout: 50000

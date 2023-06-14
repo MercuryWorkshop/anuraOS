@@ -239,7 +239,7 @@
 			// Initialise the window title
 			document.title = "SSHy Client";
 			// Opens the websocket!
-			wsproxyURL = window.parent.anura.wsproxyURL + html_ipaddress + ':' + html_port
+			wsproxyURL = anura.wsproxyURL + html_ipaddress + ':' + html_port
 
                         if (wsproxyEncoding == 'binary') {
                           ws = new WebSocket(wsproxyURL);
