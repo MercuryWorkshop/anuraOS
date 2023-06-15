@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width=" 24" height=" 24" fill-rule="evenodd" class="vector-svg"><path fill="white" stroke="white" stroke-width="0px" stroke-linecap="round" shape-rendering="geometricPrecision" d="M 23 1 v 22 H 1 V 1 h 22 Z m -3 19 H 4 V 4 h 16 v 16 Z"/></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12px" height="12px" viewBox="0 0 12 12" version="1.1">
+<g id="surface1">
+<path style=" stroke:none;fill-rule:evenodd;fill:rgb(100%,100%,100%);fill-opacity:1;" d="M 11.5 0.5 L 11.5 11.5 L 0.5 11.5 L 0.5 0.5 Z M 10 10 L 2 10 L 2 2 L 10 2 Z M 10 10 "/>
+</g>
+</svg>
