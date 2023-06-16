@@ -1,21 +1,37 @@
-# AliceWM
-Window manager for FrogOS 
+# anuraOS
+Web OS with v86 integration
 
-### Usage:
+## Getting Started
 
-`let dialog = AliceWM.create("TITLE")` returns an HTML object and create a resizable Window on screen. You add content to it by invoking `dialog.content.innterHTML` or `dialog.content.appendChild`
+### Installation
+- make sure you clone with --recursive!!!
+- You need to have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
+- mkdir build/
+- mkdir build/lib
+- `npm install`
+- Install `typescript` and `docker` packages.
+- `make all`
+ * NOTE: you can use `make all -B` to force a full build.
 
-### Exmaple:
-```js
-let dialog = AliceWM.create("Bruhmium Browser");
+### Building rootfs
+- Make sure Docker is installed and running.
+- `sudo make rootfs`
+- Keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, edit src/v86.ts to edit the `url` of those two tools to have those file names.
 
-let iframe = document.createElement("iframe")
-iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
-iframe.setAttribute("src", "https://hypertabs.cc")
-
-dialog.content.appendChild(iframe)
+### Run
+```sh
+make bundle
+cd server
+npx ts-node server.ts # Use sudo if Docker is unavailable without root.
 ```
 
-run server with `npm run start`
+## Post-installation (client)
+**NOTE**: The login for rootfs images is `root:root`.
 
-you will need to symlink your arch of `symlinks.` to `symlinks`
+- Visit `localhost:8000` in your browser. **NOTE**: anuraOS uses the latest web technologies, and is unstable in Gecko. Chromium is **strongly recommended**
+- Select the debian rootfs. If you built it from this repository, its location is `./build/images/debian-rootfs.bin`.
+- Set up rootfs by entering in the JS console: `await loadfile(document.all.input.files[0])`
+ * Once the console prints `1` and the command returns `undefined`, reload the page.
+ * If you ever need to update your rootfs image, clear the webpage cache and indexedDB database.
+- Wait for the Debian machine to boot completely (a prompt for `localhost login:`)
+- Open Terminal (second app in the shelf) and type `anura-boot.sh`. Wait for it to print `forked to background`.
