@@ -270,6 +270,7 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/chideNew.app");
     anura.registerApp("apps/python.app");
     anura.registerApp("apps/workstore.app");
+    anura.registerApp("apps/settings.app");
 
     // Load all persistent sideloaded apps
     try {
