@@ -20,6 +20,8 @@
   "homepage": "https://github.com/MercuryWorkshop/AliceWM#readme",
   "dependencies": {
     "@tomphttp/bare-server-node": "^1.2.5",
+    "@types/dockerode": "^3.3.19",
+    "dockerode": "^3.3.5",
     "express": "^4.18.2",
     "express-basic-auth": "^1.2.1",
     "fs-readdir-recursive": "^1.1.0",
