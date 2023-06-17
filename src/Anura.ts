@@ -26,6 +26,7 @@ type notifParams = {
 }
 
 class Anura {
+    initComplete = false;
     x86: null | V86Backend;
     constructor() {
 
@@ -95,14 +96,38 @@ class Anura {
                     (<any>iframe.contentWindow).AliceWM = AliceWM;
                 }
             },
+            icon: `${location}/${manifest.icon}`
         };
 
         launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app), manifest.package);
 
-        taskbar.addShortcut(`${location}/${manifest.icon}`, app.launch.bind(app), manifest.package);
+        // taskbar.addShortcut(app.icon, app.launch.bind(app), manifest.package);
 
         this.apps[manifest.package] = app;
+
+        if (this.initComplete) 
+            this.updateTaskbar()
+            
         return app;
+    }
+    updateTaskbar() {
+        if (!('applist' in localStorage)) {
+            const initAppArray = []
+            for (const appName in anura.apps) {
+            initAppArray.push(appName)
+            }
+            localStorage['applist'] = JSON.stringify(initAppArray)
+        }
+        taskbar.removeShortcuts();
+        document.body.append(taskbar.element)
+        const orderedApps = JSON.parse(localStorage['applist'])
+        for (let appID in orderedApps) {
+            const appName = orderedApps[appID]
+            if (appName in this.apps) {
+                let app = this.apps[appName]
+                taskbar.addShortcut(app.icon, app.launch, appName)
+            }
+        }
     }
     async python(appname: string) {
         return await new Promise((resolve, reject) => {
@@ -343,7 +368,8 @@ document.addEventListener("anura-login-completed", async () => {
     launcher.clickoffChecker?.addEventListener('click', () => {
         launcher.toggleVisible();
     });
-
+    anura.initComplete = true;
+    anura.updateTaskbar()
 });
 function catBufs(buffer1: ArrayBuffer, buffer2: ArrayBuffer): ArrayBuffer {
     var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
