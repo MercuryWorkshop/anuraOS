@@ -1,3 +1,3 @@
 #!/bin/sh
-/bin/anurad >/dev/ttyS0 </dev/ttyS0 2>&1
+/bin/anurad
 echo "started anurad"

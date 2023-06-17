@@ -1,7 +1,10 @@
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
-
+V86Starter.prototype.serial1_send = function(a: string) {
+  for (var b = 0; b < a.length; b++)
+    this.bus.send("serial1-input", a.charCodeAt(b))
+};
 
 
 
@@ -141,14 +144,32 @@ async function InitV86Backend(): Promise<V86Backend> {
 
       let notif = new anura.notification({ title: "x86 Subsystem", description: "Saved root filesystem sucessfully", timeout: 5000 });
       notif.show();
-    }
-  };
+    },
 
+    set_state: () => { }
+  };
 
 
   // @ts-ignore
   fakefile.__proto__ = File.prototype;
 
+  //
+  // let buff = new TextEncoder().encode(atob(await navigator.clipboard.readText()));
+  //
+  // const hdb = {
+  //   size: 512,
+  //   slice: async (start: any, end: any) => {
+  //
+  //     return new Blob([buff.slice(start, end)]);
+  //   },
+  //   set_state: () => { }
+  // };
+  // //
+  //
+  //
+  // // @ts-ignore
+  // hdb.__proto__ = File.prototype;
+  //
 
   return new V86Backend(fakefile);
 
@@ -169,6 +190,10 @@ class V86Backend {
   private s_rows_phys_addr: number;
   private s_cols_phys_addr: number;
   private resize_intent_phys_addr: number;
+
+  ready: boolean = true;
+  act: boolean = false;
+  cmd_q: string | null = null;
 
   virt_hda: FakeFile;
 
@@ -211,7 +236,10 @@ class V86Backend {
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
       network_relay_url: "ws://localhost:8001/",
+      // initial_state: { url: "/images/v86state.bin" },
       autostart: true,
+      uart1: true,
+      uart2: true,
 
     });
 
@@ -230,7 +258,18 @@ class V86Backend {
 
     this.emulator.add_listener("serial0-output-char", (char: string) => {
       if (char === "\r") {
-        console.log(data);
+        // console.log(data);
+
+        this._proc_data(data);
+        data = "";
+        return;
+      }
+      data += char;
+
+    });
+    this.emulator.add_listener("serial1-output-char", (char: string) => {
+      if (char === "\r") {
+        // console.log(`111: ${data}`);
 
         this._proc_data(data);
         data = "";
@@ -250,8 +289,18 @@ class V86Backend {
     this.write_uint(rows, this.s_rows_phys_addr);
     this.write_uint(cols, this.s_cols_phys_addr);
 
+    if (this.ready) {
+      this.ready = false;
 
-    this.emulator.serial0_send(`${command}\n`);
+      this.emulator.serial0_send("\x06\n")
+      this.emulator.serial0_send(`${command}\n`);
+    } else {
+      this.cmd_q = command;
+      this.act = true;
+    }
+
+
+
     return new Promise((resolve) => {
       this.openQueue.push((number: number) => {
         this.onDataCallbacks[number] = onData;
@@ -263,6 +312,12 @@ class V86Backend {
     this.write_uint(rows, this.s_rows_phys_addr);
     this.write_uint(cols, this.s_cols_phys_addr);
     this.write_uint(TTYn + 1, this.resize_intent_phys_addr);
+    if (this.ready) {
+      this.ready = false;
+      this.emulator.serial0_send("\x06\n")
+    } else {
+      this.act = true;
+    }
   }
   writepty(TTYn: number, data: string) {
     const bytes = encoder.encode(data);
@@ -277,6 +332,12 @@ class V86Backend {
     this.write_uint(bytes.length, this.write_nbytes_phys_addr);
 
     this.nextWrite = bytes;
+    if (this.ready) {
+      this.ready = false;
+      this.emulator.serial0_send("\x06\n")
+    } else {
+      this.act = true;
+    }
   }
 
   async _proc_data(data: string) {
@@ -295,6 +356,8 @@ class V86Backend {
         [this.read_intent_phys_addr,
         this.write_intent_phys_addr, this.new_intent_phys_addr, this.read_nbytes_phys_addr,
         this.write_nbytes_phys_addr, this.s_rows_phys_addr, this.s_cols_phys_addr, this.resize_intent_phys_addr] = arr;
+
+        this.emulator.serial0_send("\x06\n")
         break;
       }
       case "r": {
@@ -307,6 +370,9 @@ class V86Backend {
         let text = decoder.decode(mem);
 
         this.onDataCallbacks[n_tty]!(text);
+        // console.log(text);
+
+        this.emulator.serial1_send("\x06\n")
         break;
       }
       case "w": {
@@ -321,18 +387,33 @@ class V86Backend {
         if (queued) {
           this.writepty(queued[1], queued[0]);
         }
+        this.emulator.serial0_send("\x06\n")
       }
       case "n": {
         let func = this.openQueue.shift();
         if (func) {
           func(parseInt(parts[0]!));
         }
+        this.emulator.serial0_send("\x06\n")
+      }
+      case "v": {
+        this.ready = true;
+        if (this.act) {
+          this.ready = false;
+          this.act = false;
+          this.emulator.serial0_send("\x06\n")
+          if (this.cmd_q) {
+            this.cmd_q = null;
+            this.emulator.serial0_send(`${this.cmd_q}\n`);
+          }
+        }
       }
     }
 
-    this.emulator.serial0_send("\x06\n"); // ack'd
+    // this.emulator.serial0_send("\x06\n"); // ack'd
 
   }
+
   read_uint(addr: number) {
     let b = this.emulator.read_memory(addr, 4);
     return b[0] + (b[1] << 8) + (b[2] << 16) + (b[3] << 24);
@@ -347,14 +428,15 @@ class V86Backend {
 }
 async function a() {
   let emulator = anura.x86!.emulator;
-  emulator.serial0_send("\x03\n");
-  emulator.serial0_send("rm /hook.c\n");
-  emulator.serial0_send("rm /hook\n");
+  (window as any).emulator = emulator;
   await new Promise(resolve => setTimeout(resolve, 300));
-  emulator.create_file("/hook.c", new TextEncoder().encode(atob(await navigator.clipboard.readText())));
-  await new Promise(resolve => setTimeout(resolve, 300));
-  anura.x86!.emulator.serial0_send("gcc /hook.c -o /hook -lutil\n");
-  anura.x86!.emulator.serial0_send("/hook\n");
+  let text = await navigator.clipboard.readText();
+  for (let l of text.split("\n")) {
+    emulator.serial0_send(`${l}\n`)
+
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+  emulator.serial0_send("\n\x04\n")
 }
 
 

@@ -1,6 +1,8 @@
 #include <asm-generic/ioctls.h>
 #define _XOPEN_SOURCE 700
 #include <fcntl.h> /* open */
+#include <poll.h>
+#include <pthread.h>
 #include <pty.h>
 #include <stdbool.h>
 #include <stdint.h> /* uint64_t  */
@@ -12,7 +14,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h> /* pread, sysconf */
-
 #define SHARED_BUFFER_MAX_SIZE 64
 
 typedef struct {
@@ -29,7 +30,7 @@ typedef struct {
   bool closed;
 } pty_t;
 
-char *getl(void) {
+char *getl(FILE *f) {
   char *line = malloc(100), *linep = line;
   size_t lenmax = 100, len = lenmax;
   int c;
@@ -38,7 +39,7 @@ char *getl(void) {
     return NULL;
 
   for (;;) {
-    c = fgetc(stdin);
+    c = fgetc(f);
     if (c == EOF)
       break;
 
@@ -137,48 +138,105 @@ void alloc_aty(pty_t *pty, char *argv[], char *envp[], struct winsize *winp) {
   pty->slave = slave;
   pty->closed = false;
 }
-void wait_for_ack() {
+void wait_for_ack(FILE *f) {
   char ack = ' ';
   do {
-    scanf("%c", &ack);
+    fscanf(f, "%c", &ack);
   } while (ack != '\006');
+}
+pty_t *ptys;
+
+int num_ptys = 0;
+
+volatile int write_intent = 0;
+volatile int read_intent = 0;
+volatile int new_intent = 0;
+
+volatile int s_rows = 0;
+volatile int s_cols = 0;
+volatile int resize_intent = 0;
+
+volatile int read_nbytes = 0;
+volatile int write_nbytes = 0;
+
+uintptr_t read_intent_phys_addr;
+uintptr_t read_nbytes_phys_addr;
+
+uintptr_t s_rows_phys_addr;
+uintptr_t s_cols_phys_addr;
+uintptr_t resize_intent_phys_addr;
+
+uintptr_t write_nbytes_phys_addr;
+uintptr_t write_intent_phys_addr;
+uintptr_t new_intent_phys_addr;
+pid_t pid;
+
+void *readLoop() {
+
+  FILE *fo = fopen("/dev/ttyS1", "r");
+  FILE *fi = fopen("/dev/ttyS1", "w");
+  size_t count = 0;
+  while (1) {
+    int cur_num_ptys = num_ptys;
+    // gotta make sure it doesn't race condition
+    if (cur_num_ptys < 1) {
+      continue;
+    }
+    // printf("readloop!\n");
+
+    struct pollfd *fds = malloc(sizeof(struct pollfd) * cur_num_ptys);
+
+    for (int i = 0; i < cur_num_ptys; i++) {
+
+      pty_t pty = ptys[i];
+
+      fds[i].events = POLLIN;
+      fds[i].fd = pty.master;
+    }
+    // printf("ptys: %i\n", cur_num_ptys);
+    //
+    // printf("fd: %i\n", fds[0].fd);
+
+    int ret = poll(fds, cur_num_ptys, 5000);
+
+    for (int i = 0; i < cur_num_ptys; i++) {
+      pty_t pty = ptys[i];
+
+      if (!(fds[i].revents & POLLIN))
+        continue;
+
+      ioctl(pty.master, FIONREAD, &count);
+      if (count < 1)
+        continue;
+      // printf("total avail: %lu bytes\n", count);
+      if (count > SHARED_BUFFER_MAX_SIZE)
+        count = SHARED_BUFFER_MAX_SIZE;
+      char shared_out_buffer[count];
+      // shared_buffer is the pointer that can be read by the host
+
+      count = read(pty.master, shared_out_buffer, count);
+      // printf("want you to read: %lu bytes\n", count);
+
+      uintptr_t buffer_phys_addr;
+      virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_out_buffer);
+      read_intent = i + 1;
+      read_nbytes = count;
+      fprintf(fi, "\005r %lu\n", buffer_phys_addr);
+      wait_for_ack(fo);
+    }
+  }
 }
 
 int main() {
+  FILE *fo = fopen("/dev/ttyS0", "r");
+  FILE *fi = fopen("/dev/ttyS0", "w");
+  size_t count = 0;
+  ptys = malloc(0);
 
   // THIS IS USERSPACE DMA BITCH!! WE COMPILE IN THIS MUTHAFUCKER BETTER TAKE YO
   // SENSITIVE ASS BACK TO KERNEL DRIVER
-  pid_t pid = getpid();
+  pid = getpid();
   printf("pid: %u\n", pid);
-
-  printf("p: %lu\n", sysconf(_SC_PAGE_SIZE));
-
-  pty_t *ptys = malloc(0);
-
-  int num_ptys = 0;
-  size_t count = 0;
-
-  volatile int write_intent = 0;
-  volatile int read_intent = 0;
-  volatile int new_intent = 0;
-
-  volatile int s_rows = 0;
-  volatile int s_cols = 0;
-  volatile int resize_intent = 0;
-
-  volatile int read_nbytes = 0;
-  volatile int write_nbytes = 0;
-
-  uintptr_t read_intent_phys_addr;
-  uintptr_t read_nbytes_phys_addr;
-
-  uintptr_t s_rows_phys_addr;
-  uintptr_t s_cols_phys_addr;
-  uintptr_t resize_intent_phys_addr;
-
-  uintptr_t write_nbytes_phys_addr;
-  uintptr_t write_intent_phys_addr;
-  uintptr_t new_intent_phys_addr;
 
   virt_to_phys_user(&read_intent_phys_addr, pid, (uintptr_t)&read_intent);
   virt_to_phys_user(&write_intent_phys_addr, pid, (uintptr_t)&write_intent);
@@ -189,40 +247,25 @@ int main() {
   virt_to_phys_user(&s_rows_phys_addr, pid, (uintptr_t)&s_rows);
   virt_to_phys_user(&s_cols_phys_addr, pid, (uintptr_t)&s_cols);
   virt_to_phys_user(&resize_intent_phys_addr, pid, (uintptr_t)&resize_intent);
-  printf("\005i %lu %lu %lu %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
-         write_intent_phys_addr, new_intent_phys_addr, read_nbytes_phys_addr,
-         write_nbytes_phys_addr, s_rows_phys_addr, s_cols_phys_addr,
-         resize_intent_phys_addr);
+  fprintf(fi, "\005i %lu %lu %lu %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
+          write_intent_phys_addr, new_intent_phys_addr, read_nbytes_phys_addr,
+          write_nbytes_phys_addr, s_rows_phys_addr, s_cols_phys_addr,
+          resize_intent_phys_addr);
 
-  read_nbytes = 100;
+  fprintf(fi, "dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
+          read_nbytes, write_nbytes);
+  wait_for_ack(fo);
+  // printf("%d\n", __LINE__);
+  pthread_t thread_id;
+  pthread_create(&thread_id, NULL, readLoop, NULL);
 
-  printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
-         read_nbytes, write_nbytes);
-  wait_for_ack();
-  printf("%d\n", __LINE__);
+  fprintf(fi, "%d\n", __LINE__);
   while (1) {
-    //  ioctl(STDIN_FILENO, FIONREAD, &count);
-    //  if (count > 0) {
-    //    // the main input loop. the host will write to the serial console what
-    //    // pty# it wants to write to, then the size of the data it wants to
-    //    write
-    //
-    //    char req;
-    //    scanf("%c", &req);
-    //    if (req == 'w') {
-    //
-    //    } else if (req == 'n') {
-    //
-    //
-    //    } else if (req == 'c') {
-    //      int pty_index;
-    //      scanf("%i", &pty_index);
-    //
-    //      pty_t *pty = ptys + pty_index * sizeof(pty_t);
-    //      pty->closed = true;
-    //    }
-    //  }
+
+    // fprintf(fi, "%d\n", __LINE__);
     if (resize_intent > 0) {
+
+      // printf("%d\n", __LINE__);
       pty_t *pty = ptys + (resize_intent - 1) * sizeof(pty_t);
       struct winsize winp;
       winp.ws_col = s_cols;
@@ -249,35 +292,36 @@ int main() {
       uintptr_t buffer_phys_addr;
       virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_in_buffer);
 
-      printf("\005w %lu\n", buffer_phys_addr);
-      wait_for_ack();
+      fprintf(fi, "\005w %lu\n", buffer_phys_addr);
+      wait_for_ack(fo);
       write(pty->master, shared_in_buffer, in_count);
       free(shared_in_buffer);
       // write_intent = 0;
     }
     if (new_intent > 0) {
+      printf("%d\n", __LINE__);
       //
       // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
       //        read_nbytes, write_nbytes);
       // printf("%d\n", __LINE__);
-      char *argstr = getl(); // this one is used to flush the newline.
-                             // not good practice but i don't really care
+      char *argstr = getl(fo); // this one is used to flush the newline.
+                               // not good practice but i don't really care
       free(argstr);
-      argstr = getl();
+      argstr = getl(fo);
       // char argstr[1024];
       // scanf("%s", argstr);
-      // printf("a: %s\n", argstr);
+      printf("a: %s\n", argstr);
       char *argv[] = {"/bin/bash", "-c", argstr, NULL};
 
-      num_ptys += 1;
-      ptys = realloc(ptys, num_ptys * sizeof(pty_t));
+      ptys = realloc(ptys, (num_ptys + 1) * sizeof(pty_t));
 
-      pty_t *pty = ptys + ((num_ptys - 1) * sizeof(pty_t));
+      pty_t *pty = ptys + (num_ptys * sizeof(pty_t));
 
       struct winsize winp;
       winp.ws_col = s_cols;
       winp.ws_row = s_rows;
       alloc_aty(pty, argv, NULL, &winp);
+      num_ptys += 1;
       free(argstr);
 
       // don't know why but the kernel loves to rearrange addrs after realloc()
@@ -292,49 +336,20 @@ int main() {
       virt_to_phys_user(&s_cols_phys_addr, pid, (uintptr_t)&s_cols);
       virt_to_phys_user(&resize_intent_phys_addr, pid,
                         (uintptr_t)&resize_intent);
-      printf("\005i %lu %lu %lu %lu %lu %lu %lu %lu\n", read_intent_phys_addr,
-             write_intent_phys_addr, new_intent_phys_addr,
-             read_nbytes_phys_addr, write_nbytes_phys_addr, s_rows_phys_addr,
-             s_cols_phys_addr, resize_intent_phys_addr);
-      wait_for_ack();
+      fprintf(fi, "\005i %lu %lu %lu %lu %lu %lu %lu %lu\n",
+              read_intent_phys_addr, write_intent_phys_addr,
+              new_intent_phys_addr, read_nbytes_phys_addr,
+              write_nbytes_phys_addr, s_rows_phys_addr, s_cols_phys_addr,
+              resize_intent_phys_addr);
+      wait_for_ack(fo);
 
-      printf("\005n %i\n", num_ptys - 1);
-      wait_for_ack();
+      fprintf(fi, "\005n %i\n", num_ptys - 1);
+      wait_for_ack(fo);
       new_intent = 0;
     }
+    printf("%d\n", __LINE__);
 
-    for (int i = 0; i < num_ptys; i++) {
-
-      // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
-      //        read_nbytes, write_nbytes);
-      // printf("%d\n", __LINE__);
-      pty_t *pty = ptys + i * sizeof(pty_t);
-      if (pty->closed == true)
-        continue;
-      ioctl(pty->master, FIONREAD, &count);
-
-      if (count < 1)
-        continue;
-      // printf("total avail: %lu bytes\n", count);
-      if (count > SHARED_BUFFER_MAX_SIZE)
-        count = SHARED_BUFFER_MAX_SIZE;
-      // int fd = open("/dev/zero", O_RDWR);
-      char shared_out_buffer[count];
-      // shared_buffer is the pointer that can be read by the host
-
-      count = read(pty->master, shared_out_buffer, count);
-
-      // printf("want you to read: %lu bytes\n", count);
-
-      uintptr_t buffer_phys_addr;
-      virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_out_buffer);
-      read_intent = i + 1;
-      read_nbytes = count;
-      //
-      // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
-      //        read_nbytes, write_nbytes);
-      printf("\005r %lu\n", buffer_phys_addr);
-      wait_for_ack();
-    }
+    fprintf(fi, "\005v\n");
+    wait_for_ack(fo);
   }
 }
