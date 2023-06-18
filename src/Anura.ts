@@ -76,6 +76,7 @@ class Anura {
             windowinstance: null,
             async launch() {
                 if (manifest.type == 'manual') { // This type of application is discouraged for sure but is the most powerful
+                    console.warn("App type `manual` is deprecated.")
                     let req = await fetch(`${location}/${manifest.handler}`)
                     let data = await req.text();
                     top!.window.eval(data);

@@ -12,8 +12,8 @@ I propose that in the future, the manifest should be structured where `type` is 
 Each app contains a `manifest.json`\*, which defines the functionality of the app. See `manifest.json.example`.
 
 - `name`: `String` - Program name. Required. 
-- `type`: `String`\*\* - Program type. "auto" or "manual". Required. 
- * "manual": Evaluates at top-window level. Highly discouraged.
+- `type`: `String`\*\* - Program type. "auto" or "manual" (deprecated). Required. 
+ * "manual": Evaluates at top-window level. **Deprecated** and highly discouraged.
  * "auto": Evaluates within a contained iframe.
 - `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
 - `index`: `String` - Path (from app directory) to the index HTML file. Required if `type` is `"auto"` - the iframe source will be set to this.
