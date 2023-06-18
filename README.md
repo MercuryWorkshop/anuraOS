@@ -4,7 +4,7 @@ Web OS with v86 integration
 ## Getting Started
 
 ### Installation
-- make sure you clone with --recursive!!!
+- make sure you clone this repository with `--recursive`!
 - You need to have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
 - `make bootstrap`
 - `make all`

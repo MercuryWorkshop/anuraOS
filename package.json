@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "optimist": "^0.5.2",
-    "ts-node": "^10.9.1",
-    "ws": "^8.13.0"
-  }
-}

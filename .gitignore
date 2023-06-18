@@ -19,6 +19,5 @@ libv86.js
 v86.wasm
 public/dist.js
 v86timestamp
-package-lock.json
 server/package-lock.json
 Notes

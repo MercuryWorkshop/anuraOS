@@ -3,7 +3,7 @@
 import { Workbox } from '/assets/libs/workbox/workbox-window.prod.mjs';
 
 function serverReady() {
-  console.log('Server ready! use `window.Filer.fs if you need an fs');
+  console.log('Server ready! use `window.Filer.fs` if you need an fs');
 }
 
 function serverInstall() {
