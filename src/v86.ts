@@ -153,23 +153,6 @@ async function InitV86Backend(): Promise<V86Backend> {
   // @ts-ignore
   fakefile.__proto__ = File.prototype;
 
-  //
-  // let buff = new TextEncoder().encode(atob(await navigator.clipboard.readText()));
-  //
-  // const hdb = {
-  //   size: 512,
-  //   slice: async (start: any, end: any) => {
-  //
-  //     return new Blob([buff.slice(start, end)]);
-  //   },
-  //   set_state: () => { }
-  // };
-  // //
-  //
-  //
-  // // @ts-ignore
-  // hdb.__proto__ = File.prototype;
-  //
 
   return new V86Backend(fakefile);
 
@@ -199,9 +182,7 @@ class V86Backend {
 
   emulator;
   //
-  // writeLock = false;
-  // writeLockQueue: [number, string][] = [];
-  //
+
 
   constructor(virt_hda: FakeFile) {
     this.virt_hda = virt_hda;
@@ -231,12 +212,12 @@ class V86Backend {
       },
 
       cmdline: "rw init=/bin/systemd root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
-      // filesystem: { fs, sh, Path, Buffer },
+      filesystem: { fs, sh, Path, Buffer },
 
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
       network_relay_url: "ws://localhost:8001/",
-      initial_state: { url: "/images/v86state.bin" },
+      // initial_state: { url: "/images/v86state.bin" },
       autostart: true,
       uart1: true,
       uart2: true,
@@ -370,9 +351,9 @@ class V86Backend {
         let mem = this.emulator.read_memory(addr, n_bytes);
         let text = decoder.decode(mem);
 
-        console.log(n_tty)
+        // console.log(n_tty)
 
-        console.log(text);
+        // console.log(text);
         let cb = this.onDataCallbacks[n_tty]
         if (cb) {
           cb(text);

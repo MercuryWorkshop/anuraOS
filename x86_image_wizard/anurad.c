@@ -153,7 +153,7 @@ void alloc_aty(pty_t *pty, char *argv[], char *envp[]) {
   winp.ws_row = s_rows;
   openpty(&master, &slave, NULL, NULL, &winp);
 
-  printf("IIII%i %i\n", master, slave);
+  // printf("IIII%i %i\n", master, slave);
 
   pid_t child = fork();
   if (child == 0) {
@@ -190,7 +190,7 @@ void *readLoop() {
     if (cur_num_ptys < 1) {
       continue;
     }
-    printf("readloop! %i %i\n", cur_num_ptys, ptys[0].master);
+    // printf("readloop! %i %i\n", cur_num_ptys, ptys[0].master);
 
     struct pollfd fds[cur_num_ptys];
 
@@ -268,7 +268,7 @@ int main() {
   pthread_t thread_id;
   pthread_create(&thread_id, NULL, readLoop, NULL);
 
-  fprintf(fi, "%d\n", __LINE__);
+  // fprintf(fi, "%d\n", __LINE__);
   while (1) {
 
     // fprintf(fi, "%d\n", __LINE__);
@@ -309,17 +309,11 @@ int main() {
     }
     if (new_intent > 0) {
       printf("%d\n", __LINE__);
-      //
-      // printf("dbg: %i %i %i %i %i\n", read_intent, write_intent, new_intent,
-      //        read_nbytes, write_nbytes);
-      // printf("%d\n", __LINE__);
       char *argstr = getl(fo); // this one is used to flush the newline.
                                // not good practice but i don't really care
       free(argstr);
       argstr = getl(fo);
-      // char argstr[1024];
-      // scanf("%s", argstr);
-      // printf("a: %s, %i\n", argstr, num_ptys);
+
       char *argv[] = {"/bin/bash", "-c", argstr, NULL};
 
       ptys = realloc(ptys, (num_ptys + 3) * sizeof(pty_t));
@@ -359,7 +353,7 @@ int main() {
       num_ptys += 1;
       new_intent = 0;
     }
-    printf("%d\n", __LINE__);
+    // printf("%d\n", __LINE__);
 
     fprintf(fi, "\005v\n");
     wait_for_ack(fo);
