@@ -37,7 +37,7 @@ class Launcher {
 
   shortcutElement(name: string, svg: string, appID: string): HTMLElement {
     return (
-      <div class="app" id={appID}>
+      <div class="app" application={appID}>
         <input class="app-shortcut-image showDialog" type="image" src={svg} />
         <div class="app-shortcut-name">{name}</div>
       </div>

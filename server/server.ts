@@ -3,6 +3,7 @@ import createServer from '@tomphttp/bare-server-node';
 
 import read from "fs-readdir-recursive";
 import path from "path"
+import Docker from "dockerode"
 
 import { spawn } from "child_process";
 
@@ -13,15 +14,51 @@ var Proxy = require('./proxy');
 
 
 // spawn("node", ["index.js"], {
-//   cwd: "../wsproxy/",
+//   cwd: "../wsproxy/",try {
+//   let websocketproxy = new Docker({ socketPath: '/var/run/docker.sock' });
+//   websocketproxy.run('bellenottelling/websockproxy', [], process.stdout, {
+//     name: 'relay',
+//     HostConfig: {
+//       Privileged: true,
+//       PortBindings: {
+//         "80/tcp": [
+//           {
+//             "HostPort": "8001"
+//           }
+//         ]
+//       }
+//     }
+//   })
+// } catch(err) {
+//   console.log(err)
+// }
 //   env: {
 //     "PORT": "8001"
 //   },
-//   shell: true,
 //   stdio: [process.stdout, process.stderr]
 // })
 
-// spawn("docker stop relay; docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
+
+// try {
+//   let websocketproxy = new Docker({ socketPath: '/var/run/docker.sock' });
+//   websocketproxy.run('bellenottelling/websockproxy', [], process.stdout, {
+//     name: 'relay',
+//     HostConfig: {
+//       Privileged: true,
+//       PortBindings: {
+//         "80/tcp": [
+//           {
+//             "HostPort": "8001"
+//           }
+//         ]
+//       }
+//     }
+//   })
+// } catch(err) {
+//   console.log(err)
+// }
+
+// spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
 //   shell: true,
 //   stdio: [process.stdout, null, process.stderr],
 // })

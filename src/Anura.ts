@@ -24,6 +24,7 @@ type notifParams = {
 }
 
 class Anura {
+    initComplete = false;
     x86: null | V86Backend;
     settings: Settings;
     fs: FilerFS;
@@ -98,21 +99,47 @@ class Anura {
                     let win = AliceWM.create(this.manifest.wininfo);
                     this.windowinstance = win;
 
-                    let iframe = document.createElement("iframe")
+                    let iframe = document.createElement("iframe");
                     iframe.setAttribute("style", "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;")
                     iframe.setAttribute("src", `${location}/${manifest.index}`);
-
                     win.content.appendChild(iframe);
+
+                    (<any>iframe.contentWindow).anura = anura;
+                    (<any>iframe.contentWindow).AliceWM = AliceWM;
                 }
             },
+            icon: `${location}/${manifest.icon}`
         };
 
         launcher.addShortcut(manifest.name, manifest.icon ? `${location}/${manifest.icon}` : "", app.launch.bind(app), manifest.package);
 
-        taskbar.addShortcut(`${location}/${manifest.icon}`, app.launch.bind(app), manifest.package);
+        // taskbar.addShortcut(app.icon, app.launch.bind(app), manifest.package);
 
         this.apps[manifest.package] = app;
+
+        if (this.initComplete) 
+            this.updateTaskbar()
+            
         return app;
+    }
+    updateTaskbar() {
+        if (!('applist' in localStorage)) {
+            const initAppArray = []
+            for (const appName in anura.apps) {
+            initAppArray.push(appName)
+            }
+            localStorage['applist'] = JSON.stringify(initAppArray)
+        }
+        taskbar.removeShortcuts();
+        document.body.append(taskbar.element)
+        const orderedApps = JSON.parse(localStorage['applist'])
+        for (let appID in orderedApps) {
+            const appName = orderedApps[appID]
+            if (appName in this.apps) {
+                let app = this.apps[appName]
+                taskbar.addShortcut(app.icon, app.launch.bind(app), appName)
+            }
+        }
     }
     async python(appname: string) {
         return await new Promise((resolve, reject) => {
@@ -211,12 +238,25 @@ class Anura {
 
             function deleteNotif() {
                 const oldNotif = document.getElementById(id)!
+                // do nothing if the notification is already deleted
+                if (oldNotif == null) return; 
                 oldNotif.style.opacity = "0"
                 setTimeout(() => {
                     notifContainer?.removeChild(oldNotif)
                 }, 360);
             }
         }
+    }
+    get wsproxyURL() {
+        let url = '';
+        if (location.protocol == 'https:') {
+            url += 'wss://'
+        } else {
+            url += 'ws://'
+        }
+        url += window.location.origin.split("://")[1]
+        url += '/'
+        return localStorage['wsproxy-url'] || url // let user define a systemwide wsproxy url to their prefered instance, fallback to obvious choice
     }
 }
 
@@ -267,6 +307,7 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/chideNew.app");
     anura.registerApp("apps/python.app");
     anura.registerApp("apps/workstore.app");
+    anura.registerApp("apps/settings.app");
 
     // Load all persistent sideloaded apps
     try {
@@ -339,7 +380,8 @@ document.addEventListener("anura-login-completed", async () => {
     launcher.clickoffChecker?.addEventListener('click', () => {
         launcher.toggleVisible();
     });
-
+    anura.initComplete = true;
+    anura.updateTaskbar()
 });
 function catBufs(buffer1: ArrayBuffer, buffer2: ArrayBuffer): ArrayBuffer {
     var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);

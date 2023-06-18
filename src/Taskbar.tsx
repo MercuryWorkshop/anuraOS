@@ -12,8 +12,9 @@ class Taskbar {
         <ul bind:shortcutsTray={this}>
           {/* <li><input type="image" src="/assets/icons/chrome.svg" id="showDialog" on:click={()=> openBrowser()} /></li > */}
           {/* <li><input type="image" src="/assets/icons/linux.png" id="showDialog" on:click={() => open()} /></li> */}
-          {/* <li><input type="image" src="/assets/icons/settings.png" id="showDialog" on:click={() => { openAppManager() }} /> */}
-          {/* </li> */}
+          <li style="height: 40px; width=40px">
+          </li>
+
         </ul >
       </nav >
     </footer >
@@ -28,5 +29,11 @@ class Taskbar {
   }
   killself() {
     this.element.remove();
+  }
+  removeShortcuts() {
+    this.element.querySelectorAll('li').forEach((element: HTMLElement)  => {
+      if (element.hasAttribute("application"))
+          element.remove()
+    })
   }
 }

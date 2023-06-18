@@ -82,15 +82,15 @@ var AliceWM = {
 
         closeContainer.setAttribute("class", "close");
         closeContainer.setAttribute("class", "windowButton");
-        closeContainer.innerHTML = '<img src="/assets/window/close.svg" height="12px">';
+        closeContainer.innerHTML = '<img src="/assets/window/close.svg" height="12px" class="windowButtonIcon">';
 
         maximizeContainer.setAttribute("class", "maximize");
         maximizeContainer.setAttribute("class", "windowButton");
-        maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px">'
+        maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px" class="windowButtonIcon">'
 
         minimizeContainer.setAttribute("class", "minimize");
         minimizeContainer.setAttribute("class", "windowButton");
-        minimizeContainer.innerHTML = '<img src="/assets/window/minimize.svg" height="12px">';
+        minimizeContainer.innerHTML = '<img src="/assets/window/minimize.svg" height="12px" class="windowButtonIcon">';
 
         titleContainer.appendChild(titleContent);
         titleContainer.appendChild(minimizeContainer);
@@ -130,12 +130,12 @@ var AliceWM = {
                 container.style.width = `${width}px`;
                 container.style.height = `${height - 53}px`;
                 container.setAttribute("maximized", "true")
-                maximizeContainer.innerHTML = '<img src="/assets/window/restore.svg" height="12px">'
+                maximizeContainer.innerHTML = '<img src="/assets/window/restore.svg" height="12px" class="windowButtonIcon">'
                 // ro.observe(container);
             } else {
                 container.setAttribute("style", container.getAttribute("old-style")!)
                 container.setAttribute("maximized", "false")
-                maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px">'
+                maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px" class="windowButtonIcon">'
                 // ro.unobserve(container);
             }
 
