@@ -4,11 +4,13 @@ Web OS with v86 integration
 ## Getting Started
 
 ### Installation
-- make sure you clone with --recursive!!!
+- make sure you clone this repository with `--recursive`!
 - You need to have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
-- mkdir build/
-- mkdir build/lib
-- `npm install`
+- `mkdir build/`
+- `mkdir build/lib`
+- `cd server`
+- `npm install` **HI ANURA DEVS TODO we shouldn't need to cd into a folder to npm i. maybe shell script it**
+- `cd ..`
 - Install `typescript` and `docker` packages.
 - `make all`
  * NOTE: you can use `make all -B` to force a full build.
