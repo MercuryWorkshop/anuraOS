@@ -44,13 +44,12 @@ COPY logind.conf /etc/systemd/logind.conf
 
 #COPY xinitrc /root/.xinitrc
 COPY xorg.conf /etc/X11/
-COPY anurad-start.sh /bin/
 COPY anura-boot.sh /bin/
 
 
 COPY anurad.c /etc/
 
-RUN chmod u+x /bin/anura-boot.sh /bin/anurad-start.sh
+RUN chmod u+x /bin/anura-boot.sh
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil
 COPY anura-boot.service /etc/systemd/system
 COPY anurad.service /etc/systemd/system

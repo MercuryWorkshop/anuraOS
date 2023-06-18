@@ -118,32 +118,7 @@ int virt_to_phys_user(uintptr_t *paddr, pid_t pid, uintptr_t vaddr) {
       (entry.pfn * sysconf(_SC_PAGE_SIZE)) + (vaddr % sysconf(_SC_PAGE_SIZE));
   return 0;
 }
-void alloc_aty(pty_t *pty, char *argv[], char *envp[], struct winsize *winp) {
-  int master, slave;
-  openpty(&master, &slave, NULL, NULL, winp);
 
-  pid_t child = fork();
-  if (child == 0) {
-    setsid();
-    // this particular setsid() fixes the "no job control" error.
-    // i don't know why, but we'll accept it
-    // i had to read alacritty source code to find this :despair:
-
-    dup2(slave, STDOUT_FILENO);
-    dup2(slave, STDIN_FILENO);
-    dup2(slave, STDERR_FILENO);
-    execve(argv[0], argv, envp);
-  }
-  pty->master = master;
-  pty->slave = slave;
-  pty->closed = false;
-}
-void wait_for_ack(FILE *f) {
-  char ack = ' ';
-  do {
-    fscanf(f, "%c", &ack);
-  } while (ack != '\006');
-}
 pty_t *ptys;
 
 int num_ptys = 0;
@@ -171,6 +146,39 @@ uintptr_t write_intent_phys_addr;
 uintptr_t new_intent_phys_addr;
 pid_t pid;
 
+void alloc_aty(pty_t *pty, char *argv[], char *envp[]) {
+  int master, slave;
+  struct winsize winp;
+  winp.ws_col = s_cols;
+  winp.ws_row = s_rows;
+  openpty(&master, &slave, NULL, NULL, &winp);
+
+  printf("IIII%i %i\n", master, slave);
+
+  pid_t child = fork();
+  if (child == 0) {
+    setsid();
+    // this particular setsid() fixes the "no job control" error.
+    // i don't know why, but we'll accept it
+    // i had to read alacritty source code to find this :despair:
+
+    dup2(slave, STDOUT_FILENO);
+    dup2(slave, STDIN_FILENO);
+    dup2(slave, STDERR_FILENO);
+    execve(argv[0], argv, envp);
+  }
+
+  ioctl(pty->slave, TIOCSWINSZ, &winp);
+  pty->master = master;
+  pty->slave = slave;
+  pty->closed = false;
+}
+void wait_for_ack(FILE *f) {
+  char ack = ' ';
+  do {
+    fscanf(f, "%c", &ack);
+  } while (ack != '\006');
+}
 void *readLoop() {
 
   FILE *fo = fopen("/dev/ttyS1", "r");
@@ -182,9 +190,9 @@ void *readLoop() {
     if (cur_num_ptys < 1) {
       continue;
     }
-    // printf("readloop!\n");
+    printf("readloop! %i %i\n", cur_num_ptys, ptys[0].master);
 
-    struct pollfd *fds = malloc(sizeof(struct pollfd) * cur_num_ptys);
+    struct pollfd fds[cur_num_ptys];
 
     for (int i = 0; i < cur_num_ptys; i++) {
 
@@ -200,6 +208,7 @@ void *readLoop() {
     int ret = poll(fds, cur_num_ptys, 5000);
 
     for (int i = 0; i < cur_num_ptys; i++) {
+      printf("to: %i %i %i\n", i, ptys[i].master, ptys[i].slave);
       pty_t pty = ptys[i];
 
       if (!(fds[i].revents & POLLIN))
@@ -208,14 +217,14 @@ void *readLoop() {
       ioctl(pty.master, FIONREAD, &count);
       if (count < 1)
         continue;
-      // printf("total avail: %lu bytes\n", count);
+      printf("total avail: %lu bytes\n", count);
       if (count > SHARED_BUFFER_MAX_SIZE)
         count = SHARED_BUFFER_MAX_SIZE;
       char shared_out_buffer[count];
       // shared_buffer is the pointer that can be read by the host
 
       count = read(pty.master, shared_out_buffer, count);
-      // printf("want you to read: %lu bytes\n", count);
+      printf("want you to read: %lu bytes\n", count);
 
       uintptr_t buffer_phys_addr;
       virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_out_buffer);
@@ -264,13 +273,13 @@ int main() {
 
     // fprintf(fi, "%d\n", __LINE__);
     if (resize_intent > 0) {
-
       // printf("%d\n", __LINE__);
-      pty_t *pty = ptys + (resize_intent - 1) * sizeof(pty_t);
+
+      int pty_index = resize_intent - 1;
       struct winsize winp;
       winp.ws_col = s_cols;
       winp.ws_row = s_rows;
-      ioctl(pty->slave, TIOCSWINSZ, &winp);
+      ioctl(ptys[pty_index].slave, TIOCSWINSZ, &winp);
       printf("resizing: %i %i\n", s_cols, s_rows);
       resize_intent = 0;
     }
@@ -284,7 +293,7 @@ int main() {
 
       int in_count = write_nbytes;
 
-      pty_t *pty = ptys + pty_index * sizeof(pty_t);
+      // pty_t *pty = ptys + pty_index * sizeof(pty_t);
 
       char *shared_in_buffer = malloc(in_count);
       // this is the buffer that will now be written to by the host after this
@@ -294,7 +303,7 @@ int main() {
 
       fprintf(fi, "\005w %lu\n", buffer_phys_addr);
       wait_for_ack(fo);
-      write(pty->master, shared_in_buffer, in_count);
+      write(ptys[pty_index].master, shared_in_buffer, in_count);
       free(shared_in_buffer);
       // write_intent = 0;
     }
@@ -310,18 +319,14 @@ int main() {
       argstr = getl(fo);
       // char argstr[1024];
       // scanf("%s", argstr);
-      printf("a: %s\n", argstr);
+      // printf("a: %s, %i\n", argstr, num_ptys);
       char *argv[] = {"/bin/bash", "-c", argstr, NULL};
 
-      ptys = realloc(ptys, (num_ptys + 1) * sizeof(pty_t));
+      ptys = realloc(ptys, (num_ptys + 3) * sizeof(pty_t));
 
-      pty_t *pty = ptys + (num_ptys * sizeof(pty_t));
-
-      struct winsize winp;
-      winp.ws_col = s_cols;
-      winp.ws_row = s_rows;
-      alloc_aty(pty, argv, NULL, &winp);
-      num_ptys += 1;
+      alloc_aty(&ptys[num_ptys], argv, NULL);
+      printf("SDJKASDBJK: %i: %i\n", ptys[num_ptys].master,
+             ptys[num_ptys].slave);
       free(argstr);
 
       // don't know why but the kernel loves to rearrange addrs after realloc()
@@ -342,9 +347,16 @@ int main() {
               write_nbytes_phys_addr, s_rows_phys_addr, s_cols_phys_addr,
               resize_intent_phys_addr);
       wait_for_ack(fo);
-
-      fprintf(fi, "\005n %i\n", num_ptys - 1);
+      // while (1) {
+      printf("ASDJKASDBJK: %i: %i\n", ptys[num_ptys].master,
+             ptys[num_ptys].slave);
+      // usleep(5000000);
+      // }
+      //
+      fprintf(fi, "\005n %i\n", num_ptys);
       wait_for_ack(fo);
+
+      num_ptys += 1;
       new_intent = 0;
     }
     printf("%d\n", __LINE__);

@@ -231,12 +231,12 @@ class V86Backend {
       },
 
       cmdline: "rw init=/bin/systemd root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
-      filesystem: { fs, sh, Path, Buffer },
+      // filesystem: { fs, sh, Path, Buffer },
 
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
       network_relay_url: "ws://localhost:8001/",
-      // initial_state: { url: "/images/v86state.bin" },
+      initial_state: { url: "/images/v86state.bin" },
       autostart: true,
       uart1: true,
       uart2: true,
@@ -271,6 +271,7 @@ class V86Backend {
       if (char === "\r") {
         // console.log(`111: ${data}`);
 
+
         this._proc_data(data);
         data = "";
         return;
@@ -285,9 +286,9 @@ class V86Backend {
     this.emulator.serial0_send(`c\n${TTYn}`);
   }
   openpty(command: string, cols: number, rows: number, onData: (string: string) => void) {
-    this.write_uint(1, this.new_intent_phys_addr);
     this.write_uint(rows, this.s_rows_phys_addr);
     this.write_uint(cols, this.s_cols_phys_addr);
+    this.write_uint(1, this.new_intent_phys_addr);
 
     if (this.ready) {
       this.ready = false;
@@ -369,8 +370,13 @@ class V86Backend {
         let mem = this.emulator.read_memory(addr, n_bytes);
         let text = decoder.decode(mem);
 
-        this.onDataCallbacks[n_tty]!(text);
-        // console.log(text);
+        console.log(n_tty)
+
+        console.log(text);
+        let cb = this.onDataCallbacks[n_tty]
+        if (cb) {
+          cb(text);
+        }
 
         this.emulator.serial1_send("\x06\n")
         break;
