@@ -1,7 +1,7 @@
 {
-  "name": "alicewm",
-  "version": "1.0.0",
-  "description": "Window manager for FrogOS",
+  "name": "anuraos",
+  "version": "0.0.1",
+  "description": "Web OS with v86 integration",
   "main": "hterm_poc.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
