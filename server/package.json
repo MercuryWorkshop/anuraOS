@@ -25,6 +25,8 @@
     "express-basic-auth": "^1.2.1",
     "fs-readdir-recursive": "^1.1.0",
     "ts-node": "^10.9.1",
-    "xterm": "^5.1.0"
+    "xterm": "^5.1.0",
+    "optimist": "^0.5.2",
+    "ws": "^8.13.0"
   }
 }
