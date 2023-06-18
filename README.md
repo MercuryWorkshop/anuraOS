@@ -6,10 +6,7 @@ Web OS with v86 integration
 ### Installation
 - make sure you clone with --recursive!!!
 - You need to have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
-- mkdir build/
-- mkdir build/lib
-- `npm install`
-- Install `typescript` and `docker` packages.
+- `make bootstrap`
 - `make all`
  * NOTE: you can use `make all -B` to force a full build.
 

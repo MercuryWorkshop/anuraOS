@@ -3,8 +3,19 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: v86dirty v86 bundle
+all: check-bootstrap nohost v86dirty v86 bundle
 
+check-bootstrap:
+	test -f build/bootstrap-complete || exit 1
+
+bootstrap:
+	mkdir -p build/lib
+	cd server; npm i
+	cd server; npm i typescript dockernode ws
+	>build/bootstrap-complete
+
+nohost:
+	cd nohost; npm i; npm run build; cp -r dist/* ../build/
 clean:
 	cd v86; make clean
 	rm -rf build/*
@@ -27,7 +38,7 @@ public/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o 
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
-watch:
+watch: FORCE
 	mkdir -p build/artifacts
 	npx tsc-watch --onSuccess "bash -c 'cp -r src/* build/artifacts'"
 bundle:
@@ -36,8 +47,8 @@ bundle:
 	tsc
 prod: all
 	npx google-closure-compiler --js "build/lib/libv86.js" "public/assets/libs/filer.min.js" "build/lib/**/*.js" --js_output_file public/dist.js
-
-
+server: FORCE
+	cd server; npx ts-node server.ts
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 
@@ -56,3 +67,6 @@ v86/build/softfloat.o:
 	cd v86; make build/softfloat.o
 v86/build/zstddeclib.o:
 	cd v86; make build/zstddeclib.o
+
+
+FORCE: ;
