@@ -329,16 +329,18 @@ document.addEventListener("anura-login-completed", async () => {
 
 
 
+    if (!(localStorage['disable-x86'] == 'true')) {
+        // v86 stable. can enable it by default now
+        let mgr = await anura.registerApp("apps/x86mgr.app");
+        await mgr?.launch();
 
-    // v86 stable. can enable it by default now
-    let mgr = await anura.registerApp("apps/x86mgr.app");
-    await mgr?.launch();
 
+        let finp: HTMLInputElement = React.createElement("input", { type: "file", id: "input" }) as unknown as HTMLInputElement;
+        document.body.appendChild(finp);
 
-    let finp: HTMLInputElement = React.createElement("input", { type: "file", id: "input" }) as unknown as HTMLInputElement;
-    document.body.appendChild(finp);
+        anura.x86 = await InitV86Backend();
+    }
 
-    anura.x86 = await InitV86Backend();
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
