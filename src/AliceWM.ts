@@ -138,8 +138,8 @@ var AliceWM = {
                 maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px" class="windowButtonIcon">'
                 // ro.unobserve(container);
             }
-
         };
+        
         minimizeContainer.onclick = function () {
             container.style.display = 'none'
         }

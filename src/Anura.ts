@@ -86,7 +86,6 @@ class Anura {
                     if (this.windowinstance === null || this.windowinstance.parentElement === null)  { //  checks if there is an existing minimized window 
                         // if (this.windowinstance) return;
                         let win = AliceWM.create(this.manifest.wininfo);
-                        this.windowinstance = win;
 
                         let iframe = document.createElement("iframe");
                         iframe.setAttribute("style", "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;")
