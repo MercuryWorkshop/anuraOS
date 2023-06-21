@@ -1,5 +1,5 @@
 {
-    "name": "Settings App",
+    "name": "Settings",
     "type": "auto",
     "package": "anura.settings",
     "index": "index.html",
