@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import createServer from '@tomphttp/bare-server-node';
+import { createBareServer } from '@tomphttp/bare-server-node';
 
 import read from "fs-readdir-recursive";
 import path from "path"
@@ -27,7 +27,7 @@ let files = read('public');
 
 const app = express();
 const port = 8000;
-const bare = createServer('/bare/');
+const bare = createBareServer('/bare/');
 
 __dirname = path.join(process.cwd(), '..');
 
