@@ -125,7 +125,7 @@ class Anura {
             const appName = orderedApps[appID]
             if (appName in this.apps) {
                 let app = this.apps[appName]
-                taskbar.addShortcut(app.icon, app.launch, appName)
+                taskbar.addShortcut(app.icon, app.launch.bind(app), appName)
             }
         }
     }

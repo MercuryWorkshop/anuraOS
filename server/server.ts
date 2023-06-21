@@ -22,29 +22,29 @@ var Proxy = require('./proxy');
 // })
 
 
-try {
-  let websocketproxy = new Docker({ socketPath: '/var/run/docker.sock' });
-  websocketproxy.run('bellenottelling/websockproxy', [], process.stdout, {
-    name: 'relay',
-    HostConfig: {
-      Privileged: true,
-      PortBindings: {
-        "80/tcp": [
-          {
-            "HostPort": "8001"
-          }
-        ]
-      }
-    }
-  })
-} catch(err) {
-  console.log(err)
-}
+// try {
+//   let websocketproxy = new Docker({ socketPath: '/var/run/docker.sock' });
+//   websocketproxy.run('bellenottelling/websockproxy', [], process.stdout, {
+//     name: 'relay',
+//     HostConfig: {
+//       Privileged: true,
+//       PortBindings: {
+//         "80/tcp": [
+//           {
+//             "HostPort": "8001"
+//           }
+//         ]
+//       }
+//     }
+//   })
+// } catch(err) {
+//   console.log(err)
+// }
 
-// spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
-//   shell: true,
-//   stdio: [process.stdout, null, process.stderr],
-// })
+spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
+  shell: true,
+  stdio: [process.stdout, null, process.stderr],
+})
 
 let files = read('public');
 
