@@ -3,15 +3,11 @@ import createServer from '@tomphttp/bare-server-node';
 
 import read from "fs-readdir-recursive";
 import path from "path"
-import Docker from "dockerode"
 
 import { spawn } from "child_process";
 
-
-var ws = require('ws');
-var modules = require('./modules');
-var Proxy = require('./proxy');
-
+import ws from "ws";
+import Proxy from "./proxy";
 
 // spawn("node", ["index.js"], {
 //   cwd: "../wsproxy/",
@@ -112,20 +108,6 @@ app.use(async (req: Request, res: Response, next: Function) => {
 
   next();
 });
-
-/**
- * Before estabilishing a connection
- */
-function onRequestConnect(info, callback) {
-
-	// Once we get a response from our modules, pass it through
-	modules.method.verify(info, function(res) {
-		callback(res);
-	})
-
-}
-
-
 
 console.log("Starting wsProxy")
 var WebSocketServer = new ws.Server({ noServer: true})
