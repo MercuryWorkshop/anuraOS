@@ -5,8 +5,7 @@
   "main": "hterm_poc.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node server.ts",
-    "build": "./build.sh"
+    "start": "ts-node server.ts"
   },
   "repository": {
     "type": "git",
