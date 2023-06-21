@@ -1,7 +1,7 @@
 /**
  * Dependencies
  */
-import {format} from "util";
+import { format } from "util";
 
 /**
  * Info
