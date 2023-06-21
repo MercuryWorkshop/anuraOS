@@ -253,14 +253,6 @@ class Anura {
     }
 }
 
-function openAppManager() {
-    fetch("applicationmanager/launchapp.js")
-        .then(response => response.text())
-        .then((data) => {
-            window.eval(data);
-        })
-}
-
 let anura: Anura;
 const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds))
 
