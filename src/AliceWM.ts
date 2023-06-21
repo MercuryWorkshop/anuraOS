@@ -140,6 +140,9 @@ var AliceWM = {
             }
 
         };
+        minimizeContainer.onclick = function () {
+            container.style.display = 'none'
+        }
 
         container.onresize = function() {
             anura.logger.debug("resized")
