@@ -1,21 +1,21 @@
 /**
  * Dependencies
  */
-const util = require("util");
+import {format} from "util";
 
 /**
  * Info
  */
-function info(...args) {
-  const mes = util.format(...wrap(args));
+export function info(...args: any[]) {
+  const mes = format(...wrap(args));
 
   console.log("\x1b[1;37m[%s]:\x1b[0m %s", "Info", mes);
 }
 /**
  * Status
  */
-function status(...args) {
-  const mes = util.format(...wrap(args));
+export function status(...args: any[]) {
+  const mes = format(...wrap(args));
 
   console.log("\x1b[1;32m[%s]:\x1b[0m %s", "Status", mes);
 }
@@ -23,8 +23,8 @@ function status(...args) {
 /**
  * Error
  */
-function error(...args) {
-  const mes = util.format(...wrap(args));
+function error(...args: any[]) {
+  const mes = format(...wrap(args));
 
   console.log("\x1b[1;31m[%s]:\x1b[0m %s", "Error", mes);
 }
@@ -32,18 +32,17 @@ function error(...args) {
 /**
  * Warning
  */
-function warn(...args) {
-  const mes = util.format(...wrap(args));
+function warn(...args: any[]) {
+  const mes = format(...wrap(args));
 
   console.log("\x1b[1;33m[%s]:\x1b[0m %s", "Warn", mes);
 }
 
 /**
  * Wrap arguments in a cool white color :)
- * @param {any[]} args
  */
-function wrap(args) {
-  const newArgs = [];
+function wrap(args: any[]) {
+  const newArgs: any[] = [];
 
   newArgs.push(args[0]);
   //Start at index 1, index 1 doesnt need to be modified;

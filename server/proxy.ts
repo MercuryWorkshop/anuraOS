@@ -1,19 +1,24 @@
 /**
  * Dependencies
  */
-var net = require("net");
-var mes = require("./message");
+import { WebSocket } from "ws";
+import { IncomingMessage } from "http";
+import net from "net";
 
-class Proxy {
-  /**
-   *
-   * @param {import('ws').WebSocket} ws
-   */
-  constructor(ws) {
-    // console.log(ws)
-    this._tcp;
-    this._from = ws.upgradeReq.connection.remoteAddress;
-    this._to = ws.upgradeReq.url.substr(1);
+import * as mes from "./message";
+
+export interface FakeWebSocket extends WebSocket {
+  upgradeReq: IncomingMessage;
+}
+
+export default class Proxy {
+  _ws: FakeWebSocket;
+  _from: string;
+  _to: string;
+  _tcp: net.Socket;
+  constructor(ws: FakeWebSocket) {
+    this._from = ws.upgradeReq.connection.remoteAddress!;
+    this._to = ws.upgradeReq.url!.substr(1);
     this._ws = ws;
 
     // Bind data
@@ -30,7 +35,10 @@ class Proxy {
       this._from,
       this._to
     );
-    this._tcp = net.connect(args[1], args[0]);
+    
+    const port = Number(args[1])
+    if(isNaN(port)) throw new RangeError(`Port '${args[1]}' was NaN`)
+    this._tcp = net.connect(port, args[0]);
 
     // Disable nagle algorithm
     this._tcp.setTimeout(0);
@@ -104,5 +112,3 @@ class Proxy {
     mes.status("Connection accepted from '%s'.", this._to);
   }
 }
-
-module.exports = Proxy;
