@@ -34,6 +34,166 @@ class WindowInformation {
     height: string;
     allowMultipleInstance = false;
 }
+
+
+class WMWindow {
+    element: HTMLElement;
+    content: HTMLElement;
+    maximized: boolean;
+    oldstyle: string | null;
+
+    dragging = false;
+
+    originalLeft: number;
+    originalTop: number;
+
+    mouseLeft: number;
+    mouseTop: number;
+
+
+
+    maximizeImg: HTMLImageElement;
+    constructor(wininfo: WindowInformation) {
+        this.element =
+            <div class="aliceWMwin" style={`
+                    resize: both;
+                    width: ${wininfo.width};
+                    height: ${wininfo.height};
+                `}
+                on:mousedown={this.focus.bind(this)}>
+                <style scoped>
+
+                </style>
+                <div class="title"
+                    on:mousedown={(evt: MouseEvent) => {
+
+                        var i, frames;
+                        frames = document.getElementsByTagName("iframe");
+                        for (i = 0; i < frames.length; ++i) {
+                            anura.logger.debug(frames[i])
+                            frames[i]!.style.pointerEvents = 'none'
+                        }
+
+                        this.dragging = true;
+                        this.originalLeft = this.element.offsetLeft;
+                        this.originalTop = this.element.offsetTop;
+                        this.mouseLeft = evt.clientX;
+                        this.mouseTop = evt.clientY;
+                    }}
+                    on:mouseup={(evt: MouseEvent) => {
+                        var i, frames;
+                        frames = document.getElementsByTagName("iframe");
+                        for (i = 0; i < frames.length; ++i) {
+                            frames[i]!.style.pointerEvents = 'auto'
+                        }
+
+                        if (this.dragging) {
+                            this.handleDrag(evt);
+                            this.dragging = false;
+                        }
+                    }}
+                    on:mousemove={(evt: MouseEvent) => {
+                        // do the dragging during the mouse move
+
+                        if (this.dragging) {
+                            this.handleDrag(evt);
+                        }
+                    }}>
+                    <div class="titleContent">{wininfo.title}</div>
+
+                    <button class="windowButton">
+                        <img src="/assets/window/minimize.svg" on:click={() => {
+                            if (wininfo.allowMultipleInstance) {
+                                new anura.notification({
+                                    title: "Cannot minimize",
+                                    description: "minimizing isn't implimented on Multi-Instance windows"
+                                }).show()
+                                return;
+                            }
+                            this.element.style.display = 'none'
+                        }} height="12px" class="windowButtonIcon" />
+                    </button>
+
+                    <button class="windowButton">
+                        <img src="/assets/window/maximize.svg" bind:maximizeImg={this} on:click={this.maximize.bind(this)} height="12px" class="windowButtonIcon" />
+                    </button>
+                    <button class="windowButton">
+                        <img src="/assets/window/close.svg" on:click={this.close.bind(this)} height="12px" class="windowButtonIcon" />
+                    </button>
+
+                </div>
+                <div class="content" bind:content={this} style="width: 100%; padding:0; margin:0;"></div>
+            </div>
+
+        document.addEventListener('mousemove', (evt) => {
+
+            if (this.dragging) {
+                this.handleDrag(evt);
+            }
+        })
+
+        // finish the dragging when release the mouse button
+        document.addEventListener('mouseup', (evt) => {
+            var i, frames;
+            frames = document.getElementsByTagName("iframe");
+            for (i = 0; i < frames.length; ++i) {
+                frames[i]!.style.pointerEvents = 'auto'
+            }
+            evt = evt || window.event;
+
+            if (this.dragging) {
+                this.handleDrag(evt);
+                this.dragging = false;
+            }
+        });
+    }
+    handleDrag(evt: MouseEvent) {
+        this.element.style.left =
+            Math.min(window.innerWidth, Math.max(0, this.originalLeft + evt.clientX! - this.mouseLeft)) + "px";
+        this.element.style.top =
+            Math.min(window.innerHeight, Math.max(0, this.originalTop + evt.clientY! - this.mouseTop)) + "px";
+    }
+
+    focus() {
+        this.element.style.setProperty("z-index", (getHighestZindex() + 1).toString());
+        normalizeZindex()
+
+
+    }
+    close() {
+        this.element.remove()
+    }
+    maximize() {
+        if (!this.maximized) {
+            this.oldstyle = this.element.getAttribute("style");
+            const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            const height = window.innerHeight || document.documentElement.clientHeight ||
+                document.body.clientHeight;
+
+            this.element.style.top = "0"
+            this.element.style.left = "0"
+            this.element.style.width = `${width}px`;
+            this.element.style.height = `${height - 53}px`;
+
+            this.maximizeImg.src = "/assets/window/restore.svg";
+
+
+            this.maximized = true;
+        } else {
+            this.element.setAttribute("style", this.oldstyle!);
+            this.maximizeImg.src = "/assets/window/maximize.svg";
+            this.maximized = false;
+
+        }
+    }
+    minimize() {
+
+    }
+
+
+}
+
+
 var AliceWM = {
     create: function(givenWinInfo: string | WindowInformation) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
         // Default param
@@ -49,6 +209,11 @@ var AliceWM = {
 
         if (typeof (givenWinInfo) == 'string') // Only title given
             wininfo.title = givenWinInfo
+
+        let win = new WMWindow(wininfo);
+        document.body.appendChild(win.element);
+        return win;
+
 
 
         anura.logger.debug(typeof (givenWinInfo))
@@ -141,11 +306,11 @@ var AliceWM = {
                 // ro.unobserve(container);
             }
         };
-        
-        minimizeContainer.onclick = function () {
+
+        minimizeContainer.onclick = function() {
             if (wininfo.allowMultipleInstance) {
                 new anura.notification({
-                    title: "Cannot minimize", 
+                    title: "Cannot minimize",
                     description: "minimizing isn't implimented on Multi-Instance windows"
                 }).show()
                 return;
