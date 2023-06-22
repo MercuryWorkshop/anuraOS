@@ -12,7 +12,7 @@ import basicAuth from "express-basic-auth";
 
 const useAuth = process.argv.includes("--auth")
 
-spawn("docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
+spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
   shell: true,
   stdio: [process.stdout, null, process.stderr],
 });
