@@ -22,6 +22,12 @@ cd server
 npm start
 ```
 
+### Run server with authentication
+
+```sh
+npm start -- --auth
+```
+
 ## Post-installation (client)
 **NOTE**: The login for rootfs images is `root:root`.
 
