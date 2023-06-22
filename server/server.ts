@@ -119,8 +119,8 @@ app.use(async (req, res, next) => {
 });
 
 console.log("Starting wsProxy")
-var WebSocketServer = new WebSocket.Server({ noServer: true })
-WebSocketServer.on('connection', ws => {
+const wss = new WebSocket.Server({ noServer: true })
+wss.on('connection', ws => {
   try {
     new Proxy(ws as FakeWebSocket);
   } catch (e) {
@@ -142,10 +142,10 @@ server.on("upgrade", (request, socket, head) => {
     bare.routeUpgrade(request, socket, head);
   } else {
     console.log("websocket connection detected")
-    WebSocketServer.handleUpgrade(request, socket, head, (websocket) => {
+    wss.handleUpgrade(request, socket, head, (websocket) => {
       let fakeWebsocket = websocket as FakeWebSocket;
       fakeWebsocket.upgradeReq = request;
-      WebSocketServer.emit("connection", fakeWebsocket, request);
+      wss.emit("connection", fakeWebsocket, request);
     })
   }
 });
