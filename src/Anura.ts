@@ -83,7 +83,7 @@ class Anura {
                     // @ts-ignore
                     loadingScript(location, app);
                 } else {
-                    if (this.windowinstance === null || this.windowinstance.parentElement === null)  { //  checks if there is an existing minimized window 
+                    if (this.windowinstance === null || this.windowinstance.parentElement === null || this.manifest.wininfo.allowMultipleInstance)  { //  checks if there is an existing minimized window 
                         // if (this.windowinstance) return;
                         let win = AliceWM.create(this.manifest.wininfo);
 
