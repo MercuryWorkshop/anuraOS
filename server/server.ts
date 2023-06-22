@@ -4,7 +4,7 @@ import { createBareServer } from '@tomphttp/bare-server-node';
 import read from "fs-readdir-recursive";
 import path from "path"
 
-import { spawn } from "child_process";
+import { spawn, spawnSync } from "child_process";
 
 import Proxy, { FakeWebSocket } from "./proxy";
 import WebSocket from "ws";
@@ -12,10 +12,32 @@ import basicAuth from "express-basic-auth";
 
 const useAuth = process.argv.includes("--auth")
 
-spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
+spawn("docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
   shell: true,
   stdio: [process.stdout, null, process.stderr],
-})
+});
+
+function shutdown(){
+  console.log();
+  // https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html
+  server.close();
+  console.log("Stopped server")
+  // send KILL so it's faster
+  spawnSync("docker container stop relay --signal KILL", {
+    shell: true,
+    stdio: [process.stdout, null, process.stderr],
+  });
+  console.log("Stopped relay");
+  spawnSync("docker rm relay", {
+    shell: true,
+    stdio: [process.stdout, null, process.stderr],
+  });
+  console.log("Removed relay");
+  process.exit(0);
+}
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
 let files = read('public');
 
