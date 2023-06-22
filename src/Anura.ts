@@ -95,17 +95,22 @@ class Anura {
                     // @ts-ignore
                     loadingScript(location, app);
                 } else {
-                    // if (this.windowinstance) return;
-                    let win = AliceWM.create(this.manifest.wininfo);
-                    this.windowinstance = win;
+                    if (this.windowinstance === null || this.windowinstance.parentElement === null || (this.manifest.wininfo && this.manifest.wininfo.allowMultipleInstance) )  { //  checks if there is an existing minimized window 
+                        // if (this.windowinstance) return;
+                        let win = AliceWM.create(this.manifest.wininfo);
 
-                    let iframe = document.createElement("iframe");
-                    iframe.setAttribute("style", "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;")
-                    iframe.setAttribute("src", `${location}/${manifest.index}`);
-                    win.content.appendChild(iframe);
+                        let iframe = document.createElement("iframe");
+                        iframe.setAttribute("style", "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;")
+                        iframe.setAttribute("src", `${location}/${manifest.index}`);
+                        win.content.appendChild(iframe);
+                        this.windowinstance = win.content.parentElement!;
 
-                    (<any>iframe.contentWindow).anura = anura;
-                    (<any>iframe.contentWindow).AliceWM = AliceWM;
+                        (<any>iframe.contentWindow).anura = anura;
+                        (<any>iframe.contentWindow).AliceWM = AliceWM;
+                    } else {
+                        this.windowinstance.style.display  = ''
+                    }
+
                 }
             },
             icon: `${location}/${manifest.icon}`
@@ -260,14 +265,6 @@ class Anura {
     }
 }
 
-function openAppManager() {
-    fetch("applicationmanager/launchapp.js")
-        .then(response => response.text())
-        .then((data) => {
-            window.eval(data);
-        })
-}
-
 let anura: Anura;
 const sleep = (milliseconds: number) => new Promise(resolve => setTimeout(resolve, milliseconds))
 
@@ -344,16 +341,18 @@ document.addEventListener("anura-login-completed", async () => {
 
 
 
+    if (!(localStorage['disable-x86'] == 'true')) {
+        // v86 stable. can enable it by default now
+        let mgr = await anura.registerApp("apps/x86mgr.app");
+        await mgr?.launch();
 
-    // v86 stable. can enable it by default now
-    let mgr = await anura.registerApp("apps/x86mgr.app");
-    await mgr?.launch();
 
+        let finp: HTMLInputElement = React.createElement("input", { type: "file", id: "input" }) as unknown as HTMLInputElement;
+        document.body.appendChild(finp);
 
-    let finp: HTMLInputElement = React.createElement("input", { type: "file", id: "input" }) as unknown as HTMLInputElement;
-    document.body.appendChild(finp);
+        anura.x86 = await InitV86Backend();
+    }
 
-    anura.x86 = await InitV86Backend();
 
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);

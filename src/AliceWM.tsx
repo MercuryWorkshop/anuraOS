@@ -32,6 +32,7 @@ class WindowInformation {
     title: string;
     width: string;
     height: string;
+    allowMultipleInstance = false;
 }
 var AliceWM = {
     create: function(givenWinInfo: string | WindowInformation) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
@@ -40,6 +41,7 @@ var AliceWM = {
             title: "",
             width: '1000px',
             height: '500px',
+            allowMultipleInstance: false
         }
         // Param given in argument
         if (typeof (givenWinInfo) == 'object')
@@ -138,8 +140,18 @@ var AliceWM = {
                 maximizeContainer.innerHTML = '<img src="/assets/window/maximize.svg" height="12px" class="windowButtonIcon">'
                 // ro.unobserve(container);
             }
-
         };
+        
+        minimizeContainer.onclick = function () {
+            if (wininfo.allowMultipleInstance) {
+                new anura.notification({
+                    title: "Cannot minimize", 
+                    description: "minimizing isn't implimented on Multi-Instance windows"
+                }).show()
+                return;
+            }
+            container.style.display = 'none'
+        }
 
         container.onresize = function() {
             anura.logger.debug("resized")

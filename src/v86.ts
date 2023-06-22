@@ -196,7 +196,7 @@ class V86Backend {
       wasm_path: "/lib/v86.wasm",
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
-      screen_container: anura.apps["anura.x86mgr"].windowinstance.content.querySelector("div"),
+      screen_container: anura.apps["anura.x86mgr"].windowinstance.querySelector("#v86VGA"),
       
       // TODO: this should not be hardcoded.
       initrd: {

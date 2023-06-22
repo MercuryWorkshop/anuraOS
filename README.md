@@ -19,7 +19,7 @@ Web OS with v86 integration
 ```sh
 make bundle
 cd server
-npx ts-node server.ts 
+npm start
 ```
 
 ## Post-installation (client)

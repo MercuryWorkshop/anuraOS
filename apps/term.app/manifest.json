@@ -5,6 +5,7 @@
   "index": "term.html",
   "icon": "term.png",
   "wininfo":{
-    "title":"Terminal"
+    "title":"Terminal",
+    "allowMultipleInstance": "true"
   }
 }

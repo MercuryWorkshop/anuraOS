@@ -1,7 +1,8 @@
 {
-    "name": "Settings App",
+    "name": "Settings",
     "type": "auto",
     "package": "anura.settings",
-    "index": "index.html"
+    "index": "index.html",
+    "icon": "settings.png"
   }
   

@@ -5,8 +5,7 @@
   "main": "hterm_poc.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node server.ts",
-    "build": "./build.sh"
+    "start": "ts-node server.ts"
   },
   "repository": {
     "type": "git",
@@ -19,15 +18,15 @@
   },
   "homepage": "https://github.com/MercuryWorkshop/AliceWM#readme",
   "dependencies": {
-    "@tomphttp/bare-server-node": "^1.2.5",
-    "dockernode": "^0.1.0",
-    "dockerode": "^3.3.5",
+    "@tomphttp/bare-server-node": "^2.0.0",
+    "@types/express": "^4.17.17",
+    "@types/fs-readdir-recursive": "^1.1.0",
+    "@types/ws": "^8.5.5",
     "express": "^4.18.2",
     "express-basic-auth": "^1.2.1",
     "fs-readdir-recursive": "^1.1.0",
+    "optimist": "^0.5.2",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.3",
-    "ws": "^8.13.0",
-    "xterm": "^5.1.0"
+    "ws": "^8.13.0"
   }
 }
