@@ -10,14 +10,6 @@ import WebSocket from "ws";
 import Proxy, { FakeWebSocket } from "./proxy";
 import basicAuth from "express-basic-auth";
 
-// spawn("node", ["index.js"], {
-//   cwd: "../wsproxy/",
-//   env: {
-//     "PORT": "8001"
-//   },
-//   stdio: [process.stdout, process.stderr]
-// })
-
 spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
   shell: true,
   stdio: [process.stdout, null, process.stderr],
@@ -108,7 +100,7 @@ app.use(async (req, res, next) => {
 });
 
 console.log("Starting wsProxy")
-var WebSocketServer = new WebSocket.Server({ noServer: true})
+var WebSocketServer = new WebSocket.Server({ noServer: true })
 WebSocketServer.on('connection', ws => {
   try {
     new Proxy(ws as FakeWebSocket);
@@ -130,7 +122,7 @@ server.on("upgrade", (request, socket, head) => {
   if (bare.shouldRoute(request)) {
     bare.routeUpgrade(request, socket, head);
   } else {
-  console.log("websocket connection detected")
+    console.log("websocket connection detected")
     WebSocketServer.handleUpgrade(request, socket, head, (websocket) => {
       let fakeWebsocket = websocket as FakeWebSocket;
       fakeWebsocket.upgradeReq = request;
