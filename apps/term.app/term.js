@@ -9,7 +9,6 @@ window.addEventListener("load", async () => {
 
   const t = new hterm.Terminal();
   top.t = t;
-  // Cool proprietary stuff, try not to touch it if you dont need to because its easy to break and hard to fix
 
   let htermNode = $("#terminal");
 
@@ -29,6 +28,10 @@ window.addEventListener("load", async () => {
     const pty = await anura.x86.openpty("TERM=xterm bash", t.screenSize.height, t.screenSize.width, (data) => {
       io.print(data);
     });
+
+    console.log(t.screenSize)
+
+    setTimeout(() => anura.x86.resizepty(pty, t.screenSize.height, t.screenSize.width), 10000)
 
 
     function writeData(str) {

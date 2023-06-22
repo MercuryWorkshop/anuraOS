@@ -13,6 +13,7 @@ RUN apt update && \
         # xserver-xorg-video-fbdev xserver-xorg-video-vesa \
         # xserver-xorg x11-xserver-utils xinit dbus-x11 \
         # libgdk-pixbuf2.0 libpango-1.0 libpangocairo-1.0 libgtk2.0-bin \
+        htop iputils-ping \
         libc-l10n locales \
         fonts-noto fonts-droid-fallback \
         strace file xterm vim apt-file \
@@ -26,14 +27,13 @@ RUN apt update && \
     locale-gen && \
     echo 'LANG="en_US.UTF-8"' > /etc/default/locale && \
     chsh -s /bin/bash && \
-    echo "root:root" | chpasswd && \
+    passwd -d root && \
     # mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d/ && \
     # systemctl enable serial-getty@ttyS0.service && \
     rm /lib/systemd/system/getty.target.wants/getty-static.service && \
     rm /etc/motd /etc/issue && \
     systemctl disable apt-daily.timer && \
     systemctl disable apt-daily-upgrade.timer && \
-    systemctl disable dhcpcd.service && \
     echo "tmpfs /tmp tmpfs nodev,nosuid 0 0" >> /etc/fstab
 
 
@@ -44,17 +44,18 @@ COPY logind.conf /etc/systemd/logind.conf
 
 #COPY xinitrc /root/.xinitrc
 COPY xorg.conf /etc/X11/
-COPY anurad-start.sh /bin/
 COPY anura-boot.sh /bin/
 
 
 COPY anurad.c /etc/
 
-RUN chmod u+x /bin/anura-boot.sh /bin/anurad-start.sh
+RUN chmod u+x /bin/anura-boot.sh
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil
 COPY anura-boot.service /etc/systemd/system
 COPY anurad.service /etc/systemd/system
 
-
+RUN echo "RESUME=none" >> /etc/initramfs-tools/conf.d/resume
+RUN update-initramfs -u
 RUN systemctl enable anurad
 RUN systemctl enable anura-boot
+RUN systemctl enable dhcpcd

@@ -10,3 +10,6 @@
 [submodule "apps/webretro.app/webretro"]
 	path = apps/webretro.app/webretro
 	url = https://github.com/BinBashBanana/webretro
+[submodule "nohost"]
+	path = nohost
+	url = https://github.com/MercuryWorkshop/nohost

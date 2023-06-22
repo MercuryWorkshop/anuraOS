@@ -10,7 +10,24 @@ import Proxy, { FakeWebSocket } from "./proxy";
 import WebSocket from "ws";
 
 // spawn("node", ["index.js"], {
-//   cwd: "../wsproxy/",
+//   cwd: "../wsproxy/",try {
+//   let websocketproxy = new Docker({ socketPath: '/var/run/docker.sock' });
+//   websocketproxy.run('bellenottelling/websockproxy', [], process.stdout, {
+//     name: 'relay',
+//     HostConfig: {
+//       Privileged: true,
+//       PortBindings: {
+//         "80/tcp": [
+//           {
+//             "HostPort": "8001"
+//           }
+//         ]
+//       }
+//     }
+//   })
+// } catch(err) {
+//   console.log(err)
+// }
 //   env: {
 //     "PORT": "8001"
 //   },
@@ -110,14 +127,14 @@ app.use(async (req, res, next) => {
 });
 
 console.log("Starting wsProxy")
-var WebSocketServer = new WebSocket.Server({ noServer: true})
+var WebSocketServer = new WebSocket.Server({ noServer: true })
 WebSocketServer.on('connection', ws => {
   try {
     new Proxy(ws as FakeWebSocket);
   } catch (e) {
     console.error(e)
   }
-  
+
 });
 
 
@@ -132,7 +149,7 @@ server.on("upgrade", (request, socket, head) => {
   if (bare.shouldRoute(request)) {
     bare.routeUpgrade(request, socket, head);
   } else {
-  console.log("websocket connection detected")
+    console.log("websocket connection detected")
     WebSocketServer.handleUpgrade(request, socket, head, (websocket) => {
       let fakeWebsocket = websocket as FakeWebSocket;
       fakeWebsocket.upgradeReq = request;
