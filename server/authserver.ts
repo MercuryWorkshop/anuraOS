@@ -1,17 +1,14 @@
-import express, { Request, Response } from "express";
-import createServer from '@tomphttp/bare-server-node';
+import express from "express";
+import { createBareServer } from '@tomphttp/bare-server-node';
 
 import read from "fs-readdir-recursive";
 import path from "path"
 
 import { spawn } from "child_process";
 
-
-var ws = require('ws');
-var modules = require('./modules');
-var Proxy = require('./proxy');
-const basicAuth = require('express-basic-auth');
-
+import WebSocket from "ws";
+import Proxy, { FakeWebSocket } from "./proxy";
+import basicAuth from "express-basic-auth";
 
 // spawn("node", ["index.js"], {
 //   cwd: "../wsproxy/",
@@ -30,11 +27,11 @@ let files = read('public');
 
 const app = express();
 const port = 8000;
-const bare = createServer('/bare/');
+const bare = createBareServer('/bare/');
 
 __dirname = path.join(process.cwd(), '..');
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req, res) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cross-Origin-Opener-Policy", "same-origin");
@@ -42,7 +39,7 @@ app.get("/", (req: Request, res: Response) => {
   res.sendFile(__dirname + "/public/index.html");
 });
 
-app.get("/anura-filestocache", (req: Request, res: Response) => {
+app.get("/anura-filestocache", (req, res) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cross-Origin-Opener-Policy", "same-origin");
@@ -52,7 +49,7 @@ app.get("/anura-filestocache", (req: Request, res: Response) => {
   res.send(JSON.stringify(files));
 });
 
-app.use(async (req: Request, res: Response, next: Function) => {
+app.use(async (req, res, next) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cross-Origin-Opener-Policy", "same-origin");
@@ -65,7 +62,7 @@ app.use(async (req: Request, res: Response, next: Function) => {
   next();
 })
 
-function sessionPassword(length) {
+function sessionPassword(length: number) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
@@ -82,7 +79,7 @@ app.use(basicAuth({
     challenge: true
 }));
 
-app.use(async (req: Request, res: Response, next: Function) => {
+app.use(async (req, res, next) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cross-Origin-Opener-Policy", "same-origin");
@@ -96,7 +93,7 @@ app.use(async (req: Request, res: Response, next: Function) => {
   next();
 });
 
-app.use(async (req: Request, res: Response, next: Function) => {
+app.use(async (req, res, next) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Cross-Origin-Opener-Policy", "same-origin");
@@ -110,25 +107,11 @@ app.use(async (req: Request, res: Response, next: Function) => {
   next();
 });
 
-/**
- * Before estabilishing a connection
- */
-function onRequestConnect(info, callback) {
-
-	// Once we get a response from our modules, pass it through
-	modules.method.verify(info, function(res) {
-		callback(res);
-	})
-
-}
-
-
-
 console.log("Starting wsProxy")
-var WebSocketServer = new ws.Server({ noServer: true})
+var WebSocketServer = new WebSocket.Server({ noServer: true})
 WebSocketServer.on('connection', ws => {
   try {
-    new Proxy(ws);
+    new Proxy(ws as FakeWebSocket);
   } catch (e) {
     console.error(e)
   }
@@ -149,10 +132,9 @@ server.on("upgrade", (request, socket, head) => {
   } else {
   console.log("websocket connection detected")
     WebSocketServer.handleUpgrade(request, socket, head, (websocket) => {
-      let fakeWebsocket = websocket
-      fakeWebsocket.upgradeReq = request
+      let fakeWebsocket = websocket as FakeWebSocket;
+      fakeWebsocket.upgradeReq = request;
       WebSocketServer.emit("connection", fakeWebsocket, request);
-    
     })
   }
 });

@@ -6,8 +6,7 @@ Web OS with v86 integration
 ### Installation
 - make sure you clone this repository with `--recursive`!
 - You need to have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
-- `mkdir build/`
-- `mkdir build/lib`
+- `mkdir -p build/lib/`
 - `cd server`
 - `npm install` **HI ANURA DEVS TODO we shouldn't need to cd into a folder to npm i. maybe shell script it**
 - `cd ..`
@@ -24,7 +23,7 @@ Web OS with v86 integration
 ```sh
 make bundle
 cd server
-npx ts-node server.ts 
+npm start
 ```
 
 ## Post-installation (client)
