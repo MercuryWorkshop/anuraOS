@@ -8,6 +8,9 @@ import { spawn } from "child_process";
 
 import Proxy, { FakeWebSocket } from "./proxy";
 import WebSocket from "ws";
+import basicAuth from "express-basic-auth";
+
+const useAuth = process.argv.includes("--auth")
 
 spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
   shell: true,
@@ -52,6 +55,18 @@ app.use(async (req, res, next) => {
   }
   next();
 })
+
+// AUTHENTICATION
+if (useAuth) {
+  const password = sessionPassword(64);
+  console.log("The password for this session is: " + password)
+  app.use(basicAuth({
+    users: {
+      demouser: password,
+    },
+    challenge: true
+  }));
+}
 
 app.use(async (req, res, next) => {
   res.header("Cross-Origin-Embedder-Policy", "require-corp");
@@ -112,3 +127,15 @@ server.on("upgrade", (request, socket, head) => {
     })
   }
 });
+
+function sessionPassword(length: number) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
