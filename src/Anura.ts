@@ -95,7 +95,7 @@ class Anura {
                     // @ts-ignore
                     loadingScript(location, app);
                 } else {
-                    if (this.windowinstance === null || this.windowinstance.parentElement === null || (this.manifest.wininfo && this.manifest.wininfo.allowMultipleInstance) )  { //  checks if there is an existing minimized window 
+                    if (this.windowinstance === null || this.windowinstance.parentElement === null || (this.manifest.wininfo && this.manifest.wininfo.allowMultipleInstance)) { //  checks if there is an existing minimized window 
                         // if (this.windowinstance) return;
                         let win = AliceWM.create(this.manifest.wininfo);
 
@@ -108,7 +108,7 @@ class Anura {
                         (<any>iframe.contentWindow).anura = anura;
                         (<any>iframe.contentWindow).AliceWM = AliceWM;
                     } else {
-                        this.windowinstance.style.display  = ''
+                        this.windowinstance.style.display = ''
                     }
 
                 }
@@ -122,22 +122,15 @@ class Anura {
 
         this.apps[manifest.package] = app;
 
-        if (this.initComplete) 
+        if (this.initComplete)
             this.updateTaskbar()
-            
+
         return app;
     }
     updateTaskbar() {
-        if (!('applist' in localStorage)) {
-            const initAppArray = []
-            for (const appName in anura.apps) {
-            initAppArray.push(appName)
-            }
-            localStorage['applist'] = JSON.stringify(initAppArray)
-        }
         taskbar.removeShortcuts();
-        document.body.append(taskbar.element)
-        const orderedApps = JSON.parse(localStorage['applist'])
+
+        let orderedApps = anura.settings.get("applist");
         for (let appID in orderedApps) {
             const appName = orderedApps[appID]
             if (appName in this.apps) {
@@ -244,7 +237,7 @@ class Anura {
             function deleteNotif() {
                 const oldNotif = document.getElementById(id)!
                 // do nothing if the notification is already deleted
-                if (oldNotif == null) return; 
+                if (oldNotif == null) return;
                 oldNotif.style.opacity = "0"
                 setTimeout(() => {
                     notifContainer?.removeChild(oldNotif)
@@ -261,7 +254,7 @@ class Anura {
         }
         url += window.location.origin.split("://")[1]
         url += '/'
-        return localStorage['wsproxy-url'] || url // let user define a systemwide wsproxy url to their prefered instance, fallback to obvious choice
+        return this.settings.get('wsproxy-url') || url // let user define a systemwide wsproxy url to their prefered instance, fallback to obvious choice
     }
 }
 
@@ -341,7 +334,7 @@ document.addEventListener("anura-login-completed", async () => {
 
 
 
-    if (!(localStorage['disable-x86'] == 'true')) {
+    if (!anura.settings.get("x86-disabled")) {
         // v86 stable. can enable it by default now
         let mgr = await anura.registerApp("apps/x86mgr.app");
         await mgr?.launch();

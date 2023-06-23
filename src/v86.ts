@@ -197,7 +197,7 @@ class V86Backend {
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       screen_container: anura.apps["anura.x86mgr"].windowinstance.querySelector("#v86VGA"),
-      
+
       // TODO: this should not be hardcoded.
       initrd: {
         url: "/images/debian-boot/initrd.img-6.1.0-9-686",

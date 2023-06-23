@@ -20,7 +20,7 @@ class Settings {
 
   static defaultSettings() {
     return {
-
+      applist: []
     }
   }
   static async new(fs: FilerFS) {
@@ -28,7 +28,7 @@ class Settings {
     try {
       console.log(fs)
       let text = await fs.readFileSync("/anura_settings.json");
-      initial = JSON.parse(text);
+      Object.assign(initial, JSON.parse(text));
     } catch (e) {
       console.error(e);
       fs.writeFile("/anura_settings.json", JSON.stringify(initial));
@@ -43,6 +43,9 @@ class Settings {
 
   get(prop: string): any {
     return this.cache[prop]
+  }
+  has(prop: string): boolean {
+    return prop in this.cache
   }
   async set(prop: string, val: any) {
     this.cache[prop] = val;
