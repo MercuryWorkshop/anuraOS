@@ -52,6 +52,8 @@ class WMWindow {
 
     justresized = false;
 
+    mouseover = false;
+
 
 
     maximizeImg: HTMLImageElement;
@@ -70,6 +72,12 @@ class WMWindow {
                     if (this.maximized) {
                         this.unmaximize();
                     }
+                }}
+                on:mouseover={() => {
+                    this.mouseover = true;
+                }}
+                on:mouseout={() => {
+                    this.mouseover = false;
                 }}
                 on:mousedown={this.focus.bind(this)}>
                 <style scoped>
@@ -140,6 +148,13 @@ class WMWindow {
 
             if (this.dragging) {
                 this.handleDrag(evt);
+            }
+        })
+
+        // a very elegant way of detecting if the user clicked on an iframe inside of the window. credit to https://gist.github.com/jaydson/1780598
+        window.addEventListener("blur", () => {
+            if (this.mouseover) {
+                this.focus();
             }
         })
 
