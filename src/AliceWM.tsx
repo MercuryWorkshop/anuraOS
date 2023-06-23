@@ -50,6 +50,8 @@ class WMWindow {
     mouseLeft: number;
     mouseTop: number;
 
+    justresized = false;
+
 
 
     maximizeImg: HTMLImageElement;
@@ -60,6 +62,15 @@ class WMWindow {
                     width: ${wininfo.width};
                     height: ${wininfo.height};
                 `}
+                observe:Resize={() => {
+                    if (this.justresized) {
+                        this.justresized = false;
+                        return;
+                    }
+                    if (this.maximized) {
+                        this.unmaximize();
+                    }
+                }}
                 on:mousedown={this.focus.bind(this)}>
                 <style scoped>
 
@@ -143,6 +154,7 @@ class WMWindow {
 
             if (this.dragging) {
                 this.handleDrag(evt);
+
                 this.dragging = false;
             }
         });
@@ -152,6 +164,14 @@ class WMWindow {
             Math.min(window.innerWidth, Math.max(0, this.originalLeft + evt.clientX! - this.mouseLeft)) + "px";
         this.element.style.top =
             Math.min(window.innerHeight, Math.max(0, this.originalTop + evt.clientY! - this.mouseTop)) + "px";
+
+        if (this.maximized) {
+            this.unmaximize()
+            this.originalLeft = this.element.offsetLeft;
+            this.originalTop = this.element.offsetTop;
+            this.mouseLeft = evt.clientX;
+            this.mouseTop = evt.clientY;
+        }
     }
 
     focus() {
@@ -163,28 +183,37 @@ class WMWindow {
     close() {
         this.element.remove()
     }
-    maximize() {
+    togglemaximize() {
         if (!this.maximized) {
-            this.oldstyle = this.element.getAttribute("style");
-            const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-            const height = window.innerHeight || document.documentElement.clientHeight ||
-                document.body.clientHeight;
-
-            this.element.style.top = "0"
-            this.element.style.left = "0"
-            this.element.style.width = `${width}px`;
-            this.element.style.height = `${height - 53}px`;
-
-            this.maximizeImg.src = "/assets/window/restore.svg";
-
-
-            this.maximized = true;
+            this.maximize()
         } else {
-            this.element.setAttribute("style", this.oldstyle!);
-            this.maximizeImg.src = "/assets/window/maximize.svg";
-            this.maximized = false;
-
+            this.unmaximize()
         }
+    }
+    maximize() {
+        this.oldstyle = this.element.getAttribute("style");
+        const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        const height = window.innerHeight || document.documentElement.clientHeight ||
+            document.body.clientHeight;
+
+        this.element.style.top = "0"
+        this.element.style.left = "0"
+        this.element.style.width = `${width}px`;
+        this.element.style.height = `${height - 53}px`;
+
+        this.maximizeImg.src = "/assets/window/restore.svg";
+
+
+        this.justresized = true;
+        this.maximized = true;
+    }
+    unmaximize() {
+
+        this.element.setAttribute("style", this.oldstyle!);
+        this.maximizeImg.src = "/assets/window/maximize.svg";
+
+        this.justresized = true;
+        this.maximized = false;
     }
     minimize() {
 

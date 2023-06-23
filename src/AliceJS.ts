@@ -18,6 +18,20 @@ class React {
           elm.addEventListener(name.substring(3), prop);
           continue;
         }
+        if (typeof prop === "function" && name.startsWith("observe")) {
+          let observerclass = (window as any)[`${name.substring(8)}Observer`];
+          if (!observerclass) {
+            console.error(`Observer ${name} does not exist`);
+            continue;
+          }
+          let observer = new observerclass((entries: any) => {
+            for (let entry of entries) {
+              prop(entry);
+            }
+          });
+          observer.observe(elm)
+          continue;
+        }
         if (name.startsWith("bind")) {
           let propname = name.substring(5);
           prop[propname] = elm;
