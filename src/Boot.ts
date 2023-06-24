@@ -2,15 +2,16 @@
 const channel = new BroadcastChannel('tab');
 
 // send message to all tabs, after a new tab
-channel.postMessage('newtab');
-
-channel.addEventListener('message', (msg) => {
-  if (msg.data === 'newtab') {
+channel.postMessage("newtab");
+let activetab = true;
+channel.addEventListener("message", (msg) => {
+  if (msg.data === "newtab" && activetab) {
     // if there's a previously registered tab that can read the message, tell the other tab to kill itself
-    channel.postMessage('blackmanthunderstorm');
+    channel.postMessage("blackmanthunderstorm");
   }
 
   if (msg.data === "blackmanthunderstorm") {
+    activetab = false;
     //@ts-ignore
     for (let elm of [...document.children]) {
       elm.remove();
