@@ -393,3 +393,58 @@ nav li {
   width: 100%;
   height: 100%;
 }
+
+
+
+.resize-corner{
+    width: 10px;
+    height: 10px;
+
+    position: absolute;
+    z-index: 2;
+}
+.resize-edge{
+    position: absolute;
+    z-index: 2;
+    padding:5px
+}
+.resize-edge.left{
+    left:-5px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resize-edge.right{
+    right:-5px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resize-edge.top{
+    top:-5px;
+    width: 100%;
+    cursor: s-resize;
+}
+.resize-edge.bottom{
+    bottom:-5px;
+    width: 100%;
+    cursor: s-resize;
+}
+.resize-corner.top-left {
+    left: -5px;
+    top: -5px;
+    cursor: nwse-resize; /*resizer cursor*/
+}
+.resize-corner.top-right {
+    right: -5px;
+    top: -5px;
+    cursor: nesw-resize;
+}
+.resize-corner.bottom-left {
+    left: -5px;
+    bottom: -5px;
+    cursor: nesw-resize;
+}
+.resize-corner.bottom-right {
+    right: -5px;
+    bottom: -5px;
+    cursor: nwse-resize;
+}

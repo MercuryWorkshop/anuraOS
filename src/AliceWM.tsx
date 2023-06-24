@@ -20,18 +20,14 @@
 let windowInformation = {}
 let windowID = 0;
 
-class ContainerData {
-    _dragging: boolean;
-    _originalLeft: number;
-    _originalTop: number;
-    _mouseLeft: number;
-    _mouseTop: number;
-}
+
 
 class WindowInformation {
     title: string;
     width: string;
+    minwidth: number;
     height: string;
+    minheight: number;
     allowMultipleInstance = false;
 }
 
@@ -49,6 +45,7 @@ class WMWindow {
 
     mouseLeft: number;
     mouseTop: number;
+    wininfo: WindowInformation;
 
     justresized = false;
 
@@ -58,21 +55,13 @@ class WMWindow {
 
     maximizeImg: HTMLImageElement;
     constructor(wininfo: WindowInformation) {
+        this.wininfo = wininfo;
         this.element =
             <div class="aliceWMwin" style={`
-                    resize: both;
                     width: ${wininfo.width};
                     height: ${wininfo.height};
                 `}
-                observe:Resize={() => {
-                    if (this.justresized) {
-                        this.justresized = false;
-                        return;
-                    }
-                    if (this.maximized) {
-                        this.unmaximize();
-                    }
-                }}
+
                 on:mouseover={() => {
                     this.mouseover = true;
                 }}
@@ -80,9 +69,18 @@ class WMWindow {
                     this.mouseover = false;
                 }}
                 on:mousedown={this.focus.bind(this)}>
-                <style scoped>
 
-                </style>
+                <div class="resizers">
+                    <div class="resize-edge left"></div>
+                    <div class="resize-edge right"></div>
+                    <div class="resize-edge top"></div>
+                    <div class="resize-edge bottom"></div>
+
+                    <div class="resize-corner top-left"></div>
+                    <div class="resize-corner top-right"></div>
+                    <div class="resize-corner bottom-left"></div>
+                    <div class="resize-corner bottom-right"></div>
+                </div>
                 <div class="title"
                     on:mousedown={(evt: MouseEvent) => {
 
@@ -90,7 +88,7 @@ class WMWindow {
                         frames = document.getElementsByTagName("iframe");
                         for (i = 0; i < frames.length; ++i) {
                             anura.logger.debug(frames[i])
-                            frames[i]!.style.pointerEvents = 'none'
+                            frames[i]!.style.pointerEvents = "none"
                         }
 
                         this.dragging = true;
@@ -103,7 +101,7 @@ class WMWindow {
                         var i, frames;
                         frames = document.getElementsByTagName("iframe");
                         for (i = 0; i < frames.length; ++i) {
-                            frames[i]!.style.pointerEvents = 'auto'
+                            frames[i]!.style.pointerEvents = "auto"
                         }
 
                         if (this.dragging) {
@@ -125,11 +123,10 @@ class WMWindow {
                             if (wininfo.allowMultipleInstance) {
                                 new anura.notification({
                                     title: "Cannot minimize",
-                                    description: "minimizing isn't implimented on Multi-Instance windows"
+                                    description: "minimizing isn't implimented on Multi- Instance windows"
                                 }).show()
-                                return;
+                                this.element.style.display = "none"
                             }
-                            this.element.style.display = 'none'
                         }} height="12px" class="windowButtonIcon" />
                     </button>
 
@@ -144,7 +141,7 @@ class WMWindow {
                 <div class="content" bind:content={this} style="width: 100%; padding:0; margin:0;"></div>
             </div>
 
-        document.addEventListener('mousemove', (evt) => {
+        document.addEventListener("mousemove", (evt) => {
 
             if (this.dragging) {
                 this.handleDrag(evt);
@@ -159,11 +156,11 @@ class WMWindow {
         })
 
         // finish the dragging when release the mouse button
-        document.addEventListener('mouseup', (evt) => {
+        document.addEventListener("mouseup", (evt) => {
             var i, frames;
             frames = document.getElementsByTagName("iframe");
             for (i = 0; i < frames.length; ++i) {
-                frames[i]!.style.pointerEvents = 'auto'
+                frames[i]!.style.pointerEvents = "auto"
             }
             evt = evt || window.event;
 
@@ -173,7 +170,109 @@ class WMWindow {
                 this.dragging = false;
             }
         });
+
+        //@ts-ignore
+        const resizers = [...this.element.querySelectorAll(".resize-corner"), ...this.element.querySelectorAll(".resize-edge")]
+        const minimum_size = 20;
+        let original_width = 0;
+        let original_height = 0;
+        let original_x = 0;
+        let original_y = 0;
+        let original_mouse_x = 0;
+        let original_mouse_y = 0;
+        for (let i = 0; i < resizers.length; i++) {
+            const currentResizer = resizers[i];
+            currentResizer.addEventListener("mousedown", (e: MouseEvent) => {
+                e.preventDefault()
+                original_width = parseFloat(getComputedStyle(this.element, null).getPropertyValue("width").replace("px", ""));
+                original_height = parseFloat(getComputedStyle(this.element, null).getPropertyValue("height").replace("px", ""));
+                original_x = this.element.getBoundingClientRect().left;
+                original_y = this.element.getBoundingClientRect().top;
+                original_mouse_x = e.pageX;
+                original_mouse_y = e.pageY;
+                window.addEventListener("mousemove", resize)
+                window.addEventListener("mouseup", stopResize)
+            })
+
+            const resize = (e: MouseEvent) => {
+                if (this.maximized) {
+                    this.unmaximize();
+                }
+                if (currentResizer.classList.contains("bottom-right")) {
+                    const width = original_width + (e.pageX - original_mouse_x);
+                    const height = original_height + (e.pageY - original_mouse_y)
+                    if (width > minimum_size) {
+                        this.element.style.width = width + "px"
+                    }
+                    if (height > minimum_size) {
+                        this.element.style.height = height + "px"
+                    }
+                }
+                else if (currentResizer.classList.contains("bottom-left")) {
+                    const height = original_height + (e.pageY - original_mouse_y)
+                    const width = original_width - (e.pageX - original_mouse_x)
+                    if (height > minimum_size) {
+                        this.element.style.height = height + "px"
+                    }
+                    if (width > minimum_size) {
+                        this.element.style.width = width + "px"
+                        this.element.style.left = original_x + (e.pageX - original_mouse_x) + "px"
+                    }
+                }
+                else if (currentResizer.classList.contains("top-right")) {
+                    const width = original_width + (e.pageX - original_mouse_x)
+                    const height = original_height - (e.pageY - original_mouse_y)
+                    if (width > minimum_size) {
+                        this.element.style.width = width + "px"
+                    }
+                    if (height > minimum_size) {
+                        this.element.style.height = height + "px"
+                        this.element.style.top = original_y + (e.pageY - original_mouse_y) + "px"
+                    }
+                }
+                else if (currentResizer.classList.contains("top-left")) {
+                    const width = original_width - (e.pageX - original_mouse_x)
+                    const height = original_height - (e.pageY - original_mouse_y)
+                    if (width > minimum_size) {
+                        this.element.style.width = width + "px"
+                        this.element.style.left = original_x + (e.pageX - original_mouse_x) + "px"
+                    }
+                    if (height > minimum_size) {
+                        this.element.style.height = height + "px"
+                        this.element.style.top = original_y + (e.pageY - original_mouse_y) + "px"
+                    }
+                } else if (currentResizer.classList.contains("left")) {
+                    const width = original_width - (e.pageX - original_mouse_x)
+                    if (width > minimum_size) {
+                        this.element.style.width = width + "px"
+                        this.element.style.left = original_x + (e.pageX - original_mouse_x) + "px"
+                    }
+                } else if (currentResizer.classList.contains("right")) {
+                    const width = original_width + (e.pageX - original_mouse_x)
+                    if (width > minimum_size) {
+                        this.element.style.width = width + "px"
+                    }
+                } else if (currentResizer.classList.contains("top")) {
+                    const width = original_height - (e.pageY - original_mouse_y)
+                    if (width > minimum_size) {
+                        this.element.style.height = width + "px"
+                        this.element.style.top = original_y + (e.pageY - original_mouse_y) + "px"
+                    }
+                } else if (currentResizer.classList.contains("bottom")) {
+                    const height = original_height + (e.pageY - original_mouse_y)
+                    if (height > minimum_size) {
+                        this.element.style.height = height + "px"
+                    }
+                }
+            }
+
+            function stopResize() {
+                window.removeEventListener("mousemove", resize)
+            }
+        }
+
     }
+
     handleDrag(evt: MouseEvent) {
         this.element.style.left =
             Math.min(window.innerWidth, Math.max(0, this.originalLeft + evt.clientX! - this.mouseLeft)) + "px";
@@ -243,15 +342,17 @@ var AliceWM = {
         // Default param
         let wininfo: WindowInformation = {
             title: "",
-            width: '1000px',
-            height: '500px',
+            minheight: 40,
+            minwidth: 40,
+            width: "1000px",
+            height: "500px",
             allowMultipleInstance: false
         }
         // Param given in argument
-        if (typeof (givenWinInfo) == 'object')
+        if (typeof (givenWinInfo) == "object")
             wininfo = givenWinInfo;
 
-        if (typeof (givenWinInfo) == 'string') // Only title given
+        if (typeof (givenWinInfo) == "string") // Only title given
             wininfo.title = givenWinInfo
 
         let win = new WMWindow(wininfo);
@@ -260,12 +361,7 @@ var AliceWM = {
 
     }
 }
-function handleDrag(container: HTMLDivElement, containerData: ContainerData, evt: MouseEventInit) {
-    container.style.left =
-        Math.min(window.innerWidth, Math.max(0, containerData._originalLeft + evt.clientX! - containerData._mouseLeft)) + "px";
-    container.style.top =
-        Math.min(window.innerHeight, Math.max(0, containerData._originalTop + evt.clientY! - containerData._mouseTop)) + "px";
-}
+
 
 
 function getHighestZindex() {
