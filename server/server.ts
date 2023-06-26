@@ -10,7 +10,12 @@ import Proxy, { FakeWebSocket } from "./proxy";
 import WebSocket from "ws";
 import basicAuth from "express-basic-auth";
 
+import { readFileSync } from 'fs';
+
 const useAuth = process.argv.includes("--auth")
+const useParanoidAuth = process.argv.includes("--paranoid-auth")
+// paranoid auth requests the user to send the server a passkey instead of a password, it's recommended to generate this passkey
+// using a secure method such as /dev/random.
 
 spawn("docker rm relay; docker run --privileged -p 8001:80 --name relay bellenottelling/websockproxy:latest", [], {
   shell: true,
@@ -85,6 +90,17 @@ if (useAuth) {
   app.use(basicAuth({
     users: {
       demouser: password,
+    },
+    challenge: true
+  }));
+}
+
+if (useParanoidAuth) {
+  const passkey = readFileSync("passkey", "utf8");
+  console.log("Using paranoid authentication for this session.")
+  app.use(basicAuth({
+    users: {
+      demouser: passkey,
     },
     challenge: true
   }));
