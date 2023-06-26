@@ -65,7 +65,7 @@
     background-color: var(--oobe-bg);
     border-radius: 16px;
     border: 1px solid gray;
-    color: rgb(26,115,232);
+    color: rgb(26, 115, 232);
     height: 2em;
     padding-left: 1em;
     padding-right: 1em;
@@ -74,5 +74,5 @@
 .oobe #welcome.screen #animation {
     grid-column: 2 / span 1;
     grid-row: 1 / span 2;
-    margin-left: auto
+    margin-left: auto;
 }

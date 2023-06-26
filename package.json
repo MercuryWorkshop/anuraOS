@@ -1,0 +1,24 @@
+{
+    "name": "alicewm",
+    "version": "1.0.0",
+    "description": "Web OS with v86 integration",
+    "main": ".eslintrc.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MercuryWorkshop/AliceWM.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/MercuryWorkshop/AliceWM/issues"
+    },
+    "homepage": "https://github.com/MercuryWorkshop/AliceWM#readme",
+    "dependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.60.1",
+        "eslint": "=8.13.0",
+        "typescript": "=5.0.4"
+    }
+}

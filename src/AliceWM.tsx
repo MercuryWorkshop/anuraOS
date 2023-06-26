@@ -1,4 +1,3 @@
-
 /**
  * the purpose of the following code is to give a demo of
  * how to realize the floating dialog using javascript.
@@ -8,19 +7,15 @@
  * nope nope this code has NOT been stolen rafflesia did NOT make it :thumbsup:
  */
 
-
 // no i will not use data properties in the dom element fuck off
 // ok fine i will fine i just realized how much harder it would be
-
 
 /**
  * to show a floating dialog displaying the given dom element
  * @param {Object} title "title of the dialog"
  */
-let windowInformation = {}
-let windowID = 0;
-
-
+const windowInformation = {};
+const windowID = 0;
 
 class WindowInformation {
     title: string;
@@ -30,7 +25,6 @@ class WindowInformation {
     minheight: number;
     allowMultipleInstance = false;
 }
-
 
 class WMWindow {
     element: HTMLElement;
@@ -51,25 +45,24 @@ class WMWindow {
 
     mouseover = false;
 
-
-
     maximizeImg: HTMLImageElement;
     constructor(wininfo: WindowInformation) {
         this.wininfo = wininfo;
-        this.element =
-            <div class="aliceWMwin" style={`
+        this.element = (
+            <div
+                class="aliceWMwin"
+                style={`
                     width: ${wininfo.width};
                     height: ${wininfo.height};
                 `}
-
                 on:mouseover={() => {
                     this.mouseover = true;
                 }}
                 on:mouseout={() => {
                     this.mouseover = false;
                 }}
-                on:mousedown={this.focus.bind(this)}>
-
+                on:mousedown={this.focus.bind(this)}
+            >
                 <div class="resizers">
                     <div class="resize-edge left"></div>
                     <div class="resize-edge right"></div>
@@ -81,14 +74,14 @@ class WMWindow {
                     <div class="resize-corner bottom-left"></div>
                     <div class="resize-corner bottom-right"></div>
                 </div>
-                <div class="title"
+                <div
+                    class="title"
                     on:mousedown={(evt: MouseEvent) => {
-
-                        var i, frames;
-                        frames = document.getElementsByTagName("iframe");
+                        let i;
+                        const frames = document.getElementsByTagName("iframe");
                         for (i = 0; i < frames.length; ++i) {
-                            anura.logger.debug(frames[i])
-                            frames[i]!.style.pointerEvents = "none"
+                            anura.logger.debug(frames[i]);
+                            frames[i]!.style.pointerEvents = "none";
                         }
 
                         this.dragging = true;
@@ -98,10 +91,11 @@ class WMWindow {
                         this.mouseTop = evt.clientY;
                     }}
                     on:mouseup={(evt: MouseEvent) => {
-                        var i, frames;
-                        frames = document.getElementsByTagName("iframe");
+                        let i;
+
+                        const frames = document.getElementsByTagName("iframe");
                         for (i = 0; i < frames.length; ++i) {
-                            frames[i]!.style.pointerEvents = "auto"
+                            frames[i]!.style.pointerEvents = "auto";
                         }
 
                         if (this.dragging) {
@@ -115,52 +109,73 @@ class WMWindow {
                         if (this.dragging) {
                             this.handleDrag(evt);
                         }
-                    }}>
+                    }}
+                >
                     <div class="titleContent">{wininfo.title}</div>
 
                     <button class="windowButton">
-                        <img src="/assets/window/minimize.svg" on:click={() => {
-                            if (wininfo.allowMultipleInstance) {
-                                new anura.notification({
-                                    title: "Cannot minimize",
-                                    description: "minimizing isn't implimented on Multi- Instance windows"
-                                }).show()
-                                this.element.style.display = "none"
-                            }
-                        }} height="12px" class="windowButtonIcon" />
+                        <img
+                            src="/assets/window/minimize.svg"
+                            on:click={() => {
+                                if (wininfo.allowMultipleInstance) {
+                                    new anura.notification({
+                                        title: "Cannot minimize",
+                                        description:
+                                            "minimizing isn't implimented on Multi- Instance windows",
+                                    }).show();
+                                    this.element.style.display = "none";
+                                }
+                            }}
+                            height="12px"
+                            class="windowButtonIcon"
+                        />
                     </button>
 
                     <button class="windowButton">
-                        <img src="/assets/window/maximize.svg" bind:maximizeImg={this} on:click={this.maximize.bind(this)} height="12px" class="windowButtonIcon" />
+                        <img
+                            src="/assets/window/maximize.svg"
+                            bind:maximizeImg={this}
+                            on:click={this.maximize.bind(this)}
+                            height="12px"
+                            class="windowButtonIcon"
+                        />
                     </button>
                     <button class="windowButton">
-                        <img src="/assets/window/close.svg" on:click={this.close.bind(this)} height="12px" class="windowButtonIcon" />
+                        <img
+                            src="/assets/window/close.svg"
+                            on:click={this.close.bind(this)}
+                            height="12px"
+                            class="windowButtonIcon"
+                        />
                     </button>
-
                 </div>
-                <div class="content" bind:content={this} style="width: 100%; padding:0; margin:0;"></div>
+                <div
+                    class="content"
+                    bind:content={this}
+                    style="width: 100%; padding:0; margin:0;"
+                ></div>
             </div>
+        );
 
         document.addEventListener("mousemove", (evt) => {
-
             if (this.dragging) {
                 this.handleDrag(evt);
             }
-        })
+        });
 
         // a very elegant way of detecting if the user clicked on an iframe inside of the window. credit to https://gist.github.com/jaydson/1780598
         window.addEventListener("blur", () => {
             if (this.mouseover) {
                 this.focus();
             }
-        })
+        });
 
         // finish the dragging when release the mouse button
         document.addEventListener("mouseup", (evt) => {
-            var i, frames;
-            frames = document.getElementsByTagName("iframe");
+            let i;
+            const frames = document.getElementsByTagName("iframe");
             for (i = 0; i < frames.length; ++i) {
-                frames[i]!.style.pointerEvents = "auto"
+                frames[i]!.style.pointerEvents = "auto";
             }
             evt = evt || window.event;
 
@@ -171,8 +186,12 @@ class WMWindow {
             }
         });
 
-        //@ts-ignore
-        const resizers = [...this.element.querySelectorAll(".resize-corner"), ...this.element.querySelectorAll(".resize-edge")]
+        const resizers = [
+            //@ts-ignore
+            ...this.element.querySelectorAll(".resize-corner"),
+            //@ts-ignore
+            ...this.element.querySelectorAll(".resize-edge"),
+        ];
         const minimum_size = 20;
         let original_width = 0;
         let original_height = 0;
@@ -183,16 +202,26 @@ class WMWindow {
         for (let i = 0; i < resizers.length; i++) {
             const currentResizer = resizers[i];
             currentResizer.addEventListener("mousedown", (e: MouseEvent) => {
-                e.preventDefault()
-                original_width = parseFloat(getComputedStyle(this.element, null).getPropertyValue("width").replace("px", ""));
-                original_height = parseFloat(getComputedStyle(this.element, null).getPropertyValue("height").replace("px", ""));
+                e.preventDefault();
+                original_width = parseFloat(
+                    getComputedStyle(this.element, null)
+                        .getPropertyValue("width")
+                        .replace("px", "")
+                );
+                original_height = parseFloat(
+                    getComputedStyle(this.element, null)
+                        .getPropertyValue("height")
+                        .replace("px", "")
+                );
                 original_x = this.element.getBoundingClientRect().left;
                 original_y = this.element.getBoundingClientRect().top;
                 original_mouse_x = e.pageX;
                 original_mouse_y = e.pageY;
-                window.addEventListener("mousemove", resize)
-                window.addEventListener("mouseup", stopResize)
-            })
+                window.addEventListener("mousemove", resize);
+                window.addEventListener("mouseup", () => {
+                    window.removeEventListener("mousemove", resize);
+                });
+            });
 
             const resize = (e: MouseEvent) => {
                 if (this.maximized) {
@@ -200,87 +229,97 @@ class WMWindow {
                 }
                 if (currentResizer.classList.contains("bottom-right")) {
                     const width = original_width + (e.pageX - original_mouse_x);
-                    const height = original_height + (e.pageY - original_mouse_y)
+                    const height =
+                        original_height + (e.pageY - original_mouse_y);
                     if (width > minimum_size) {
-                        this.element.style.width = width + "px"
+                        this.element.style.width = width + "px";
                     }
                     if (height > minimum_size) {
-                        this.element.style.height = height + "px"
+                        this.element.style.height = height + "px";
                     }
-                }
-                else if (currentResizer.classList.contains("bottom-left")) {
-                    const height = original_height + (e.pageY - original_mouse_y)
-                    const width = original_width - (e.pageX - original_mouse_x)
+                } else if (currentResizer.classList.contains("bottom-left")) {
+                    const height =
+                        original_height + (e.pageY - original_mouse_y);
+                    const width = original_width - (e.pageX - original_mouse_x);
                     if (height > minimum_size) {
-                        this.element.style.height = height + "px"
+                        this.element.style.height = height + "px";
                     }
                     if (width > minimum_size) {
-                        this.element.style.width = width + "px"
-                        this.element.style.left = original_x + (e.pageX - original_mouse_x) + "px"
+                        this.element.style.width = width + "px";
+                        this.element.style.left =
+                            original_x + (e.pageX - original_mouse_x) + "px";
                     }
-                }
-                else if (currentResizer.classList.contains("top-right")) {
-                    const width = original_width + (e.pageX - original_mouse_x)
-                    const height = original_height - (e.pageY - original_mouse_y)
+                } else if (currentResizer.classList.contains("top-right")) {
+                    const width = original_width + (e.pageX - original_mouse_x);
+                    const height =
+                        original_height - (e.pageY - original_mouse_y);
                     if (width > minimum_size) {
-                        this.element.style.width = width + "px"
+                        this.element.style.width = width + "px";
                     }
                     if (height > minimum_size) {
-                        this.element.style.height = height + "px"
-                        this.element.style.top = original_y + (e.pageY - original_mouse_y) + "px"
+                        this.element.style.height = height + "px";
+                        this.element.style.top =
+                            original_y + (e.pageY - original_mouse_y) + "px";
                     }
-                }
-                else if (currentResizer.classList.contains("top-left")) {
-                    const width = original_width - (e.pageX - original_mouse_x)
-                    const height = original_height - (e.pageY - original_mouse_y)
+                } else if (currentResizer.classList.contains("top-left")) {
+                    const width = original_width - (e.pageX - original_mouse_x);
+                    const height =
+                        original_height - (e.pageY - original_mouse_y);
                     if (width > minimum_size) {
-                        this.element.style.width = width + "px"
-                        this.element.style.left = original_x + (e.pageX - original_mouse_x) + "px"
+                        this.element.style.width = width + "px";
+                        this.element.style.left =
+                            original_x + (e.pageX - original_mouse_x) + "px";
                     }
                     if (height > minimum_size) {
-                        this.element.style.height = height + "px"
-                        this.element.style.top = original_y + (e.pageY - original_mouse_y) + "px"
+                        this.element.style.height = height + "px";
+                        this.element.style.top =
+                            original_y + (e.pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("left")) {
-                    const width = original_width - (e.pageX - original_mouse_x)
+                    const width = original_width - (e.pageX - original_mouse_x);
                     if (width > minimum_size) {
-                        this.element.style.width = width + "px"
-                        this.element.style.left = original_x + (e.pageX - original_mouse_x) + "px"
+                        this.element.style.width = width + "px";
+                        this.element.style.left =
+                            original_x + (e.pageX - original_mouse_x) + "px";
                     }
                 } else if (currentResizer.classList.contains("right")) {
-                    const width = original_width + (e.pageX - original_mouse_x)
+                    const width = original_width + (e.pageX - original_mouse_x);
                     if (width > minimum_size) {
-                        this.element.style.width = width + "px"
+                        this.element.style.width = width + "px";
                     }
                 } else if (currentResizer.classList.contains("top")) {
-                    const width = original_height - (e.pageY - original_mouse_y)
+                    const width =
+                        original_height - (e.pageY - original_mouse_y);
                     if (width > minimum_size) {
-                        this.element.style.height = width + "px"
-                        this.element.style.top = original_y + (e.pageY - original_mouse_y) + "px"
+                        this.element.style.height = width + "px";
+                        this.element.style.top =
+                            original_y + (e.pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("bottom")) {
-                    const height = original_height + (e.pageY - original_mouse_y)
+                    const height =
+                        original_height + (e.pageY - original_mouse_y);
                     if (height > minimum_size) {
-                        this.element.style.height = height + "px"
+                        this.element.style.height = height + "px";
                     }
                 }
-            }
-
-            function stopResize() {
-                window.removeEventListener("mousemove", resize)
-            }
+            };
         }
-
     }
 
     handleDrag(evt: MouseEvent) {
         this.element.style.left =
-            Math.min(window.innerWidth, Math.max(0, this.originalLeft + evt.clientX! - this.mouseLeft)) + "px";
+            Math.min(
+                window.innerWidth,
+                Math.max(0, this.originalLeft + evt.clientX! - this.mouseLeft)
+            ) + "px";
         this.element.style.top =
-            Math.min(window.innerHeight, Math.max(0, this.originalTop + evt.clientY! - this.mouseTop)) + "px";
+            Math.min(
+                window.innerHeight,
+                Math.max(0, this.originalTop + evt.clientY! - this.mouseTop)
+            ) + "px";
 
         if (this.maximized) {
-            this.unmaximize()
+            this.unmaximize();
             this.originalLeft = this.element.offsetLeft;
             this.originalTop = this.element.offsetTop;
             this.mouseLeft = evt.clientX;
@@ -289,56 +328,56 @@ class WMWindow {
     }
 
     focus() {
-        this.element.style.setProperty("z-index", (getHighestZindex() + 1).toString());
-        normalizeZindex()
-
-
+        this.element.style.setProperty(
+            "z-index",
+            (getHighestZindex() + 1).toString()
+        );
+        normalizeZindex();
     }
     close() {
-        this.element.remove()
+        this.element.remove();
     }
     togglemaximize() {
         if (!this.maximized) {
-            this.maximize()
+            this.maximize();
         } else {
-            this.unmaximize()
+            this.unmaximize();
         }
     }
     maximize() {
         this.oldstyle = this.element.getAttribute("style");
-        const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-        const height = window.innerHeight || document.documentElement.clientHeight ||
+        const width =
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
+        const height =
+            window.innerHeight ||
+            document.documentElement.clientHeight ||
             document.body.clientHeight;
 
-        this.element.style.top = "0"
-        this.element.style.left = "0"
+        this.element.style.top = "0";
+        this.element.style.left = "0";
         this.element.style.width = `${width}px`;
         this.element.style.height = `${height - 53}px`;
 
         this.maximizeImg.src = "/assets/window/restore.svg";
 
-
         this.justresized = true;
         this.maximized = true;
     }
     unmaximize() {
-
         this.element.setAttribute("style", this.oldstyle!);
         this.maximizeImg.src = "/assets/window/maximize.svg";
 
         this.justresized = true;
         this.maximized = false;
     }
-    minimize() {
-
-    }
-
-
+    minimize() {}
 }
 
-
-var AliceWM = {
-    create: function(givenWinInfo: string | WindowInformation) { // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
+const AliceWM = {
+    create: function (givenWinInfo: string | WindowInformation) {
+        // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
         // Default param
         let wininfo: WindowInformation = {
             title: "",
@@ -346,52 +385,57 @@ var AliceWM = {
             minwidth: 40,
             width: "1000px",
             height: "500px",
-            allowMultipleInstance: false
-        }
+            allowMultipleInstance: false,
+        };
         // Param given in argument
-        if (typeof (givenWinInfo) == "object")
-            wininfo = givenWinInfo;
+        if (typeof givenWinInfo == "object") wininfo = givenWinInfo;
 
-        if (typeof (givenWinInfo) == "string") // Only title given
-            wininfo.title = givenWinInfo
+        if (typeof givenWinInfo == "string")
+            // Only title given
+            wininfo.title = givenWinInfo;
 
-        let win = new WMWindow(wininfo);
+        const win = new WMWindow(wininfo);
         document.body.appendChild(win.element);
         return win;
-
-    }
-}
-
-
+    },
+};
 
 function getHighestZindex() {
-    const allWindows: HTMLElement[] = Array.from(document.querySelectorAll<HTMLTableElement>(".aliceWMwin"))
+    const allWindows: HTMLElement[] = Array.from(
+        document.querySelectorAll<HTMLTableElement>(".aliceWMwin")
+    );
     anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
 
-    let highestZindex = 0
+    let highestZindex = 0;
     for (const wmwindow of allWindows) {
         if (Number(wmwindow.style.getPropertyValue("z-index")) >= highestZindex)
-            highestZindex = Number(wmwindow.style.getPropertyValue("z-index"))
+            highestZindex = Number(wmwindow.style.getPropertyValue("z-index"));
     }
-    return highestZindex
+    return highestZindex;
 }
 
 async function normalizeZindex() {
-    const allWindows: HTMLElement[] = Array.from(document.querySelectorAll<HTMLTableElement>(".aliceWMwin"))
+    const allWindows: HTMLElement[] = Array.from(
+        document.querySelectorAll<HTMLTableElement>(".aliceWMwin")
+    );
     anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
 
-    let lowestZindex = 9999
+    let lowestZindex = 9999;
     for (const wmwindow of allWindows) {
         if (Number(wmwindow.style.getPropertyValue("z-index")) <= lowestZindex)
-            lowestZindex = Number(wmwindow.style.getPropertyValue("z-index"))
+            lowestZindex = Number(wmwindow.style.getPropertyValue("z-index"));
     }
 
-    let normalizeValue = lowestZindex - 1;
+    const normalizeValue = lowestZindex - 1;
 
     for (const wmwindow of allWindows) {
-
-        wmwindow.style.setProperty("z-index", (Number(wmwindow.style.getPropertyValue("z-index")) - normalizeValue).toString())
-
+        wmwindow.style.setProperty(
+            "z-index",
+            (
+                Number(wmwindow.style.getPropertyValue("z-index")) -
+                normalizeValue
+            ).toString()
+        );
     }
 }
 
@@ -401,8 +445,10 @@ async function normalizeZindex() {
  */
 function center(element: HTMLElement) {
     if (element) {
-        element.style.left = (window.innerWidth - element.offsetWidth) / 2 + "px";
-        element.style.top = (window.innerHeight - element.offsetHeight) / 2 + "px";
+        element.style.left =
+            (window.innerWidth - element.offsetWidth) / 2 + "px";
+        element.style.top =
+            (window.innerHeight - element.offsetHeight) / 2 + "px";
     }
 }
 

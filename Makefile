@@ -42,7 +42,7 @@ public/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o 
 
 watch: FORCE
 	mkdir -p build/artifacts
-	npx tsc-watch --onSuccess "bash -c 'cp -r src/* build/artifacts'"
+	npx tsc-watch --onSuccess "bash -c 'cp -r src/* build/artifacts; npx eslint . --fix; npx prettier --write --loglevel warn .'"
 bundle:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
@@ -51,6 +51,9 @@ prod: all
 	npx google-closure-compiler --js build/assets/libs/filer.min.js build/lib/Taskbar.js build/lib/AliceJS.js build/lib/api/Notification.js build/lib/ContextMenu.js build/lib/oobe/OobeAssetsStep.js build/lib/AliceWM.js build/lib/api/Settings.js build/lib/Launcher.js build/lib/oobe/OobeView.js build/lib/libv86.js build/lib/v86.js build/lib/Bootsplash.js build/lib/oobe/OobeWelcomeStep.js build/lib/Anura.js --js_output_file public/dist.js
 server: FORCE
 	cd server; npx ts-node server.ts
+lint: FORCE
+	npx eslint . --fix
+	npx prettier --write --loglevel warn .
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 

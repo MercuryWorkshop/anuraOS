@@ -1,0 +1,7 @@
+/aboutproxy/**/*
+/libapps/**/*
+/v86/**/*
+/build/**/*
+/apps/**/*
+/nohost/**/*
+.eslintrc.js

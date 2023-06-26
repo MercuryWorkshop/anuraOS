@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
 /* Note from Majikun: PLEASE STOP ADDING BACK STUFF!!!!!!! NO BORDERS OR TITLES!!!!! */
 
@@ -8,12 +8,12 @@ body {
 
 .aliceWMwin {
     user-select: none; /* FUCK ie and safari no one uses them anyways */
-    height:200px;
-    width:500px;
+    height: 200px;
+    width: 500px;
     background: white;
-    position:fixed;
-    overflow:hidden;
-    z-index:91;
+    position: fixed;
+    overflow: hidden;
+    z-index: 91;
     display: flex; /* FLEXBOX #2 */
     border: 2px solid #444;
     flex-direction: column;
@@ -21,14 +21,14 @@ body {
     border-radius: 3px;
 }
 
-.aliceWMwin .title{
+.aliceWMwin .title {
     display: flex;
     background-color: #202124;
-    font-weight:bold;
+    font-weight: bold;
     color: white;
-    height:24px; 
-    padding:2px;
-    align-items:center;
+    height: 24px;
+    padding: 2px;
+    align-items: center;
     z-index: 1;
 }
 
@@ -36,13 +36,13 @@ body {
     flex: 1;
 }
 
-.aliceWMwin .content{
-    padding:2px;
+.aliceWMwin .content {
+    padding: 2px;
     flex: 1;
 }
 
-.aliceWMwin .title:hover{
-    cursor:move;
+.aliceWMwin .title:hover {
+    cursor: move;
 }
 
 .aliceWMwin .windowButton {
@@ -53,9 +53,8 @@ body {
     margin: 2px;
     aspect-ratio: 1 / 1;
     flex-shrink: 0;
-    transition: background-color .2s ease-in-out;
+    transition: background-color 0.2s ease-in-out;
     z-index: 2;
-    
 }
 
 .aliceWMwin .windowButton > span {
@@ -70,53 +69,53 @@ body {
     background-color: gray;
 }
 
-
-#overlay{
-    width:100%;
-    height:100%;
-    left:0;
-    top:0;
-    right:0;
-    position:fixed;
-    background:gray;
-    opacity:0.5;
-    z-index:98;
+#overlay {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    right: 0;
+    position: fixed;
+    background: gray;
+    opacity: 0.5;
+    z-index: 98;
 }
 
 body {
     overflow: hidden;
-    background: url(/assets/wallpaper/wallpaper.png) no-repeat center center fixed;
+    background: url(/assets/wallpaper/wallpaper.png) no-repeat center center
+        fixed;
     user-select: none;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  background-color: rgba(22, 22, 22, 0.8);
-  backdrop-filter: blur(5px);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    background-color: rgba(22, 22, 22, 0.8);
+    backdrop-filter: blur(5px);
 }
 
 nav ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  text-align: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
 
 nav li {
-  display: inline-block;
-  margin-right: 20px;
-  padding-top:5px;
+    display: inline-block;
+    margin-right: 20px;
+    padding-top: 5px;
 }
 
 .showDialog {
-	width: 40px;
-	height: 40px;
+    width: 40px;
+    height: 40px;
 }
 
 .xterm {
@@ -134,7 +133,7 @@ nav li {
     display: flex;
     flex-direction: column;
     display: block;
-    transition: all .1s ease-out;
+    transition: all 0.1s ease-out;
     opacity: 0;
     z-index: -1;
     visibility: hidden;
@@ -145,7 +144,7 @@ nav li {
     opacity: 1;
     height: min(80%, 40em);
     z-index: 9999;
-    transition: all .1s ease-in;
+    transition: all 0.1s ease-in;
     visibility: visible;
 }
 
@@ -215,14 +214,13 @@ nav li {
     color: #fff;
 }
 
-.launcher .appsView .app input[type=image] {
+.launcher .appsView .app input[type="image"] {
     margin-bottom: 0.5em;
 }
 
 .launcher .appsView .app div {
     height: 1em;
 }
-
 
 .custom-menu {
     position: absolute;
@@ -246,21 +244,21 @@ nav li {
 }
 
 .material-symbols-outlined {
-    font-family: 'Material Symbols Outlined', sans-serif;
+    font-family: "Material Symbols Outlined", sans-serif;
 }
 .custom-menu-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  color: #ffffff;
-  cursor: pointer;
-  user-select: none;
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
 }
 
 .custom-menu-item .material-symbols-outlined {
-  margin-top: 0.05px;
-  margin-right: 5px;
-  padding-left: 1px;
+    margin-top: 0.05px;
+    margin-right: 5px;
+    padding-left: 1px;
 }
 
 .custom-menu .extra-menu-wrapper {
@@ -287,10 +285,8 @@ nav li {
     background-color: gray;
     opacity: 0.5;
     border-radius: 50%;
-    height: 32px; 
+    height: 32px;
     width: 32px;
-    
-
 }
 
 #launcher-button img {
@@ -299,22 +295,20 @@ nav li {
 
 @keyframes slide-in {
     from {
-      transform: translateY(100%);
+        transform: translateY(100%);
     }
     to {
-      transform: translateY(-5%);
-    }
-  }
-@keyframes slide-out {
-    from {
-      transform: translateY(0%);
-    }
-    to {
-      transform: translateY(100%);
+        transform: translateY(-5%);
     }
 }
-
-
+@keyframes slide-out {
+    from {
+        transform: translateY(0%);
+    }
+    to {
+        transform: translateY(100%);
+    }
+}
 
 .bootsplash {
     background-color: black;
@@ -324,7 +318,7 @@ nav li {
     height: 100%;
     top: 0;
     left: 0;
-    display:  flex;
+    display: flex;
     justify-content: center;
     align-content: center;
     flex-wrap: wrap;
@@ -338,15 +332,15 @@ nav li {
 .notif-container {
     position: absolute;
     float: right;
-    bottom:  72px;
+    bottom: 72px;
     right: 10px;
     z-index: 9997;
 }
-  
+
 .notif {
     position: relative;
-    font-family: 'Roboto';
-    background-color: rgba(28, 28, 28, 0.85);;
+    font-family: "Roboto";
+    background-color: rgba(28, 28, 28, 0.85);
     border-radius: 7px;
     color: white;
     min-height: 115px;
@@ -357,7 +351,7 @@ nav li {
     animation: slideIn 0.5s ease-in-out forwards;
     opacity: 1;
     transition: 350ms ease-in-out;
-} 
+}
 
 @keyframes slideIn {
     from {
@@ -367,12 +361,12 @@ nav li {
         left: 0px;
     }
 }
-  
+
 .notif-body {
     margin: 10px;
     padding-top: 5px;
-} 
-  
+}
+
 .notif-description {
     padding-top: 10px;
     padding-left: 10px;
@@ -389,42 +383,41 @@ nav li {
     top: 6px;
     left: 370px;
 }
-#screen_container, canvas{
-  width: 100%;
-  height: 100%;
+#screen_container,
+canvas {
+    width: 100%;
+    height: 100%;
 }
 
-
-
-.resize-corner{
+.resize-corner {
     width: 10px;
     height: 10px;
 
     position: absolute;
     z-index: 2;
 }
-.resize-edge{
+.resize-edge {
     position: absolute;
     z-index: 2;
-    padding:5px
+    padding: 5px;
 }
-.resize-edge.left{
-    left:-5px;
+.resize-edge.left {
+    left: -5px;
     height: 100%;
     cursor: e-resize;
 }
-.resize-edge.right{
-    right:-5px;
+.resize-edge.right {
+    right: -5px;
     height: 100%;
     cursor: e-resize;
 }
-.resize-edge.top{
-    top:-5px;
+.resize-edge.top {
+    top: -5px;
     width: 100%;
     cursor: s-resize;
 }
-.resize-edge.bottom{
-    bottom:-5px;
+.resize-edge.bottom {
+    bottom: -5px;
     width: 100%;
     cursor: s-resize;
 }
