@@ -213,12 +213,12 @@ class V86Backend {
       },
 
       cmdline: "rw init=/bin/systemd root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
-      filesystem: { fs, sh, Path, Buffer },
+      // filesystem: { fs, sh, Path, Buffer },
 
       bios: { url: "/bios/seabios.bin" },
       vga_bios: { url: "/bios/vgabios.bin" },
       network_relay_url: "ws://localhost:8001/",
-      // initial_state: { url: "/images/v86state.bin" },
+      initial_state: { url: "/images/v86state.bin" },
       autostart: true,
       uart1: true,
       uart2: true,
@@ -347,7 +347,8 @@ class V86Backend {
         let addr = parseInt(parts[0]!);
 
         let n_bytes = this.read_uint(this.read_nbytes_phys_addr);
-        let n_tty = this.read_uint(this.read_intent_phys_addr) - 1;
+        // let n_tty = this.read_uint(this.read_intent_phys_addr) - 1;
+        let n_tty = parseInt(parts[1]!);
 
         let mem = this.emulator.read_memory(addr, n_bytes);
         let text = decoder.decode(mem);

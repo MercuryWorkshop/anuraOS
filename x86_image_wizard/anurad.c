@@ -224,13 +224,12 @@ void *readLoop() {
       // shared_buffer is the pointer that can be read by the host
 
       count = read(pty.master, shared_out_buffer, count);
-      printf("want you to read: %lu bytes\n", count);
 
       uintptr_t buffer_phys_addr;
       virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_out_buffer);
       read_intent = i + 1;
       read_nbytes = count;
-      fprintf(fi, "\005r %lu\n", buffer_phys_addr);
+      fprintf(fi, "\005r %lu %i\n", buffer_phys_addr, i);
       wait_for_ack(fo);
     }
   }
