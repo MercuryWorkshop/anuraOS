@@ -178,6 +178,9 @@ class V86Backend {
   act: boolean = false;
   cmd_q: string | null = null;
 
+
+  booted: boolean = false;
+
   virt_hda: FakeFile;
 
   emulator;
@@ -262,6 +265,29 @@ class V86Backend {
 
     });
 
+    this.onboot();
+
+
+
+
+  }
+
+  onboot() {
+    console.log("?")
+
+    navigator.serviceWorker.addEventListener("message", async (event) => {
+      if (event.data?.anura_target == "anura.x86.proxy") {
+        event.source?.postMessage({
+          anura_target: event.data.anura_target,
+          id: event.data.id,
+          value: {
+            body: "from sw",
+            status: 200,
+
+          }
+        })
+      }
+    });
   }
 
   closepty(TTYn: number) {
@@ -341,6 +367,11 @@ class V86Backend {
         this.write_nbytes_phys_addr, this.s_rows_phys_addr, this.s_cols_phys_addr, this.resize_intent_phys_addr] = arr;
 
         this.emulator.serial0_send("\x06\n")
+
+        if (!this.booted) {
+          this.booted = true;
+          this.onboot();
+        }
         break;
       }
       case "r": {

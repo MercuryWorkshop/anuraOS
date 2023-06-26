@@ -20,17 +20,46 @@ function serverInstall() {
  */
 
 if ('serviceWorker' in navigator) {
-  const wb = new Workbox('/nohost-sw.js?debug');
 
-  // Wait on the server to be fully ready to handle routing requests
-  wb.controlling.then(serverReady);
-
-  // Deal with first-run install, if necessary
-  wb.addEventListener('installed', (event) => {
-    if (!event.isUpdate) {
-      serverInstall();
-    }
+  //
+  //
+  const proxy = new Workbox('/x86-proxy.js');
+  proxy.addEventListener("waiting", event => {
+    // proxy.messageSkipWaiting();
+  })
+  proxy.addEventListener('activate', function(event) {
+    console.log("ash");
+    event.waitUntil(
+      caches.keys().then(function(cacheNames) {
+        return Promise.all(
+          cacheNames.filter(function(cacheName) {
+            // Return true if you want to remove this cache,
+            // but remember that caches are shared across
+            // the whole origin
+          }).map(function(cacheName) {
+            return caches.delete(cacheName);
+          })
+        );
+      })
+    );
   });
+  proxy.register();
+  // console.log(proxy);
+  // console.log("rg?")
+  //
+  // const wb = new Workbox('/nohost-sw.js?debug');
+  //
+  // // Wait on the server to be fully ready to handle routing requests
+  // wb.controlling.then(serverReady);
+  //
+  // // Deal with first-run install, if necessary
+  // wb.addEventListener('installed', (event) => {
+  //   if (!event.isUpdate) {
+  //     serverInstall();
+  //   }
+  // });
+  //
+  // wb.register();
 
-  wb.register();
+
 }
