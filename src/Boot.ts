@@ -93,17 +93,13 @@ document.addEventListener("anura-login-completed", async () => {
     // the games app is too large and unneccesary for ordinary developers
 
     if ((await await fetch("/fs/")).status === 404) {
-        const notif = new anura.notification({
+        const notif = anura.notifications.add({
             title: "Anura Error",
             description:
                 "Anura has encountered an error with the Filesystem HTTP bridge, click this notification to restart",
             timeout: 50000,
+            callback: () => window.location.reload(),
         });
-        notif.callback = function () {
-            window.location.reload();
-            return null;
-        };
-        notif.show();
     }
 
     if (!anura.settings.get("x86-disabled")) {

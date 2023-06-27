@@ -180,12 +180,11 @@ async function InitV86Backend(): Promise<V86Backend> {
             }
             await Promise.all(promises);
 
-            const notif = new anura.notification({
+            anura.notifications.add({
                 title: "x86 Subsystem",
                 description: "Saved root filesystem sucessfully",
                 timeout: 5000,
             });
-            notif.show();
         },
 
         set_state: () => {},

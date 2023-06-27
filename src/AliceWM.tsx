@@ -118,11 +118,11 @@ class WMWindow {
                             src="/assets/window/minimize.svg"
                             on:click={() => {
                                 if (wininfo.allowMultipleInstance) {
-                                    new anura.notification({
+                                    anura.notifications.add({
                                         title: "Cannot minimize",
                                         description:
                                             "minimizing isn't implimented on Multi- Instance windows",
-                                    }).show();
+                                    });
                                     this.element.style.display = "none";
                                 }
                             }}

@@ -1,28 +1,16 @@
-interface notifParams {
-    title?: string;
-    description?: string;
-    timeout?: number;
-    callback?: () => null;
-    closeIndicator?: boolean;
-    // COMING SOON (hopefully)
-    // icon?: string
-    // buttons?: Array<{ text: string, callback: Function }>
-}
-
 class Anura {
     initComplete = false;
     x86: null | V86Backend;
     settings: Settings;
     fs: FilerFS;
+    notifications: NotificationService;
+
     private constructor(fs: FilerFS, settings: Settings) {
         this.fs = fs;
         this.settings = settings;
 
-        {
-            const notif = document.createElement("div");
-            notif.className = "notif-container";
-            document.body.appendChild(notif);
-        }
+        this.notifications = new NotificationService();
+        document.body.appendChild(this.notifications.element);
     }
 
     static async new(): Promise<Anura> {
@@ -170,89 +158,6 @@ class Anura {
             document.body.appendChild(iframe);
         });
     }
-    notification = class {
-        constructor(params: notifParams) {
-            if (params) {
-                if (params.title) {
-                    this.title = params.title;
-                }
-                if (params.description) {
-                    this.description = params.description;
-                }
-                if (params.timeout) {
-                    this.timeout = params.timeout;
-                }
-                if (params.callback) {
-                    this.callback = params.callback;
-                }
-                if (params.closeIndicator) {
-                    this.closeIndicator = params.closeIndicator;
-                }
-            }
-        }
-        title = "Anura Notification";
-        description = "Anura Description";
-        timeout = 2000;
-        closeIndicator = false;
-        callback() {
-            return null;
-        }
-        async show() {
-            const id = crypto.randomUUID();
-            // initializing the elements
-            const notifContainer =
-                document.getElementsByClassName("notif-container")[0];
-            const notif = document.createElement("div");
-            notif.className = "notif";
-            const notifBody = document.createElement("div");
-            notifBody.className = "notif-body";
-            const notifTitle = document.createElement("div");
-            notifTitle.className = "notif-title";
-            const notifDesc = document.createElement("div");
-            notifDesc.className = "notif-description";
-            if (this.closeIndicator) {
-                const closeIndicator = document.createElement("div");
-                closeIndicator.className = "notif-close-indicator";
-                // temporary because im too lazy to make a span item properly, it's hardcoded so it's fine.
-                closeIndicator.innerHTML =
-                    '<span class="material-symbols-outlined">close</span>';
-                notif.appendChild(closeIndicator);
-            }
-
-            // assign relevant values
-            notifTitle.innerText = this.title;
-            notifDesc.innerText = this.description;
-            notif.id = id;
-
-            const callback = this.callback;
-
-            notif.onclick = function () {
-                deleteNotif();
-                callback();
-            };
-
-            // adding the elements to the list
-            notifBody.appendChild(notifTitle);
-            notifBody.appendChild(notifDesc);
-            notif.appendChild(notifBody);
-            notifContainer?.appendChild(notif);
-
-            // remove afyer period
-            setTimeout(() => {
-                deleteNotif();
-            }, this.timeout);
-
-            function deleteNotif() {
-                const oldNotif = document.getElementById(id)!;
-                // do nothing if the notification is already deleted
-                if (oldNotif == null) return;
-                oldNotif.style.opacity = "0";
-                setTimeout(() => {
-                    notifContainer?.removeChild(oldNotif);
-                }, 360);
-            }
-        }
-    };
     get wsproxyURL() {
         let url = "";
         if (location.protocol == "https:") {
