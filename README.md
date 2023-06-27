@@ -8,7 +8,6 @@ Web OS with v86 integration
 
 -   make sure you clone this repository with `--recursive`!
 -   You need to have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
--   `make bootstrap`
 -   `make all`
 
 *   NOTE: you can use `make all -B` to force a full build.
@@ -22,14 +21,13 @@ Web OS with v86 integration
 ### Run
 
 ```sh
-make bundle
-cd server
-npm start
+make server
 ```
 
 ### Run server with authentication
 
 ```sh
+cd server
 npm start -- --auth
 ```
 
