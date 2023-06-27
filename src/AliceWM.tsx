@@ -77,12 +77,7 @@ class WMWindow {
                 <div
                     class="title"
                     on:mousedown={(evt: MouseEvent) => {
-                        let i;
-                        const frames = document.getElementsByTagName("iframe");
-                        for (i = 0; i < frames.length; ++i) {
-                            anura.logger.debug(frames[i]);
-                            frames[i]!.style.pointerEvents = "none";
-                        }
+                        deactivateFrames();
 
                         this.dragging = true;
                         this.originalLeft = this.element.offsetLeft;
@@ -91,12 +86,7 @@ class WMWindow {
                         this.mouseTop = evt.clientY;
                     }}
                     on:mouseup={(evt: MouseEvent) => {
-                        let i;
-
-                        const frames = document.getElementsByTagName("iframe");
-                        for (i = 0; i < frames.length; ++i) {
-                            frames[i]!.style.pointerEvents = "auto";
-                        }
+                        reactivateFrames();
 
                         if (this.dragging) {
                             this.handleDrag(evt);
@@ -172,11 +162,8 @@ class WMWindow {
 
         // finish the dragging when release the mouse button
         document.addEventListener("mouseup", (evt) => {
-            let i;
-            const frames = document.getElementsByTagName("iframe");
-            for (i = 0; i < frames.length; ++i) {
-                frames[i]!.style.pointerEvents = "auto";
-            }
+            reactivateFrames();
+
             evt = evt || window.event;
 
             if (this.dragging) {
@@ -213,12 +200,14 @@ class WMWindow {
                         .getPropertyValue("height")
                         .replace("px", "")
                 );
+                deactivateFrames();
                 original_x = this.element.getBoundingClientRect().left;
                 original_y = this.element.getBoundingClientRect().top;
                 original_mouse_x = e.pageX;
                 original_mouse_y = e.pageY;
                 window.addEventListener("mousemove", resize);
                 window.addEventListener("mouseup", () => {
+                    reactivateFrames();
                     window.removeEventListener("mousemove", resize);
                 });
             });
@@ -399,6 +388,23 @@ const AliceWM = {
         return win;
     },
 };
+
+function deactivateFrames() {
+    let i;
+    const frames = document.getElementsByTagName("iframe");
+    for (i = 0; i < frames.length; ++i) {
+        anura.logger.debug(frames[i]);
+        frames[i]!.style.pointerEvents = "none";
+    }
+}
+function reactivateFrames() {
+    let i;
+
+    const frames = document.getElementsByTagName("iframe");
+    for (i = 0; i < frames.length; ++i) {
+        frames[i]!.style.pointerEvents = "auto";
+    }
+}
 
 function getHighestZindex() {
     const allWindows: HTMLElement[] = Array.from(
