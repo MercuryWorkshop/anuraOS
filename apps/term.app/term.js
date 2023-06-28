@@ -25,13 +25,11 @@ window.addEventListener("load", async () => {
 
     t.setBackgroundColor("#141516");
     t.setCursorColor("#bbb");
-    const pty = await anura.x86.openpty("TERM=xterm bash", t.screenSize.height, t.screenSize.width, (data) => {
+    const pty = await anura.x86.openpty("TERM=xterm bash", t.screenSize.width, t.screenSize.height, (data) => {
       io.print(data);
     });
 
-    console.log(t.screenSize)
 
-    setTimeout(() => anura.x86.resizepty(pty, t.screenSize.height, t.screenSize.width), 10000)
 
 
     function writeData(str) {
