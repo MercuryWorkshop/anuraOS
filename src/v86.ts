@@ -239,10 +239,10 @@ class V86Backend {
 
             // TODO: this should not be hardcoded.
             initrd: {
-                url: "/images/debian-boot/initrd.img-6.1.0-9-686",
+                url: "/fs/initrd.img",
             },
             bzimage: {
-                url: "/images/debian-boot/vmlinuz-6.1.0-9-686",
+                url: "/fs/bzimage",
                 async: false,
             },
 
@@ -253,12 +253,12 @@ class V86Backend {
 
             cmdline:
                 "rw init=/bin/systemd root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
-            // filesystem: { fs, sh, Path, Buffer },
+            filesystem: { fs, sh, Path, Buffer },
 
             bios: { url: "/bios/seabios.bin" },
             vga_bios: { url: "/bios/vgabios.bin" },
             network_relay_url: "ws://localhost:8001/",
-            initial_state: { url: "/images/v86state.bin" },
+            // initial_state: { url: "/images/v86state.bin" },
             autostart: true,
             uart1: true,
             uart2: true,
@@ -278,7 +278,7 @@ class V86Backend {
 
         this.emulator.add_listener("serial0-output-char", (char: string) => {
             if (char === "\r") {
-                console.log(data);
+                anura.logger.debug(data);
 
                 this._proc_data(data);
                 data = "";
@@ -288,7 +288,7 @@ class V86Backend {
         });
         this.emulator.add_listener("serial1-output-char", (char: string) => {
             if (char === "\r") {
-                console.log(`111: ${data}`);
+                anura.logger.debug(`111: ${data}`);
 
                 this._proc_data(data);
                 data = "";

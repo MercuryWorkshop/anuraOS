@@ -16,7 +16,7 @@ Web OS with v86 integration
 
 -   Make sure Docker is installed and running.
 -   `make rootfs`, Make sure to add yourself to the docker group: usermod -a -G docker $USER
--   Keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, edit src/v86.ts to edit the `url` of those two tools to have those file names.
+-   Keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, upload them in file manager and rename them to initrd.img and bzimage respectively
 
 ### Run
 
