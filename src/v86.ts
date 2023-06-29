@@ -237,7 +237,6 @@ class V86Backend {
                     "#v86VGA"
                 ),
 
-            // TODO: this should not be hardcoded.
             initrd: {
                 url: "/fs/initrd.img",
             },
