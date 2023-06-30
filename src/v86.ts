@@ -243,7 +243,7 @@ class V86Backend {
 
     this.emulator.add_listener("serial0-output-char", (char: string) => {
       if (char === "\r") {
-        // console.log(data);
+        console.log(data);
 
         this._proc_data(data);
         data = "";
@@ -254,7 +254,7 @@ class V86Backend {
     });
     this.emulator.add_listener("serial1-output-char", (char: string) => {
       if (char === "\r") {
-        // console.log(`111: ${data}`);
+        console.log(`111: ${data}`);
 
 
         this._proc_data(data);
@@ -265,27 +265,41 @@ class V86Backend {
 
     });
 
-    this.onboot();
+    // this.onboot();
 
 
 
 
   }
 
-  onboot() {
-    console.log("?")
+  registered = false
+  async onboot() {
+    if (this.registered) return;
+    this.registered = true;
+
+    await sleep(500); // to be safe
+
+
+    let barepty = anura.x86?.openpty("echo 1", 1, 1, data => {
+      console.log("BARE: " + data);
+
+    })
 
     navigator.serviceWorker.addEventListener("message", async (event) => {
       if (event.data?.anura_target == "anura.x86.proxy") {
-        event.source?.postMessage({
+
+        let id = event.data.id
+        navigator.serviceWorker.controller?.postMessage({
           anura_target: event.data.anura_target,
-          id: event.data.id,
+          id: id,
           value: {
-            body: "from sw",
+            body: "hur",
             status: 200,
 
           }
+
         })
+
       }
     });
   }
@@ -370,7 +384,7 @@ class V86Backend {
 
         if (!this.booted) {
           this.booted = true;
-          this.onboot();
+          // this.onboot();
         }
         break;
       }
@@ -457,6 +471,16 @@ async function a() {
     await new Promise(resolve => setTimeout(resolve, 10));
   }
   emulator.serial0_send("\n\x04\n")
+}
+async function savestate() {
+  const new_state = await anura.x86!.emulator.save_state();
+  var a = document.createElement("a");
+  a.download = "v86state.bin";
+  a.href = window.URL.createObjectURL(new Blob([new_state]));
+  a.dataset.downloadurl = "application/octet-stream:" + a.download + ":" + a.href;
+  a.click();
+
+  this.blur();
 }
 
 

@@ -11,7 +11,6 @@ importScripts("/sw.js");
 workbox.routing.registerRoute(
   /\/x86\/(.*)/,
   (req) => {
-    console.log(handleRequests(req))
     return handleRequests(req) // need to do this because of the dumb way workbox handles async
     // console.log(url, request, event, params)
   }
@@ -23,7 +22,9 @@ const callbacks = {};
 
 addEventListener("message", (event) => {
   if (event.data.anura_target === "anura.x86.proxy") {
-    callbacks[event.data.id](event.data.value)
+    let callback = callbacks[event.data.id]
+    // console.log(callback)
+    callback(event.data.value)
   }
 });
 
@@ -49,6 +50,7 @@ async function handleRequests({ url, request, event, params }) {
     }
   });
 
+  console.log("want uuid" + uuid)
   let resp = await new Promise(resolve => {
     callbacks[uuid] = resolve
   })
