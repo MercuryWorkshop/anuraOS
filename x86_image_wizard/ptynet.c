@@ -102,12 +102,41 @@ int main(void) {
     return 1;
 
   while (1) {
-    curl_easy_setopt(curl, CURLOPT_URL, "http://coolelectronics.me");
+    // url
+    // headers
+    // method
+    // body
+    size_t len = 0;
+    ssize_t lineSize = 0;
+
+    char *url = NULL;
+    lineSize = getline(&url, &len, stdin);
+    url[strcspn(url, "\n")] = 0;
+
+    char *headers = NULL;
+    lineSize = getline(&headers, &len, stdin);
+    headers[strcspn(headers, "\n")] = 0;
+
+    char *method = NULL;
+    lineSize = getline(&method, &len, stdin);
+    method[strcspn(method, "\n")] = 0;
+
+    char *body = NULL;
+    lineSize = getline(&body, &len, stdin);
+    body[strcspn(body, "\n")] = 0;
+
+    struct curl_slist *slist = NULL;
+
+    slist = curl_slist_append(slist, "pragma:");
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 0L);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &data);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &curlWriteFunction);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headerdata);
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, &header_callback);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, method);
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body);
 
     res = curl_easy_perform(curl);
     if (res != CURLE_OK)
@@ -119,12 +148,23 @@ int main(void) {
     size_t output_length;
     for (int i = 0; i < header_nitems - 1; i++) {
 
-      printf("%s\n", b64_encode(headerdata[i], strlen(headerdata[i])));
+      char *data = b64_encode(headerdata[i], strlen(headerdata[i]));
+      printf("%s\n", data);
+
+      // free(data);
+      // free(headerdata[i]);
     }
 
-    return 0;
+    char *b64data = b64_encode(data, strlen(data));
+    printf("|%s|", b64data);
+    free(b64data);
 
-    // printf("|%s|", data);
+    header_nitems = 0;
+
+    free(url);
+    free(headers);
+    free(body);
+    free(method);
 
     /* always cleanup */
   }
