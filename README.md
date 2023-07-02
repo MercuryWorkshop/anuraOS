@@ -1,46 +1,46 @@
-# anuraOS
+# AnuraOS
 
-Web OS with v86 integration
-
-## Getting Started
+WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
 
 ### Installation
 
--   make sure you clone this repository with `--recursive`!
--   You need to have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
--   `make all`
+-   Make sure you have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
+-   Clone the repository with `git clone --recursive`
+-   Then, `make all`
 
-*   NOTE: you can use `make all -B` to force a full build.
+*   NOTE: You can use `make all -B` instead if you want to force a full build.
 
-### Building rootfs
+### Building ROOTFS
 
--   Make sure Docker is installed and running.
--   `make rootfs`, Make sure to add yourself to the docker group: usermod -a -G docker $USER
--   Keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, upload them in file manager and rename them to initrd.img and bzimage respectively
+-   Make sure you have `Docker` installed and running.
+-   Run `make rootfs`
+-   Make sure to add yourself to the Docker group using `usermod -a -G docker $USER`
+-   Keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, upload them in file manager and rename them to initrd.img and bzimage respectively.
 
-### Run
+### Running Anura
+
+You can run anura with the command
 
 ```sh
 make server
 ```
-
-### Run server with authentication
+Or, run authenticated with
 
 ```sh
 cd server
 npm start -- --auth
 ```
 
-## Post-installation (client)
+## After Installation
 
 **NOTE**: The login for rootfs images is `root:root`.
 
--   Visit `localhost:8000` in your browser. **NOTE**: anuraOS uses the latest web technologies, and is unstable in Gecko. Chromium is **strongly recommended**
--   Select the debian rootfs. If you built it from this repository, its location is `./build/images/debian-rootfs.bin`.
--   Set up rootfs by entering in the JS console: `await loadfile(document.all.input.files[0])`
+**NOTE**: Anura uses recent web technologies, and is unstable in Gecko. Chromium is **strongly recommended** as it has seen the best results.
 
-*   Once the console prints `1` and the command returns `undefined`, reload the page.
-*   If you ever need to update your rootfs image, clear the webpage cache and indexedDB database.
+-   If you started the server, Anura should be running at `localhost:8000`.
+-   Select the Debian rootfs. If you built it from this repository, its location is `./build/images/debian-rootfs.bin`.
+-   Set up rootfs by entering `await loadfile(document.all.input.files[0])` in your console.
 
--   Wait for the Debian machine to boot completely (a prompt for `localhost login:`)
--   Open Terminal (second app in the shelf) and type `dhcpcd`. Wait for it to print `forked to background`.
+<sub>
+Good Luck
+</sub>
