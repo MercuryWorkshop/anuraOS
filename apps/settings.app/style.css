@@ -39,7 +39,7 @@ body {
 }
 
 .tab button.active {
-  background-color: #9daaff;
+  background-color: #3d4043;
 }
 
 .tabcontent {
@@ -77,7 +77,7 @@ body {
   font-size: 16px;
   font-weight: 500;
   height: 58px;
-  width: 861px;
+  width: 1000px;
 }
 
 .rowsbtn {
@@ -107,4 +107,26 @@ body {
 .rows:not(:first-child):not(:last-child) .rowsbtn {
   border-bottom: 0.5px solid #3f4042;
   border-top: 0.5px solid #3f4042;
+}
+
+svg {
+  color: white;
+  fill: white;
+}
+
+hr {
+  color: #555555;
+  background-color: #555;
+}
+
+h3 {
+  font-family: 'Roboto', 'Segoe UI', Tahoma, sans-serif;
+  color: #ddd;
+  padding-left: 5px;
+}
+
+.header {
+  border-bottom-color: #555;
+  border-bottom-width: 5px;
+  width: 100%;
 }
