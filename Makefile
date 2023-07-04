@@ -41,6 +41,7 @@ watch: bundle FORCE
 	which inotifywait || echo "INSTALL INOTIFYTOOLS"
 	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make bundle; sleep 2; done
 tsc:
+	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
 	tsc
 css: src/*.css
