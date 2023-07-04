@@ -5,6 +5,7 @@ WebOS complete with v86 integration and a minimal yet capable desktop enviroment
 ### Installation
 
 -   Make sure you have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
+-   You also need to have a C compiler, inotifytools and a decent version of java installed
 -   Clone the repository with `git clone --recursive`
 -   Then, `make all`
 
@@ -24,6 +25,7 @@ You can run anura with the command
 ```sh
 make server
 ```
+
 Or, run authenticated with
 
 ```sh

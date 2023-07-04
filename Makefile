@@ -37,13 +37,19 @@ public/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o 
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
-watch: FORCE
-	mkdir -p build/artifacts
-	npx tsc-watch --onSuccess "bash -c 'cp -r src/* build/artifacts'"
-bundle:
-	mkdir -p build/artifacts
+watch: bundle FORCE
+	which inotifywait || echo "INSTALL INOTIFYTOOLS"
+	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make bundle; sleep 2; done
+tsc:
 	cp -r src/* build/artifacts
 	tsc
+css: src/*.css
+	shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
+bundle: tsc css lint
+	mkdir -p build/artifacts
+lint:
+	npx prettier -w --loglevel error .
+	npx eslint . --fix
 prod: all
 	npx google-closure-compiler --js build/assets/libs/filer.min.js build/lib/Taskbar.js build/lib/AliceJS.js build/lib/api/Notification.js build/lib/ContextMenu.js build/lib/oobe/OobeAssetsStep.js build/lib/AliceWM.js build/lib/api/Settings.js build/lib/Launcher.js build/lib/oobe/OobeView.js build/lib/libv86.js build/lib/v86.js build/lib/Bootsplash.js build/lib/oobe/OobeWelcomeStep.js build/lib/Anura.js --js_output_file public/dist.js
 server: FORCE

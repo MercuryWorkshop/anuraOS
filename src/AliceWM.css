@@ -1,0 +1,115 @@
+.aliceWMwin {
+    user-select: none; /* FUCK ie and safari no one uses them anyways */
+    height: 200px;
+    width: 500px;
+    background: white;
+    position: fixed;
+    overflow: hidden;
+    z-index: 91;
+    display: flex; /* FLEXBOX #2 */
+    border: 2px solid #444;
+    flex-direction: column;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 3px;
+}
+
+.aliceWMwin .title {
+    display: flex;
+    background-color: #202124;
+    font-weight: bold;
+    color: white;
+    height: 24px;
+    padding: 2px;
+    align-items: center;
+    z-index: 1;
+}
+
+.aliceWMwin .titleContent {
+    flex: 1;
+}
+
+.aliceWMwin .content {
+    padding: 2px;
+    flex: 1;
+}
+
+.aliceWMwin .title:hover {
+    cursor: move;
+}
+
+.aliceWMwin .windowButton {
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 100%;
+    margin: 2px;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease-in-out;
+    z-index: 2;
+}
+
+.aliceWMwin .windowButton > span {
+    font-size: 16px;
+}
+
+.aliceWMwin .windowButton:hover {
+    background-color: darkgray;
+}
+
+.aliceWMwin .windowButton:active {
+    background-color: gray;
+}
+
+.resize-corner {
+    width: 10px;
+    height: 10px;
+
+    position: absolute;
+    z-index: 2;
+}
+.resize-edge {
+    position: absolute;
+    z-index: 2;
+    padding: 5px;
+}
+.resize-edge.left {
+    left: -5px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resize-edge.right {
+    right: -5px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resize-edge.top {
+    top: -5px;
+    width: 100%;
+    cursor: s-resize;
+}
+.resize-edge.bottom {
+    bottom: -5px;
+    width: 100%;
+    cursor: s-resize;
+}
+.resize-corner.top-left {
+    left: -5px;
+    top: -5px;
+    cursor: nwse-resize; /*resizer cursor*/
+}
+.resize-corner.top-right {
+    right: -5px;
+    top: -5px;
+    cursor: nesw-resize;
+}
+.resize-corner.bottom-left {
+    left: -5px;
+    bottom: -5px;
+    cursor: nesw-resize;
+}
+.resize-corner.bottom-right {
+    right: -5px;
+    bottom: -5px;
+    cursor: nwse-resize;
+}

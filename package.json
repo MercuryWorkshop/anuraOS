@@ -18,7 +18,11 @@
     "homepage": "https://github.com/MercuryWorkshop/AliceWM#readme",
     "dependencies": {
         "@typescript-eslint/eslint-plugin": "^5.60.1",
+        "autoprefixer": "^10.4.14",
         "eslint": "=8.13.0",
+        "onchange": "^7.1.0",
+        "postcss": "^8.4.24",
+        "postcss-cli": "^10.1.0",
         "typescript": "=5.0.4"
     }
 }
