@@ -14,6 +14,7 @@
  * to show a floating dialog displaying the given dom element
  * @param {Object} title "title of the dialog"
  */
+
 const windowInformation = {};
 const windowID = 0;
 
