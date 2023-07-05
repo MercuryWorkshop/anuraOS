@@ -39,7 +39,7 @@ public/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o 
 
 watch: bundle FORCE
 	which inotifywait || echo "INSTALL INOTIFYTOOLS"
-	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make bundle; sleep 2; done
+	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make tsc css; echo "Done!"; sleep 1; done
 tsc:
 	cp -r src/* build/artifacts
 	tsc
