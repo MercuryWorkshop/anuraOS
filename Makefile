@@ -41,6 +41,7 @@ watch: bundle FORCE
 	which inotifywait || echo "INSTALL INOTIFYTOOLS"
 	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make tsc css; echo "Done!"; sleep 1; done
 tsc:
+	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
 	tsc
 css: src/*.css
@@ -51,7 +52,7 @@ lint:
 	npx prettier -w --loglevel error .
 	npx eslint . --fix
 prod: all
-	npx google-closure-compiler --js build/assets/libs/filer.min.js build/lib/Taskbar.js build/lib/AliceJS.js build/lib/api/Notification.js build/lib/ContextMenu.js build/lib/oobe/OobeAssetsStep.js build/lib/AliceWM.js build/lib/api/Settings.js build/lib/Launcher.js build/lib/oobe/OobeView.js build/lib/libv86.js build/lib/v86.js build/lib/Bootsplash.js build/lib/oobe/OobeWelcomeStep.js build/lib/Anura.js --js_output_file public/dist.js
+	npx google-closure-compiler --js build/assets/libs/filer.min.js build/lib/Taskbar.js build/lib/AliceJS.js build/lib/api/NotificationService.js build/lib/ContextMenu.js build/lib/oobe/OobeAssetsStep.js build/lib/AliceWM.js build/lib/api/Settings.js build/lib/Launcher.js build/lib/oobe/OobeView.js build/lib/libv86.js build/lib/v86.js build/lib/Bootsplash.js build/lib/oobe/OobeWelcomeStep.js build/lib/Anura.js --js_output_file public/dist.js
 server: FORCE
 	cd server; npx ts-node server.ts
 
