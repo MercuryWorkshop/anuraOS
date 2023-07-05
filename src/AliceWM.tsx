@@ -104,37 +104,43 @@ class WMWindow {
                 >
                     <div class="titleContent">{wininfo.title}</div>
 
-                    <button class="windowButton">
+                    <button
+                        class="windowButton"
+                        on:click={() => {
+                            if (wininfo.allowMultipleInstance) {
+                                anura.notifications.add({
+                                    title: "Cannot minimize",
+                                    description:
+                                        "minimizing isn't implimented on Multi- Instance windows",
+                                });
+                                this.element.style.display = "none";
+                            }
+                        }}
+                    >
                         <img
                             src="/assets/window/minimize.svg"
-                            on:click={() => {
-                                if (wininfo.allowMultipleInstance) {
-                                    anura.notifications.add({
-                                        title: "Cannot minimize",
-                                        description:
-                                            "minimizing isn't implimented on Multi- Instance windows",
-                                    });
-                                    this.element.style.display = "none";
-                                }
-                            }}
                             height="12px"
                             class="windowButtonIcon"
                         />
                     </button>
 
-                    <button class="windowButton">
+                    <button
+                        class="windowButton"
+                        on:click={this.maximize.bind(this)}
+                    >
                         <img
                             src="/assets/window/maximize.svg"
                             bind:maximizeImg={this}
-                            on:click={this.maximize.bind(this)}
                             height="12px"
                             class="windowButtonIcon"
                         />
                     </button>
-                    <button class="windowButton">
+                    <button
+                        class="windowButton"
+                        on:click={this.close.bind(this)}
+                    >
                         <img
                             src="/assets/window/close.svg"
-                            on:click={this.close.bind(this)}
                             height="12px"
                             class="windowButtonIcon"
                         />
