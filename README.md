@@ -1,6 +1,7 @@
 # AnuraOS
 
 WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
+Formerly known as Chimera. Based off of the AliceWM.
 
 ### Installation
 
@@ -43,6 +44,14 @@ npm start -- --auth
 -   Select the Debian rootfs. If you built it from this repository, its location is `./build/images/debian-rootfs.bin`.
 -   Set up rootfs by entering `await loadfile(document.all.input.files[0])` in your console.
 
+## Changelog
+
+Will be utilized after the first Build of AnuraOS.
+
+## Documentation
+
+Still being written.
+
 <sub>
-Good Luck
+The AnuraOS Team and Mercury Workshop are both not liable to any loss of braincells after working with this product.
 </sub>
