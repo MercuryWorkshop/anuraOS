@@ -200,12 +200,12 @@ class WMWindow {
                 original_width = parseFloat(
                     getComputedStyle(this.element, null)
                         .getPropertyValue("width")
-                        .replace("px", "")
+                        .replace("px", ""),
                 );
                 original_height = parseFloat(
                     getComputedStyle(this.element, null)
                         .getPropertyValue("height")
-                        .replace("px", "")
+                        .replace("px", ""),
                 );
                 deactivateFrames();
                 original_x = this.element.getBoundingClientRect().left;
@@ -306,12 +306,12 @@ class WMWindow {
         this.element.style.left =
             Math.min(
                 window.innerWidth,
-                Math.max(0, this.originalLeft + evt.clientX! - this.mouseLeft)
+                Math.max(0, this.originalLeft + evt.clientX! - this.mouseLeft),
             ) + "px";
         this.element.style.top =
             Math.min(
                 window.innerHeight,
-                Math.max(0, this.originalTop + evt.clientY! - this.mouseTop)
+                Math.max(0, this.originalTop + evt.clientY! - this.mouseTop),
             ) + "px";
 
         if (this.maximized) {
@@ -326,7 +326,7 @@ class WMWindow {
     focus() {
         this.element.style.setProperty(
             "z-index",
-            (getHighestZindex() + 1).toString()
+            (getHighestZindex() + 1).toString(),
         );
         normalizeZindex();
     }
@@ -415,7 +415,7 @@ function reactivateFrames() {
 
 function getHighestZindex() {
     const allWindows: HTMLElement[] = Array.from(
-        document.querySelectorAll<HTMLTableElement>(".aliceWMwin")
+        document.querySelectorAll<HTMLTableElement>(".aliceWMwin"),
     );
     anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
 
@@ -429,7 +429,7 @@ function getHighestZindex() {
 
 async function normalizeZindex() {
     const allWindows: HTMLElement[] = Array.from(
-        document.querySelectorAll<HTMLTableElement>(".aliceWMwin")
+        document.querySelectorAll<HTMLTableElement>(".aliceWMwin"),
     );
     anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
 
@@ -447,7 +447,7 @@ async function normalizeZindex() {
             (
                 Number(wmwindow.style.getPropertyValue("z-index")) -
                 normalizeValue
-            ).toString()
+            ).toString(),
         );
     }
 }
