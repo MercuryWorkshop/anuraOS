@@ -43,7 +43,7 @@ watch: bundle FORCE
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
-	tsc
+	npx tsc
 css: src/*.css
 	shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
 bundle: tsc css lint

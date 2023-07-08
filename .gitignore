@@ -23,3 +23,5 @@ server/package-lock.json
 Notes
 server/passkey
 package-lock.json
+.direnv
+result

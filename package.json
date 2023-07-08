@@ -26,5 +26,8 @@
         "postcss": "^8.4.24",
         "postcss-cli": "^10.1.0",
         "typescript": "=5.0.4"
+    },
+    "devDependencies": {
+        "prettier": "^3.0.0"
     }
 }
