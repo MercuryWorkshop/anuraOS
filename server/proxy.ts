@@ -33,7 +33,7 @@ export default class Proxy {
         mes.info(
             "Requested connection from '%s' to '%s' [ACCEPTED].",
             this._from,
-            this._to
+            this._to,
         );
 
         const port = Number(args[1]);

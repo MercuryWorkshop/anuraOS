@@ -15,7 +15,7 @@ function serverInstall() {
         "This file exists to test the filesystem",
         function (err) {
             if (err) console.error(err);
-        }
+        },
     );
 }
 
