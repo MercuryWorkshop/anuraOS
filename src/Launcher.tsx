@@ -23,9 +23,17 @@ class Launcher {
         this.clickoffChecker.classList.toggle("active");
     }
 
+    hide() {
+        this.element.classList.remove("active");
+        this.clickoffChecker.classList.remove("active");
+    }
+
     addShortcut(name: string, svg: string, onclick: () => void, appID: string) {
         const shortcut = this.shortcutElement(name, svg, appID);
-        shortcut.addEventListener("click", onclick);
+        shortcut.addEventListener("click", (...args) => {
+            this.hide();
+            onclick.call(this, ...args);
+        });
         this.element.querySelector("#appsView").appendChild(shortcut);
     }
 
