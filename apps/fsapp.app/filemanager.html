@@ -360,11 +360,16 @@
             var contextmenu = document.querySelector("#contextMenu");
             contextmenu.style.left = e.pageX + "px";
             contextmenu.style.top = e.pageY + "px";
+            const hasSelection = currentlySelected.length > 0;
+            for (const elt of contextmenu.getElementsByClassName("needs-selection")) {
+                elt.ariaDisabled = !hasSelection;
+                elt.onclick = hasSelection ? elt.onclick : null;
+            }
             contextmenu.style.removeProperty("display");
         });
 
         document.addEventListener("click", (e) => {
-            if (e.target !== document.querySelector("#contextMenu") || !document.querySelector("#contextMenu").contains(e.target)) {
+            if (!document.querySelector("#contextMenu").contains(e.target) || !e.target.ariaDisabled) {
                 document.querySelector("#contextMenu").style.setProperty("display", "none");
             }
         });
@@ -439,10 +444,10 @@
         <button onclick="reload()">Refresh</button>
         <hr>
         </hr>
-        <button onclick="cut()">Cut</button>
-        <button onclick="copy()">Copy</button>
+        <button class="needs-selection" onclick="cut()">Cut</button>
+        <button class="needs-selection" onclick="copy()">Copy</button>
         <button onclick="paste()">Paste</button>
-        <button onclick="deleteFile()">Delete</button>
+        <button class="needs-selection" onclick="deleteFile()">Delete</button>
         <button onclick="upload()">Upload from PC</button>
         <hr>
         </hr>

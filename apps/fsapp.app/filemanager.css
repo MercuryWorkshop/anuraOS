@@ -185,6 +185,10 @@ hr {
     text-align: left;
     height: 2em;
 }
+#contextMenu button[aria-disabled=true] {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
 #contextMenu button:hover {
     background-color: #51576d;
 }
