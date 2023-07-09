@@ -78,9 +78,12 @@ class Anura {
                         const win = AliceWM.create(this.manifest.wininfo);
 
                         const iframe = document.createElement("iframe");
+                        // CSS injection here but it's no big deal
+                        const bg = manifest.background || "#202124";
                         iframe.setAttribute(
                             "style",
-                            "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;",
+                            "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
+                                `border: none; margin: 0; padding: 0; background-color: ${bg};`,
                         );
                         iframe.setAttribute(
                             "src",
