@@ -58,3 +58,5 @@ function openSetting(evt, TabName) {
 
 
 }
+# anura is not defined accoring to Dev Tools
+# https://media.discordapp.net/attachments/1096925028886515792/1127955000123981916/image.png?width=487&height=83
