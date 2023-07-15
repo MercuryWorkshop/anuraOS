@@ -56,7 +56,7 @@ class Taskbar {
     );
 
     shortcuts: { [key: string]: Shortcut } = {};
-    constructor() { }
+    constructor() {}
     addShortcut(svg: string, launch: () => void, appID: string) {
         const shortcut = new Shortcut(svg, launch, appID);
         this.shortcuts[appID] = shortcut;

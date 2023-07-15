@@ -48,8 +48,8 @@ class Settings {
             this.fs.writeFile(
                 "/anura_settings.json",
                 JSON.stringify(this.cache),
-                r,
-            ),
+                r
+            )
         );
     }
 }

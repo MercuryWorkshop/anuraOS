@@ -16,7 +16,7 @@ class NotificationService {
     }
     remove(notification: AnuraNotification) {
         this.notifications = this.notifications.filter(
-            (n) => n != notification,
+            (n) => n != notification
         );
 
         notification.element.style.opacity = "0";
