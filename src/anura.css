@@ -49,6 +49,13 @@ nav li {
     width: 40px;
     height: 40px;
 }
+.lightbar {
+    width: 40px;
+    height: 5px;
+    position: relative;
+    bottom: 1px;
+    border-radius: 5px;
+}
 
 .bootsplash {
     background-color: black;

@@ -33,9 +33,14 @@ class Taskbar {
                     class="showDialog"
                     on:click={launch}
                 />
+                <div
+                    class="lightbar"
+                    style="position: relative; bottom: 1px;"
+                ></div>
             </li>
         );
         this.shortcutsTray.appendChild(elm);
+        return elm;
     }
     killself() {
         this.element.remove();
