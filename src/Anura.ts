@@ -123,7 +123,9 @@ class Anura {
             const app = anura.apps[appName];
             app.windowinstance.forEach((element: any) => {
                 if (!element.parentElement) {
-                    app.windowinstance.splice(app.windowinstance.indexOf(element));
+                    app.windowinstance.splice(
+                        app.windowinstance.indexOf(element),
+                    );
                 }
             });
         }

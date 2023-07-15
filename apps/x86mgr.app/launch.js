@@ -18,7 +18,13 @@ function loadingScript(currentpath, app) {
     console.log(app.windowinstance[0])
     const buttons = app.windowinstance[0].querySelectorAll('.windowButton')
     
-    buttons[2].onclick  = buttons[0].onclick
+    let closeButton = buttons[2];
+    closeButton.replaceWith(closeButton.cloneNode(true)); // Dirty Hack to remove event listeners
+
+    closeButton = app.windowinstance[0].querySelectorAll('.windowButton')[2] // The reference was destroyed, get it back
+    closeButton.onclick = function () {
+      buttons[0].click()
+    } 
 
   } else {
       app.windowinstance[0].style.display = ''
