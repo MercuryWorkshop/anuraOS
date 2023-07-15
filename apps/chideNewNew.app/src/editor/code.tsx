@@ -17,11 +17,32 @@ export const Code = ({ selectedFile }: { selectedFile: File | undefined }) => {
 
   let language = selectedFile.name.split('.').pop()
 
-  if (language === "js" || language === "jsx")
-    language = "javascript";
-  else if (language === "ts" || language === "tsx")
-    language = "typescript"
-
+  switch (language) {
+    case "js":
+    case "jsx":
+      language = "javascript"
+      break;
+    case "ts":
+    case "tsx":
+      language = "javascript"
+      break;
+    case "sh":
+      language = "shell"
+      break;
+    case "htm":
+    case "html":
+      language = "html"
+      break;
+    case "c":
+      language = "c"
+      break;
+    case "cpp":
+      language = "cpp"
+      break;
+    case "css":
+      language = "css"
+      break;
+  }
 
 
   let editor = (<Editor
