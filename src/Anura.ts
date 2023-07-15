@@ -77,7 +77,7 @@ class Anura {
                     iframe.setAttribute(
                         "style",
                         "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
-                            `border: none; margin: 0; padding: 0; background-color: ${bg};`
+                        `border: none; margin: 0; padding: 0; background-color: ${bg};`,
                     );
                     iframe.setAttribute("src", `${location}/${manifest.index}`);
                     win.content.appendChild(iframe);
@@ -87,7 +87,7 @@ class Anura {
                     (<any>iframe.contentWindow).anura = anura;
                     (<any>iframe.contentWindow).AliceWM = AliceWM;
                 }
-                anura.updateTaskbar();
+                taskbar.updateTaskbar();
             },
             icon: `${location}/${manifest.icon}`,
         };
@@ -96,57 +96,16 @@ class Anura {
             manifest.name,
             manifest.icon ? `${location}/${manifest.icon}` : "",
             app.launch.bind(app),
-            manifest.package
+            manifest.package,
         );
 
         // taskbar.addShortcut(app.icon, app.launch.bind(app), manifest.package);
 
         this.apps[manifest.package] = app;
 
-        if (this.initComplete) this.updateTaskbar();
+        if (this.initComplete) taskbar.updateTaskbar();
 
         return app;
-    }
-    updateTaskbar() {
-        taskbar.removeShortcuts();
-
-        const orderedApps = anura.settings.get("applist");
-        const takenCareOf: any = [];
-        for (const appID in orderedApps) {
-            const appName = orderedApps[appID];
-            if (appName in this.apps) {
-                const app = this.apps[appName];
-
-                const item = taskbar.addShortcut(
-                    app.icon,
-                    app.launch.bind(app),
-                    appName
-                );
-                if (app.windowinstance.length !== 0) {
-                    item.getElementsByClassName(
-                        "lightbar"
-                    )[0].style.backgroundColor = "#FFF";
-                }
-                takenCareOf.push(appName);
-            }
-        }
-        for (const appName in anura.apps) {
-            const app = this.apps[appName];
-            console.log(appName);
-            if (
-                app.windowinstance.length !== 0 &&
-                !takenCareOf.includes(appName)
-            ) {
-                const item = taskbar.addShortcut(
-                    app.icon,
-                    app.launch.bind(app),
-                    appName
-                );
-                item.getElementsByClassName(
-                    "lightbar"
-                )[0].style.backgroundColor = "#FFF";
-            }
-        }
     }
     removeStaleApps() {
         for (const appName in anura.apps) {
@@ -154,12 +113,12 @@ class Anura {
             app.windowinstance.forEach((element: any) => {
                 if (!element.parentElement) {
                     app.windowinstance.splice(
-                        app.windowinstance.indexOf(element)
+                        app.windowinstance.indexOf(element),
                     );
                 }
             });
         }
-        anura.updateTaskbar();
+        taskbar.updateTaskbar();
     }
     async python(appname: string) {
         return await new Promise((resolve, reject) => {
@@ -167,7 +126,7 @@ class Anura {
             iframe.setAttribute("style", "display: none");
             iframe.setAttribute("src", "/apps/python.app/lib.html");
             iframe.id = appname;
-            iframe.onload = async function () {
+            iframe.onload = async function() {
                 console.log("Called from python");
                 //@ts-ignore
                 const pythonInterpreter = await document

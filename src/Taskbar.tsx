@@ -37,6 +37,9 @@ class Taskbar {
                     class="lightbar"
                     style="position: relative; bottom: 1px;"
                 ></div>
+                <div class="hoverMenu" style="display: none;">
+                    <ul class="openWindows"></ul>
+                </div>
             </li>
         );
         this.shortcutsTray.appendChild(elm);
@@ -49,5 +52,46 @@ class Taskbar {
         this.element.querySelectorAll("li").forEach((element: HTMLElement) => {
             if (element.hasAttribute("application")) element.remove();
         });
+    }
+    updateTaskbar() {
+        taskbar.removeShortcuts();
+
+        const orderedApps = anura.settings.get("applist");
+        const takenCareOf: any = [];
+        for (const appID in orderedApps) {
+            const appName = orderedApps[appID];
+            if (appName in anura.apps) {
+                const app = anura.apps[appName];
+
+                const item = taskbar.addShortcut(
+                    app.icon,
+                    app.launch.bind(app),
+                    appName,
+                );
+                if (app.windowinstance.length !== 0) {
+                    item.getElementsByClassName(
+                        "lightbar",
+                    )[0].style.backgroundColor = "#FFF";
+                }
+                takenCareOf.push(appName);
+            }
+        }
+        for (const appName in anura.apps) {
+            const app = anura.apps[appName];
+            console.log(appName);
+            if (
+                app.windowinstance.length !== 0 &&
+                !takenCareOf.includes(appName)
+            ) {
+                const item = taskbar.addShortcut(
+                    app.icon,
+                    app.launch.bind(app),
+                    appName,
+                );
+                item.getElementsByClassName(
+                    "lightbar",
+                )[0].style.backgroundColor = "#FFF";
+            }
+        }
     }
 }
