@@ -56,7 +56,7 @@ class Anura {
             name: manifest.name,
             location,
             manifest,
-            windowinstance: null,
+            windowinstance: [],
             async launch() {
                 if (manifest.type == "manual") {
                     // This type of application is discouraged for sure but is the most powerful
@@ -67,36 +67,25 @@ class Anura {
                     // @ts-ignore
                     loadingScript(location, app);
                 } else {
-                    if (
-                        this.windowinstance === null ||
-                        this.windowinstance.parentElement === null ||
-                        (this.manifest.wininfo &&
-                            this.manifest.wininfo.allowMultipleInstance)
-                    ) {
-                        //  checks if there is an existing minimized window
-                        // if (this.windowinstance) return;
-                        const win = AliceWM.create(this.manifest.wininfo);
+                    //  checks if there is an existing minimized window
+                    // if (this.windowinstance) return;
+                    const win = AliceWM.create(this.manifest.wininfo);
 
-                        const iframe = document.createElement("iframe");
-                        // CSS injection here but it's no big deal
-                        const bg = manifest.background || "#202124";
-                        iframe.setAttribute(
-                            "style",
-                            "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
-                                `border: none; margin: 0; padding: 0; background-color: ${bg};`,
-                        );
-                        iframe.setAttribute(
-                            "src",
-                            `${location}/${manifest.index}`,
-                        );
-                        win.content.appendChild(iframe);
-                        this.windowinstance = win.content.parentElement!;
+                    const iframe = document.createElement("iframe");
+                    // CSS injection here but it's no big deal
+                    const bg = manifest.background || "#202124";
+                    iframe.setAttribute(
+                        "style",
+                        "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
+                            `border: none; margin: 0; padding: 0; background-color: ${bg};`,
+                    );
+                    iframe.setAttribute("src", `${location}/${manifest.index}`);
+                    win.content.appendChild(iframe);
 
-                        (<any>iframe.contentWindow).anura = anura;
-                        (<any>iframe.contentWindow).AliceWM = AliceWM;
-                    } else {
-                        this.windowinstance.style.display = "";
-                    }
+                    this.windowinstance.push(win.content.parentElement);
+
+                    (<any>iframe.contentWindow).anura = anura;
+                    (<any>iframe.contentWindow).AliceWM = AliceWM;
                 }
             },
             icon: `${location}/${manifest.icon}`,
@@ -127,6 +116,16 @@ class Anura {
                 const app = this.apps[appName];
                 taskbar.addShortcut(app.icon, app.launch.bind(app), appName);
             }
+        }
+    }
+    removeStaleApps() {
+        for (const appName in anura.apps) {
+            const app = anura.apps[appName];
+            app.windowinstance.forEach((element: any) => {
+                if (!element.parentElement) {
+                    app.windowinstance.splice(app.windowinstance.indexOf(element));
+                }
+            });
         }
     }
     async python(appname: string) {

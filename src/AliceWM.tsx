@@ -107,14 +107,7 @@ class WMWindow {
                     <button
                         class="windowButton"
                         on:click={() => {
-                            if (wininfo.allowMultipleInstance) {
-                                anura.notifications.add({
-                                    title: "Cannot minimize",
-                                    description:
-                                        "minimizing isn't implimented on Multi- Instance windows",
-                                });
-                                this.element.style.display = "none";
-                            }
+                            this.minimize();
                         }}
                     >
                         <img
@@ -332,6 +325,8 @@ class WMWindow {
     }
     close() {
         this.element.remove();
+        // TODO, Remove this and make it an event
+        anura.removeStaleApps();
     }
     togglemaximize() {
         if (!this.maximized) {
@@ -341,6 +336,11 @@ class WMWindow {
         }
     }
     maximize() {
+        if (this.maximized) {
+            // Unmaximize if already maximized
+            this.unmaximize();
+            return;
+        }
         this.oldstyle = this.element.getAttribute("style");
         const width =
             window.innerWidth ||
@@ -368,7 +368,9 @@ class WMWindow {
         this.justresized = true;
         this.maximized = false;
     }
-    minimize() {}
+    minimize() {
+        this.element.style.display = "none";
+    }
 }
 
 const AliceWM = {

@@ -1,9 +1,9 @@
 
 function loadingScript(currentpath, app) {
 
-  if (app.windowinstance === null || app.windowinstance.parentElement === null)  { //  checks if there is an existing minimized window 
+  if (!app.windowinstance[0] || app.windowinstance[0].parentElement === null)  { //  checks if there is an existing minimized window 
     let win = AliceWM.create({ "title": "", "width": "700px", "height": "500px" })
-    app.windowinstance = win.content.parentElement;
+    app.windowinstance[0] = win.content.parentElement;
 
     let screen_container = document.createElement("div");
     screen_container.style.position = "relative";
@@ -15,11 +15,13 @@ function loadingScript(currentpath, app) {
     screen_container.appendChild(document.createElement("canvas"));
     screen_container.appendChild(document.createElement("div"));
 
-    const buttons = app.windowinstance.querySelectorAll('.windowButton')
+    console.log(app.windowinstance[0])
+    const buttons = app.windowinstance[0].querySelectorAll('.windowButton')
+    
     buttons[2].onclick  = buttons[0].onclick
 
   } else {
-      app.windowinstance.style.display  = ''
+      app.windowinstance[0].style.display = ''
   }
 
 
