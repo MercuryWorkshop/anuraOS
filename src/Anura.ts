@@ -77,7 +77,7 @@ class Anura {
                     iframe.setAttribute(
                         "style",
                         "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
-                        `border: none; margin: 0; padding: 0; background-color: ${bg};`,
+                            `border: none; margin: 0; padding: 0; background-color: ${bg};`,
                     );
                     iframe.setAttribute("src", `${location}/${manifest.index}`);
                     win.content.appendChild(iframe);
@@ -126,7 +126,7 @@ class Anura {
             iframe.setAttribute("style", "display: none");
             iframe.setAttribute("src", "/apps/python.app/lib.html");
             iframe.id = appname;
-            iframe.onload = async function() {
+            iframe.onload = async function () {
                 console.log("Called from python");
                 //@ts-ignore
                 const pythonInterpreter = await document
