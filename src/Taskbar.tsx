@@ -25,6 +25,7 @@ class Taskbar {
     );
     constructor() {}
     addShortcut(svg: string, launch: () => void, appID: string) {
+        
         const elm = (
             <li application={appID}>
                 <input
@@ -37,6 +38,14 @@ class Taskbar {
                     class="lightbar"
                     style="position: relative; bottom: 1px;"
                 ></div>
+                <div 
+                    class="hoverMenu"
+                    style="display: none;"
+                >
+                    <ul class="openWindows">
+            
+                    </ul>
+                </div>
             </li>
         );
         this.shortcutsTray.appendChild(elm);
