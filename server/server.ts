@@ -23,7 +23,7 @@ spawn(
     {
         shell: true,
         stdio: [process.stdout, null, process.stderr],
-    },
+    }
 );
 
 function shutdown() {
@@ -97,7 +97,7 @@ if (useAuth) {
                 demouser: password,
             },
             challenge: true,
-        }),
+        })
     );
 }
 
@@ -110,7 +110,7 @@ if (useParanoidAuth) {
                 demouser: passkey,
             },
             challenge: true,
-        }),
+        })
     );
 }
 
@@ -180,7 +180,7 @@ function sessionPassword(length: number) {
     let counter = 0;
     while (counter < length) {
         result += characters.charAt(
-            Math.floor(Math.random() * charactersLength),
+            Math.floor(Math.random() * charactersLength)
         );
         counter += 1;
     }
