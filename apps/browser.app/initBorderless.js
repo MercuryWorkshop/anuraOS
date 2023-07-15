@@ -18,7 +18,7 @@ function loadingScript(currentpath) {
         container.querySelector(".title").style["background-color"] = "rgba(0, 0, 0, 0)"
     }
     anura.apps['anura.browser'].windowinstance.push(browser.content.parentElement)
-    anura.updateTaskbar()
+    taskbar.updateTaskbar();
 
 }
 

@@ -87,7 +87,7 @@ class Anura {
                     (<any>iframe.contentWindow).anura = anura;
                     (<any>iframe.contentWindow).AliceWM = AliceWM;
                 }
-                anura.updateTaskbar();
+                taskbar.updateTaskbar();
             },
             icon: `${location}/${manifest.icon}`,
         };
@@ -103,50 +103,9 @@ class Anura {
 
         this.apps[manifest.package] = app;
 
-        if (this.initComplete) this.updateTaskbar();
+        if (this.initComplete) taskbar.updateTaskbar();
 
         return app;
-    }
-    updateTaskbar() {
-        taskbar.removeShortcuts();
-
-        const orderedApps = anura.settings.get("applist");
-        const takenCareOf: any = [];
-        for (const appID in orderedApps) {
-            const appName = orderedApps[appID];
-            if (appName in this.apps) {
-                const app = this.apps[appName];
-
-                const item = taskbar.addShortcut(
-                    app.icon,
-                    app.launch.bind(app),
-                    appName,
-                );
-                if (app.windowinstance.length !== 0) {
-                    item.getElementsByClassName(
-                        "lightbar",
-                    )[0].style.backgroundColor = "#FFF";
-                }
-                takenCareOf.push(appName);
-            }
-        }
-        for (const appName in anura.apps) {
-            const app = this.apps[appName];
-            console.log(appName);
-            if (
-                app.windowinstance.length !== 0 &&
-                !takenCareOf.includes(appName)
-            ) {
-                const item = taskbar.addShortcut(
-                    app.icon,
-                    app.launch.bind(app),
-                    appName,
-                );
-                item.getElementsByClassName(
-                    "lightbar",
-                )[0].style.backgroundColor = "#FFF";
-            }
-        }
     }
     removeStaleApps() {
         for (const appName in anura.apps) {
@@ -159,7 +118,7 @@ class Anura {
                 }
             });
         }
-        anura.updateTaskbar();
+        taskbar.updateTaskbar();
     }
     async python(appname: string) {
         return await new Promise((resolve, reject) => {

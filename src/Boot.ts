@@ -144,5 +144,5 @@ document.addEventListener("anura-login-completed", async () => {
         launcher.toggleVisible();
     });
     anura.initComplete = true;
-    anura.updateTaskbar();
+    taskbar.updateTaskbar();
 });
