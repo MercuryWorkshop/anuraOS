@@ -65,7 +65,7 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp("apps/vnc.app");
     anura.registerApp("apps/sshy.app"); // ssh will be reworked later
     anura.registerApp("apps/fsapp.app");
-    anura.registerApp("apps/chideNew.app");
+    anura.registerApp("apps/chideNewNew.app");
     anura.registerApp("apps/python.app");
     anura.registerApp("apps/workstore.app");
     anura.registerApp("apps/settings.app");

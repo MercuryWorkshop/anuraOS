@@ -1,3 +1,6 @@
+//@ts-ignore
+import Filer from "filer";
+
 export enum Type {
   FILE, // 文件
   DIRECTORY, // 目录
@@ -25,13 +28,14 @@ export interface Directory extends CommonProps {
  * 构建文件树
  * @param data fetch获取的结果
  */
-export function buildFileTree(data: any): Directory {
+
+export async function buildFileTree(data: any): Promise<Directory> {
   const dirs = [...data.directories]; // 目录数组
   const files = [...data.modules]; // 文件数组
   const cache = new Map<string, Directory | File>(); // 缓存
   // 待构建的根目录
   let rootDir: Directory = {
-    id: "0",
+    id: "/",
     name: "root",
     parentId: undefined,
     type: Type.DIRECTORY,
@@ -40,35 +44,82 @@ export function buildFileTree(data: any): Directory {
     files: []
   };
   // 将<id，目录对象>存入map
-  dirs.forEach((item) => {
-    let dir: Directory = {
-      id: item.shortid,
-      name: item.title,
-      parentId: item.directory_shortid === null ? "0" : item.directory_shortid,
-      type: Type.DIRECTORY,
-      depth: 0,
-      dirs: [],
-      files: []
-    };
+  // dirs.forEach((item) => {
+  //   let dir: Directory = {
+  //     id: item.shortid,
+  //     name: item.title,
+  //     parentId: item.directory_shortid === null ? "0" : item.directory_shortid,
+  //     type: Type.DIRECTORY,
+  //     depth: 0,
+  //     dirs: [],
+  //     files: []
+  //   };
+  //
+  //   cache.set(dir.id, dir);
+  // });
+  // files.forEach((item) => {
+  //   let file: File = {
+  //     id: item.shortid,
+  //     name: item.title,
+  //     parentId: item.directory_shortid === null ? "0" : item.directory_shortid,
+  //     type: Type.FILE,
+  //     depth: 0,
+  //     content: item.code
+  //   };
+  //   cache.set(file.id, file);
+  // });
+  async function recurse(dir: string) {
+    let entries: any = await new Promise(r => Filer.fs.readdir(dir, (_a: any, b: any) => r(b)));
+    for (let entry of entries) {
 
-    cache.set(dir.id, dir);
-  });
-  // 将<id，文件对象>存入map
-  files.forEach((item) => {
-    let file: File = {
-      id: item.shortid,
-      name: item.title,
-      parentId: item.directory_shortid === null ? "0" : item.directory_shortid,
-      type: Type.FILE,
-      depth: 0,
-      content: item.code
-    };
-    cache.set(file.id, file);
-  });
+      let path = dir + "/" + entry;
+      console.log(path);
+
+      let stat: any = await new Promise(r => Filer.fs.stat(path, (_a: any, b: any) => r(b)));
+      if (!stat) {
+        continue;
+      }
+      switch (stat.type) {
+        case "DIRECTORY": {
+          let d: Directory = {
+            id: path,
+            name: entry,
+            parentId: dir,
+            type: Type.DIRECTORY,
+            depth: 0,
+            dirs: [],
+            files: []
+          };
+
+          cache.set(d.id, d);
+
+          await recurse(path);
+          break;
+        }
+        case "FILE": {
+          let file: File = {
+            id: path,
+            name: entry,
+            parentId: dir,
+            type: Type.FILE,
+            depth: 0,
+            content: "a"
+          };
+
+          cache.set(file.id, file);
+          break;
+        }
+      }
+
+    }
+  }
+  console.log(cache);
+  await recurse("/");
+
   // 开始遍历构建文件树
   cache.forEach((value, key) => {
     // '0'表示文件或目录位于根目录
-    if (value.parentId === "0") {
+    if (value.parentId === "/") {
       if (value.type === Type.DIRECTORY) rootDir.dirs.push(value as Directory);
       else rootDir.files.push(value as File);
     } else {
@@ -79,8 +130,13 @@ export function buildFileTree(data: any): Directory {
     }
   });
 
+
+
   // 获取文件深度
   getDepth(rootDir, 0);
+  console.log(rootDir);
+  //@ts-ignore
+  window.f = Filer;
 
   return rootDir;
 }

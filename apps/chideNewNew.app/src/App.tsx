@@ -29,7 +29,9 @@ const App = () => {
     setRootDir(root);
   });
 
-  const onSelect = (file: File) => setSelectedFile(file);
+  const onSelect = (file: File) => {
+    setSelectedFile(file)
+  };
 
   return (
     <div>

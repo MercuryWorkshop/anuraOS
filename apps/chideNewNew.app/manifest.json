@@ -2,7 +2,7 @@
     "name": "chIDE",
     "type": "auto",
     "package": "anura.ide",
-    "index": "chide.html",
+    "index": "build/index.html",
     "icon": "visual-studio-code.svg",
     "wininfo":{
       "title":"chIDE",
