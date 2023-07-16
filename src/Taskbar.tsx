@@ -83,7 +83,7 @@ class Taskbar {
                 const shortcut = taskbar.addShortcut(
                     app.icon,
                     app.launch.bind(app),
-                    appName
+                    appName,
                 );
 
                 this.activeTray.appendChild(shortcut.element);
@@ -98,7 +98,7 @@ class Taskbar {
                 const shortcut = taskbar.addShortcut(
                     app.icon,
                     app.launch.bind(app),
-                    appName
+                    appName,
                 );
 
                 this.pinnedTray.appendChild(shortcut.element);
