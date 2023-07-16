@@ -142,7 +142,9 @@ class Taskbar {
                 app.windowinstance.length !== 0 &&
                 !this.rendered.includes(appName)
             ) {
-                console.log(appName + " is not rendered, but has a window open");
+                console.log(
+                    appName + " is not rendered, but has a window open",
+                );
                 // if there is a window of the app, and its icon hasn't been rendered, render it
                 const shortcut = taskbar.addShortcut(
                     app.icon,
