@@ -14,7 +14,7 @@ class Shortcut {
                 <div
                     class="lightbar"
                     bind:lightbar={this}
-                    style="position: relative; bottom: 1px; background-color:#FFF; display:none"
+                    style="position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%); display:none"
                 ></div>
                 <div class="hoverMenu" style="display: none;">
                     <ul class="openWindows"></ul>
@@ -26,7 +26,6 @@ class Shortcut {
 
 class Taskbar {
     activeTray: HTMLElement;
-    pinnedTray: HTMLElement;
 
     element = (
         <footer>
@@ -45,10 +44,6 @@ class Taskbar {
             </div>
             <nav id="taskbar-bar">
                 <ul bind:activeTray={this}>
-                    <li style="height: 40px; width=40px"></li>
-                </ul>
-                <div id="taskbar-separator"></div>
-                <ul bind:pinnedTray={this}>
                     <li style="height: 40px; width=40px"></li>
                 </ul>
             </nav>
@@ -75,33 +70,38 @@ class Taskbar {
         taskbar.removeShortcuts();
 
         const rendered = [];
-
-        for (const appName in anura.apps) {
-            const app = anura.apps[appName];
-            if (app.windowinstance.length !== 0) {
-                rendered.push(appName);
-                const shortcut = taskbar.addShortcut(
-                    app.icon,
-                    app.launch.bind(app),
-                    appName,
-                );
-
-                this.activeTray.appendChild(shortcut.element);
-                shortcut.lightbar.style.display = "block";
-            }
-        }
         const pinnedApps = anura.settings.get("applist");
         for (const appName of pinnedApps) {
-            if (appName in anura.apps && !rendered.includes(appName)) {
+            if (appName in anura.apps) {
+                rendered.push(appName);
                 const app = anura.apps[appName];
 
                 const shortcut = taskbar.addShortcut(
                     app.icon,
                     app.launch.bind(app),
-                    appName,
+                    appName
                 );
 
-                this.pinnedTray.appendChild(shortcut.element);
+                if (app.windowinstance.length !== 0) {
+                    shortcut.lightbar.style.display = "block";
+                }
+                this.activeTray.appendChild(shortcut.element);
+            }
+        }
+        for (const appName in anura.apps) {
+            const app = anura.apps[appName];
+            if (
+                app.windowinstance.length !== 0 &&
+                !rendered.includes(appName)
+            ) {
+                const shortcut = taskbar.addShortcut(
+                    app.icon,
+                    app.launch.bind(app),
+                    appName
+                );
+
+                this.activeTray.appendChild(shortcut.element);
+                shortcut.lightbar.style.display = "block";
             }
         }
     }
