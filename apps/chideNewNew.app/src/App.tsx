@@ -43,7 +43,12 @@ const App = () => {
             onSelect={onSelect}
           />
         </Sidebar>
-        <Code selectedFile={selectedFile} />
+        <div style={{ height: "100vh", width: "100%", display: "flex", flexDirection: "column" }}>
+          <Code selectedFile={selectedFile} />
+          <iframe src="/apps/term.app/term.html" style={{ width: "100%", border: "none" }}>
+
+          </iframe>
+        </div>
       </Main>
     </div>
   );

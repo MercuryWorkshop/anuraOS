@@ -21,6 +21,10 @@ window.addEventListener("load", async () => {
 
   const decoder = new TextDecoder("UTF-8");
   t.onTerminalReady = async () => {
+
+    let e = document.querySelector("iframe").contentDocument.querySelector("x-screen");
+    console.log(e);
+    e.style.overflow = "hidden"
     let io = t.io.push();
 
     t.setBackgroundColor("#141516");
@@ -46,6 +50,7 @@ window.addEventListener("load", async () => {
 
 
     htermNode.querySelector("iframe").style.position = "relative";
+    console.log("wtf")
 
 
   }

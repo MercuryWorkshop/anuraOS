@@ -46,7 +46,7 @@ export const Code = ({ selectedFile }: { selectedFile: File | undefined }) => {
 
 
   let editor = (<Editor
-    height="100vh"
+    height="100%"
     language={language}
     value={code}
     theme="vs-dark"
@@ -67,7 +67,8 @@ export const Code = ({ selectedFile }: { selectedFile: File | undefined }) => {
 }
 
 const Div = styled.div`
-  width: calc(100% - 250px);
+  width: calc(100%);
+  height: 100%;
   margin: 0;
   font-size: 16px;
 `
