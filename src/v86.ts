@@ -38,7 +38,7 @@ async function InitV86Backend(): Promise<V86Backend> {
                     (db
                         .transaction("parts", "readwrite")
                         .objectStore("parts")
-                        .put(buf, i).onsuccess = r)
+                        .put(buf, i).onsuccess = r),
             );
             i++;
 
@@ -54,7 +54,7 @@ async function InitV86Backend(): Promise<V86Backend> {
                 (db
                     .transaction("parts")
                     .objectStore("parts")
-                    .get("size").onsuccess = r)
+                    .get("size").onsuccess = r),
         )) as any
     ).target.result;
 
@@ -85,7 +85,7 @@ async function InitV86Backend(): Promise<V86Backend> {
                                 (db
                                     .transaction("parts")
                                     .objectStore("parts")
-                                    .get(i).onsuccess = r)
+                                    .get(i).onsuccess = r),
                         )) as any
                     ).target.result;
                     ro_slice_cache[i] = part;
@@ -96,7 +96,7 @@ async function InitV86Backend(): Promise<V86Backend> {
                 }
                 const slice = part.slice(
                     Math.max(0, start - i * SLICE_SIZE),
-                    end - i * SLICE_SIZE
+                    end - i * SLICE_SIZE,
                 );
                 if (buf == null) {
                     buf = slice;
@@ -132,7 +132,7 @@ async function InitV86Backend(): Promise<V86Backend> {
                                 (db
                                     .transaction("parts")
                                     .objectStore("parts")
-                                    .get(i).onsuccess = r)
+                                    .get(i).onsuccess = r),
                         )) as any
                     ).target.result;
                     tmpb = new Uint8Array(part);
@@ -152,7 +152,7 @@ async function InitV86Backend(): Promise<V86Backend> {
                                     (db
                                         .transaction("parts")
                                         .objectStore("parts")
-                                        .get(i).onsuccess = r)
+                                        .get(i).onsuccess = r),
                             )) as any
                         ).target.result;
                         tmpb = new Uint8Array(part);
@@ -173,9 +173,9 @@ async function InitV86Backend(): Promise<V86Backend> {
                                 .objectStore("parts")
                                 .put(
                                     part_cache[i].buffer,
-                                    parseInt(i)
-                                ).onsuccess = r)
-                    )
+                                    parseInt(i),
+                                ).onsuccess = r),
+                    ),
                 );
             }
             await Promise.all(promises);
@@ -234,7 +234,7 @@ class V86Backend {
             vga_memory_size: 8 * 1024 * 1024,
             screen_container:
                 anura.apps["anura.x86mgr"].windowinstance[0].querySelector(
-                    "#v86VGA"
+                    "#v86VGA",
                 ),
 
             initrd: {
@@ -305,7 +305,7 @@ class V86Backend {
         command: string,
         cols: number,
         rows: number,
-        onData: (string: string) => void
+        onData: (string: string) => void,
     ) {
         this.write_uint(rows, this.s_rows_phys_addr);
         this.write_uint(cols, this.s_cols_phys_addr);

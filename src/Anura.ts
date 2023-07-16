@@ -77,7 +77,7 @@ class Anura {
                     iframe.setAttribute(
                         "style",
                         "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
-                            `border: none; margin: 0; padding: 0; background-color: ${bg};`
+                            `border: none; margin: 0; padding: 0; background-color: ${bg};`,
                     );
                     iframe.setAttribute("src", `${location}/${manifest.index}`);
                     win.content.appendChild(iframe);
@@ -96,7 +96,7 @@ class Anura {
             manifest.name,
             manifest.icon ? `${location}/${manifest.icon}` : "",
             app.launch.bind(app),
-            manifest.package
+            manifest.package,
         );
 
         // taskbar.addShortcut(app.icon, app.launch.bind(app), manifest.package);
@@ -113,7 +113,7 @@ class Anura {
             app.windowinstance.forEach((element: any) => {
                 if (!element.parentElement) {
                     app.windowinstance.splice(
-                        app.windowinstance.indexOf(element)
+                        app.windowinstance.indexOf(element),
                     );
                 }
             });
