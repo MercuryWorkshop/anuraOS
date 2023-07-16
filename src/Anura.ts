@@ -87,7 +87,7 @@ class Anura {
                     (<any>iframe.contentWindow).anura = anura;
                     (<any>iframe.contentWindow).AliceWM = AliceWM;
                 }
-                taskbar.updateTaskbar();
+                taskbar.updateTaskbarPartial();
             },
             icon: `${location}/${manifest.icon}`,
         };
@@ -118,7 +118,7 @@ class Anura {
                 }
             });
         }
-        taskbar.updateTaskbar();
+        taskbar.updateTaskbarPartial();
     }
     async python(appname: string) {
         return await new Promise((resolve, reject) => {

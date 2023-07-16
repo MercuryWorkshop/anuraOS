@@ -66,14 +66,14 @@ class Taskbar {
             delete this.shortcuts[name];
         }
     }
+    rendered: string[] = [];
     updateTaskbar() {
         taskbar.removeShortcuts();
 
-        const rendered = [];
+        this.rendered = [];
         const pinnedApps = anura.settings.get("applist");
         for (const appName of pinnedApps) {
             if (appName in anura.apps) {
-                rendered.push(appName);
                 const app = anura.apps[appName];
 
                 const shortcut = taskbar.addShortcut(
@@ -86,13 +86,14 @@ class Taskbar {
                     shortcut.lightbar.style.display = "block";
                 }
                 this.activeTray.appendChild(shortcut.element);
+                this.rendered.push(appName);
             }
         }
         for (const appName in anura.apps) {
             const app = anura.apps[appName];
             if (
                 app.windowinstance.length !== 0 &&
-                !rendered.includes(appName)
+                !this.rendered.includes(appName)
             ) {
                 const shortcut = taskbar.addShortcut(
                     app.icon,
@@ -102,6 +103,67 @@ class Taskbar {
 
                 this.activeTray.appendChild(shortcut.element);
                 shortcut.lightbar.style.display = "block";
+                this.rendered.push(appName);
+            }
+        }
+    }
+    updateTaskbarPartial() {
+        const pinnedApps = anura.settings.get("applist");
+        // For our purposes, we will assume that all pinned apps are already rendered
+        for (const appName of pinnedApps) {
+            if (appName in anura.apps) {
+                let lightbar: HTMLElement;
+                if (this.rendered.includes(appName)) {
+                    const app = anura.apps[appName];
+
+                    // you could totally inject something into a query selector but like... why?
+                    const shortcut: HTMLElement = this.element.querySelector(
+                        `[application="${appName}"]`,
+                    );
+                    lightbar = (shortcut.getElementsByClassName(
+                        "lightbar",
+                    )[0] as HTMLElement)!;
+
+                    if (app.windowinstance.length !== 0) {
+                        lightbar.style.display = "block";
+                    } else {
+                        lightbar.style.display = "none";
+                    }
+                } else {
+                    // Something went wrong, this should never be false, fallback to rerender
+                    taskbar.updateTaskbar();
+                }
+            }
+        }
+
+        for (const appName in anura.apps) {
+            const app = anura.apps[appName];
+            if (
+                app.windowinstance.length !== 0 &&
+                !this.rendered.includes(appName)
+            ) {
+                console.log(appName + " is not rendered, but has a window open");
+                // if there is a window of the app, and its icon hasn't been rendered, render it
+                const shortcut = taskbar.addShortcut(
+                    app.icon,
+                    app.launch.bind(app),
+                    appName,
+                );
+
+                this.activeTray.appendChild(shortcut.element);
+                shortcut.lightbar.style.display = "block";
+                this.rendered.push(appName);
+            } else if (
+                app.windowinstance.length === 0 &&
+                this.rendered.includes(appName) &&
+                !pinnedApps.includes(appName)
+            ) {
+                // if there is no window of the app, the icon has been rendered, and the app is NOT pinned, remove the app
+                const shortcut: HTMLElement = this.element.querySelector(
+                    `[application="${appName}"]`,
+                );
+                shortcut.remove();
+                this.rendered.splice(this.rendered.indexOf(appName));
             }
         }
     }
