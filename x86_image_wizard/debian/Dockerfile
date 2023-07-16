@@ -64,3 +64,4 @@ RUN update-initramfs -u
 RUN systemctl enable anurad
 RUN systemctl enable anura-boot
 RUN systemctl enable dhcpcd
+RUN bash

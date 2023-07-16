@@ -166,6 +166,8 @@ int main(void) {
     free(body);
     free(method);
 
+    data = realloc(data, 1);
+
     /* always cleanup */
   }
   curl_easy_cleanup(curl);
