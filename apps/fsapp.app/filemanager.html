@@ -53,6 +53,34 @@
     <script>
         // implementing it myself was too hard so i just stole it from https://codepen.io/adam-lynch/pen/GaqgXP
 
+
+        const newcontextmenu = new anura.ContextMenu()
+        newcontextmenu.addItem("Get Info", function(){})
+        newcontextmenu.addItem("Pin to Shelf", function(){})
+        newcontextmenu.addItem("Refresh", function(){})
+        newcontextmenu.addItem("Cut", function(){
+            cut()
+        })
+        newcontextmenu.addItem("Copy", function(){
+            copy()
+        })
+        newcontextmenu.addItem("Paste", function(){
+            paste()
+        })
+        newcontextmenu.addItem("Delete", function(){
+            deleteFile()
+        })
+        newcontextmenu.addItem("Rename", function(){
+            rename()
+        })
+        newcontextmenu.addItem("Upload from PC", function(){
+            upload()
+        })
+        newcontextmenu.addItem("New folder", function(){
+            newFolder()
+        })
+        
+
         const min = 150;
         // The max (fr) values for grid-template-columns
         const columnTypeToRatioMap = {
@@ -357,20 +385,24 @@
                 return;
             }
             e.preventDefault();
-            var contextmenu = document.querySelector("#contextMenu");
-            contextmenu.style.left = e.pageX + "px";
-            contextmenu.style.top = e.pageY + "px";
-            const hasSelection = currentlySelected.length > 0;
-            for (const elt of contextmenu.getElementsByClassName("needs-selection")) {
-                elt.ariaDisabled = !hasSelection;
-                elt.onclick = hasSelection ? elt.onclick : null;
-            }
-            contextmenu.style.removeProperty("display");
+            const boundingRect = window.frameElement.getBoundingClientRect()
+            // var contextmenu = document.querySelector("#contextMenu");
+            
+            // contextmenu.style.left = e.pageX + "px";
+            // contextmenu.style.top = e.pageY + "px";
+            // const hasSelection = currentlySelected.length > 0;
+            // for (const elt of contextmenu.getElementsByClassName("needs-selection")) {
+            //     elt.ariaDisabled = !hasSelection;
+            //     elt.onclick = hasSelection ? elt.onclick : null;
+            // }
+            // contextmenu.style.removeProperty("display");
+            newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y)
         });
 
         document.addEventListener("click", (e) => {
             if (!document.querySelector("#contextMenu").contains(e.target) || !e.target.ariaDisabled) {
-                document.querySelector("#contextMenu").style.setProperty("display", "none");
+                // document.querySelector("#contextMenu").style.setProperty("display", "none");
+                newcontextmenu.hide()
             }
         });
         function newFolder(path) {
@@ -434,6 +466,21 @@
                     });
                 })
             }
+        }
+        function rename() {
+            const path = document.querySelector(".breadcrumbs").getAttribute("data-current-path")
+            if (currentlySelected.length == 0) {
+                alert("BUG: You have no files selected, right clicking does not select files")
+                return;
+            }
+            if (currentlySelected.length > 1) {
+                alert("Renaming only works with one file")
+                return;
+            }
+            fs.rename(currentlySelected[0].getAttribute("data-path"), `${path}/${prompt("filename:")}`, function(err) {
+                if (err) throw err;
+                reload()
+            })
         }
         loadPath('/');
 
