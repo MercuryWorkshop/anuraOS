@@ -58,7 +58,10 @@ document.addEventListener("anura-boot-completed", async () => {
 });
 
 document.addEventListener("anura-login-completed", async () => {
-    anura.registerExternalApp("apps/browser.app");
+    const browser = new BrowserApp();
+    anura.registerApp(browser);
+
+
     anura.registerExternalApp("apps/term.app");
     anura.registerExternalApp("apps/glxgears.app");
     anura.registerExternalApp("apps/eruda.app");
