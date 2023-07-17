@@ -5,13 +5,20 @@ class Settings {
         this.fs = fs;
         this.cache = inital;
 
+        navigator.serviceWorker.ready.then((isReady) => {
+            isReady.active!.postMessage({ anuraMsg: "readyToGetSettings" });
+        });
+
         navigator.serviceWorker.addEventListener("message", (event) => {
             console.log("ajskdhshdkas " + event);
             if (event.data.anura_target == "anura.settings.set") {
                 event.source?.postMessage({
                     anura_target: event.data.anura_target,
                     id: event.data.id,
-                    value: this.cache[event.data.prop],
+                    anuraMsg: {
+                        anuraMsg: "settingsValue",
+                        value: this.cache[event.data.prop],
+                    },
                 });
             }
         });
