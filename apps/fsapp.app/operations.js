@@ -485,7 +485,7 @@ function paste() {
                     fs.readFile(origin, function (err, data) {
                         if (err) throw err;
                         fs.writeFile(
-                            `${path}/${origin.split("/").slice("-1")[0]}`,
+                            `${path}/${origin.split("/").slice("-1")[0]}`, data
                         );
                         reload();
                     });
