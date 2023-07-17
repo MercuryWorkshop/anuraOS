@@ -40,19 +40,37 @@ class React {
         ...children: (HTMLElement | string)[]
     ): HTMLElement {
         const elm: HTMLElement = document.createElement(type);
+
         if (props) {
+            if ("if" in props) {
+                const cond = props["if"];
+
+                const then = props["then"];
+                elm.appendChild(then);
+
+                const elseelm = props["else"];
+                if (elseelm) elm.appendChild(elseelm);
+
+                handle(cond, (val) => {
+                    if (val) {
+                        then.style.display = "";
+                        elseelm?.style.display = "none";
+                    } else {
+                        then.style.display = "none";
+                        elseelm?.style.display = "";
+                    }
+                });
+
+                delete props["if"];
+                delete props["then"];
+                delete props["else"];
+            }
             for (const name in props) {
                 const prop = props[name];
                 if (typeof prop === "object" && "__alicejs_marker" in prop) {
-                    const p = prop[prop.length - 1];
-                    const closure = (target, prop, val) => {
-                        if (prop == p[1] && target == p[0]) {
-                            __assign_prop(elm, name, val);
-                        }
-                    };
-                    p[0].__listeners.push(closure);
-                    closure(p[0], p[1], p[0][p[1]]);
-                    console.log(prop);
+                    handle(prop, (val) => {
+                        __assign_prop(elm, name, val);
+                    });
                 } else {
                     __assign_prop(elm, name, prop);
                 }
@@ -60,14 +78,9 @@ class React {
         }
         for (const child of children) {
             if (typeof child === "object" && "__alicejs_marker" in child) {
-                const p = child[child.length - 1];
-                const closure = (target, prop, val) => {
-                    if (prop == p[1] && target == p[0]) {
-                        elm.innerText = val;
-                    }
-                };
-                p[0].__listeners.push(closure);
-                closure(p[0], p[1], p[0][p[1]]);
+                handle(child, (val) => {
+                    elm.innerText = val;
+                });
             } else if (child instanceof Node) {
                 elm.appendChild(child);
             } else {
@@ -84,7 +97,7 @@ function __assign_prop(elm, name, prop) {
         return;
     }
 
-    if (typeof prop === "function" && name.startsWith("on")) {
+    if (typeof prop === "function" && name.startsWith("on:")) {
         elm.addEventListener(name.substring(3), prop);
         return;
     }
@@ -102,7 +115,7 @@ function __assign_prop(elm, name, prop) {
         observer.observe(elm);
         return;
     }
-    if (name.startsWith("bind")) {
+    if (name.startsWith("bind:")) {
         const propname = name.substring(5);
         prop[propname] = elm;
         return;
@@ -127,3 +140,36 @@ function stateful(target: object): object {
 
     return proxy;
 }
+
+function handle(used: [any, any, any][], callback: () => void) {
+    const p = used[used.length - 1];
+    const closure = (target, prop, val) => {
+        if (prop == p[1] && target == p[0]) {
+            callback(val);
+        }
+    };
+    p[0].__listeners.push(closure);
+    closure(p[0], p[1], p[0][p[1]]);
+}
+
+// function x() {
+//     const b = stateful({
+//         counter: stateful({
+//             b: 1
+//         }),
+//         show: false,
+//     });
+//
+//     document.body.appendChild(<div>
+//         <div if={React.use(b.show)} then={<p>what</p>} else={<p>brh</p>}>
+//
+//         </div>
+//         <p>reactivity demo</p>
+//         <p asd={React.use(b.counter.b)}>the value of a is {React.use(b.counter.b)}</p>
+//         <button on:click={() => {
+//             b.counter.b += 1;
+//         }}>click me!</button>
+//     </div>);
+//     window.br = b;
+// }
+// window.addEventListener("load", x);
