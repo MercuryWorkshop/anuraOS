@@ -498,65 +498,65 @@
                     if (data.isDirectory()) {
                         // Ok so you are about to be in for a ride
                         sh.ls(origin, {
-                        recursive: true
-                    }, async function(err, entries) {
-                        if (err) throw err;
-                        let items = []
-                        let dirs = []
-                        entries.forEach(entry => {
-                            function recurse(dirnode, path) {
-                            dirnode.contents.forEach(entry => {
+                            recursive: true
+                        }, async function(err, entries) {
+                            if (err) throw err;
+                            let items = []
+                            let dirs = []
+                            entries.forEach(entry => {
+                                function recurse(dirnode, path) {
+                                    dirnode.contents.forEach(entry => {
+                                        if (entry.type === "DIRECTORY") {
+                                            recurse(entry, path + "/" + entry.name)
+                                            dirs.push(path + "/" + entry.name)
+                                        } else {
+                                            items.push(path + "/" + entry.name)
+                                        }
+
+                                    })
+                                }
                                 if (entry.type === "DIRECTORY") {
-                                    recurse(entry, path + "/" + entry.name)
-                                    dirs.push(path + "/" + entry.name)
+                                    recurse(entry, origin + '/' + entry.name)
+                                    dirs.push(origin + '/' + entry.name)
                                 } else {
-                                    items.push(path + "/" + entry.name)
+                                    items.push("/" + entry.name)
                                 }
 
                             })
+                            destItems = []
+                            destDirs = []
+                            numberToSubBy = origin.length
+                            for (item in items) {
+                                console.log(items[item])
+                                destItems.push(destination + '/' + items[item].slice(numberToSubBy))
                             }
-                            if (entry.type === "DIRECTORY") {
-                                recurse(entry, origin + '/' + entry.name)
-                                dirs.push(origin + '/' + entry.name)
-                            } else {
-                                items.push("/" + entry.name)
+                            for (dir in dirs) {
+                                destDirs.push(destination + '/' + dirs[dir].slice(numberToSubBy))
+                            }
+                            console.log("initials")
+                            console.log(items)
+                            console.log("destinations")
+                            console.log(destItems)
+                            console.log('directories to mkdir -p ')
+                            console.log(destDirs)
+                            for (dir in destDirs) {
+                                await new Promise((resolve, reject) =>{
+                                    sh.mkdirp(destDirs[dir], function (err) {
+                                        if (err) {
+                                            reject(err);
+                                            console.error(err)
+                                        }
+                                        resolve()
+                                    })
+                                }) 
                             }
 
-                        })
-                        destItems = []
-                        destDirs = []
-                        numberToSubBy = origin.length
-                        for (item in items) {
-                            console.log(items[item])
-                            destItems.push(destination + '/' + items[item].slice(numberToSubBy))
-                        }
-                        for (dir in dirs) {
-                            destDirs.push(destination + '/' + dirs[dir].slice(numberToSubBy))
-                        }
-                        console.log("initials")
-                        console.log(items)
-                        console.log("destinations")
-                        console.log(destItems)
-                        console.log('directories to mkdir -p ')
-                        console.log(destDirs)
-                        for (dir in destDirs) {
-                            await new Promise((resolve, reject) =>{
-                                sh.mkdirp(destDirs[dir], function (err) {
-                                    if (err) {
-                                        reject(err);
-                                        console.error(err)
-                                    }
-                                    resolve()
+                            for (item in items) {
+                                fs.readFile(items[item], function(err, data) {
+                                    fs.writeFile(destItems[item], data)
                                 })
-                            }) 
-                        }
-
-                        for (item in items) {
-                            fs.readFile(items[item], function(err, data) {
-                                fs.writeFile(destItems[item], data)
-                            })
-                        }
-                    });
+                            }
+                        });
                     } else {
                         fs.readFile(origin, function (err, data) {
                             if (err) throw err;
