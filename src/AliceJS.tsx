@@ -65,6 +65,29 @@ class React {
                 delete props["then"];
                 delete props["else"];
             }
+            if ("for" in props) {
+                const predicate = props["for"];
+                console.log(predicate);
+                const closure = props["do"];
+
+                const __elms = [];
+
+                handle(predicate, (val) => {
+                    for (const part of __elms) {
+                        part.remove();
+                    }
+                    for (const index in val) {
+                        const value = val[index];
+
+                        const part = closure(value, index, val);
+                        __elms.push(part);
+                        elm.appendChild(part);
+                    }
+                });
+
+                delete props["for"];
+                delete props["do"];
+            }
             for (const name in props) {
                 const prop = props[name];
                 if (typeof prop === "object" && "__alicejs_marker" in prop) {
@@ -76,15 +99,18 @@ class React {
                 }
             }
         }
+        // todo: proper selective repainting
         for (const child of children) {
             if (typeof child === "object" && "__alicejs_marker" in child) {
+                const text = document.createTextNode("");
+                elm.appendChild(text);
                 handle(child, (val) => {
-                    elm.innerText = val;
+                    text.textContent = val;
                 });
             } else if (child instanceof Node) {
                 elm.appendChild(child);
             } else {
-                elm.innerText = child;
+                elm.appendChild(document.createTextNode(child));
             }
         }
 
@@ -155,21 +181,40 @@ function handle(used: [any, any, any][], callback: () => void) {
 // function x() {
 //     const b = stateful({
 //         counter: stateful({
-//             b: 1
+//             b: 1,
 //         }),
 //         show: false,
+//         list: [],
 //     });
 //
-//     document.body.appendChild(<div>
-//         <div if={React.use(b.show)} then={<p>what</p>} else={<p>brh</p>}>
 //
-//         </div>
-//         <p>reactivity demo</p>
-//         <p asd={React.use(b.counter.b)}>the value of a is {React.use(b.counter.b)}</p>
-//         <button on:click={() => {
-//             b.counter.b += 1;
-//         }}>click me!</button>
-//     </div>);
+//     document.body.appendChild(
+//         <div>
+//             <div
+//                 if={React.use(b.show)}
+//                 then={<p>b.show is true</p>}
+//                 else={<p>b.show is fale</p>}
+//             />
+//
+//             <p>reactivity demo</p>
+//             <p asd={React.use(b.counter.b)}>
+//                 the value of a is {React.use(b.counter.b)}
+//             </p>
+//             <div for={React.use(b.list)} do={(v, i) => {
+//                 return (<p>
+//                     #{i} of "b.list" is {v}
+//                 </p>);
+//             }} />
+//             <button
+//                 on:click={() => {
+//
+//                     b.counter.b += 1;
+//                 }}
+//             >
+//                 click me!
+//             </button>
+//         </div>,
+//     );
 //     window.br = b;
 // }
 // window.addEventListener("load", x);
