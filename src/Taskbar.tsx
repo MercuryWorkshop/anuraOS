@@ -51,7 +51,7 @@ class Taskbar {
     );
 
     shortcuts: { [key: string]: Shortcut } = {};
-    constructor() {}
+    constructor() { }
     addShortcut(svg: string, launch: () => void, appID: string) {
         const shortcut = new Shortcut(svg, launch, appID);
         this.shortcuts[appID] = shortcut;
@@ -78,11 +78,11 @@ class Taskbar {
 
                 const shortcut = taskbar.addShortcut(
                     app.icon,
-                    app.launch.bind(app),
+                    app.open.bind(app),
                     appName,
                 );
 
-                if (app.windowinstance.length !== 0) {
+                if (app.windows.length !== 0) {
                     shortcut.lightbar.style.display = "block";
                 }
                 this.activeTray.appendChild(shortcut.element);
@@ -92,12 +92,12 @@ class Taskbar {
         for (const appName in anura.apps) {
             const app = anura.apps[appName];
             if (
-                app.windowinstance.length !== 0 &&
+                app.windows.length !== 0 &&
                 !this.rendered.includes(appName)
             ) {
                 const shortcut = taskbar.addShortcut(
                     app.icon,
-                    app.launch.bind(app),
+                    app.open.bind(app),
                     appName,
                 );
 
@@ -124,7 +124,7 @@ class Taskbar {
                         "lightbar",
                     )[0] as HTMLElement)!;
 
-                    if (app.windowinstance.length !== 0) {
+                    if (app.windows.length !== 0) {
                         lightbar.style.display = "block";
                     } else {
                         lightbar.style.display = "none";
@@ -139,7 +139,7 @@ class Taskbar {
         for (const appName in anura.apps) {
             const app = anura.apps[appName];
             if (
-                app.windowinstance.length !== 0 &&
+                app.windows.length !== 0 &&
                 !this.rendered.includes(appName)
             ) {
                 console.log(
@@ -148,7 +148,7 @@ class Taskbar {
                 // if there is a window of the app, and its icon hasn't been rendered, render it
                 const shortcut = taskbar.addShortcut(
                     app.icon,
-                    app.launch.bind(app),
+                    app.open.bind(app),
                     appName,
                 );
 
@@ -156,7 +156,7 @@ class Taskbar {
                 shortcut.lightbar.style.display = "block";
                 this.rendered.push(appName);
             } else if (
-                app.windowinstance.length === 0 &&
+                app.windows.length === 0 &&
                 this.rendered.includes(appName) &&
                 !pinnedApps.includes(appName)
             ) {

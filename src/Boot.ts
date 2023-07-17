@@ -58,17 +58,17 @@ document.addEventListener("anura-boot-completed", async () => {
 });
 
 document.addEventListener("anura-login-completed", async () => {
-    anura.registerApp("apps/browser.app");
-    anura.registerApp("apps/term.app");
-    anura.registerApp("apps/glxgears.app");
-    anura.registerApp("apps/eruda.app");
-    anura.registerApp("apps/vnc.app");
-    anura.registerApp("apps/sshy.app"); // ssh will be reworked later
-    anura.registerApp("apps/fsapp.app");
-    anura.registerApp("apps/chideNewNew.app");
-    anura.registerApp("apps/python.app");
-    anura.registerApp("apps/workstore.app");
-    anura.registerApp("apps/settings.app");
+    anura.registerExternalApp("apps/browser.app");
+    anura.registerExternalApp("apps/term.app");
+    anura.registerExternalApp("apps/glxgears.app");
+    anura.registerExternalApp("apps/eruda.app");
+    anura.registerExternalApp("apps/vnc.app");
+    anura.registerExternalApp("apps/sshy.app"); // ssh will be reworked later
+    anura.registerExternalApp("apps/fsapp.app");
+    anura.registerExternalApp("apps/chideNewNew.app");
+    anura.registerExternalApp("apps/python.app");
+    anura.registerExternalApp("apps/workstore.app");
+    anura.registerExternalApp("apps/settings.app");
 
     // Load all persistent sideloaded apps
     try {
@@ -77,7 +77,7 @@ document.addEventListener("anura-login-completed", async () => {
             if (files == undefined) return;
             files.forEach((file) => {
                 try {
-                    anura.registerApp("/fs/userApps/" + file);
+                    anura.registerExternalApp("/fs/userApps/" + file);
                 } catch (e) {
                     anura.logger.error("Anura failed to load an app " + e);
                 }
@@ -104,8 +104,8 @@ document.addEventListener("anura-login-completed", async () => {
 
     if (!anura.settings.get("x86-disabled")) {
         // v86 stable. can enable it by default now
-        const mgr = await anura.registerApp("apps/x86mgr.app");
-        await mgr?.launch();
+        const mgr = await anura.registerExternalApp("apps/x86mgr.app");
+        await mgr?.open();
 
         const finp: HTMLInputElement = React.createElement("input", {
             type: "file",
@@ -123,7 +123,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     (window as any).taskbar = taskbar;
 
-    document.addEventListener("contextmenu", function (e) {
+    document.addEventListener("contextmenu", function(e) {
         if (e.shiftKey) return;
         e.preventDefault();
         const menu: any = document.querySelector(".custom-menu");

@@ -43,68 +43,29 @@ class Anura {
         warn: console.warn.bind(console, "anuraOS:"),
         error: console.error.bind(console, "anuraOS:"),
     };
-    async registerApp(location: string) {
-        const resp = await fetch(`${location}/manifest.json`);
-        const manifest = await resp.json();
-
-        if (manifest.package in anura.apps) {
-            //  Application already registered
+    async registerApp(app: App) {
+        if (app.package in this.apps) {
             throw "Application already installed";
         }
 
-        const app = {
-            name: manifest.name,
-            location,
-            manifest,
-            windowinstance: [],
-            async launch() {
-                if (manifest.type == "manual") {
-                    // This type of application is discouraged for sure but is the most powerful
-                    const req = await fetch(`${location}/${manifest.handler}`);
-                    const data = await req.text();
-                    top!.window.eval(data);
-                    // top!.window.eval(`loadingScript("${location}",)`)
-                    // @ts-ignore
-                    loadingScript(location, app);
-                } else {
-                    //  checks if there is an existing minimized window
-                    // if (this.windowinstance) return;
-                    const win = AliceWM.create(this.manifest.wininfo);
-
-                    const iframe = document.createElement("iframe");
-                    // CSS injection here but it's no big deal
-                    const bg = manifest.background || "#202124";
-                    iframe.setAttribute(
-                        "style",
-                        "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
-                            `border: none; margin: 0; padding: 0; background-color: ${bg};`,
-                    );
-                    iframe.setAttribute("src", `${location}/${manifest.index}`);
-                    win.content.appendChild(iframe);
-
-                    this.windowinstance.push(win.content.parentElement);
-
-                    (<any>iframe.contentWindow).anura = anura;
-                    (<any>iframe.contentWindow).AliceWM = AliceWM;
-                }
-                taskbar.updateTaskbarPartial();
-            },
-            icon: `${location}/${manifest.icon}`,
-        };
-
         launcher.addShortcut(
-            manifest.name,
-            manifest.icon ? `${location}/${manifest.icon}` : "",
-            app.launch.bind(app),
-            manifest.package,
+            app.name,
+            app.icon,
+            app.open.bind(app),
+            app.package,
         );
+        taskbar.addShortcut(app.icon, app.open.bind(app), app.package);
 
-        // taskbar.addShortcut(app.icon, app.launch.bind(app), manifest.package);
-
-        this.apps[manifest.package] = app;
+        this.apps[app.package] = app;
 
         if (this.initComplete) taskbar.updateTaskbar();
-
+        return app;
+    }
+    async registerExternalApp(source: string): Promise<ExternalApp> {
+        const resp = await fetch(`${source}/manifest.json`);
+        const manifest = await resp.json();
+        const app = new ExternalApp(manifest, source);
+        anura.registerApp(app);
         return app;
     }
     ContextMenu = ContextMenuAPI;
@@ -164,4 +125,23 @@ class Anura {
         url += "/";
         return this.settings.get("wsproxy-url") || url; // let user define a systemwide wsproxy url to their prefered instance, fallback to obvious choice
     }
+}
+
+interface App {
+    open(): Promise<WMWindow | undefined>;
+    icon: string;
+    package: string;
+    name: string;
+    windows: WMWindow[];
+}
+
+interface AppManifest {
+    name: string;
+    type: "manual" | "auto";
+    package: string;
+    index?: string;
+    icon: string;
+    handler?: string;
+    background?: string;
+    wininfo: string | WindowInformation;
 }

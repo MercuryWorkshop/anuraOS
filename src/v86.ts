@@ -1,7 +1,7 @@
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
-V86Starter.prototype.serial1_send = function (a: string) {
+V86Starter.prototype.serial1_send = function(a: string) {
     for (let b = 0; b < a.length; b++)
         this.bus.send("serial1-input", a.charCodeAt(b));
 };
@@ -35,10 +35,10 @@ async function InitV86Backend(): Promise<V86Backend> {
                 .arrayBuffer();
             await new Promise(
                 (r) =>
-                    (db
-                        .transaction("parts", "readwrite")
-                        .objectStore("parts")
-                        .put(buf, i).onsuccess = r),
+                (db
+                    .transaction("parts", "readwrite")
+                    .objectStore("parts")
+                    .put(buf, i).onsuccess = r),
             );
             i++;
 
@@ -51,10 +51,10 @@ async function InitV86Backend(): Promise<V86Backend> {
     const size = (
         (await new Promise(
             (r) =>
-                (db
-                    .transaction("parts")
-                    .objectStore("parts")
-                    .get("size").onsuccess = r),
+            (db
+                .transaction("parts")
+                .objectStore("parts")
+                .get("size").onsuccess = r),
         )) as any
     ).target.result;
 
@@ -82,10 +82,10 @@ async function InitV86Backend(): Promise<V86Backend> {
                     part = (
                         (await new Promise(
                             (r) =>
-                                (db
-                                    .transaction("parts")
-                                    .objectStore("parts")
-                                    .get(i).onsuccess = r),
+                            (db
+                                .transaction("parts")
+                                .objectStore("parts")
+                                .get(i).onsuccess = r),
                         )) as any
                     ).target.result;
                     ro_slice_cache[i] = part;
@@ -129,10 +129,10 @@ async function InitV86Backend(): Promise<V86Backend> {
                     const part: ArrayBuffer = (
                         (await new Promise(
                             (r) =>
-                                (db
-                                    .transaction("parts")
-                                    .objectStore("parts")
-                                    .get(i).onsuccess = r),
+                            (db
+                                .transaction("parts")
+                                .objectStore("parts")
+                                .get(i).onsuccess = r),
                         )) as any
                     ).target.result;
                     tmpb = new Uint8Array(part);
@@ -149,10 +149,10 @@ async function InitV86Backend(): Promise<V86Backend> {
                         const part: ArrayBuffer = (
                             (await new Promise(
                                 (r) =>
-                                    (db
-                                        .transaction("parts")
-                                        .objectStore("parts")
-                                        .get(i).onsuccess = r),
+                                (db
+                                    .transaction("parts")
+                                    .objectStore("parts")
+                                    .get(i).onsuccess = r),
                             )) as any
                         ).target.result;
                         tmpb = new Uint8Array(part);
@@ -168,13 +168,13 @@ async function InitV86Backend(): Promise<V86Backend> {
                 promises.push(
                     new Promise(
                         (r) =>
-                            (db
-                                .transaction("parts", "readwrite")
-                                .objectStore("parts")
-                                .put(
-                                    part_cache[i].buffer,
-                                    parseInt(i),
-                                ).onsuccess = r),
+                        (db
+                            .transaction("parts", "readwrite")
+                            .objectStore("parts")
+                            .put(
+                                part_cache[i].buffer,
+                                parseInt(i),
+                            ).onsuccess = r),
                     ),
                 );
             }
@@ -187,7 +187,7 @@ async function InitV86Backend(): Promise<V86Backend> {
             });
         },
 
-        set_state: () => {},
+        set_state: () => { },
     };
 
     // @ts-ignore
@@ -228,12 +228,13 @@ class V86Backend {
         const Buffer = Filer.Buffer;
         const sh = new fs.Shell();
 
+        console.log(anura.apps["anura.x86mgr"]);
         this.emulator = new V86Starter({
             wasm_path: "/lib/v86.wasm",
             memory_size: 512 * 1024 * 1024,
             vga_memory_size: 8 * 1024 * 1024,
             screen_container:
-                anura.apps["anura.x86mgr"].windowinstance[0].querySelector(
+                anura.apps["anura.x86mgr"].windows[0].content.querySelector(
                     "#v86VGA",
                 ),
 
