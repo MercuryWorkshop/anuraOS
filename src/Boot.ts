@@ -104,8 +104,9 @@ document.addEventListener("anura-login-completed", async () => {
 
     if (!anura.settings.get("x86-disabled")) {
         // v86 stable. can enable it by default now
-        const mgr = await anura.registerExternalApp("apps/x86mgr.app");
-        await mgr?.open();
+
+        const mgr = new x86MgrApp();
+        await anura.registerApp(mgr);
 
         const finp: HTMLInputElement = React.createElement("input", {
             type: "file",
@@ -113,7 +114,7 @@ document.addEventListener("anura-login-completed", async () => {
         }) as unknown as HTMLInputElement;
         document.body.appendChild(finp);
 
-        anura.x86 = await InitV86Backend();
+        anura.x86 = await InitV86Backend(mgr);
     }
 
     document.body.appendChild(contextMenu.element);
