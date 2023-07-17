@@ -44,22 +44,30 @@ class React {
         if (props) {
             if ("if" in props) {
                 const cond = props["if"];
-
                 const then = props["then"];
-                elm.appendChild(then);
-
                 const elseelm = props["else"];
-                if (elseelm) elm.appendChild(elseelm);
 
-                handle(cond, (val) => {
-                    if (val) {
-                        then.style.display = "";
-                        elseelm?.style.display = "none";
-                    } else {
-                        then.style.display = "none";
-                        elseelm?.style.display = "";
+                if (typeof cond === "object" && "__alicejs_marker" in cond) {
+                    elm.appendChild(then);
+
+                    if (elseelm) elm.appendChild(elseelm);
+
+                    handle(cond, (val) => {
+                        if (val) {
+                            then.style.display = "";
+                            elseelm?.style.display = "none";
+                        } else {
+                            then.style.display = "none";
+                            elseelm?.style.display = "";
+                        }
+                    });
+                } else {
+                    if (cond) {
+                        elm.appendChild(then);
+                    } else if (elseelm) {
+                        elm.appendChild(elseelm);
                     }
-                });
+                }
 
                 delete props["if"];
                 delete props["then"];
@@ -67,23 +75,33 @@ class React {
             }
             if ("for" in props) {
                 const predicate = props["for"];
-                console.log(predicate);
                 const closure = props["do"];
 
-                const __elms = [];
+                if (
+                    typeof predicate === "object" &&
+                    "__alicejs_marker" in predicate
+                ) {
+                    const __elms = [];
+                    handle(predicate, (val) => {
+                        for (const part of __elms) {
+                            part.remove();
+                        }
+                        for (const index in val) {
+                            const value = val[index];
 
-                handle(predicate, (val) => {
-                    for (const part of __elms) {
-                        part.remove();
-                    }
-                    for (const index in val) {
-                        const value = val[index];
+                            const part = closure(value, index, val);
+                            __elms.push(part);
+                            elm.appendChild(part);
+                        }
+                    });
+                } else {
+                    for (const index in predicate) {
+                        const value = predicate[index];
 
-                        const part = closure(value, index, val);
-                        __elms.push(part);
+                        const part = closure(value, index, predicate);
                         elm.appendChild(part);
                     }
-                });
+                }
 
                 delete props["for"];
                 delete props["do"];
@@ -177,14 +195,14 @@ function handle(used: [any, any, any][], callback: () => void) {
     p[0].__listeners.push(closure);
     closure(p[0], p[1], p[0][p[1]]);
 }
-
+//
 // function x() {
 //     const b = stateful({
 //         counter: stateful({
 //             b: 1,
 //         }),
 //         show: false,
-//         list: [],
+//         list: ["test element", "element 2", "another list element", "element 4"],
 //     });
 //
 //
@@ -200,7 +218,7 @@ function handle(used: [any, any, any][], callback: () => void) {
 //             <p asd={React.use(b.counter.b)}>
 //                 the value of a is {React.use(b.counter.b)}
 //             </p>
-//             <div for={React.use(b.list)} do={(v, i) => {
+//             <div for={b.list} do={(v, i) => {
 //                 return (<p>
 //                     #{i} of "b.list" is {v}
 //                 </p>);
