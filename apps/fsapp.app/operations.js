@@ -339,6 +339,9 @@ function paste() {
 
                               })
                           }
+
+                          const topLevelFolder = origin;
+                          dirs.push(origin)
                           if (entry.type === "DIRECTORY") {
                               recurse(entry, origin + '/' + entry.name)
                               dirs.push(origin + '/' + entry.name)
@@ -349,13 +352,13 @@ function paste() {
                       })
                       destItems = []
                       destDirs = []
-                      numberToSubBy = origin.length
+                      numberToSubBy = origin.length - origin.split('/').pop().length;
+                      
                       for (item in items) {
-                          console.log(items[item])
                           destItems.push(destination + '/' + items[item].slice(numberToSubBy))
                       }
                       for (dir in dirs) {
-                          destDirs.push(destination + '/' + dirs[dir].slice(numberToSubBy))
+                        destDirs.push(destination + '/' + dirs[dir].slice(numberToSubBy))
                       }
                       console.log("initials")
                       console.log(items)
