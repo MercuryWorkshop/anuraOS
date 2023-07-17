@@ -107,6 +107,7 @@ class Anura {
 
         return app;
     }
+    ContextMenu = ContextMenuAPI;
     removeStaleApps() {
         for (const appName in anura.apps) {
             const app = anura.apps[appName];
