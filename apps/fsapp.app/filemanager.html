@@ -556,14 +556,16 @@
                                     fs.writeFile(destItems[item], data)
                                 })
                             }
+                            reload()
                         });
                     } else {
                         fs.readFile(origin, function (err, data) {
                             if (err) throw err;
                             fs.writeFile(`${path}/${origin.split("/").slice("-1")[0]}`)
+                            reload()
                         })
                     }
-                    reload()
+                    
                 })
             })
         }
