@@ -55,13 +55,13 @@ class React {
                         if (then) {
                             if (val) {
                                 then.style.display = "";
-                                // @ts-ignore
-                                elseelm?.style.display = "none";
+                                if (elseelm)
+                                    elseelm.style.display = "none";
                             } else {
                                 then.style.display = "none";
 
-                                // @ts-ignore
-                                elseelm?.style.display = "";
+                                if (elseelm)
+                                    elseelm.style.display = "";
                             }
                         } else {
                             if (val) {
@@ -104,7 +104,6 @@ class React {
                     let lastpredicate: any = [];
                     handle(predicate, (val) => {
                         if (Object.keys(val).length == lastpredicate.length) {
-                            console.log("SELECTIVErepaint");
                             let i = 0;
                             for (const index in val) {
                                 if (
@@ -112,8 +111,6 @@ class React {
                                 ) {
                                     continue;
                                 }
-                                console.log("selectively" + i);
-                                console.log(__elms[i]);
                                 const part = closure(val[index], index, val);
                                 elm.replaceChild(part, __elms[i]!);
                                 __elms[i] = part;
@@ -121,8 +118,6 @@ class React {
                                 i += 1;
                             }
                         } else {
-                            console.log("repaint");
-                            // @ts-ignore
                             for (const part of __elms) {
                                 part.remove();
                             }
@@ -166,7 +161,6 @@ class React {
             if (typeof child === "object" && "__alicejs_marker" in child) {
                 const text = document.createTextNode("");
                 elm.appendChild(text);
-
                 // @ts-ignore
                 handle(child, (val) => {
                     text.textContent = val;
@@ -207,8 +201,7 @@ function deepEqual(object1: any, object2: any) {
 function isObject(object: any) {
     return object != null && typeof object === "object";
 }
-// @ts-ignore
-function __assign_prop(elm, name, prop) {
+function __assign_prop(elm: HTMLElement, name: string, prop: any) {
     if (name === "class") {
         elm.className = prop;
         return;
