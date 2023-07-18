@@ -54,7 +54,7 @@ class Anura {
             app.open.bind(app),
             app.package,
         );
-        taskbar.addShortcut(app.icon, app.open.bind(app), app.package);
+        taskbar.addShortcut(app);
 
         this.apps[app.package] = app;
 
@@ -72,10 +72,10 @@ class Anura {
     removeStaleApps() {
         for (const appName in anura.apps) {
             const app = anura.apps[appName];
-            app.windowinstance.forEach((element: any) => {
-                if (!element.parentElement) {
-                    app.windowinstance.splice(
-                        app.windowinstance.indexOf(element),
+            app.windows.forEach((win: any) => {
+                if (!win.element.parentElement) {
+                    app.windows.splice(
+                        app.windows.indexOf(win),
                     );
                 }
             });
@@ -88,7 +88,7 @@ class Anura {
             iframe.setAttribute("style", "display: none");
             iframe.setAttribute("src", "/apps/python.app/lib.html");
             iframe.id = appname;
-            iframe.onload = async function () {
+            iframe.onload = async function() {
                 console.log("Called from python");
                 //@ts-ignore
                 const pythonInterpreter = await document
