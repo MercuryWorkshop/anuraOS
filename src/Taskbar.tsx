@@ -60,22 +60,13 @@ class Taskbar {
                                 />
                                 <div
                                     class="lightbar"
-                                    style="position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%)"
-                                    if={app.windows.length > 0}
+                                    style={"position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%)" + (app.windows.length == 0 ? ";visibility:hidden" : "")}
                                     bind:lightbar={this}
                                 ></div>
                             </li>
                         );
                     }}
                 >
-                    <li>
-                        <li style="height: 40px; width: 40px"></li>
-                        <div
-                            class="lightbar"
-                            bind:lightbar={this}
-                            style="position: relative; bottom: 1px; background-color:rgba(0,0,0,0); width:50%; left:50%; transform:translateX(-50%);"
-                        ></div>
-                    </li>
                 </ul>
             </nav>
         </footer>
