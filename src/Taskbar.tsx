@@ -78,44 +78,10 @@ class Taskbar {
         this.shortcuts[app.package] = shortcut;
         return shortcut;
     }
-    #updateShortcutWindows(app: any, windowList?: HTMLElement) {
-        if (windowList === undefined) {
-            const shortcut: HTMLElement = this.element.querySelector(
-                `[application="${app.manifest.package}"]`,
-            );
-            windowList = shortcut.getElementsByClassName(
-                "hoverMenu",
-            )[0] as HTMLElement;
-        }
-        windowList.innerHTML = ""; // Remove all child elements
-        for (const instance in app.windowinstance) {
-            windowList.appendChild(
-                <div
-                    class="custom-menu-item"
-                    on:click={function () {
-                        app.windowinstance[instance].style!.display = "";
-                    }}
-                >
-                    Window {instance}
-                </div>,
-            );
-        }
-    }
-    #updateShortcutLightbar(app: any, lightbar?: HTMLElement) {
-        if (lightbar === undefined) {
-            const shortcut: HTMLElement = this.element.querySelector(
-                `[application="${app.manifest.package}"]`,
-            );
-            lightbar = shortcut.getElementsByClassName(
-                "lightbar",
-            )[0] as HTMLElement;
-        }
-        if (app.windowinstance.length !== 0) lightbar.style.display = "block";
-        else lightbar.style.display = "none";
-    }
     killself() {
         this.element.remove();
     }
+    updateTaskbar() {}
     removeShortcuts() {
         for (const name in this.shortcuts) {
             this.shortcuts[name]!.element.remove();
