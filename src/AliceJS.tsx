@@ -115,6 +115,9 @@ class React {
 
                                 i += 1;
                             }
+                            lastpredicate = Object.keys(
+                                JSON.parse(JSON.stringify(val)),
+                            );
                         } else {
                             for (const part of __elms) {
                                 part.remove();
@@ -126,10 +129,9 @@ class React {
                                 __elms.push(part);
                                 elm.appendChild(part);
                             }
+
+                            lastpredicate = [];
                         }
-                        lastpredicate = Object.keys(
-                            JSON.parse(JSON.stringify(val)),
-                        );
                     });
                 } else {
                     for (const index in predicate) {
