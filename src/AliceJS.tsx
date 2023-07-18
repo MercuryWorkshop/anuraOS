@@ -100,20 +100,43 @@ class React {
                     typeof predicate === "object" &&
                     "__alicejs_marker" in predicate
                 ) {
-                    // @ts-ignore
-                    const __elms = [];
+                    const __elms: HTMLElement[] = [];
+                    let lastpredicate: any = [];
                     handle(predicate, (val) => {
-                        // @ts-ignore
-                        for (const part of __elms) {
-                            part.remove();
-                        }
-                        for (const index in val) {
-                            const value = val[index];
+                        if (Object.keys(val).length == lastpredicate.length) {
+                            console.log("SELECTIVErepaint");
+                            let i = 0;
+                            for (const index in val) {
+                                if (
+                                    deepEqual(val[index], lastpredicate[index])
+                                ) {
+                                    continue;
+                                }
+                                console.log("selectively" + i);
+                                console.log(__elms[i]);
+                                const part = closure(val[index], index, val);
+                                elm.replaceChild(part, __elms[i]!);
+                                __elms[i] = part;
 
-                            const part = closure(value, index, val);
-                            __elms.push(part);
-                            elm.appendChild(part);
+                                i += 1;
+                            }
+                        } else {
+                            console.log("repaint");
+                            // @ts-ignore
+                            for (const part of __elms) {
+                                part.remove();
+                            }
+                            for (const index in val) {
+                                const value = val[index];
+
+                                const part = closure(value, index, val);
+                                __elms.push(part);
+                                elm.appendChild(part);
+                            }
                         }
+                        lastpredicate = Object.keys(
+                            JSON.parse(JSON.stringify(val)),
+                        );
                     });
                 } else {
                     for (const index in predicate) {
@@ -158,7 +181,32 @@ class React {
         return elm;
     }
 }
+function deepEqual(object1: any, object2: any) {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
 
+    if (keys1.length !== keys2.length) {
+        return false;
+    }
+
+    for (const key of keys1) {
+        const val1 = object1[key];
+        const val2 = object2[key];
+        const areObjects = isObject(val1) && isObject(val2);
+        if (
+            (areObjects && !deepEqual(val1, val2)) ||
+            (!areObjects && val1 !== val2)
+        ) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function isObject(object: any) {
+    return object != null && typeof object === "object";
+}
 // @ts-ignore
 function __assign_prop(elm, name, prop) {
     if (name === "class") {
