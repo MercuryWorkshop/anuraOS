@@ -60,20 +60,24 @@ class Taskbar {
                                 />
                                 <div
                                     class="lightbar"
-                                    style={"position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%)" + (app.windows.length == 0 ? ";visibility:hidden" : "")}
+                                    style={
+                                        "position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%)" +
+                                        (app.windows.length == 0
+                                            ? ";visibility:hidden"
+                                            : "")
+                                    }
                                     bind:lightbar={this}
                                 ></div>
                             </li>
                         );
                     }}
-                >
-                </ul>
+                ></ul>
             </nav>
         </footer>
     );
 
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() { }
+    constructor() {}
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;
