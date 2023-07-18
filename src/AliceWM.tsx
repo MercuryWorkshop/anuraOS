@@ -354,7 +354,7 @@ class WMWindow {
         this.element.style.top = "0";
         this.element.style.left = "0";
         this.element.style.width = `${width}px`;
-        this.element.style.height = `${height - 53}px`;
+        this.element.style.height = `${height - 61}px`;
 
         this.maximizeImg.src = "/assets/window/restore.svg";
 
