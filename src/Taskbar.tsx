@@ -35,9 +35,11 @@ class Shortcut {
                     bind:lightbar={this}
                     style="position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%); display:none"
                 ></div>
-                <div class="hoverMenu" style="display: none;">
-                    <ul class="openWindows"></ul>
-                </div>
+                <div
+                    class="hoverMenu custom-menu"
+                    bind:windowList={this}
+                    style=""
+                ></div>
             </li>
         );
     }
@@ -76,6 +78,41 @@ class Taskbar {
         this.shortcuts[app.package] = shortcut;
         return shortcut;
     }
+    #updateShortcutWindows(app: any, windowList?: HTMLElement) {
+        if (windowList === undefined) {
+            const shortcut: HTMLElement = this.element.querySelector(
+                `[application="${app.manifest.package}"]`,
+            );
+            windowList = shortcut.getElementsByClassName(
+                "hoverMenu",
+            )[0] as HTMLElement;
+        }
+        windowList.innerHTML = ""; // Remove all child elements
+        for (const instance in app.windowinstance) {
+            windowList.appendChild(
+                <div
+                    class="custom-menu-item"
+                    on:click={function () {
+                        app.windowinstance[instance].style!.display = "";
+                    }}
+                >
+                    Window {instance}
+                </div>,
+            );
+        }
+    }
+    #updateShortcutLightbar(app: any, lightbar?: HTMLElement) {
+        if (lightbar === undefined) {
+            const shortcut: HTMLElement = this.element.querySelector(
+                `[application="${app.manifest.package}"]`,
+            );
+            lightbar = shortcut.getElementsByClassName(
+                "lightbar",
+            )[0] as HTMLElement;
+        }
+        if (app.windowinstance.length !== 0) lightbar.style.display = "block";
+        else lightbar.style.display = "none";
+    }
     killself() {
         this.element.remove();
     }
@@ -83,36 +120,6 @@ class Taskbar {
         for (const name in this.shortcuts) {
             this.shortcuts[name]!.element.remove();
             delete this.shortcuts[name];
-        }
-    }
-    rendered: string[] = [];
-    updateTaskbar() {
-        taskbar.removeShortcuts();
-
-        this.rendered = [];
-        const pinnedApps = anura.settings.get("applist");
-        for (const appName of pinnedApps) {
-            if (appName in anura.apps) {
-                const app = anura.apps[appName];
-
-                const shortcut = taskbar.addShortcut(app);
-
-                if (app.windows.length !== 0) {
-                    shortcut.lightbar.style.display = "block";
-                }
-                this.activeTray.appendChild(shortcut.element);
-                this.rendered.push(appName);
-            }
-        }
-        for (const appName in anura.apps) {
-            const app = anura.apps[appName];
-            if (app.windows.length !== 0 && !this.rendered.includes(appName)) {
-                const shortcut = taskbar.addShortcut(app);
-
-                this.activeTray.appendChild(shortcut.element);
-                shortcut.lightbar.style.display = "block";
-                this.rendered.push(appName);
-            }
         }
     }
 }
