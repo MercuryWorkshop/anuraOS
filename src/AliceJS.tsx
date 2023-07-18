@@ -1,12 +1,11 @@
-//@ts-nocheck
 namespace JSX {
     export type IntrinsicElements = { [index: string]: any };
 }
 
-let __effects = [];
+let __effects: any = [];
 
 class React {
-    static get use() {
+    static get use(): (sink: any) => any {
         // documentation, in case anyone looks in here. the below is a simple way you would use reactivity.
         //// let reactive = stateful({
         ////      a: 1
@@ -27,7 +26,7 @@ class React {
         // the createElement function will then add a listener to the set() hook of the stateful proxy
         // React.createElement will then re-run all the important stuff once the reaction has happened
         __effects = [];
-        return () => {
+        return (sink: any) => {
             const tmp = __effects;
             __effects = [];
             tmp.__alicejs_marker = true;
@@ -48,24 +47,44 @@ class React {
                 const elseelm = props["else"];
 
                 if (typeof cond === "object" && "__alicejs_marker" in cond) {
-                    elm.appendChild(then);
+                    if (then) elm.appendChild(then);
 
                     if (elseelm) elm.appendChild(elseelm);
 
-                    handle(cond, (val) => {
-                        if (val) {
-                            then.style.display = "";
-                            elseelm?.style.display = "none";
+                    handle(cond, (val: any) => {
+                        if (then) {
+                            if (val) {
+                                then.style.display = "";
+                                // @ts-ignore
+                                elseelm?.style.display = "none";
+                            } else {
+                                then.style.display = "none";
+
+                                // @ts-ignore
+                                elseelm?.style.display = "";
+                            }
                         } else {
-                            then.style.display = "none";
-                            elseelm?.style.display = "";
+                            if (val) {
+                                elm.style.display = "";
+                            } else {
+                                elm.style.display = "none";
+                            }
                         }
                     });
                 } else {
-                    if (cond) {
-                        elm.appendChild(then);
-                    } else if (elseelm) {
-                        elm.appendChild(elseelm);
+                    if (then) {
+                        if (cond) {
+                            elm.appendChild(then);
+                        } else if (elseelm) {
+                            elm.appendChild(elseelm);
+                        }
+                    } else {
+                        if (!cond) {
+                            elm.style.display = "none";
+                            // todo: make this not exist
+                            // @ts-ignore
+                            return document.createTextNode("");
+                        }
                     }
                 }
 
@@ -81,8 +100,12 @@ class React {
                     typeof predicate === "object" &&
                     "__alicejs_marker" in predicate
                 ) {
+
+                    // @ts-ignore
                     const __elms = [];
                     handle(predicate, (val) => {
+
+                        // @ts-ignore
                         for (const part of __elms) {
                             part.remove();
                         }
@@ -122,6 +145,8 @@ class React {
             if (typeof child === "object" && "__alicejs_marker" in child) {
                 const text = document.createTextNode("");
                 elm.appendChild(text);
+
+                // @ts-ignore
                 handle(child, (val) => {
                     text.textContent = val;
                 });
@@ -135,6 +160,8 @@ class React {
         return elm;
     }
 }
+
+// @ts-ignore
 function __assign_prop(elm, name, prop) {
     if (name === "class") {
         elm.className = prop;
@@ -167,14 +194,19 @@ function __assign_prop(elm, name, prop) {
 
     elm.setAttribute(name, prop);
 }
-function stateful(target: object): object {
+function stateful<T>(target: T): T {
+
+    // @ts-ignore
     target.__listeners = [];
+    // @ts-ignore
     const proxy = new Proxy(target, {
         get(target, prop, reciever) {
             __effects.push([target, prop, reciever]);
             return Reflect.get(target, prop, reciever);
         },
         set(target, prop, val) {
+
+            // @ts-ignore
             for (const listener of target.__listeners) {
                 listener(target, prop, val);
             }
@@ -182,12 +214,13 @@ function stateful(target: object): object {
         },
     });
 
+    // @ts-ignore
     return proxy;
 }
 
-function handle(used: [any, any, any][], callback: () => void) {
-    const p = used[used.length - 1];
-    const closure = (target, prop, val) => {
+function handle(used: [any, any, any][], callback: (val: any) => void) {
+    const p = used[used.length - 1]!;
+    const closure = (target: any, prop: any, val: any) => {
         if (prop == p[1] && target == p[0]) {
             callback(val);
         }
