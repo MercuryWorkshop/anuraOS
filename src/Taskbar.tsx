@@ -61,6 +61,41 @@ class Taskbar {
         this.shortcuts[appID] = shortcut;
         return shortcut;
     }
+    #updateShortcutWindows(app: any, windowList?: HTMLElement) {
+        if (windowList === undefined) {
+            const shortcut: HTMLElement = this.element.querySelector(
+                `[application="${app.manifest.package}"]`,
+            );
+            windowList = shortcut.getElementsByClassName(
+                "hoverMenu",
+            )[0] as HTMLElement;
+        }
+        windowList.innerHTML = ""; // Remove all child elements
+        for (const instance in app.windowinstance) {
+            windowList.appendChild(
+                <div
+                    class="custom-menu-item"
+                    on:click={function () {
+                        app.windowinstance[instance].style!.display = "";
+                    }}
+                >
+                    Window {instance}
+                </div>,
+            );
+        }
+    }
+    #updateShortcutLightbar(app: any, lightbar?: HTMLElement) {
+        if (lightbar === undefined) {
+            const shortcut: HTMLElement = this.element.querySelector(
+                `[application="${app.manifest.package}"]`,
+            );
+            lightbar = shortcut.getElementsByClassName(
+                "lightbar",
+            )[0] as HTMLElement;
+        }
+        if (app.windowinstance.length !== 0) lightbar.style.display = "block";
+        else lightbar.style.display = "none";
+    }
     killself() {
         this.element.remove();
     }
@@ -86,23 +121,8 @@ class Taskbar {
                     appName,
                 );
 
-                if (app.windowinstance.length !== 0) {
-                    shortcut.lightbar.style.display = "block";
-                }
-                shortcut.windowList.innerHTML = ""; // Remove all child elements
-                for (const instance in app.windowinstance) {
-                    shortcut.windowList.appendChild(
-                        <div
-                            class="custom-menu-item"
-                            on:click={function () {
-                                app.windowinstance[instance].style!.display =
-                                    "";
-                            }}
-                        >
-                            Window {instance}
-                        </div>,
-                    );
-                }
+                this.#updateShortcutLightbar(app, shortcut.lightbar);
+                this.#updateShortcutWindows(app, shortcut.windowList);
 
                 this.activeTray.appendChild(shortcut.element);
                 this.rendered.push(appName);
@@ -120,23 +140,11 @@ class Taskbar {
                     appName,
                 );
 
-                this.activeTray.appendChild(shortcut.element);
                 shortcut.lightbar.style.display = "block";
 
-                shortcut.windowList.innerHTML = ""; // Remove all child elements
-                for (const instance in app.windowinstance) {
-                    shortcut.windowList.appendChild(
-                        <div
-                            class="custom-menu-item"
-                            on:click={function () {
-                                app.windowinstance[instance].style!.display =
-                                    "";
-                            }}
-                        >
-                            Window {instance}
-                        </div>,
-                    );
-                }
+                this.#updateShortcutWindows(app, shortcut.windowList);
+
+                this.activeTray.appendChild(shortcut.element);
                 this.rendered.push(appName);
             }
         }
@@ -146,42 +154,11 @@ class Taskbar {
         // For our purposes, we will assume that all pinned apps are already rendered
         for (const appName of pinnedApps) {
             if (appName in anura.apps) {
-                let lightbar: HTMLElement;
-                let windowList: HTMLElement;
                 if (this.rendered.includes(appName)) {
                     const app = anura.apps[appName];
 
-                    // you could totally inject something into a query selector but like... why?
-                    const shortcut: HTMLElement = this.element.querySelector(
-                        `[application="${appName}"]`,
-                    );
-                    lightbar = (shortcut.getElementsByClassName(
-                        "lightbar",
-                    )[0] as HTMLElement)!;
-                    windowList = (shortcut.getElementsByClassName(
-                        "hoverMenu",
-                    )[0] as HTMLElement)!;
-
-                    windowList.innerHTML = ""; // Remove all child elements
-                    if (app.windowinstance.length !== 0) {
-                        lightbar.style.display = "block";
-                        for (const instance in app.windowinstance) {
-                            windowList.appendChild(
-                                <div
-                                    class="custom-menu-item"
-                                    on:click={function () {
-                                        app.windowinstance[
-                                            instance
-                                        ].style!.display = "";
-                                    }}
-                                >
-                                    Window {instance}
-                                </div>,
-                            );
-                        }
-                    } else {
-                        lightbar.style.display = "none";
-                    }
+                    this.#updateShortcutLightbar(app);
+                    this.#updateShortcutWindows(app);
                 } else {
                     // Something went wrong, this should never be false, fallback to rerender
                     taskbar.updateTaskbar();
@@ -195,9 +172,6 @@ class Taskbar {
                 app.windowinstance.length !== 0 &&
                 !this.rendered.includes(appName)
             ) {
-                console.log(
-                    appName + " is not rendered, but has a window open",
-                );
                 // if there is a window of the app, and its icon hasn't been rendered, render it
                 const shortcut = taskbar.addShortcut(
                     app.icon,
@@ -208,20 +182,7 @@ class Taskbar {
                 this.activeTray.appendChild(shortcut.element);
                 shortcut.lightbar.style.display = "block";
 
-                shortcut.windowList.innerHTML = ""; // Remove all child elements
-                for (const instance in app.windowinstance) {
-                    shortcut.windowList.appendChild(
-                        <div
-                            class="custom-menu-item"
-                            on:click={function () {
-                                app.windowinstance[instance].style!.display =
-                                    "block";
-                            }}
-                        >
-                            Window {instance}
-                        </div>,
-                    );
-                }
+                this.#updateShortcutWindows(app, shortcut.windowList);
                 this.rendered.push(appName);
             } else if (
                 app.windowinstance.length === 0 &&
@@ -239,28 +200,7 @@ class Taskbar {
                 !pinnedApps.includes(appName) &&
                 this.rendered.includes(appName)
             ) {
-                // App has been rendered, is not pinnned, has atleast one window, here we'll just update the window list
-                const shortcut: HTMLElement = this.element.querySelector(
-                    `[application="${appName}"]`,
-                );
-                const windowList = (shortcut.getElementsByClassName(
-                    "hoverMenu",
-                )[0] as HTMLElement)!;
-
-                windowList.innerHTML = ""; // Remove all child elements
-                for (const instance in app.windowinstance) {
-                    windowList.appendChild(
-                        <div
-                            class="custom-menu-item"
-                            on:click={function () {
-                                app.windowinstance[instance].style!.display =
-                                    "block";
-                            }}
-                        >
-                            Window {instance}
-                        </div>,
-                    );
-                }
+                this.#updateShortcutWindows(app);
             }
         }
     }
