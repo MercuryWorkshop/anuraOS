@@ -68,7 +68,8 @@ class Taskbar {
                         );
                     }}
                 >
-                    <li style="height: 40px; width=40px">
+                    <li>
+                        <input class="showDialog" />
                         <div
                             class="lightbar"
                             bind:lightbar={this}
@@ -81,7 +82,7 @@ class Taskbar {
     );
 
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() {}
+    constructor() { }
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;
