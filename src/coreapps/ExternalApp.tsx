@@ -26,7 +26,7 @@ class ExternalApp implements App {
             iframe.setAttribute(
                 "style",
                 "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
-                    `border: none; margin: 0; padding: 0; background-color: ${bg};`,
+                `border: none; margin: 0; padding: 0; background-color: ${bg};`,
             );
             console.log(this.source);
             iframe.setAttribute("src", `${this.source}/${this.manifest.index}`);
@@ -37,7 +37,7 @@ class ExternalApp implements App {
             (iframe.contentWindow as any).anura = anura;
             (iframe.contentWindow as any).AliceWM = AliceWM;
 
-            taskbar.updateTaskbarPartial();
+            taskbar.updateTaskbar();
             return win;
         } else {
             // This type of application is reserved only for scripts meant for hacking anura internals
@@ -47,7 +47,7 @@ class ExternalApp implements App {
             // @ts-ignore
             loadingScript(this.source, this);
 
-            taskbar.updateTaskbarPartial();
+            taskbar.updateTaskbar();
 
             return;
         }

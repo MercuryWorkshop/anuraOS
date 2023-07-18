@@ -68,9 +68,9 @@ class Taskbar {
             </nav>
         </footer>
     );
- 
+
     shortcuts: { [key: string]: Shortcut } = {};
-    constructor() {}
+    constructor() { }
     addShortcut(app: App) {
         const shortcut = new Shortcut(app);
         this.shortcuts[app.package] = shortcut;
@@ -115,7 +115,5 @@ class Taskbar {
             }
         }
     }
-    updateTaskbarPartial() {
-        this.updateTaskbar();
-    }
+
 }

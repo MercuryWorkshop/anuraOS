@@ -80,7 +80,7 @@ class Anura {
                 }
             });
         }
-        taskbar.updateTaskbarPartial();
+        taskbar.updateTaskbar();
     }
     async python(appname: string) {
         return await new Promise((resolve, reject) => {

@@ -25,6 +25,8 @@ class x86MgrApp implements App {
 
         win.content.appendChild(this.screen_container);
 
+        taskbar.updateTaskbar();
+
         return win;
     }
 }
