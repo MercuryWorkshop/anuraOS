@@ -5,8 +5,6 @@
 importScripts("/nohost-sw.js");
 importScripts("/sw.js");
 
-
-
 var cacheenabled = false;
 
 // workbox.setConfig({ modulePathPrefix: "/assets/libs/workbox" });
@@ -24,8 +22,13 @@ addEventListener("message", (event) => {
         // console.log(callback)
         callback(event.data.value);
     }
+    if (event.data.anura_target === "anura.cache") {
+        cacheenabled = event.data.value;
+    }
+    if (event.data.anura_target === "anura.cache.invalidate") {
+        invalidateCache();
+    }
 });
-
 async function handleRequests({ url, request, event, params }) {
     let clients = (await self.clients.matchAll()).filter(
         (v) => new URL(v.url).pathname === "/",
@@ -55,18 +58,23 @@ async function handleRequests({ url, request, event, params }) {
 
     return new Response(resp.body);
 }
+function invalidateCache() {
+    let sh = new fs.Shell();
+    sh.rm("/anura_files", { recursive: true });
+    console.log("cache invalidated!");
+}
 
 workbox.routing.registerRoute(
     /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE))/,
     ({ url }) => {
-        if (!cacheenabled)
-            return;
+        if (!cacheenabled) return;
         if (url.pathname === "/") {
             url.pathname = "/index.html";
         }
         const basepath = "/anura_files";
         let sh = new fs.Shell();
         // this is more annoying than it needs to be because this uses an old-ass compiler which doesn't like promises
+        // (not any more i rewrote it)
         let path = decodeURI(url.pathname);
         let localreq = serve(`${basepath}${path}`, htmlFormatter, false);
         return new Promise((resolve) => {
@@ -104,26 +112,3 @@ workbox.routing.registerRoute(
     },
     "GET",
 );
-let done = false;
-addEventListener("message", (event) => {
-    console.log("Recieved Message");
-    console.log(event);
-    if (event.data.anuraMsg && event.data.anuraMsg.value) {
-        // regCache();
-    }
-    if (done) return;
-    console.log("Starting request for anura settings");
-    if (event.data.anuraMsg === "readyToGetSettings") {
-        self.clients.matchAll().then((clients) => {
-            clients.forEach((client) => {
-                done = true;
-                console.log("Posting Message");
-                client.postMessage({
-                    anura_target: "anura.settings.set",
-                    id: 1,
-                    prop: "use-sw-cache",
-                });
-            });
-        });
-    }
-});

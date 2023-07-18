@@ -34,9 +34,25 @@ let anura: Anura;
 
 window.addEventListener("load", async () => {
     document.body.appendChild(bootsplash.element);
+    if (!navigator.serviceWorker.controller)
+        window.location.reload();
 
-    // await sleep(2000);
+    const conf = await (await fetch("/config.json")).json();
+    const milestone = await (await fetch("/MILESTONE")).text();
+    const instancemilestone = conf.milestone;
+
+
     anura = await Anura.new();
+    if (anura.settings.get("milestone") != milestone || anura.settings.get("instancemilestone") != instancemilestone) {
+        await anura.settings.set("milestone", milestone);
+        await anura.settings.set("instancemilestone", instancemilestone);
+        navigator.serviceWorker.controller!.postMessage({
+            anura_target: "anura.cache.invalidate",
+        });
+        console.log("invalidated cache");
+        window.location.reload();
+    }
+
     (window as any).anura = anura;
 
     bootsplash.element.remove();
@@ -126,7 +142,8 @@ document.addEventListener("anura-login-completed", async () => {
 
     (window as any).taskbar = taskbar;
 
-    document.addEventListener("contextmenu", function (e) {
+    document.addEventListener("contextmenu", function(e) {
+
         if (e.shiftKey) return;
         e.preventDefault();
         const menu: any = document.querySelector(".custom-menu");

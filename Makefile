@@ -53,7 +53,7 @@ css: src/*.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
 bundle: tsc css lint
 	mkdir -p build/artifacts
-	git rev-parse HEAD > build/MILESTONE
+	bash -c "cat /dev/urandom | tr -dc '[:alpha:]' | fold -w $${1:-50} | head -n 1 > build/MILESTONE"
 lint:
 	npx prettier -w --loglevel error .
 	npx eslint . --fix

@@ -6,21 +6,14 @@ class Settings {
         this.cache = inital;
 
         navigator.serviceWorker.ready.then((isReady) => {
-            isReady.active!.postMessage({ anuraMsg: "readyToGetSettings" });
-        });
-
-        navigator.serviceWorker.addEventListener("message", (event) => {
-            console.log("ajskdhshdkas " + event);
-            if (event.data.anura_target == "anura.settings.set") {
-                event.source?.postMessage({
-                    anura_target: event.data.anura_target,
-                    id: event.data.id,
-                    anuraMsg: {
-                        anuraMsg: "settingsValue",
-                        value: this.cache[event.data.prop],
-                    },
-                });
-            }
+            isReady.active!.postMessage({
+                anura_target: "anura.cache",
+                value: this.cache["use-sw-cache"],
+            });
+            console.log(
+                "ANURA-SW: For this boot, cache will be " +
+                    (this.cache["use-sw-cache"] ? "enabled" : "disabled"),
+            );
         });
     }
 
@@ -32,7 +25,6 @@ class Settings {
     static async new(fs: FilerFS) {
         const initial = this.defaultSettings();
         try {
-            console.log(fs);
             const text = await fs.readFileSync("/anura_settings.json");
             Object.assign(initial, JSON.parse(text));
         } catch (e) {
