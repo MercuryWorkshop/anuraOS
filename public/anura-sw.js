@@ -5,8 +5,6 @@
 importScripts("/nohost-sw.js");
 importScripts("/sw.js");
 
-
-
 var cacheenabled = false;
 
 // workbox.setConfig({ modulePathPrefix: "/assets/libs/workbox" });
@@ -59,8 +57,7 @@ async function handleRequests({ url, request, event, params }) {
 workbox.routing.registerRoute(
     /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE))/,
     ({ url }) => {
-        if (!cacheenabled)
-            return;
+        if (!cacheenabled) return;
         if (url.pathname === "/") {
             url.pathname = "/index.html";
         }

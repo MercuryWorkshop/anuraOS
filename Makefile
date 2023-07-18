@@ -58,7 +58,7 @@ lint:
 	npx prettier -w --loglevel error .
 	npx eslint . --fix
 prod: all
-	npx google-closure-compiler --js build/assets/libs/filer.min.js build/lib/Taskbar.js build/lib/AliceJS.js build/lib/api/NotificationService.js build/lib/ContextMenu.js build/lib/oobe/OobeAssetsStep.js build/lib/AliceWM.js build/lib/api/Settings.js build/lib/Launcher.js build/lib/oobe/OobeView.js build/lib/libv86.js build/lib/v86.js build/lib/Bootsplash.js build/lib/oobe/OobeWelcomeStep.js build/lib/Anura.js --js_output_file public/dist.js
+	npx google-closure-compiler --js build/lib/libv86.js build/assets/libs/filer.min.js build/lib/coreapps/ExternalApp.js build/lib/coreapps/x86MgrApp.js build/lib/coreapps/SettingsApp.js build/lib/coreapps/BrowserApp.js build/lib/v86.js build/lib/AliceWM.js build/lib/AliceJS.js build/lib/Taskbar.js build/lib/ContextMenu.js build/lib/api/ContextMenuAPI.js build/lib/Launcher.js build/lib/Bootsplash.js build/lib/oobe/OobeView.js build/lib/oobe/OobeWelcomeStep.js build/lib/oobe/OobeAssetsStep.js build/lib/Utils.js build/lib/Anura.js build/lib/api/Settings.js build/lib/api/NotificationService.js build/lib/Boot.js --js_output_file public/dist.js
 server: FORCE
 	cd server; npx ts-node server.ts
 
