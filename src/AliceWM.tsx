@@ -377,7 +377,7 @@ class WMWindow {
 }
 
 const AliceWM = {
-    create: function(givenWinInfo: string | WindowInformation) {
+    create: function (givenWinInfo: string | WindowInformation) {
         // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
         // Default param
         let wininfo: WindowInformation = {
