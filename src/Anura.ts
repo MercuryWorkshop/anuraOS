@@ -60,7 +60,7 @@ class Anura {
         const resp = await fetch(`${source}/manifest.json`);
         const manifest = await resp.json();
         const app = new ExternalApp(manifest, source);
-        anura.registerApp(app);
+        await anura.registerApp(app); // This will let us capture error messages
         return app;
     }
     ContextMenu = ContextMenuAPI;

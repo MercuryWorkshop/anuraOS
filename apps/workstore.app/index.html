@@ -13,7 +13,7 @@
 <body>
     <div class="container">
         <div class="sidebar">
-            <textarea name="" id="repos">https://8000-mercuryworkshop-alicewm-rmklwfllsv5.ws-us99.gitpod.io/</textarea>
+            <textarea name="" id="repos">https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/</textarea>
             <button type="button" onclick="loadPathFromUser()">Reload</button>
         </div>
         <div class="fileView">
@@ -247,11 +247,11 @@
                                 console.log(await zipEntry.async("arraybuffer"))
                                 fs.writeFile(`${path}/${zipEntry.name}`, Buffer.from(await zipEntry.async("arraybuffer")))
                                 if (zipEntry.name == "manifest.json") {
-                                    await anura.registerApp('/fs' + path)
+                                    await anura.registerExternalApp('/fs' + path)
                                     anura.notifications.add(
                                         {
-                                            title: "Application Installed for Session",
-                                            description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`,
+                                            title: "Application Installed",
+                                            description: `Application ${fileSelected.getAttribute("file-name")} has been installed.`,
                                             timeout: 50000
                                         })
                                 }
@@ -267,11 +267,11 @@
                     } catch (e) {
                         console.error(e)
                         try {
-                            await anura.registerApp('/fs' + path)
+                            await anura.registerExternalApp('/fs' + path)
                             anura.notifications.add(
                                 {
-                                    title: "Application Installed for Session",
-                                    description: `Application ${fileSelected.getAttribute("file-name")} has been installed temporarily, it will go away on refresh`,
+                                    title: "Application Installed",
+                                    description: `Application ${fileSelected.getAttribute("file-name")} has been installed.`,
                                     timeout: 50000
                                 })
                         } catch (e) {
@@ -297,6 +297,7 @@
         });
 
         function loadPathFromUser() {
+            anura.settings.set("repos", document.getElementById('repos').value)
             document.getElementById('repos').value.split('\n').forEach(repo => {
                 try {
                     console.log('Repo being loaded ' + repo)
@@ -310,6 +311,13 @@
                 }
             })
         }
+
+        if (anura.settings.get("repos")) {
+            anura.settings.set("repos", document.getElementById('repos').value)
+        } else {
+            document.getElementById('repos').value = anura.settings.get("repos")
+        }
+
         loadPathFromUser()
 
     </script>

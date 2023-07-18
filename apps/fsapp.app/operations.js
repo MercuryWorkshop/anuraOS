@@ -195,7 +195,7 @@ async function fileAction(selected) {
                     .slice("-1")[0] == "app"
             ) {
                 try {
-                    await anura.registerApp(
+                    await anura.registerExternalApp(
                         `/fs${fileSelected.getAttribute("data-path")}`.replace(
                             "//",
                             "/",
