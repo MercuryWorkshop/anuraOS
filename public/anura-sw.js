@@ -5,6 +5,10 @@
 importScripts("/nohost-sw.js");
 importScripts("/sw.js");
 
+
+
+var cacheenabled = false;
+
 // workbox.setConfig({ modulePathPrefix: "/assets/libs/workbox" });
 
 workbox.routing.registerRoute(/\/x86\/(.*)/, (req) => {
@@ -52,60 +56,60 @@ async function handleRequests({ url, request, event, params }) {
     return new Response(resp.body);
 }
 
-function regCache() {
-    workbox.routing.registerRoute(
-        /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE))/,
-        ({ url }) => {
-            if (url.pathname === "/") {
-                url.pathname = "/index.html";
-            }
-            const basepath = "/anura_files";
-            let sh = new fs.Shell();
-            // this is more annoying than it needs to be because this uses an old-ass compiler which doesn't like promises
-            let path = decodeURI(url.pathname);
-            let localreq = serve(`${basepath}${path}`, htmlFormatter, false);
-            return new Promise((resolve) => {
-                localreq.then((r) => {
-                    if (r.ok) {
-                        resolve(r);
-                    } else {
-                        fetch(url)
-                            .then((f) => {
-                                resolve(f);
-                                if (f.ok) {
-                                    let cl = f.clone();
-                                    cl.arrayBuffer().then((b) => {
-                                        sh.mkdirp(
-                                            `${basepath}${path.replace(
-                                                /[^/]*$/g,
-                                                "",
-                                            )}`,
-                                            () => {
-                                                fs.writeFile(
-                                                    `${basepath}${path}`,
-                                                    Buffer(b),
-                                                );
-                                            },
-                                        );
-                                    });
-                                }
-                            })
-                            .catch((a) => {
-                                console.error(`Could not fetch? ${a}`);
-                            });
-                    }
-                });
+workbox.routing.registerRoute(
+    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE))/,
+    ({ url }) => {
+        if (!cacheenabled)
+            return;
+        if (url.pathname === "/") {
+            url.pathname = "/index.html";
+        }
+        const basepath = "/anura_files";
+        let sh = new fs.Shell();
+        // this is more annoying than it needs to be because this uses an old-ass compiler which doesn't like promises
+        let path = decodeURI(url.pathname);
+        let localreq = serve(`${basepath}${path}`, htmlFormatter, false);
+        return new Promise((resolve) => {
+            localreq.then((r) => {
+                if (r.ok) {
+                    resolve(r);
+                } else {
+                    fetch(url)
+                        .then((f) => {
+                            resolve(f);
+                            if (f.ok) {
+                                let cl = f.clone();
+                                cl.arrayBuffer().then((b) => {
+                                    sh.mkdirp(
+                                        `${basepath}${path.replace(
+                                            /[^/]*$/g,
+                                            "",
+                                        )}`,
+                                        () => {
+                                            fs.writeFile(
+                                                `${basepath}${path}`,
+                                                Buffer(b),
+                                            );
+                                        },
+                                    );
+                                });
+                            }
+                        })
+                        .catch((a) => {
+                            console.error(`Could not fetch? ${a}`);
+                        });
+                }
             });
-        },
-        "GET",
-    );
-}
+        });
+    },
+    "GET",
+);
 let done = false;
 addEventListener("message", (event) => {
     console.log("Recieved Message");
     console.log(event);
     if (event.data.anuraMsg && event.data.anuraMsg.value) {
-        regCache();
+        // regCache();
     }
     if (done) return;
     console.log("Starting request for anura settings");

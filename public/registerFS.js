@@ -13,7 +13,7 @@ function serverInstall() {
     fs.writeFile(
         "/test.txt",
         "This file exists to test the filesystem",
-        function (err) {
+        function(err) {
             if (err) console.error(err);
         },
     );
@@ -26,22 +26,22 @@ function serverInstall() {
 if ("serviceWorker" in navigator) {
     //
     //
-    const proxy = new Workbox("/x86-proxy.js");
+    const proxy = new Workbox("/anura-sw.js");
     proxy.addEventListener("waiting", (event) => {
         // proxy.messageSkipWaiting();
     });
-    proxy.addEventListener("activate", function (event) {
+    proxy.addEventListener("activate", function(event) {
         console.log("ash");
         event.waitUntil(
-            caches.keys().then(function (cacheNames) {
+            caches.keys().then(function(cacheNames) {
                 return Promise.all(
                     cacheNames
-                        .filter(function (cacheName) {
+                        .filter(function(cacheName) {
                             // Return true if you want to remove this cache,
                             // but remember that caches are shared across
                             // the whole origin
                         })
-                        .map(function (cacheName) {
+                        .map(function(cacheName) {
                             return caches.delete(cacheName);
                         }),
                 );
