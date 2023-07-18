@@ -5,10 +5,12 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle
+all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json
 
 full: all prod rootfs
 
+public/config.json:
+	cp config.default.json public/config.json
 build/bootstrap:
 	mkdir -p build/lib
 	npm i
@@ -51,6 +53,7 @@ css: src/*.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
 bundle: tsc css lint
 	mkdir -p build/artifacts
+	git rev-parse HEAD > build/MILESTONE
 lint:
 	npx prettier -w --loglevel error .
 	npx eslint . --fix

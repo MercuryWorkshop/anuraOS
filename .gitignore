@@ -25,3 +25,4 @@ server/passkey
 package-lock.json
 .direnv
 result
+public/config.json

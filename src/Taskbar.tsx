@@ -69,7 +69,7 @@ class Taskbar {
                     }}
                 >
                     <li>
-                        <input class="showDialog" />
+                        <li style="height: 40px; width: 40px"></li>
                         <div
                             class="lightbar"
                             bind:lightbar={this}
