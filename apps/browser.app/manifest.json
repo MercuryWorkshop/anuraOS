@@ -1,8 +1,0 @@
-{
-  "name": "AboutBrowser",
-  "type": "manual",
-  "package": "anura.browser",
-  "index": "../../browser.html",
-  "icon": "chrome.svg",
-  "handler": "initBorderless.js"
-}

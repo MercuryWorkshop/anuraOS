@@ -9,7 +9,7 @@ V86Starter.prototype.serial1_send = function (a: string) {
 const SLICE_SIZE = 2 ** 17 * 32;
 const BUF_SIZE = 256;
 
-async function InitV86Backend(): Promise<V86Backend> {
+async function InitV86Backend(mgr: x86MgrApp): Promise<V86Backend> {
     // all right! time to explain what goes on here
 
     const request = indexedDB.open("image", 2);
@@ -193,7 +193,7 @@ async function InitV86Backend(): Promise<V86Backend> {
     // @ts-ignore
     fakefile.__proto__ = File.prototype;
 
-    return new V86Backend(fakefile);
+    return new V86Backend(fakefile, mgr);
 }
 
 class V86Backend {
@@ -220,7 +220,7 @@ class V86Backend {
     emulator;
     //
 
-    constructor(virt_hda: FakeFile) {
+    constructor(virt_hda: FakeFile, mgr: x86MgrApp) {
         this.virt_hda = virt_hda;
 
         const fs = anura.fs;
@@ -232,10 +232,7 @@ class V86Backend {
             wasm_path: "/lib/v86.wasm",
             memory_size: 512 * 1024 * 1024,
             vga_memory_size: 8 * 1024 * 1024,
-            screen_container:
-                anura.apps["anura.x86mgr"].windowinstance[0].querySelector(
-                    "#v86VGA",
-                ),
+            screen_container: mgr.screen_container,
 
             initrd: {
                 url: "/fs/initrd.img",

@@ -371,6 +371,9 @@ class WMWindow {
     minimize() {
         this.element.style.display = "none";
     }
+    unminimize() {
+        this.element.style.display = "";
+    }
 }
 
 const AliceWM = {
