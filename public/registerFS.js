@@ -23,77 +23,47 @@ function serverInstall() {
  * Register the nohost service worker, passing `route` or other options.
  */
 
-if ("serviceWorker" in navigator) {
-    const wb = new Workbox("/nohost-sw.js?debug");
+if ('serviceWorker' in navigator) {
 
-    // Wait on the server to be fully ready to handle routing requests
-    wb.controlling.then(serverReady);
-
-    // Deal with first-run install, if necessary
-    wb.addEventListener("installed", (event) => {
-        if (!event.isUpdate) {
-            serverInstall();
-        }
+    //
+    //
+    const proxy = new Workbox('/x86-proxy.js');
+    proxy.addEventListener("waiting", event => {
+        // proxy.messageSkipWaiting();
     });
+    proxy.addEventListener('activate', function(event) {
+        console.log("ash");
+        event.waitUntil(
+            caches.keys().then(function(cacheNames) {
+                return Promise.all(
+                    cacheNames.filter(function(cacheName) {
+                        // Return true if you want to remove this cache,
+                        // but remember that caches are shared across
+                        // the whole origin
+                    }).map(function(cacheName) {
+                        return caches.delete(cacheName);
+                    })
+                );
+            })
+        );
+    });
+    proxy.register();
+    // console.log(proxy);
+    // console.log("rg?")
+    //
+    // const wb = new Workbox('/nohost-sw.js?debug');
+    //
+    // // Wait on the server to be fully ready to handle routing requests
+    // wb.controlling.then(serverReady);
+    //
+    // // Deal with first-run install, if necessary
+    // wb.addEventListener('installed', (event) => {
+    //   if (!event.isUpdate) {
+    //     serverInstall();
+    //   }
+    // });
+    //
+    // wb.register();
 
-    wb.register();
+
 }
-function regCache() {
-    workbox.routing.registerRoute(
-        /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE))/,
-        ({ url }) => {
-            if (url.pathname === "/") {
-                url.pathname = "/index.html";
-            }
-            const basepath = "/anura_files";
-            let sh = new fs.Shell();
-            // this is more annoying than it needs to be because this uses an old-ass compiler which doesn't like promises
-            let path = decodeURI(url.pathname);
-            let localreq = serve(`${basepath}${path}`, htmlFormatter, false);
-            return new Promise(resolve => {
-                localreq.then(r => {
-                    if (r.ok) {
-                        resolve(r);
-                    } else {
-                        fetch(url).then(f => {
-                            resolve(f);
-                            if (f.ok) {
-                                let cl = f.clone();
-                                cl.arrayBuffer().then(b => {
-                                    sh.mkdirp(`${basepath}${path.replace(/[^/]*$/g, "")}`, () => {
-                                        fs.writeFile(`${basepath}${path}`, Buffer(b));
-                                    });
-                                });
-                            }
-                        }).catch(a => {
-                            console.error(`Could not fetch? ${a}`);
-                        });
-                    }
-                });
-            });
-        },
-        'GET'
-    );
-}
-let done = false;
-addEventListener("message", event => {
-    console.log("Recieved Message")
-    console.log(event)
-    if (event.data.anuraMsg && event.data.anuraMsg.value) {
-        regCache();
-    }
-    if (done) return;
-    console.log("Starting request for anura settings")
-    if (event.data.anuraMsg === "readyToGetSettings") {
-        self.clients.matchAll().then(clients => {
-            clients.forEach(client => {
-                done = true;
-                console.log("Posting Message")
-                client.postMessage({ anura_target: "anura.settings.set", id: 1, prop: "use-sw-cache" });
-            });
-        });
-    }
-
-});
-
-

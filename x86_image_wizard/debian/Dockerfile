@@ -1,9 +1,11 @@
 FROM i386/debian:bookworm
 
+
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update && \
     apt --yes --no-install-recommends install \
+
         linux-image-686 grub2 systemd \
         libterm-readline-perl-perl \
         gcc make libc6-dev \
@@ -21,6 +23,8 @@ RUN apt update && \
         wget curl \
         net-tools \
         mesa-utils libgl1-mesa-dri \
+        openssl \
+        libcurl4-openssl-dev \
     && \
     touch /root/.Xdefaults && \
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
@@ -36,6 +40,7 @@ RUN apt update && \
     systemctl disable apt-daily-upgrade.timer && \
     echo "tmpfs /tmp tmpfs nodev,nosuid 0 0" >> /etc/fstab
 
+ARG CACHEBUST=1
 
 # COPY getty-noclear.conf getty-override.conf /etc/systemd/system/getty@tty1.service.d/
 # COPY getty-autologin-serial.conf /etc/systemd/system/serial-getty@ttyS0.service.d/
@@ -59,3 +64,4 @@ RUN update-initramfs -u
 RUN systemctl enable anurad
 RUN systemctl enable anura-boot
 RUN systemctl enable dhcpcd
+RUN bash

@@ -23,6 +23,9 @@ server/package-lock.json
 Notes
 server/passkey
 package-lock.json
+<<<<<<< HEAD
+=======
 .direnv
 result
 public/config.json
+>>>>>>> 22eb0fa93e4906685a1dbed9c2e5dc9cdfb21610
