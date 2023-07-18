@@ -55,13 +55,11 @@ class React {
                         if (then) {
                             if (val) {
                                 then.style.display = "";
-                                if (elseelm)
-                                    elseelm.style.display = "none";
+                                if (elseelm) elseelm.style.display = "none";
                             } else {
                                 then.style.display = "none";
 
-                                if (elseelm)
-                                    elseelm.style.display = "";
+                                if (elseelm) elseelm.style.display = "";
                             }
                         } else {
                             if (val) {
