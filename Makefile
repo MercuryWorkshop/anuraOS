@@ -1,20 +1,21 @@
+SHELL := /bin/bash
+
 RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/interpreter.rs v86/src/rust/gen/interpreter0f.rs \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/lib v86dirty v86 build/nohost-sw.js bundle
+all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json
 
 full: all prod rootfs
 
-check-bootstrap:
-	test -f build/bootstrap-complete || exit 1
-
-build/lib:
+public/config.json:
+	cp config.default.json public/config.json
+build/bootstrap:
 	mkdir -p build/lib
+	npm i
 	cd server; npm i
-	cd server; npm i typescript dockernode ws
-	>build/bootstrap-complete
+	>build/bootstrap
 
 build/nohost-sw.js:
 	cd nohost; npm i; npm run build; cp -r dist/* ../build/
@@ -22,13 +23,13 @@ clean:
 	cd v86; make clean
 	rm -rf build/*
 
-rootfs:
+rootfs: FORCE
 	cd x86_image_wizard/debian; sh build-debian-bin.sh
 
 v86dirty: 
 	touch v86timestamp # makes it "dirty" and forces recompilation
 
-v86: libv86.js public/lib/v86.wasm
+v86: libv86.js build/lib/v86.wasm
 	cp -r v86/bios public
 	
 
@@ -36,19 +37,28 @@ libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 	cd v86; make build/libv86.js
 	cp v86/build/libv86.js build/lib/libv86.js
 
-public/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v86/Cargo.toml
+build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v86/Cargo.toml
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
-watch: FORCE
-	mkdir -p build/artifacts
-	npx tsc-watch --onSuccess "bash -c 'cp -r src/* build/artifacts'"
-bundle:
+watch: bundle FORCE
+	which inotifywait || echo "INSTALL INOTIFYTOOLS"
+	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make tsc & make css; echo "Done!"; sleep 1; done
+tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
-	tsc
+	npx tsc
+css: src/*.css
+	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
+	shopt -s globstar; cat src/**/*.css > build/bundle.css
+bundle: tsc css lint
+	mkdir -p build/artifacts
+	git rev-parse HEAD > build/MILESTONE
+lint:
+	npx prettier -w --loglevel error .
+	npx eslint . --fix
 prod: all
-	npx google-closure-compiler --js build/assets/libs/filer.min.js build/lib/Taskbar.js build/lib/AliceJS.js build/lib/api/Notification.js build/lib/ContextMenu.js build/lib/oobe/OobeAssetsStep.js build/lib/AliceWM.js build/lib/api/Settings.js build/lib/Launcher.js build/lib/oobe/OobeView.js build/lib/libv86.js build/lib/v86.js build/lib/Bootsplash.js build/lib/oobe/OobeWelcomeStep.js build/lib/Anura.js --js_output_file public/dist.js
+	npx google-closure-compiler --js build/assets/libs/filer.min.js build/lib/Taskbar.js build/lib/AliceJS.js build/lib/api/NotificationService.js build/lib/ContextMenu.js build/lib/oobe/OobeAssetsStep.js build/lib/AliceWM.js build/lib/api/Settings.js build/lib/Launcher.js build/lib/oobe/OobeView.js build/lib/libv86.js build/lib/v86.js build/lib/Bootsplash.js build/lib/oobe/OobeWelcomeStep.js build/lib/Anura.js --js_output_file public/dist.js
 server: FORCE
 	cd server; npx ts-node server.ts
 

@@ -1,0 +1,8 @@
+dist.js
+build/
+aboutproxy/
+libapps/
+v86/
+apps/
+nohost/
+.eslintrc.js

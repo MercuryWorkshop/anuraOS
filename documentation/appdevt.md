@@ -1,8 +1,7 @@
 # Application development
 
-
-
 all of the below is undergoing change. see public/glxgears.app for an example
+
 <!-- Every application is a .app folder with an entry file called launchapp.js. In this file, a function called loadingScript is called with the path of the app  -->
 <!---->
 <!-- take the python application loader for example. -->

@@ -1,10 +1,9 @@
 class OobeView {
-  content: HTMLElement;
+    content: HTMLElement;
 
-  element = (
-    <div class="oobe">
-      <div bind:content={this} id="content">
-      </div>
-    </div>
-  )
+    element = (
+        <div class="oobe">
+            <div bind:content={this} id="content"></div>
+        </div>
+    );
 }

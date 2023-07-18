@@ -1,3 +1,3 @@
-declare var V86Starter: V86StarterType;
+declare let V86Starter: V86StarterType;
 // [todo]
 type V86StarterType = any;

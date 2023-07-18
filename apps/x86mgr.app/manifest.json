@@ -1,8 +1,0 @@
-{
-  "name": "x86 manager",
-  "type": "manual",
-  "package": "anura.x86mgr",
-  "index": "index.html",
-  "icon": "xorg.svg",
-  "handler": "launch.js"
-}

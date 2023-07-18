@@ -4,37 +4,37 @@ function openSetting(evt, TabName) {
   let x86button = document.getElementById('x86subsystemsstate')
 
   if (!anura.settings.get("disable-x86")) {
-    x86button.innerText = 'Use x86 subsystem (enabled)'
+    x86button.innerText = 'x86 Subsystem - ON'
   } else {
-    x86button.innerText = 'Use x86 subsystem (disabled)'
+    x86button.innerText = 'x86 Subsystem - OFF'
   }
 
   x86button.onclick = function() {
     if (anura.settings.get("disable-x86")) {
       anura.settings.set("disable-x86", false)
-      x86button.innerText = 'Use x86 subsystem (disabled)'
+      x86button.innerText = 'x86 Subsystem - OFF'
 
     } else {
       anura.settings.set("disable-x86", true)
-      x86button.innerText = 'Use x86 subsystem (enabled)'
+      x86button.innerText = 'x86 Subsystem - ON'
     }
   }
 
   let aboutbrowserbutton = document.getElementById('abtbrowser')
   if (!anura.settings.get("borderless-aboutbrowser")) {
-    aboutbrowserbutton.innerText = 'borderless about browser (disabled)'
+    aboutbrowserbutton.innerText = 'Borderless Browser - OFF'
   } else {
-    aboutbrowserbutton.innerText = 'borderless about browser (enabled)'
+    aboutbrowserbutton.innerText = 'Borderless Browser - ON'
   }
 
   aboutbrowserbutton.onclick = function() {
     if (!anura.settings.get("borderless-aboutbrowser")) {
       anura.settings.set("borderless-aboutbrowser", true)
-      aboutbrowserbutton.innerText = 'borderless about browser (enabled)'
+      aboutbrowserbutton.innerText = 'Borderless Browser - ON'
 
     } else {
       anura.settings.set("borderless-aboutbrowser", false)
-      aboutbrowserbutton.innerText = 'borderless about browser (disabled)'
+      aboutbrowserbutton.innerText = 'Borderless Browser - OFF'
     }
   }
 

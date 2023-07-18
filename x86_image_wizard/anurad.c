@@ -153,7 +153,7 @@ void alloc_aty(pty_t *pty, char *argv[], char *envp[]) {
   winp.ws_row = s_rows;
   openpty(&master, &slave, NULL, NULL, &winp);
 
-  // printf("IIII%i %i\n", master, slave);
+  printf("IIII%i %i\n", master, slave);
 
   pid_t child = fork();
   if (child == 0) {
@@ -165,8 +165,11 @@ void alloc_aty(pty_t *pty, char *argv[], char *envp[]) {
     dup2(slave, STDOUT_FILENO);
     dup2(slave, STDIN_FILENO);
     dup2(slave, STDERR_FILENO);
+
+    ioctl(pty->slave, TIOCSWINSZ, &winp);
     execve(argv[0], argv, envp);
   }
+  // sleep(1);
 
   ioctl(pty->slave, TIOCSWINSZ, &winp);
   pty->master = master;
@@ -208,7 +211,7 @@ void *readLoop() {
     int ret = poll(fds, cur_num_ptys, 5000);
 
     for (int i = 0; i < cur_num_ptys; i++) {
-      printf("to: %i %i %i\n", i, ptys[i].master, ptys[i].slave);
+      // printf("to: %i %i %i\n", i, ptys[i].master, ptys[i].slave);
       pty_t pty = ptys[i];
 
       if (!(fds[i].revents & POLLIN))
@@ -217,7 +220,7 @@ void *readLoop() {
       ioctl(pty.master, FIONREAD, &count);
       if (count < 1)
         continue;
-      printf("total avail: %lu bytes\n", count);
+      // printf("total avail: %lu bytes\n", count);
       if (count > SHARED_BUFFER_MAX_SIZE)
         count = SHARED_BUFFER_MAX_SIZE;
       char shared_out_buffer[count];
@@ -227,7 +230,6 @@ void *readLoop() {
 
       uintptr_t buffer_phys_addr;
       virt_to_phys_user(&buffer_phys_addr, pid, (uintptr_t)shared_out_buffer);
-      read_intent = i + 1;
       read_nbytes = count;
       fprintf(fi, "\005r %lu %i\n", buffer_phys_addr, i);
       wait_for_ack(fo);
@@ -271,7 +273,9 @@ int main() {
   while (1) {
 
     // fprintf(fi, "%d\n", __LINE__);
-    if (resize_intent > 0) {
+    if (resize_intent > 0 && read_intent == 1336) {
+      read_intent = 0;
+      read_intent = 0;
       // printf("%d\n", __LINE__);
 
       int pty_index = resize_intent - 1;
@@ -279,7 +283,8 @@ int main() {
       winp.ws_col = s_cols;
       winp.ws_row = s_rows;
       ioctl(ptys[pty_index].slave, TIOCSWINSZ, &winp);
-      printf("resizing: %i %i\n", s_cols, s_rows);
+      // printf("resizing: %i %i WITH INTENT %i\n", s_cols, s_rows,
+      // resize_intent);
       resize_intent = 0;
     }
 

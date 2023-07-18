@@ -4,10 +4,9 @@
     "package": "anura.fsapp",
     "index": "filemanager.html",
     "icon": "files.png",
-    "wininfo":{
-      "title":"",
-      "width":"700px",
-      "height":"500px"
+    "wininfo": {
+        "title": "",
+        "width": "700px",
+        "height": "500px"
     }
-  }
-  
+}

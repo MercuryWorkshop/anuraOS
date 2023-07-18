@@ -18,7 +18,8 @@ Each app contains a `manifest.json`\*, which defines the functionality of the ap
 - `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
 - `index`: `String` - Path (from app directory) to the index HTML file. Required if `type` is `"auto"` - the iframe source will be set to this.
 - `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Anura will display this icon throughout the DE.
-- `handler`: `String` - Path (from app directory) to a file containing JavaScript to execute at the top-level document. Required if `type` is `"manual"` - the top-level document will execute this file as JavaScript.
+- `background`: Background color of iframe while it is loading. Optional. 
+- `handler`: `String` - Path (from app directory) to a file containing JavaScript to execute at the top-level document. Required if `type` is `"manual"`, ignored otherwise - the top-level document will execute this file as JavaScript.
 - `wininfo`: `Object {title, width, height}` - Required if `type` is `"auto"`.
  * `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
  * `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
