@@ -48,12 +48,7 @@ class Anura {
             throw "Application already installed";
         }
 
-        launcher.addShortcut(
-            app.name,
-            app.icon,
-            app.open.bind(app),
-            app.package,
-        );
+        launcher.addShortcut(app);
         taskbar.addShortcut(app);
 
         this.apps[app.package] = app;
