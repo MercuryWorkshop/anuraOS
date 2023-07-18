@@ -2,9 +2,11 @@ class Shortcut {
     element: HTMLElement;
 
     lightbar: HTMLElement;
+    windowList: HTMLElement;
+
     constructor(svg: string, launch: () => void, appID: string) {
         this.element = (
-            <li application={appID}>
+            <li class="taskbar-app" application={appID}>
                 <input
                     type="image"
                     src={svg}
@@ -16,9 +18,11 @@ class Shortcut {
                     bind:lightbar={this}
                     style="position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%); display:none"
                 ></div>
-                <div class="hoverMenu" style="display: none;">
-                    <ul class="openWindows"></ul>
-                </div>
+                <div
+                    class="hoverMenu custom-menu"
+                    bind:windowList={this}
+                    style=""
+                ></div>
             </li>
         );
     }
@@ -85,6 +89,21 @@ class Taskbar {
                 if (app.windowinstance.length !== 0) {
                     shortcut.lightbar.style.display = "block";
                 }
+                shortcut.windowList.innerHTML = ""; // Remove all child elements
+                for (const instance in app.windowinstance) {
+                    shortcut.windowList.appendChild(
+                        <div
+                            class="custom-menu-item"
+                            on:click={function () {
+                                app.windowinstance[instance].style!.display =
+                                    "";
+                            }}
+                        >
+                            Window {instance}
+                        </div>,
+                    );
+                }
+
                 this.activeTray.appendChild(shortcut.element);
                 this.rendered.push(appName);
             }
@@ -103,6 +122,21 @@ class Taskbar {
 
                 this.activeTray.appendChild(shortcut.element);
                 shortcut.lightbar.style.display = "block";
+
+                shortcut.windowList.innerHTML = ""; // Remove all child elements
+                for (const instance in app.windowinstance) {
+                    shortcut.windowList.appendChild(
+                        <div
+                            class="custom-menu-item"
+                            on:click={function () {
+                                app.windowinstance[instance].style!.display =
+                                    "";
+                            }}
+                        >
+                            Window {instance}
+                        </div>,
+                    );
+                }
                 this.rendered.push(appName);
             }
         }
@@ -113,6 +147,7 @@ class Taskbar {
         for (const appName of pinnedApps) {
             if (appName in anura.apps) {
                 let lightbar: HTMLElement;
+                let windowList: HTMLElement;
                 if (this.rendered.includes(appName)) {
                     const app = anura.apps[appName];
 
@@ -123,9 +158,27 @@ class Taskbar {
                     lightbar = (shortcut.getElementsByClassName(
                         "lightbar",
                     )[0] as HTMLElement)!;
+                    windowList = (shortcut.getElementsByClassName(
+                        "hoverMenu",
+                    )[0] as HTMLElement)!;
 
+                    windowList.innerHTML = ""; // Remove all child elements
                     if (app.windowinstance.length !== 0) {
                         lightbar.style.display = "block";
+                        for (const instance in app.windowinstance) {
+                            windowList.appendChild(
+                                <div
+                                    class="custom-menu-item"
+                                    on:click={function () {
+                                        app.windowinstance[
+                                            instance
+                                        ].style!.display = "";
+                                    }}
+                                >
+                                    Window {instance}
+                                </div>,
+                            );
+                        }
                     } else {
                         lightbar.style.display = "none";
                     }
@@ -154,6 +207,21 @@ class Taskbar {
 
                 this.activeTray.appendChild(shortcut.element);
                 shortcut.lightbar.style.display = "block";
+
+                shortcut.windowList.innerHTML = ""; // Remove all child elements
+                for (const instance in app.windowinstance) {
+                    shortcut.windowList.appendChild(
+                        <div
+                            class="custom-menu-item"
+                            on:click={function () {
+                                app.windowinstance[instance].style!.display =
+                                    "block";
+                            }}
+                        >
+                            Window {instance}
+                        </div>,
+                    );
+                }
                 this.rendered.push(appName);
             } else if (
                 app.windowinstance.length === 0 &&
@@ -166,6 +234,33 @@ class Taskbar {
                 );
                 shortcut.remove();
                 this.rendered.splice(this.rendered.indexOf(appName));
+            } else if (
+                app.windowinstance.length !== 0 &&
+                !pinnedApps.includes(appName) &&
+                this.rendered.includes(appName)
+            ) {
+                // App has been rendered, is not pinnned, has atleast one window, here we'll just update the window list
+                const shortcut: HTMLElement = this.element.querySelector(
+                    `[application="${appName}"]`,
+                );
+                const windowList = (shortcut.getElementsByClassName(
+                    "hoverMenu",
+                )[0] as HTMLElement)!;
+
+                windowList.innerHTML = ""; // Remove all child elements
+                for (const instance in app.windowinstance) {
+                    windowList.appendChild(
+                        <div
+                            class="custom-menu-item"
+                            on:click={function () {
+                                app.windowinstance[instance].style!.display =
+                                    "block";
+                            }}
+                        >
+                            Window {instance}
+                        </div>,
+                    );
+                }
             }
         }
     }

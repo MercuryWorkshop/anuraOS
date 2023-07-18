@@ -11,3 +11,15 @@
     width: 5px;
     border-radius: 10px;
 }
+
+.hoverMenu {
+    display: none;
+    bottom: 50px;
+    transform: translate(
+        -40%
+    ); /* 40% is entirely arbritrary and looks centerish, while 50% doesn't */
+}
+
+.taskbar-app:hover .hoverMenu {
+    display: block;
+}
