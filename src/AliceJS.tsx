@@ -100,11 +100,9 @@ class React {
                     typeof predicate === "object" &&
                     "__alicejs_marker" in predicate
                 ) {
-
                     // @ts-ignore
                     const __elms = [];
                     handle(predicate, (val) => {
-
                         // @ts-ignore
                         for (const part of __elms) {
                             part.remove();
@@ -195,7 +193,6 @@ function __assign_prop(elm, name, prop) {
     elm.setAttribute(name, prop);
 }
 function stateful<T>(target: T): T {
-
     // @ts-ignore
     target.__listeners = [];
     // @ts-ignore
@@ -205,7 +202,6 @@ function stateful<T>(target: T): T {
             return Reflect.get(target, prop, reciever);
         },
         set(target, prop, val) {
-
             // @ts-ignore
             for (const listener of target.__listeners) {
                 listener(target, prop, val);
