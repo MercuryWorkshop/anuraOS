@@ -43,7 +43,7 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 
 watch: bundle FORCE
 	which inotifywait || echo "INSTALL INOTIFYTOOLS"
-	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make tsc & make css; echo "Done!"; sleep 1; done
+	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make tsc & make css & make milestone; echo "Done!"; sleep 1; done
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
@@ -51,8 +51,9 @@ tsc:
 css: src/*.css
 	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
-bundle: tsc css lint
+bundle: tsc css lint milestone
 	mkdir -p build/artifacts
+milestone:
 	bash -c "cat /dev/urandom | tr -dc '[:alpha:]' | fold -w $${1:-50} | head -n 1 > build/MILESTONE"
 lint:
 	npx prettier -w --loglevel error .

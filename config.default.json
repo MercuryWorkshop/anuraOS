@@ -1,1 +1,17 @@
-{}
+{
+    "milestone": 2,
+    "apps": [
+        "apps/term.app",
+        "apps/glxgears.app",
+        "apps/eruda.app",
+        "apps/vnc.app",
+        "apps/sshy.app",
+        "apps/fsapp.app",
+        "apps/chideNewNew.app",
+        "apps/python.app",
+        "apps/workstore.app",
+        "apps/settings.app"
+    ],
+    "bzimage":"/images/debian-boot/vmlinuz-6.1.0-10-686",
+    "initrd":"/images/debian-boot/initrd.img-6.1.0-10-686"
+}

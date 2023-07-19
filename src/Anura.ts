@@ -3,17 +3,19 @@ class Anura {
     x86: null | V86Backend;
     settings: Settings;
     fs: FilerFS;
+    config: any;
     notifications: NotificationService;
 
-    private constructor(fs: FilerFS, settings: Settings) {
+    private constructor(fs: FilerFS, settings: Settings, config: any) {
         this.fs = fs;
         this.settings = settings;
+        this.config = config;
 
         this.notifications = new NotificationService();
         document.body.appendChild(this.notifications.element);
     }
 
-    static async new(): Promise<Anura> {
+    static async new(config: any): Promise<Anura> {
         // File System Initialization //
         const fs = new Filer.FileSystem({
             name: "anura-mainContext",
@@ -31,12 +33,11 @@ class Anura {
 
         const settings = await Settings.new(fs);
 
-        const anuraPartial = new Anura(fs, settings);
+        const anuraPartial = new Anura(fs, settings, config);
         return anuraPartial;
     }
 
     apps: any = {};
-    Version = "0.2.0 alpha";
     logger = {
         log: console.log.bind(console, "anuraOS:"),
         debug: console.debug.bind(console, "anuraOS:"),
@@ -81,7 +82,7 @@ class Anura {
             iframe.setAttribute("style", "display: none");
             iframe.setAttribute("src", "/apps/python.app/lib.html");
             iframe.id = appname;
-            iframe.onload = async function () {
+            iframe.onload = async function() {
                 console.log("Called from python");
                 //@ts-ignore
                 const pythonInterpreter = await document

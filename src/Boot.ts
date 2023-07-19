@@ -34,16 +34,17 @@ let anura: Anura;
 
 window.addEventListener("load", async () => {
     document.body.appendChild(bootsplash.element);
-    if (!navigator.serviceWorker.controller)
-        window.location.reload();
+    if (!navigator.serviceWorker.controller) window.location.reload();
 
     const conf = await (await fetch("/config.json")).json();
     const milestone = await (await fetch("/MILESTONE")).text();
     const instancemilestone = conf.milestone;
 
-
-    anura = await Anura.new();
-    if (anura.settings.get("milestone") != milestone || anura.settings.get("instancemilestone") != instancemilestone) {
+    anura = await Anura.new(conf);
+    if (
+        anura.settings.get("milestone") != milestone ||
+        anura.settings.get("instancemilestone") != instancemilestone
+    ) {
         await anura.settings.set("milestone", milestone);
         await anura.settings.set("instancemilestone", instancemilestone);
         navigator.serviceWorker.controller!.postMessage({
@@ -77,16 +78,9 @@ document.addEventListener("anura-login-completed", async () => {
     const browser = new BrowserApp();
     anura.registerApp(browser);
 
-    anura.registerExternalApp("apps/term.app");
-    anura.registerExternalApp("apps/glxgears.app");
-    anura.registerExternalApp("apps/eruda.app");
-    anura.registerExternalApp("apps/vnc.app");
-    anura.registerExternalApp("apps/sshy.app"); // ssh will be reworked later
-    anura.registerExternalApp("apps/fsapp.app");
-    anura.registerExternalApp("apps/chideNewNew.app");
-    anura.registerExternalApp("apps/python.app");
-    anura.registerExternalApp("apps/workstore.app");
-    anura.registerExternalApp("apps/settings.app");
+    for (const app of anura.config.apps) {
+        anura.registerExternalApp(app);
+    }
 
     // Load all persistent sideloaded apps
     try {
@@ -104,11 +98,6 @@ document.addEventListener("anura-login-completed", async () => {
     } catch (e) {
         anura.logger.error(e);
     }
-
-    // anura.registerApp("games.app");
-    // if you want to use the games app, uncomment this, clone the repo in /apps
-    // and rename it to games.app
-    // the games app is too large and unneccesary for ordinary developers
 
     if ((await await fetch("/fs/")).status === 404) {
         const notif = anura.notifications.add({
@@ -143,21 +132,20 @@ document.addEventListener("anura-login-completed", async () => {
     (window as any).taskbar = taskbar;
 
     document.addEventListener("contextmenu", function(e) {
-
         if (e.shiftKey) return;
         e.preventDefault();
-        const menu: any = document.querySelector(".custom-menu");
-        menu.style.removeProperty("display");
-        menu.style.top = `${e.clientY}px`;
-        menu.style.left = `${e.clientX}px`;
+        //     const menu: any = document.querySelector(".custom-menu");
+        //     menu.style.removeProperty("display");
+        //     menu.style.top = `${e.clientY}px`;
+        //     menu.style.left = `${e.clientX}px`;
     });
-
-    document.addEventListener("click", (e) => {
-        if (e.button != 0) return;
-        (
-            document.querySelector(".custom-menu")! as HTMLElement
-        ).style.setProperty("display", "none");
-    });
+    //
+    // document.addEventListener("click", (e) => {
+    //     if (e.button != 0) return;
+    //     (
+    //         document.querySelector(".custom-menu")! as HTMLElement
+    //     ).style.setProperty("display", "none");
+    // });
 
     // This feels wrong but it works and makes TSC happy
     launcher.clickoffChecker?.addEventListener("click", () => {
