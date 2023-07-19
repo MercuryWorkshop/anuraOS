@@ -77,7 +77,7 @@ class Taskbar {
     );
 
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() {}
+    constructor() { }
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;

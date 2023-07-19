@@ -3,11 +3,9 @@ class Launcher {
         <div class="launcher">
             <div class="topSearchBar">
                 <img src="/assets/icons/googleg.png"></img>
-                <input placeholder="Search your tabs, files, apps, and more..." />
+                <input readonly placeholder="Search your tabs, files, apps, and more..." style="outline:none" />
             </div>
-            <div class="recentItemsWrapper">
-                <div class="recentItemsText">Continue where you left off</div>
-            </div>
+
             <div id="appsView" class="appsView"></div>
         </div>
     );
@@ -16,7 +14,7 @@ class Launcher {
         <div id="clickoffChecker" class="clickoffChecker"></div>
     );
 
-    constructor() {}
+    constructor() { }
 
     toggleVisible() {
         this.element.classList.toggle("active");
