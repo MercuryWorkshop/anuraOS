@@ -10,7 +10,7 @@ class BrowserApp implements App {
     }
     async open(): Promise<WMWindow | undefined> {
         const browser = AliceWM.create({
-            title: "",
+            title: "Anura Browser",
             width: "700px",
             height: "500px",
         } as unknown as any);
