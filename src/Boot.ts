@@ -131,7 +131,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     (window as any).taskbar = taskbar;
 
-    document.addEventListener("contextmenu", function(e) {
+    document.addEventListener("contextmenu", function (e) {
         if (e.shiftKey) return;
         e.preventDefault();
         //     const menu: any = document.querySelector(".custom-menu");

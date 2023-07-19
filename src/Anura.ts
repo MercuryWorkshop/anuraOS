@@ -44,6 +44,7 @@ class Anura {
         warn: console.warn.bind(console, "anuraOS:"),
         error: console.error.bind(console, "anuraOS:"),
     };
+    net = new Networking();
     async registerApp(app: App) {
         if (app.package in this.apps) {
             throw "Application already installed";
@@ -82,7 +83,7 @@ class Anura {
             iframe.setAttribute("style", "display: none");
             iframe.setAttribute("src", "/apps/python.app/lib.html");
             iframe.id = appname;
-            iframe.onload = async function() {
+            iframe.onload = async function () {
                 console.log("Called from python");
                 //@ts-ignore
                 const pythonInterpreter = await document
