@@ -10,6 +10,3 @@
 [submodule "libapps"]
 	path = libapps
 	url = https://chromium.googlesource.com/apps/libapps
-[submodule "public/assets/wallpaper/gnome-backgrounds"]
-	path = public/assets/wallpaper/gnome-backgrounds
-	url = https://gitlab.gnome.org/GNOME/gnome-backgrounds
