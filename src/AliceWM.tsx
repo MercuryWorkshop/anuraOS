@@ -51,7 +51,7 @@ class WMWindow {
         this.wininfo = wininfo;
         this.element = (
             <div
-                class="aliceWMwin"
+                class="aliceWMwin opacity0"
                 style={`
                     width: ${wininfo.width};
                     height: ${wininfo.height};
@@ -293,6 +293,8 @@ class WMWindow {
                 }
             };
         }
+
+        setTimeout(() => this.element.classList.remove("opacity0"), 10);
     }
 
     handleDrag(evt: MouseEvent) {
@@ -378,7 +380,6 @@ class WMWindow {
 
 const AliceWM = {
     create: function (givenWinInfo: string | WindowInformation) {
-        // CODE ORIGINALLY FROM https://gist.github.com/chwkai/290488
         // Default param
         let wininfo: WindowInformation = {
             title: "",

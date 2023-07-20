@@ -3,8 +3,10 @@
     width: min(70%, 35em);
     height: min(60%, 30em);
     background-color: rgba(22, 22, 22, 0.8);
+
+    border: 2px solid rgba(22, 22, 22, 0.6);
     border-radius: 1em;
-    bottom: 4em;
+    bottom: 5.25em;
     backdrop-filter: blur(5px);
     display: flex;
     flex-direction: column;
@@ -32,7 +34,7 @@
     position: absolute;
     width: 100%;
     /* TODO: make this not be a magic number later with css variables */
-    height: calc(100% - 49px);
+    height: calc(100% - 51px);
     z-index: 9998;
     opacity: 0;
     top: 0;
@@ -106,6 +108,7 @@
     padding: 10px 0;
     width: 300px;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+
     z-index: 10000;
     overflow: hidden;
 }
@@ -161,8 +164,8 @@
     background-color: gray;
     opacity: 0.5;
     border-radius: 50%;
-    height: 32px;
-    width: 32px;
+    height: 38px;
+    width: 38px;
 }
 
 #launcher-button img {

@@ -24,11 +24,13 @@ body {
 footer {
     position: fixed;
     bottom: 0;
-    left: 0;
+    left: -2px;
     width: 100%;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
     background-color: rgba(22, 22, 22, 0.8);
+    border: 2px solid rgba(22, 22, 22, 0.6);
+    border-bottom: none;
     backdrop-filter: blur(5px);
 }
 

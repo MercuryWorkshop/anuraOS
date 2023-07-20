@@ -82,7 +82,7 @@ class Anura {
             iframe.setAttribute("style", "display: none");
             iframe.setAttribute("src", "/apps/python.app/lib.html");
             iframe.id = appname;
-            iframe.onload = async function() {
+            iframe.onload = async function () {
                 console.log("Called from python");
                 //@ts-ignore
                 const pythonInterpreter = await document

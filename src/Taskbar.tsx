@@ -28,7 +28,7 @@ class Taskbar {
                     for={React.use(this.state.apps)}
                     do={(app: App) => {
                         return (
-                            <li>
+                            <li class="taskbar-button">
                                 <input
                                     type="image"
                                     src={app.icon}
@@ -77,7 +77,7 @@ class Taskbar {
     );
 
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() { }
+    constructor() {}
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;

@@ -3,6 +3,12 @@
     "type": "auto",
     "package": "anura.settings",
     "index": "index.html",
-    "icon": "settings.png"
+    "icon": "settings.png",
+    "wininfo":{
+    "title":"Anura Settings",
+"width": "600px",
+            "height": "700px",
+    "allowMultipleInstance": "true"
+    }
   }
   

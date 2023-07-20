@@ -24,11 +24,17 @@
 .taskbar-app:hover .hoverMenu {
     display: block;
 }
-.lightbar{
-  transition: visibility 0s, opacity 5s linear;
+.lightbar {
+    transition:
+        visibility 0s,
+        opacity 5s linear;
     opacity: 1;
 }
-.lightbar-hidden{
+.lightbar-hidden {
     visibility: hidden;
     opacity: 0;
+}
+
+.taskbar-button {
+    filter: drop-shadow(0px 3px 7px #111);
 }
