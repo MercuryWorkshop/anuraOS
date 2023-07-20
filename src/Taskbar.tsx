@@ -73,11 +73,26 @@ class Taskbar {
                     }}
                 ></ul>
             </nav>
+            <div id="taskinfo-container"
+                on:click={() => {
+                    anura.apps["anura.settings"].open();
+                }}
+            >
+                <div class="flex flexcenter"
+
+                >
+                    <p>19:23</p>
+
+                    <span class="material-symbols-outlined">battery_0_bar</span>
+
+                    <span class="material-symbols-outlined">settings</span>
+                </div>
+            </div>
         </footer>
     );
 
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() {}
+    constructor() {  }
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;
