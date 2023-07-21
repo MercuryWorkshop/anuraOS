@@ -43,14 +43,21 @@ class Taskbar {
                                                     app.open();
                                                 },
                                             );
-
+                                            let winEnumerator = 0;
                                             for (const win of app.windows) {
+                                                let displayTitle =
+                                                    win.wininfo.title;
+                                                if (win.wininfo.title === "")
+                                                    displayTitle =
+                                                        "Window " +
+                                                        winEnumerator;
                                                 newcontextmenu.addItem(
-                                                    win.wininfo.title,
+                                                    displayTitle,
                                                     () => {
                                                         win.unminimize();
                                                     },
                                                 );
+                                                winEnumerator++;
                                             }
                                             newcontextmenu.show(e.x, e.y - 100);
                                         } else {
