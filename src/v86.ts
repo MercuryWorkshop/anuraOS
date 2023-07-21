@@ -9,7 +9,7 @@ V86Starter.prototype.serial1_send = function (a: string) {
 const SLICE_SIZE = 2 ** 17 * 32;
 const BUF_SIZE = 256;
 
-async function InitV86Backend(mgr: x86MgrApp): Promise<V86Backend> {
+async function InitV86Hdd(): Promise<FakeFile> {
     // all right! time to explain what goes on here
 
     const request = indexedDB.open("image", 2);
@@ -24,27 +24,6 @@ async function InitV86Backend(mgr: x86MgrApp): Promise<V86Backend> {
 
     // loads a local file into indexedDB
     // can be optimized somewhat significantly with promise.all
-    (window as any).loadfile = async (f: File) => {
-        const trn = db.transaction("parts", "readwrite").objectStore("parts");
-        trn.put(f.size, "size");
-
-        let i = 0;
-        while (i * SLICE_SIZE < f.size) {
-            const buf = await f
-                .slice(i * SLICE_SIZE, (i + 1) * SLICE_SIZE)
-                .arrayBuffer();
-            await new Promise(
-                (r) =>
-                    (db
-                        .transaction("parts", "readwrite")
-                        .objectStore("parts")
-                        .put(buf, i).onsuccess = r),
-            );
-            i++;
-
-            console.log(i / (f.size / SLICE_SIZE));
-        }
-    };
 
     // the rootfs is an EXT4 binary blob, stored with indexedDB, in parts of SLICE_SIZE
 
@@ -107,6 +86,29 @@ async function InitV86Backend(mgr: x86MgrApp): Promise<V86Backend> {
                 i++;
             }
             return new Blob([buf!]);
+        },
+        loadfile: async (f: File) => {
+            const trn = db
+                .transaction("parts", "readwrite")
+                .objectStore("parts");
+            trn.put(f.size, "size");
+
+            let i = 0;
+            while (i * SLICE_SIZE < f.size) {
+                const buf = await f
+                    .slice(i * SLICE_SIZE, (i + 1) * SLICE_SIZE)
+                    .arrayBuffer();
+                await new Promise(
+                    (r) =>
+                        (db
+                            .transaction("parts", "readwrite")
+                            .objectStore("parts")
+                            .put(buf, i).onsuccess = r),
+                );
+                i++;
+
+                console.log(i / (f.size / SLICE_SIZE));
+            }
         },
 
         // when a "file" is loaded with v86, it keeps around a "block_cache" so it can write on top of the drive in ram
@@ -193,7 +195,7 @@ async function InitV86Backend(mgr: x86MgrApp): Promise<V86Backend> {
     // @ts-ignore
     fakefile.__proto__ = File.prototype;
 
-    return new V86Backend(fakefile, mgr);
+    return fakefile;
 }
 
 class V86Backend {
@@ -221,6 +223,7 @@ class V86Backend {
     //
 
     constructor(virt_hda: FakeFile, mgr: x86MgrApp) {
+        console.log(virt_hda);
         this.virt_hda = virt_hda;
 
         const fs = anura.fs;

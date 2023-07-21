@@ -119,7 +119,7 @@ document.addEventListener("anura-login-completed", async () => {
         }) as unknown as HTMLInputElement;
         document.body.appendChild(finp);
 
-        anura.x86 = await InitV86Backend(mgr);
+        anura.x86 = new V86Backend(anura.x86hdd, mgr);
     }
 
     document.body.appendChild(contextMenu.element);

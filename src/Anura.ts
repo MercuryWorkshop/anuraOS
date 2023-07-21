@@ -5,11 +5,18 @@ class Anura {
     fs: FilerFS;
     config: any;
     notifications: NotificationService;
+    x86hdd: FakeFile;
 
-    private constructor(fs: FilerFS, settings: Settings, config: any) {
+    private constructor(
+        fs: FilerFS,
+        settings: Settings,
+        config: any,
+        hdd: FakeFile,
+    ) {
         this.fs = fs;
         this.settings = settings;
         this.config = config;
+        this.x86hdd = hdd;
 
         this.notifications = new NotificationService();
         document.body.appendChild(this.notifications.element);
@@ -33,7 +40,8 @@ class Anura {
 
         const settings = await Settings.new(fs);
 
-        const anuraPartial = new Anura(fs, settings, config);
+        const hdd = await InitV86Hdd();
+        const anuraPartial = new Anura(fs, settings, config, hdd);
         return anuraPartial;
     }
 

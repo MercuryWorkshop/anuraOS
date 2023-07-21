@@ -13,5 +13,6 @@
         "apps/settings.app"
     ],
     "bzimage": "/images/debian-boot/vmlinuz-6.1.0-10-686",
-    "initrd": "/images/debian-boot/initrd.img-6.1.0-10-686"
+    "initrd": "/images/debian-boot/initrd.img-6.1.0-10-686",
+    "rootfs": "/images/debian-rootfs.bin"
 }
