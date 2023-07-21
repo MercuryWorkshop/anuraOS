@@ -290,6 +290,7 @@ document.addEventListener("contextmenu", (e) => {
     }
     e.preventDefault();
     const boundingRect = window.frameElement.getBoundingClientRect();
+
     // var contextmenu = document.querySelector("#contextMenu");
 
     // contextmenu.style.left = e.pageX + "px";
@@ -363,9 +364,11 @@ function upload() {
 
 function deleteFile() {
     if (currentlySelected.length == 0) {
-        alert(
-            "BUG: You have no files selected, right clicking does not select files",
-        );
+        anura.notifications.add({
+            title: "Filesystem app",
+            description: "BUG: You have no files selected, right clicking does not select files",
+            timeout: 5000,
+        });
     }
     currentlySelected.forEach(async (item) => {
         await sh.rm(
@@ -514,13 +517,20 @@ function rename() {
         .querySelector(".breadcrumbs")
         .getAttribute("data-current-path");
     if (currentlySelected.length == 0) {
-        alert(
-            "BUG: You have no files selected, right clicking does not select files",
-        );
+        anura.notifications.add({
+            title: "Filesystem app",
+            description: "BUG: You have no files selected, right clicking does not select files",
+            timeout: 5000,
+        });
+        
         return;
     }
     if (currentlySelected.length > 1) {
-        alert("Renaming only works with one file");
+        anura.notifications.add({
+            title: "Filesystem app",
+            description: "Renaming only works with one file",
+            timeout: 5000,
+        });
         return;
     }
     fs.rename(
