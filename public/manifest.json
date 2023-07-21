@@ -1,0 +1,16 @@
+
+{
+  "name": "AnuraOS",
+  "short_name": "AnuraOS",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "A web OS and devleoper environment powered by v86",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}

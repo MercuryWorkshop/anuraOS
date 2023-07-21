@@ -112,13 +112,6 @@ document.addEventListener("anura-login-completed", async () => {
 
         const mgr = new x86MgrApp();
         await anura.registerApp(mgr);
-
-        const finp: HTMLInputElement = React.createElement("input", {
-            type: "file",
-            id: "input",
-        }) as unknown as HTMLInputElement;
-        document.body.appendChild(finp);
-
         anura.x86 = new V86Backend(anura.x86hdd, mgr);
     }
 
@@ -129,7 +122,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     (window as any).taskbar = taskbar;
 
-    document.addEventListener("contextmenu", function (e) {
+    document.addEventListener("contextmenu", function(e) {
         if (e.shiftKey) return;
         e.preventDefault();
         //     const menu: any = document.querySelector(".custom-menu");
