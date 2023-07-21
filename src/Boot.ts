@@ -26,8 +26,6 @@ const launcher = new Launcher();
 const contextMenu = new ContextMenu();
 const bootsplash = new Bootsplash();
 const oobeview = new OobeView();
-const oobewelcomestep = new OobeWelcomeStep();
-const oobeassetsstep = new OobeAssetsStep();
 
 let anura: Anura;
 // global
@@ -56,22 +54,22 @@ window.addEventListener("load", async () => {
 
     (window as any).anura = anura;
 
-    bootsplash.element.remove();
-    anura.logger.debug("boot completed");
-    document.dispatchEvent(new Event("anura-boot-completed"));
+    setTimeout(
+        () => {
+            bootsplash.element.remove();
+            anura.logger.debug("boot completed");
+            document.dispatchEvent(new Event("anura-boot-completed"));
+        },
+        anura.settings.get("oobe-complete") ? 1000 : 2000,
+    );
 });
 
 document.addEventListener("anura-boot-completed", async () => {
-    // document.body.appendChild(oobeview.element);
-    // oobeview.content.appendChild(oobewelcomestep.element);
-    // oobewelcomestep.nextButton.addEventListener("click", () => {
-    //     oobewelcomestep.element.remove();
-    //     oobeview.content.appendChild(oobeassetsstep.element);
-    //     oobeassetsstep.nextButton.addEventListener("click", () => {
-    //         oobeview.element.remove();
-    document.dispatchEvent(new Event("anura-login-completed"));
-    //     });
-    // });
+    if (anura.settings.get("oobe-complete")) {
+        document.dispatchEvent(new Event("anura-login-completed"));
+    } else {
+        document.body.appendChild(oobeview.element);
+    }
 });
 
 document.addEventListener("anura-login-completed", async () => {

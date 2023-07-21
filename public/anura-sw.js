@@ -65,7 +65,7 @@ function invalidateCache() {
 }
 
 workbox.routing.registerRoute(
-    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE))/,
+    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin))/,
     ({ url }) => {
         if (!cacheenabled) return;
         if (url.pathname === "/") {

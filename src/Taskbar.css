@@ -38,22 +38,22 @@
 .taskbar-button {
     filter: drop-shadow(0px 3px 7px #111);
 }
-#taskinfo-container{
+#taskinfo-container {
     position: absolute;
     height: 70%;
-    cursor:pointer;
+    cursor: pointer;
 
     /* border: 2px solid rgba(22, 22, 22, 0.6); */
 
-    background-color: rgba(255,255,255, 0.15);
+    background-color: rgba(255, 255, 255, 0.15);
     aspect-ratio: 1/1;
     padding: 0.1em;
-    padding-left:1em;
+    padding-left: 1em;
 
-    padding-right:1em;
+    padding-right: 1em;
     /* width: 5em; */
-    right:1em;
-    top:50%;
+    right: 1em;
+    top: 50%;
     transform: translateY(-50%);
 
     border-radius: 1em;
@@ -62,6 +62,6 @@
     justify-content: center;
 }
 
-#taskinfo-container > *{
-    color:whitesmoke;
+#taskinfo-container > * {
+    color: whitesmoke;
 }
