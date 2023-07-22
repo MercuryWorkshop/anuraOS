@@ -1,0 +1,16 @@
+body {
+    background-color: rgb(32, 33, 36);
+    color: white;
+}
+.taskbarImg {
+    height: 40px;
+    width: 40px;
+}
+.element {
+    height: 40px;
+    width: 40px;
+    border: 1px solid white;
+}
+.taskbar {
+    display: flex;
+}

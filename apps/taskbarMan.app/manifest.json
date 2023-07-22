@@ -1,0 +1,14 @@
+{
+    "name": "Taskbar Settings",
+    "type": "auto",
+    "package": "anura.taskbarMan",
+    "index": "index.html",
+    "icon": "taskbar.svg",
+    "wininfo":{
+      "title":"Taskbar Manager",
+      "width": "600px",
+      "height": "200px",
+      "allowMultipleInstance": "true"
+    }
+  }
+  
