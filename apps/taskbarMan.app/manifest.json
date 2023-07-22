@@ -6,8 +6,8 @@
     "icon": "taskbar.svg",
     "wininfo":{
       "title":"Taskbar Manager",
-      "width": "600px",
-      "height": "200px",
+      "width": "650px",
+      "height": "300px",
       "allowMultipleInstance": "true"
     }
   }

@@ -1,9 +1,5 @@
 let anura = window.parent.anura;
 
-let taskbarList = anura.settings.get("applist")
-console.log(taskbarList)
-console.log(anura.apps)
-
 /* Event fired on the drag target */
 document.ondragstart = function(event) {
     event.dataTransfer.setData("Text", event.target.id);
@@ -38,31 +34,12 @@ function drop(ev) {
     console.log(newTaskBar);
     anura.settings.set('applist', newTaskBar);
     window.parent.taskbar.updateTaskbar();
-    window.location.reload()
+    drawTaskbar();
 }
 
 
 function drawTaskbar() {
-    allContainer = document.getElementsByClassName("allApps")[0]
-    allContainer.innerHTML = ''
-    for (appName in anura.apps) {
-        if (taskbarList.includes(appName))
-            continue;
-        const app = anura.apps[appName]
-        let newImg = document.createElement('img')
-        if (app.icon.startsWith('/'))
-            newImg.src = app.icon;
-        else 
-            newImg.src = '/' + app.icon;
-        newImg.className = "taskbarImg"
-        newImg.draggable = true
-        newImg.ondragstart = function (event) {
-            drag(event)
-        }
-        newImg.id = appName
-        allContainer.appendChild(newImg)
-    }
-    taskbarList = anura.settings.get("applist")
+    let taskbarList = anura.settings.get("applist")
     let taskbar = document.getElementsByClassName("taskbar")[0]
     taskbar.innerHTML = ''
     let backBoundry = document.createElement("div")
@@ -93,5 +70,26 @@ function drawTaskbar() {
     frontBoundary.className = "element"
     frontBoundary.addEventListener("drop", drop);
     taskbar.appendChild(frontBoundary)
+
+    allContainer = document.getElementsByClassName("allApps")[0]
+    allContainer.innerHTML = ''
+    for (appName in anura.apps) {
+        if (taskbarList.includes(appName))
+            continue;
+        const app = anura.apps[appName]
+        let newImg = document.createElement('img')
+        if (app.icon.startsWith('/'))
+            newImg.src = app.icon;
+        else 
+            newImg.src = '/' + app.icon;
+        newImg.className = "taskbarImg"
+        newImg.draggable = true
+        newImg.ondragstart = function (event) {
+            drag(event)
+        }
+        newImg.id = appName
+        allContainer.appendChild(newImg)
+    }
+    taskbarList = anura.settings.get("applist")
 }
 drawTaskbar()
