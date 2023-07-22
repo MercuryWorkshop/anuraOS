@@ -10,7 +10,7 @@ class BrowserApp implements App {
     }
     async open(): Promise<WMWindow | undefined> {
         const browser = AliceWM.create({
-            title: "Anura Browser",
+            title: "",
             width: "700px",
             height: "500px",
         } as unknown as any);
@@ -21,7 +21,7 @@ class BrowserApp implements App {
         iframe.setAttribute("src", "../../browser.html");
         browser.content.appendChild(iframe);
 
-        if (localStorage["borderless-aboutbrowser"] == "true") {
+        if (anura.settings.get("borderless-aboutbrowser") == "true") {
             // make borderless
             browser.content.style.position = "absolute";
             browser.content.style.height = "100%";
