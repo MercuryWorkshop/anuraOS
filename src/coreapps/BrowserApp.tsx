@@ -21,7 +21,7 @@ class BrowserApp implements App {
         iframe.setAttribute("src", "../../browser.html");
         browser.content.appendChild(iframe);
 
-        if (anura.settings.get("borderless-aboutbrowser") == "true") {
+        if (anura.settings.get("borderless-aboutbrowser")) {
             // make borderless
             browser.content.style.position = "absolute";
             browser.content.style.height = "100%";
