@@ -6,8 +6,8 @@
     "icon": "settings.png",
     "wininfo":{
     "title":"Anura Settings",
-"width": "600px",
-            "height": "700px",
+    "width": "900px",
+    "height": "500px",
     "allowMultipleInstance": "true"
     }
   }

@@ -1,0 +1,139 @@
+* {
+    box-sizing: border-box;
+}
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap");
+
+.tab {
+    float: left;
+    background-color: #202124;
+    width: 16%;
+    height: 100vh;
+    font-family: "Roboto", "Segoe UI", Tahoma, sans-serif;
+}
+
+.tab button {
+    display: block;
+    background-color: #202124;
+    color: white;
+    padding: 10px 16px;
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 17px;
+    font-weight: 500;
+    border-end-end-radius: 100px;
+    border-start-end-radius: 100px;
+    height: 40px;
+    margin-bottom: 5px;
+}
+
+.tab button:hover {
+    background-color: #3d4043;
+}
+
+.tab button.active {
+    background-color: #3d4043;
+}
+
+.tabcontent {
+    display: flex;
+    flex-direction: column;
+    float: left;
+    padding: 0px 12px;
+    width: 84%;
+    border-left: none;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    overflow-y: scroll;
+}
+
+.tab button img {
+    display: inline-block;
+    margin-right: 27px;
+    height: 24px;
+}
+
+.tab button div {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.rows {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 500;
+    height: 58px;
+    width: 1000px;
+}
+
+.rowsbtn {
+    background-color: #292a2d;
+    color: white;
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
+    border: none;
+}
+
+.rows:first-child .rowsbtn {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom: 0.5px solid #3f4042;
+}
+
+.rows:last-child .rowsbtn {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-top: 0.5px solid #3f4042;
+}
+.rowswrapper {
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+}
+
+.rows:not(:first-child):not(:last-child) .rowsbtn {
+    border-bottom: 0.5px solid #3f4042;
+    border-top: 0.5px solid #3f4042;
+}
+
+svg {
+    color: white;
+    fill: white;
+}
+
+.separator {
+    color: #555555;
+    background-color: #555;
+}
+
+h3 {
+    font-family: "Roboto", "Segoe UI", Tahoma, sans-serif;
+    color: #ddd;
+    padding-left: 5px;
+}
+
+.header {
+    border-bottom-color: #555;
+    border-bottom-width: 5px;
+    width: 100%;
+}
+
+.taskbarImg {
+    height: 39px;
+    width: 39px;
+}
+.element {
+    height: 41px;
+    width: 41px;
+    border: 1px solid white;
+}
+.taskbar {
+    display: flex;
+}
