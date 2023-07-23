@@ -107,9 +107,13 @@ function drawTaskbar() {
         let container = document.createElement("div");
         container.className = "element"
         container.addEventListener("drop", drop);
-
+        
         const app = anura.apps[appName]
-        console.log(app)
+        if (!app) // Sometimes the pinned list will contain nonexistent apps
+        {
+          console.log("Pinned app " + appName + " is not installed on the system, it will be removed on save")
+          continue;
+        }
         let newImg = document.createElement('img')
         if (app.icon.startsWith('/'))
             newImg.src = app.icon;
