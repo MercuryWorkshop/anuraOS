@@ -9,12 +9,18 @@ all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json
 
 full: all prod rootfs
 
+hooks: FORCE
+	mkdir -p .git/hooks
+	echo -e "#!/bin/sh\nmake lint" > .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+
 public/config.json:
 	cp config.default.json public/config.json
-build/bootstrap:
+build/bootstrap: 
 	mkdir -p build/lib
 	npm i
 	cd server; npm i
+	make hooks
 	>build/bootstrap
 
 build/nohost-sw.js:
