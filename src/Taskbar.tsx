@@ -134,7 +134,10 @@ class Taskbar {
                                                     alert("todo");
                                                 },
                                             );
-                                            const c = newcontextmenu.show(e.x, 0);
+                                            const c = newcontextmenu.show(
+                                                e.x,
+                                                0,
+                                            );
                                             // HACK HACK DUMB HACK
                                             c.style.top = "";
                                             c.style.bottom = "69px";
@@ -179,7 +182,7 @@ class Taskbar {
     );
 
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() { }
+    constructor() {}
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;
