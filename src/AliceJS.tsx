@@ -101,7 +101,10 @@ class React {
                     const __elms: HTMLElement[] = [];
                     let lastpredicate: any = [];
                     handle(predicate, (val) => {
-                        if (Object.keys(val).length && Object.keys(val).length == lastpredicate.length) {
+                        if (
+                            Object.keys(val).length &&
+                            Object.keys(val).length == lastpredicate.length
+                        ) {
                             let i = 0;
                             for (const index in val) {
                                 if (
@@ -208,8 +211,8 @@ function __assign_prop(elm: HTMLElement, name: string, prop: any) {
     }
 
     if (typeof prop === "function" && name.startsWith("on:")) {
-        let names = name.substring(3);
-        for (let name of names.split("-")) {
+        const names = name.substring(3);
+        for (const name of names.split("-")) {
             elm.addEventListener(name, prop);
         }
         return;

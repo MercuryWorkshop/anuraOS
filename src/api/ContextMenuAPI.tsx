@@ -9,19 +9,23 @@ class ContextMenuAPI {
     }
     #isShown = false;
     constructor() {
+        setTimeout(
+            () =>
+                document.addEventListener("click", (event) => {
+                    const withinBoundaries = event
+                        .composedPath()
+                        .includes(this.#element);
 
-        setTimeout(() =>
-            document.addEventListener('click', (event) => {
-                const withinBoundaries = event.composedPath().includes(this.#element);
-
-                if (!withinBoundaries) {
-                    this.#element.remove();
-                }
-            }), 100);
+                    if (!withinBoundaries) {
+                        this.#element.remove();
+                    }
+                }),
+            100,
+        );
     }
     addItem(text: string, callback: VoidFunction) {
         this.#element.appendChild(
-            this.item(text, function() {
+            this.item(text, function () {
                 this.hide();
                 callback();
             }),
@@ -43,4 +47,3 @@ class ContextMenuAPI {
         }
     }
 }
-

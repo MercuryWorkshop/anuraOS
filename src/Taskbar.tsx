@@ -7,7 +7,6 @@ class Taskbar {
         apps: [],
     });
 
-
     dragged = null;
     insidedrag = false;
 
@@ -26,9 +25,11 @@ class Taskbar {
                     ></img>
                 </div>
             </div>
-            <nav id="taskbar-bar" on:dragover={(e: DragEvent) => {
-                e.preventDefault();
-            }}
+            <nav
+                id="taskbar-bar"
+                on:dragover={(e: DragEvent) => {
+                    e.preventDefault();
+                }}
                 on:drop={(e: DragEvent) => {
                     this.insidedrag = true;
                     e.preventDefault();
@@ -44,27 +45,28 @@ class Taskbar {
                                     type="image"
                                     draggable="true"
                                     src={app?.icon || ""}
-                                    on:dragend={
-                                        () => {
-                                            console.log("???");
-                                            if (!this.insidedrag) {
-                                                for (const i of app.windows) {
-                                                    i.close();
-                                                }
-                                                anura.settings.set("applist", anura.settings.get("applist").filter((p: string) => p != app.package));
-                                                this.updateTaskbar();
+                                    on:dragend={() => {
+                                        if (!this.insidedrag) {
+                                            for (const i of app.windows) {
+                                                i.close();
                                             }
-                                            this.dragged = null;
-                                            this.insidedrag = false;
+                                            anura.settings.set(
+                                                "applist",
+                                                anura.settings
+                                                    .get("applist")
+                                                    .filter(
+                                                        (p: string) =>
+                                                            p != app.package,
+                                                    ),
+                                            );
+                                            this.updateTaskbar();
                                         }
-                                    }
-                                    on:dragstart={
-                                        () => {
-
-                                            console.log("?sxx??");
-                                            this.dragged = t;
-                                        }
-                                    }
+                                        this.dragged = null;
+                                        this.insidedrag = false;
+                                    }}
+                                    on:dragstart={() => {
+                                        this.dragged = t;
+                                    }}
                                     class="showDialog"
                                     on:click-contextmenu={(e: MouseEvent) => {
                                         if (app.windows.length > 0) {
@@ -93,15 +95,35 @@ class Taskbar {
                                                 );
                                                 winEnumerator++;
                                             }
-                                            let pinned = anura.settings.get("applist").includes(app.package);
+                                            const pinned = anura.settings
+                                                .get("applist")
+                                                .includes(app.package);
                                             newcontextmenu.addItem(
                                                 pinned ? "Unpin" : "Pin",
                                                 () => {
                                                     if (pinned) {
-                                                        anura.settings.set("applist", anura.settings.get("applist").filter((p: string) => p != app.package));
+                                                        anura.settings.set(
+                                                            "applist",
+                                                            anura.settings
+                                                                .get("applist")
+                                                                .filter(
+                                                                    (
+                                                                        p: string,
+                                                                    ) =>
+                                                                        p !=
+                                                                        app.package,
+                                                                ),
+                                                        );
                                                     } else {
-
-                                                        anura.settings.set("applist", [...anura.settings.get("applist"), app.package]);
+                                                        anura.settings.set(
+                                                            "applist",
+                                                            [
+                                                                ...anura.settings.get(
+                                                                    "applist",
+                                                                ),
+                                                                app.package,
+                                                            ],
+                                                        );
                                                     }
                                                 },
                                             );
@@ -112,7 +134,7 @@ class Taskbar {
                                                     alert("todo");
                                                 },
                                             );
-                                            let c = newcontextmenu.show(e.x, 0);
+                                            const c = newcontextmenu.show(e.x, 0);
                                             // HACK HACK DUMB HACK
                                             c.style.top = "";
                                             c.style.bottom = "69px";

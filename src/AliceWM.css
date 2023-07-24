@@ -7,7 +7,7 @@
     overflow: hidden;
     z-index: 91;
     display: flex; /* FLEXBOX #2 */
-    border: 2px solid #444;
+    border: 2px solid var(--material-border);
     flex-direction: column;
     box-shadow:
         0 4px 8px 0 rgba(0, 0, 0, 0.2),
@@ -24,7 +24,7 @@
 
 .aliceWMwin .title {
     display: flex;
-    background-color: #202124;
+    background-color: var(--material-bg);
     font-weight: bold;
     color: white;
     height: 24px;
