@@ -7,6 +7,10 @@ class Taskbar {
         apps: [],
     });
 
+
+    dragged = null;
+    insidedrag = false;
+
     element = (
         <footer>
             <div id="launcher-button-container">
@@ -22,18 +26,47 @@ class Taskbar {
                     ></img>
                 </div>
             </div>
-            <nav id="taskbar-bar">
+            <nav id="taskbar-bar" on:dragover={(e: DragEvent) => {
+                e.preventDefault();
+            }}
+                on:drop={(e: DragEvent) => {
+                    this.insidedrag = true;
+                    e.preventDefault();
+                }}
+            >
                 <ul
                     bind:activeTray={this}
                     for={React.use(this.state.apps)}
                     do={(app: App) => {
-                        return (
-                            <li class="taskbar-button">
+                        const t = (
+                            <li class="taskbar-button" bind:tmp={this}>
                                 <input
                                     type="image"
-                                    src={app.icon}
+                                    draggable="true"
+                                    src={app?.icon || ""}
+                                    on:dragend={
+                                        () => {
+                                            console.log("???");
+                                            if (!this.insidedrag) {
+                                                for (const i of app.windows) {
+                                                    i.close();
+                                                }
+                                                anura.settings.set("applist", anura.settings.get("applist").filter((p: string) => p != app.package));
+                                                this.updateTaskbar();
+                                            }
+                                            this.dragged = null;
+                                            this.insidedrag = false;
+                                        }
+                                    }
+                                    on:dragstart={
+                                        () => {
+
+                                            console.log("?sxx??");
+                                            this.dragged = t;
+                                        }
+                                    }
                                     class="showDialog"
-                                    on:click={(e: MouseEvent) => {
+                                    on:click-contextmenu={(e: MouseEvent) => {
                                         if (app.windows.length > 0) {
                                             const newcontextmenu =
                                                 new anura.ContextMenu();
@@ -43,6 +76,7 @@ class Taskbar {
                                                     app.open();
                                                 },
                                             );
+
                                             let winEnumerator = 0;
                                             for (const win of app.windows) {
                                                 let displayTitle =
@@ -59,7 +93,31 @@ class Taskbar {
                                                 );
                                                 winEnumerator++;
                                             }
-                                            newcontextmenu.show(e.x, e.y - 100);
+                                            let pinned = anura.settings.get("applist").includes(app.package);
+                                            newcontextmenu.addItem(
+                                                pinned ? "Unpin" : "Pin",
+                                                () => {
+                                                    if (pinned) {
+                                                        anura.settings.set("applist", anura.settings.get("applist").filter((p: string) => p != app.package));
+                                                    } else {
+
+                                                        anura.settings.set("applist", [...anura.settings.get("applist"), app.package]);
+                                                    }
+                                                },
+                                            );
+
+                                            newcontextmenu.addItem(
+                                                "Uninstall",
+                                                () => {
+                                                    alert("todo");
+                                                },
+                                            );
+                                            let c = newcontextmenu.show(e.x, 0);
+                                            // HACK HACK DUMB HACK
+                                            c.style.top = "";
+                                            c.style.bottom = "69px";
+
+                                            console.log(c);
                                         } else {
                                             app.open();
                                         }
@@ -77,6 +135,7 @@ class Taskbar {
                                 ></div>
                             </li>
                         );
+                        return t;
                     }}
                 ></ul>
             </nav>
@@ -98,7 +157,7 @@ class Taskbar {
     );
 
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() {}
+    constructor() { }
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;
