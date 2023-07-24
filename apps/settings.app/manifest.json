@@ -1,7 +1,7 @@
 {
     "name": "Settings",
     "type": "auto",
-    "package": "anura.settings",
+    "package": "anura.settingslegacy",
     "index": "index.html",
     "icon": "settings.png",
     "wininfo":{

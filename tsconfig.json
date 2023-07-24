@@ -5,7 +5,7 @@
         "lib": ["ESNext", "dom"], // specifies which default set of type definitions to use ("DOM", "ES6", etc)
         "outDir": "build/lib", // .js (as well as .d.ts, .js.map, etc.) files will be emitted into this directory.,
         "removeComments": false, // Strips all comments from TypeScript files when converting into JavaScript- you rarely read compiled code so this saves space
-        "target": "ES6", // Target environment. Most modern browsers support ES6, but you may want to set it to newer or older. (defaults to ES3)
+        "target": "ESNext", // Target environment. Most modern browsers support ES6, but you may want to set it to newer or older. (defaults to ES3)
 
         // Module resolution
         // "baseUrl": "./src", // Lets you set a base directory to resolve non-absolute module names.

@@ -110,6 +110,12 @@ async function InitV86Hdd(): Promise<FakeFile> {
                 console.log(i / (f.size / SLICE_SIZE));
             }
         },
+        delete: async () => {
+            alert("todo!");
+        },
+        resize: async (size: number) => {
+            alert("todo!");
+        },
 
         // when a "file" is loaded with v86, it keeps around a "block_cache" so it can write on top of the drive in ram
         // normally changes don't persist, but this function will take the changes made in the cache and propagate them back to indexedDB
@@ -472,5 +478,7 @@ async function a() {
 interface FakeFile {
     slice: (start: number, end: number) => Promise<Blob>;
     save: () => Promise<void>;
+    delete: () => Promise<void>;
+    resize: (size: number) => Promise<void>;
     size: number;
 }
