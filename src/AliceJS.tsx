@@ -310,7 +310,7 @@ class styled {
             flattened_template.join(""),
         );
 
-        return uid;
+        return uid + " self";
     }
     static parse_css(uid: string, css: string) {
         let cssParsed = "";
@@ -323,78 +323,81 @@ class styled {
 
         //@ts-ignore
         for (const rule of virtualStyleElement.sheet.cssRules) {
-            rule.selectorText = `.${uid} ${rule.selectorText}`;
+            console.log(rule.selectorText.includes("self"));
+            rule.selectorText = rule.selectorText.includes("self") ? `.${uid}.self${rule.selectorText.replace("self", "")}` : `.${uid} ${rule.selectorText}`;
             cssParsed += `${rule.cssText}\n`;
         }
 
         return cssParsed;
     }
 }
-
-function x() {
-    const b = stateful({
-        counter: stateful({
-            b: 1,
-        }),
-        show: false,
-        list: [
-            "test element",
-            "element 2",
-            "another list element",
-            "element 4",
-        ],
-        color: "red",
-    });
-
-    const style = styled.new`
-        p {
-            color: ${React.use(b.color)};
-        }
-    `;
-
-    document.body.appendChild(
-        <div class={style}>
-            <p>colored text</p>
-            <button on:click={() => {
-                if (b.color == "red") {
-                    b.color = "blue";
-                } else {
-                    b.color = "red";
-                }
-            }}>
-                change color of text
-            </button>
-
-
-            {/* <div */}
-            {/*     if={React.use(b.show)} */}
-            {/*     then={<p>b.show is true</p>} */}
-            {/*     else={<p>b.show is fale</p>} */}
-            {/* /> */}
-            {/**/}
-            {/* <p>reactivity demo</p> */}
-            {/* <p asd={React.use(b.counter.b)}> */}
-            {/*     the value of a is {React.use(b.counter.b)} */}
-            {/* </p> */}
-            {/* <div */}
-            {/*     for={b.list} */}
-            {/*     do={(v, i) => { */}
-            {/*         return ( */}
-            {/*             <p> */}
-            {/*                 #{i} of "b.list" is {v} */}
-            {/*             </p> */}
-            {/*         ); */}
-            {/*     }} */}
-            {/* /> */}
-            {/* <button */}
-            {/*     on:click={() => { */}
-            {/*         b.counter.b += 1; */}
-            {/*     }} */}
-            {/* > */}
-            {/*     click me! */}
-            {/* </button> */}
-        </div>,
-    );
-    window.br = b;
-}
-window.addEventListener("load", x);
+let css: string;
+//
+// function x() {
+//     const b = stateful({
+//         counter: stateful({
+//             b: 1,
+//         }),
+//         show: false,
+//         list: [
+//             "test element",
+//             "element 2",
+//             "another list element",
+//             "element 4",
+//         ],
+//         color: "red",
+//     });
+//
+//     const style = styled.new`
+//         p {
+//             color: ${React.use(b.color)};
+//         }
+//     `;
+//
+//     document.body.appendChild(
+//         <div class={style}>
+//             <p>colored text</p>
+//             <button
+//                 on:click={() => {
+//                     if (b.color == "red") {
+//                         b.color = "blue";
+//                     } else {
+//                         b.color = "red";
+//                     }
+//                 }}
+//             >
+//                 change color of text
+//             </button>
+//
+//             {/* <div */}
+//             {/*     if={React.use(b.show)} */}
+//             {/*     then={<p>b.show is true</p>} */}
+//             {/*     else={<p>b.show is fale</p>} */}
+//             {/* /> */}
+//             {/**/}
+//             {/* <p>reactivity demo</p> */}
+//             {/* <p asd={React.use(b.counter.b)}> */}
+//             {/*     the value of a is {React.use(b.counter.b)} */}
+//             {/* </p> */}
+//             {/* <div */}
+//             {/*     for={b.list} */}
+//             {/*     do={(v, i) => { */}
+//             {/*         return ( */}
+//             {/*             <p> */}
+//             {/*                 #{i} of "b.list" is {v} */}
+//             {/*             </p> */}
+//             {/*         ); */}
+//             {/*     }} */}
+//             {/* /> */}
+//             {/* <button */}
+//             {/*     on:click={() => { */}
+//             {/*         b.counter.b += 1; */}
+//             {/*     }} */}
+//             {/* > */}
+//             {/*     click me! */}
+//             {/* </button> */}
+//         </div>,
+//     );
+//     window.br = b;
+// }
+// window.addEventListener("load", x);

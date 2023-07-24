@@ -1,3 +1,16 @@
+css = styled.new`
+self {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+canvas {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+}
+`;
+
 class x86MgrApp implements App {
     name = "x86 Manager";
     package = "anura.x86mgr";
@@ -5,8 +18,9 @@ class x86MgrApp implements App {
     windows: WMWindow[];
     source: string;
 
+
     screen_container = (
-        <div id="screen_container">
+        <div id="screen_container" class={css}>
             <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
             <canvas></canvas>
         </div>
