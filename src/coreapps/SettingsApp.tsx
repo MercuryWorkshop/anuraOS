@@ -13,7 +13,7 @@ class SettingsApp implements App {
             class="background"
             style="height:100%;width:100%;position:absolute"
         >
-            <div>
+            <div css={this.state}>
                 <h1>General</h1>
                 {this.toggle("Allow offline use", "use-sw-cache")}
                 {this.textbox("Custom WSproxy URL", "wsproxy-url", false)}

@@ -271,44 +271,130 @@ function handle(used: [any, any, any][], callback: (val: any) => void) {
     p[0].__listeners.push(closure);
     closure(p[0], p[1], p[0][p[1]]);
 }
-//
-// function x() {
-//     const b = stateful({
-//         counter: stateful({
-//             b: 1,
-//         }),
-//         show: false,
-//         list: ["test element", "element 2", "another list element", "element 4"],
-//     });
-//
-//
-//     document.body.appendChild(
-//         <div>
-//             <div
-//                 if={React.use(b.show)}
-//                 then={<p>b.show is true</p>}
-//                 else={<p>b.show is fale</p>}
-//             />
-//
-//             <p>reactivity demo</p>
-//             <p asd={React.use(b.counter.b)}>
-//                 the value of a is {React.use(b.counter.b)}
-//             </p>
-//             <div for={b.list} do={(v, i) => {
-//                 return (<p>
-//                     #{i} of "b.list" is {v}
-//                 </p>);
-//             }} />
-//             <button
-//                 on:click={() => {
-//
-//                     b.counter.b += 1;
-//                 }}
-//             >
-//                 click me!
-//             </button>
-//         </div>,
-//     );
-//     window.br = b;
-// }
-// window.addEventListener("load", x);
+class styled {
+    static new(strings: TemplateStringsArray, ...values: any) {
+        const uid = `alicecss-${Array(16)
+            .fill(0)
+            .map(() => {
+                return Math.floor(Math.random() * 16).toString(16);
+            })
+            .join("")}`;
+
+        const styleElement = document.createElement("style");
+
+        document.head.appendChild(styleElement);
+
+        const flattened_template: string[] = [];
+        for (const i in strings) {
+            flattened_template.push(strings[i]!);
+            if (values[i]) {
+                const prop = values[i];
+
+                if (typeof prop === "object" && "__alicejs_marker" in prop) {
+                    const current_i = flattened_template.length;
+                    handle(prop, (val) => {
+                        flattened_template[current_i] = String(val);
+                        styleElement.textContent = this.parse_css(
+                            uid,
+                            flattened_template.join(""),
+                        );
+                    });
+                } else {
+                    flattened_template.push(String(prop));
+                }
+            }
+        }
+
+        styleElement.textContent = this.parse_css(
+            uid,
+            flattened_template.join(""),
+        );
+
+        return uid;
+    }
+    static parse_css(uid: string, css: string) {
+        let cssParsed = "";
+
+        const virtualDoc = document.implementation.createHTMLDocument("");
+        const virtualStyleElement = document.createElement("style");
+
+        virtualStyleElement.textContent = css;
+        virtualDoc.body.appendChild(virtualStyleElement);
+
+        //@ts-ignore
+        for (const rule of virtualStyleElement.sheet.cssRules) {
+            rule.selectorText = `.${uid} ${rule.selectorText}`;
+            cssParsed += `${rule.cssText}\n`;
+        }
+
+        return cssParsed;
+    }
+}
+
+function x() {
+    const b = stateful({
+        counter: stateful({
+            b: 1,
+        }),
+        show: false,
+        list: [
+            "test element",
+            "element 2",
+            "another list element",
+            "element 4",
+        ],
+        color: "red",
+    });
+
+    const style = styled.new`
+        p {
+            color: ${React.use(b.color)};
+        }
+    `;
+
+    document.body.appendChild(
+        <div class={style}>
+            <p>colored text</p>
+            <button on:click={() => {
+                if (b.color == "red") {
+                    b.color = "blue";
+                } else {
+                    b.color = "red";
+                }
+            }}>
+                change color of text
+            </button>
+
+
+            {/* <div */}
+            {/*     if={React.use(b.show)} */}
+            {/*     then={<p>b.show is true</p>} */}
+            {/*     else={<p>b.show is fale</p>} */}
+            {/* /> */}
+            {/**/}
+            {/* <p>reactivity demo</p> */}
+            {/* <p asd={React.use(b.counter.b)}> */}
+            {/*     the value of a is {React.use(b.counter.b)} */}
+            {/* </p> */}
+            {/* <div */}
+            {/*     for={b.list} */}
+            {/*     do={(v, i) => { */}
+            {/*         return ( */}
+            {/*             <p> */}
+            {/*                 #{i} of "b.list" is {v} */}
+            {/*             </p> */}
+            {/*         ); */}
+            {/*     }} */}
+            {/* /> */}
+            {/* <button */}
+            {/*     on:click={() => { */}
+            {/*         b.counter.b += 1; */}
+            {/*     }} */}
+            {/* > */}
+            {/*     click me! */}
+            {/* </button> */}
+        </div>,
+    );
+    window.br = b;
+}
+window.addEventListener("load", x);

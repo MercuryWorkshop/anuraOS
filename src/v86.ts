@@ -225,6 +225,8 @@ class V86Backend {
 
     virt_hda: FakeFile;
 
+    barepty: number;
+
     emulator;
     //
 
@@ -304,6 +306,39 @@ class V86Backend {
         });
     }
 
+    registered = false;
+    async onboot() {
+        if (this.registered) return;
+        this.registered = true;
+
+        await sleep(5000); // to be safe
+
+        anura.notifications.add({
+            title: "x86 Subsystem Ready",
+            description: "x86 OS has booted and is ready for use",
+            timeout: 5000,
+        });
+        anura.apps["anura.term"].open();
+
+        this.barepty = await this.openpty("echo 1", 1, 1, (data) => {
+            console.log("BARE: " + data);
+        });
+
+        navigator.serviceWorker.addEventListener("message", async (event) => {
+            if (event.data?.anura_target == "anura.x86.proxy") {
+                const id = event.data.id;
+                navigator.serviceWorker.controller?.postMessage({
+                    anura_target: event.data.anura_target,
+                    id: id,
+                    value: {
+                        body: "hur",
+                        status: 200,
+                    },
+                });
+            }
+        });
+    }
+
     closepty(TTYn: number) {
         this.emulator.serial0_send(`c\n${TTYn}`);
     }
@@ -312,7 +347,7 @@ class V86Backend {
         cols: number,
         rows: number,
         onData: (string: string) => void,
-    ) {
+    ): Promise<number> {
         this.write_uint(rows, this.s_rows_phys_addr);
         this.write_uint(cols, this.s_cols_phys_addr);
         this.write_uint(1, this.new_intent_phys_addr);
@@ -387,6 +422,8 @@ class V86Backend {
                     this.s_cols_phys_addr,
                     this.resize_intent_phys_addr,
                 ] = arr;
+
+                if (!this.registered) this.onboot();
 
                 this.emulator.serial0_send("\x06\n");
                 break;

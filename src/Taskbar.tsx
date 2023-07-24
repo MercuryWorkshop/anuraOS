@@ -75,10 +75,8 @@ class Taskbar {
                                         if (app.windows.length == 1) {
                                             app.windows[0]!.focus();
                                         } else {
-
                                             this.showcontext(app, e);
                                         }
-
                                     }}
                                     on:contextmenu={(e: MouseEvent) => {
                                         this.showcontext(app, e);
@@ -119,75 +117,43 @@ class Taskbar {
 
     showcontext(app: App, e: MouseEvent) {
         if (app.windows.length > 0) {
-            const newcontextmenu =
-                new anura.ContextMenu();
-            newcontextmenu.addItem(
-                "New Window",
-                () => {
-                    app.open();
-                },
-            );
+            const newcontextmenu = new anura.ContextMenu();
+            newcontextmenu.addItem("New Window", () => {
+                app.open();
+            });
 
             let winEnumerator = 0;
             for (const win of app.windows) {
-                let displayTitle =
-                    win.wininfo.title;
+                let displayTitle = win.wininfo.title;
                 if (win.wininfo.title === "")
-                    displayTitle =
-                        "Window " +
-                        winEnumerator;
-                newcontextmenu.addItem(
-                    displayTitle,
-                    () => {
-                        win.focus();
-                        win.unminimize();
-                    },
-                );
+                    displayTitle = "Window " + winEnumerator;
+                newcontextmenu.addItem(displayTitle, () => {
+                    win.focus();
+                    win.unminimize();
+                });
                 winEnumerator++;
             }
-            const pinned = anura.settings
-                .get("applist")
-                .includes(app.package);
-            newcontextmenu.addItem(
-                pinned ? "Unpin" : "Pin",
-                () => {
-                    if (pinned) {
-                        anura.settings.set(
-                            "applist",
-                            anura.settings
-                                .get("applist")
-                                .filter(
-                                    (
-                                        p: string,
-                                    ) =>
-                                        p !=
-                                        app.package,
-                                ),
-                        );
-                    } else {
-                        anura.settings.set(
-                            "applist",
-                            [
-                                ...anura.settings.get(
-                                    "applist",
-                                ),
-                                app.package,
-                            ],
-                        );
-                    }
-                },
-            );
+            const pinned = anura.settings.get("applist").includes(app.package);
+            newcontextmenu.addItem(pinned ? "Unpin" : "Pin", () => {
+                if (pinned) {
+                    anura.settings.set(
+                        "applist",
+                        anura.settings
+                            .get("applist")
+                            .filter((p: string) => p != app.package),
+                    );
+                } else {
+                    anura.settings.set("applist", [
+                        ...anura.settings.get("applist"),
+                        app.package,
+                    ]);
+                }
+            });
 
-            newcontextmenu.addItem(
-                "Uninstall",
-                () => {
-                    alert("todo");
-                },
-            );
-            const c = newcontextmenu.show(
-                e.x,
-                0,
-            );
+            newcontextmenu.addItem("Uninstall", () => {
+                alert("todo");
+            });
+            const c = newcontextmenu.show(e.x, 0);
             // HACK HACK DUMB HACK
             c.style.top = "";
             c.style.bottom = "69px";
@@ -196,13 +162,10 @@ class Taskbar {
         } else {
             app.open();
         }
-
     }
 
-
-
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() { }
+    constructor() {}
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;
