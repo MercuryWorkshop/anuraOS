@@ -16,9 +16,7 @@ class Settings {
             });
             console.log(
                 "ANURA-SW: For this boot, cache will be " +
-                s.cache["use-sw-cache"] ? "enabled" : "disabled") +
-                e-url will be set to " +
-                .cache["bare-url"],
+                    (this.cache["use-sw-cache"] ? "enabled" : "disabled"),
             );
         });
     }
@@ -44,8 +42,6 @@ class Settings {
         if (!initial["relay-url"]) {
             alert("figure this out later");
         }
-
-
 
         try {
             const text = await fs.readFileSync("/anura_settings.json");

@@ -5,7 +5,7 @@ namespace JSX {
 let __effects: any = [];
 
 class React {
-    static get use(): (sink: any) => any {
+    static get use(): (sink: any, mapping?: (...args: any[]) => any) => any {
         // documentation, in case anyone looks in here. the below is a simple way you would use reactivity.
         //// let reactive = stateful({
         ////      a: 1
@@ -26,10 +26,11 @@ class React {
         // the createElement function will then add a listener to the set() hook of the stateful proxy
         // React.createElement will then re-run all the important stuff once the reaction has happened
         __effects = [];
-        return (sink: any) => {
+        return (sink, mapping) => {
             const tmp = __effects;
             __effects = [];
             tmp.__alicejs_marker = true;
+            if (mapping) tmp.__alicejs_mapping = mapping;
             return tmp;
         };
     }
@@ -266,14 +267,65 @@ function stateful<T>(target: T): T {
 }
 
 function handle(used: [any, any, any][], callback: (val: any) => void) {
-    const p = used[used.length - 1]!;
-    const closure = (target: any, prop: any, val: any) => {
-        if (prop == p[1] && target == p[0]) {
-            callback(val);
+    if ("__alicejs_mapping" in used) {
+        console.log(used);
+        const mapping: any = used["__alicejs_mapping"];
+        const used_props: any[] = [];
+        const used_targets: any[] = [];
+
+        const values = new Map();
+
+        const pairs: [any, any][] = [];
+
+        const partial_update = (target: any, prop: any, val: any) => {
+            if (used_props.includes(prop) && used_targets.includes(target)) {
+                values.get(target)[prop] = val;
+            }
+        };
+
+        const full_update = () => {
+            console.log(values);
+            const flattened_values = pairs.map(
+                (pair) => values.get(pair[0])[pair[1]],
+            );
+
+            const value = mapping(...flattened_values);
+
+            callback(value);
+        };
+
+        for (const p of used) {
+            console.log(p);
+            const target = p[0];
+            const prop = p[1];
+
+            used_props.push(prop);
+            used_targets.push(target);
+
+            pairs.push([target, prop]);
+
+            if (!values.has(target)) {
+                values.set(target, {});
+            }
+
+            partial_update(target, prop, target[prop]);
+
+            target.__listeners.push((t: any, p: any, v: any) => {
+                partial_update(t, p, v);
+                full_update();
+            });
         }
-    };
-    p[0].__listeners.push(closure);
-    closure(p[0], p[1], p[0][p[1]]);
+        full_update();
+    } else {
+        const p = used[used.length - 1]!;
+        const closure = (target: any, prop: any, val: any) => {
+            if (prop == p[1] && target == p[0]) {
+                callback(val);
+            }
+        };
+        p[0].__listeners.push(closure);
+        closure(p[0], p[1], p[0][p[1]]);
+    }
 }
 class styled {
     static new(strings: TemplateStringsArray, ...values: any) {
@@ -338,7 +390,7 @@ class styled {
     }
 }
 let css: string;
-//
+// //
 // function x() {
 //     const b = stateful({
 //         counter: stateful({
@@ -352,28 +404,35 @@ let css: string;
 //             "element 4",
 //         ],
 //         color: "red",
+//         count: 0,
+//         count2: 0,
 //     });
-//
-//     const style = styled.new`
-//         p {
-//             color: ${React.use(b.color)};
-//         }
-//     `;
+//     //
+//     // const style = styled.new`
+//     //     p {
+//     //         color: ${React.use(b.count, (c) => {
+//     //     return (c % 2 == 0) ? "red" : "blue";
+//     // })};
+//     //     }
+//     // `;
 //
 //     document.body.appendChild(
-//         <div class={style}>
-//             <p>colored text</p>
-//             <button
-//                 on:click={() => {
-//                     if (b.color == "red") {
-//                         b.color = "blue";
-//                     } else {
-//                         b.color = "red";
-//                     }
-//                 }}
-//             >
-//                 change color of text
+//         <div class={""}>
+//             <p>count is {React.use(b.count)}. that's an {React.use(b.count, c => c % 2 == 0 ? "even" : "odd")} number!</p>
+//             <button on:click={() => b.count += 1}>
+//                 add 1 to count
 //             </button>
+//
+//             <button on:click={() => b.count2 += 1}>
+//                 add 1 to count2
+//             </button>
+//
+//
+//             <p>count is {React.use(b.count)}</p>
+//             <p>count2 is {React.use(b.count2)}</p>
+//
+//
+//             <p>the sum of count and count2 is {React.use((b.count, b.count2), (c1, c2) => c1 + c2)}</p>
 //
 //             {/* <div */}
 //             {/*     if={React.use(b.show)} */}
