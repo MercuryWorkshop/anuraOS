@@ -22,6 +22,20 @@ addEventListener("message", (event) => {
         // console.log(callback)
         callback(event.data.value);
     }
+    if (event.data.anura_target === "anura.bareurl") {
+        let url = new URL(event.data.value);
+        uv.address = event.data.value;
+        uv.config.bare = event.data.value;
+        uv.bareClient.server = url;
+        uv.bareClient.client.base = url;
+        uv.bareClient.client.getMeta = url
+        uv.bareClient.client.http = url;
+        uv.bareClient.client.newMeta = url;
+        uv.bareClient.client.ws = url;
+
+
+        cacheenabled = event.data.value;
+    }
     if (event.data.anura_target === "anura.cache") {
         cacheenabled = event.data.value;
     }
@@ -65,7 +79,7 @@ function invalidateCache() {
 }
 
 workbox.routing.registerRoute(
-    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin))/,
+    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin|\/ultraviolet\/))/,
     ({ url }) => {
         if (!cacheenabled) return;
         if (url.pathname === "/") {

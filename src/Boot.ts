@@ -34,22 +34,33 @@ window.addEventListener("load", async () => {
     document.body.appendChild(bootsplash.element);
     if (!navigator.serviceWorker.controller) window.location.reload();
 
-    const conf = await (await fetch("/config.json")).json();
-    const milestone = await (await fetch("/MILESTONE")).text();
-    const instancemilestone = conf.milestone;
+    let conf, milestone, instancemilestone;
+    try {
+        conf = await (await fetch("/config.json")).json();
+        milestone = await (await fetch("/MILESTONE")).text();
+        instancemilestone = conf.milestone;
+
+
+        Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
+
+    } catch (e) {
+        conf = JSON.parse(await new Promise(r => Filer.fs.readFile("/config_cached.json", (_: any, b: Uint8Array) => r(new TextDecoder().decode(b)))));
+    }
 
     anura = await Anura.new(conf);
-    if (
-        anura.settings.get("milestone") != milestone ||
-        anura.settings.get("instancemilestone") != instancemilestone
-    ) {
-        await anura.settings.set("milestone", milestone);
-        await anura.settings.set("instancemilestone", instancemilestone);
-        navigator.serviceWorker.controller!.postMessage({
-            anura_target: "anura.cache.invalidate",
-        });
-        console.log("invalidated cache");
-        window.location.reload();
+    if (milestone) {
+        if (
+            anura.settings.get("milestone") != milestone ||
+            anura.settings.get("instancemilestone") != instancemilestone
+        ) {
+            await anura.settings.set("milestone", milestone);
+            await anura.settings.set("instancemilestone", instancemilestone);
+            navigator.serviceWorker.controller!.postMessage({
+                anura_target: "anura.cache.invalidate",
+            });
+            console.log("invalidated cache");
+            window.location.reload();
+        }
     }
 
     (window as any).anura = anura;
@@ -125,7 +136,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     (window as any).taskbar = taskbar;
 
-    document.addEventListener("contextmenu", function (e) {
+    document.addEventListener("contextmenu", function(e) {
         if (e.shiftKey) return;
         e.preventDefault();
         //     const menu: any = document.querySelector(".custom-menu");
