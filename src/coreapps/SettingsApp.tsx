@@ -158,6 +158,7 @@ class SettingsApp implements App {
                                                 "x86 OS has sucessfully installed",
                                             timeout: 5000,
                                         });
+                                        // BUG! IT WON'T FIX THE X86HDD, WILL FAIL TO BOOT FIRST TIME
 
                                         await bootx86();
                                         anura.apps["anura.x86mgr"].open();

@@ -212,8 +212,11 @@ function __assign_prop(elm: HTMLElement, name: string, prop: any) {
 
     if (typeof prop === "function" && name.startsWith("on:")) {
         const names = name.substring(3);
-        for (const name of names.split("-")) {
-            elm.addEventListener(name, prop);
+        for (const name of names.split("$")) {
+            elm.addEventListener(name, (...args) => {
+                (window as any).$el = elm;
+                prop(...args);
+            });
         }
         return;
     }
@@ -225,6 +228,7 @@ function __assign_prop(elm: HTMLElement, name: string, prop: any) {
         }
         const observer = new observerclass((entries: any) => {
             for (const entry of entries) {
+                (window as any).$el = elm;
                 prop(entry);
             }
         });
