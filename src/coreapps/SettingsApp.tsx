@@ -70,7 +70,8 @@ class SettingsApp implements App {
     windows: WMWindow[];
 
     state = stateful({
-        show_x86: !anura.settings.get("disable-x86"),
+        show_x86: !anura.settings.get("x86-disabled"),
+        x86_installing: false,
     });
 
     page = (
@@ -111,7 +112,7 @@ class SettingsApp implements App {
                                 <button
                                     on:click={() => {
                                         this.state.show_x86 = false;
-                                        anura.settings.set("disable-x86", true);
+                                        anura.settings.set("x86-disabled", true);
                                         anura.x86hdd.delete();
                                     }}
                                 >
@@ -120,6 +121,44 @@ class SettingsApp implements App {
                             </>
                         );
                     })()}
+                    else={
+
+
+                        <div if={React.use(this.state.x86_installing)} then={
+                            <>
+                                <h3>Installing x86... this may take a while</h3>
+                                <img src="/assets/oobe/spinner.gif" class={styled.new`
+self{
+    width:10%;
+    aspect-ratio: 1/1;
+}
+`} />
+
+                            </>
+                        }
+                            else={
+                                <button on:click={async () => {
+
+                                    this.state.x86_installing = true;
+                                    await installx86();
+                                    anura.settings.set("x86-disabled", false);
+                                    anura.notifications.add({
+                                        title: "x86 Subsystem Installed",
+                                        description: "x86 OS has sucessfully installed",
+                                        timeout: 5000,
+                                    });
+
+                                    await bootx86();
+                                    anura.apps["anura.x86mgr"].open();
+
+                                    this.state.x86_installing = false;
+                                    this.state.show_x86 = true;
+                                }}>Install x86 subsystem OS</button>
+                            }
+                        >
+                        </div>
+
+                    }
                 />
             </div>
         </div>

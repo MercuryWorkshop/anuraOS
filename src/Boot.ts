@@ -40,11 +40,16 @@ window.addEventListener("load", async () => {
         milestone = await (await fetch("/MILESTONE")).text();
         instancemilestone = conf.milestone;
 
-
         Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
-
     } catch (e) {
-        conf = JSON.parse(await new Promise(r => Filer.fs.readFile("/config_cached.json", (_: any, b: Uint8Array) => r(new TextDecoder().decode(b)))));
+        conf = JSON.parse(
+            await new Promise((r) =>
+                Filer.fs.readFile(
+                    "/config_cached.json",
+                    (_: any, b: Uint8Array) => r(new TextDecoder().decode(b)),
+                ),
+            ),
+        );
     }
 
     anura = await Anura.new(conf);
@@ -122,11 +127,7 @@ document.addEventListener("anura-login-completed", async () => {
     }
 
     if (!anura.settings.get("x86-disabled")) {
-        // v86 stable. can enable it by default now
-
-        const mgr = new x86MgrApp();
-        await anura.registerApp(mgr);
-        anura.x86 = new V86Backend(anura.x86hdd, mgr);
+        await bootx86();
     }
 
     document.body.appendChild(contextMenu.element);
@@ -159,3 +160,9 @@ document.addEventListener("anura-login-completed", async () => {
     anura.initComplete = true;
     taskbar.updateTaskbar();
 });
+async function bootx86() {
+
+    const mgr = new x86MgrApp();
+    await anura.registerApp(mgr);
+    anura.x86 = new V86Backend(anura.x86hdd, mgr);
+}

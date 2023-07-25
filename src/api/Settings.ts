@@ -16,8 +16,9 @@ class Settings {
             });
             console.log(
                 "ANURA-SW: For this boot, cache will be " +
-                (this.cache["use-sw-cache"] ? "enabled" : "disabled") +
-                "bare-url will be set to " + this.cache["bare-url"],
+                    (this.cache["use-sw-cache"] ? "enabled" : "disabled") +
+                    "bare-url will be set to " +
+                    this.cache["bare-url"],
             );
         });
     }

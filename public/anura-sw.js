@@ -28,11 +28,10 @@ addEventListener("message", (event) => {
         uv.config.bare = event.data.value;
         uv.bareClient.server = url;
         uv.bareClient.client.base = url;
-        uv.bareClient.client.getMeta = url
+        uv.bareClient.client.getMeta = url;
         uv.bareClient.client.http = url;
         uv.bareClient.client.newMeta = url;
         uv.bareClient.client.ws = url;
-
 
         cacheenabled = event.data.value;
     }
