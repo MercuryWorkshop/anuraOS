@@ -264,7 +264,7 @@ class V86Backend {
 
             bios: { url: "/bios/seabios.bin" },
             vga_bios: { url: "/bios/vgabios.bin" },
-            network_relay_url: "ws://localhost:8001/",
+            network_relay_url: anura.settings.get("relay-url"),
             // initial_state: { url: "/images/v86state.bin" },
             autostart: true,
             uart1: true,
@@ -311,19 +311,21 @@ class V86Backend {
         if (this.registered) return;
         this.registered = true;
 
-        await sleep(5000); // to be safe
+        await sleep(8000); // to be safe
 
         anura.notifications.add({
             title: "x86 Subsystem Ready",
             description: "x86 OS has booted and is ready for use",
             timeout: 5000,
         });
-        anura.apps["anura.term"].open();
 
         this.barepty = await this.openpty("echo 1", 1, 1, (data) => {
             console.log("BARE: " + data);
         });
+        await sleep(5000); // to be safe
+        anura.apps["anura.term"].open();
 
+        await sleep(5000); // to be safe
         navigator.serviceWorker.addEventListener("message", async (event) => {
             if (event.data?.anura_target == "anura.x86.proxy") {
                 const id = event.data.id;

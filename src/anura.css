@@ -90,3 +90,53 @@ canvas {
     justify-content: space-evenly;
     align-items: center;
 }
+
+.custom-menu {
+    position: absolute;
+    border: 1px solid #000000;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    padding: 10px 0;
+    width: 300px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+
+    z-index: 10000;
+    overflow: hidden;
+}
+.custom-menu-item {
+    padding: 8px 12px;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+}
+.custom-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.material-symbols-outlined {
+    font-family: "Material Symbols Outlined", sans-serif;
+}
+.custom-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-menu-item .material-symbols-outlined {
+    margin-top: 0.05px;
+    margin-right: 5px;
+    padding-left: 1px;
+}
+
+.custom-menu .extra-menu-wrapper {
+    position: fixed;
+}
+
+.custom-menu .extra-menu {
+    position: relative;
+    left: 303px;
+    bottom: 0.75em;
+}

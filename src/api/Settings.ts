@@ -23,13 +23,8 @@ class Settings {
         });
     }
 
-    static defaultSettings() {
-        return {
-            applist: [],
-        };
-    }
-    static async new(fs: FilerFS) {
-        const initial = this.defaultSettings();
+    static async new(fs: FilerFS, defaultsettings: { [key: string]: any }) {
+        const initial = defaultsettings;
         try {
             const text = await fs.readFileSync("/anura_settings.json");
             Object.assign(initial, JSON.parse(text));

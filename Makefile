@@ -11,7 +11,7 @@ full: all prod rootfs
 
 hooks: FORCE
 	mkdir -p .git/hooks
-	echo -e "#!/bin/sh\nmake lint" > .git/hooks/pre-commit
+	echo -e "#!/bin/sh\nmake lint\ngit add -A" > .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 
 public/config.json:

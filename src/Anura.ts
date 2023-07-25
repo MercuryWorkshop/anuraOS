@@ -38,7 +38,7 @@ class Anura {
             });
         };
 
-        const settings = await Settings.new(fs);
+        const settings = await Settings.new(fs, config.defaultsettings);
 
         const hdd = await InitV86Hdd();
         const anuraPartial = new Anura(fs, settings, config, hdd);
