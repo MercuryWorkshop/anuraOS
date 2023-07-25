@@ -1,8 +1,96 @@
+
 class OobeView {
     content: HTMLElement;
+    state = stateful({
+        color: "var(--oobe-bg)",
+        text: "black"
+    });
+    css = styled.new`
+*{
+    color:${React.use(this.state.text)}
+}
 
+self {
+    background-color: ${React.use(this.state.color)};
+    z-index: 999999999;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+#content {
+    padding: 79.6px 40px 23.8px 40px;
+    width: 1040px;
+    height: 680px;
+    box-sizing: border-box;
+}
+
+#content .screen {
+    width: 100%;
+    height: 100%;
+}
+
+.screen h1 {
+    margin: 48px 0 0 0;
+}
+
+.screen #subtitle {
+    margin: 16px 0 64px 0;
+    font-size: 24px;
+}
+
+.screen #gridContent {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.screen #gridContent #topButtons {
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+}
+
+.screen #gridContent #bottomButtons {
+    align-self: end;
+    justify-self: start;
+    grid-column: 1 / span 1;
+    grid-row: 2 / span 1;
+}
+
+.screen .preferredButton {
+    background-color: rgb(26, 115, 232);
+    border-radius: 16px;
+    border-style: none;
+    color: white;
+    height: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.screen button {
+    background-color: var(--oobe-bg);
+    border-radius: 16px;
+    border: 1px solid gray;
+    color: rgb(26, 115, 232);
+    height: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+#welcome.screen #animation {
+    grid-column: 2 / span 1;
+    grid-row: 1 / span 2;
+    margin-left: auto;
+}
+`;
     element = (
-        <div class="oobe">
+        <div class={this.css}>
             <div bind:content={this} id="content"></div>
         </div>
     );
@@ -30,7 +118,7 @@ class OobeView {
                     </div>
                 </div>
             ),
-            on: () => {},
+            on: () => { },
         },
         {
             elm: (
@@ -57,7 +145,9 @@ class OobeView {
                     </button>
                 </div>
             ),
-            on: () => {},
+            on: () => {
+
+            },
         },
         {
             elm: (
@@ -72,6 +162,10 @@ class OobeView {
                 </div>
             ),
             on: async () => {
+
+                this.state.color = "var(--material-bg)";
+                this.state.text = "whitesmoke";
+
                 if (!anura.settings.get("x86-disabled")) {
                     console.log("installing x86");
                     const bzimage = await fetch(anura.config.bzimage);

@@ -1,14 +1,14 @@
 css = styled.new`
-self {
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-}
-canvas {
-    width: 100%;
-    height: 100%;
-    background-color: #000;
-}
+    self {
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+    }
+    canvas {
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+    }
 `;
 
 class x86MgrApp implements App {
@@ -17,7 +17,6 @@ class x86MgrApp implements App {
     icon = "/assets/xorg.svg";
     windows: WMWindow[];
     source: string;
-
 
     screen_container = (
         <div id="screen_container" class={css}>

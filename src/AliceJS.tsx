@@ -324,7 +324,9 @@ class styled {
         //@ts-ignore
         for (const rule of virtualStyleElement.sheet.cssRules) {
             console.log(rule.selectorText.includes("self"));
-            rule.selectorText = rule.selectorText.includes("self") ? `.${uid}.self${rule.selectorText.replace("self", "")}` : `.${uid} ${rule.selectorText}`;
+            rule.selectorText = rule.selectorText.includes("self")
+                ? `.${uid}.self${rule.selectorText.replace("self", "")}`
+                : `.${uid} ${rule.selectorText}`;
             cssParsed += `${rule.cssText}\n`;
         }
 
