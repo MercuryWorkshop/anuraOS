@@ -4,9 +4,11 @@ class Taskbar {
     state: {
         apps: App[];
         time: string;
+        bat_icon: string;
     } = stateful({
         apps: [],
         time: "",
+        bat_icon: "battery_0_bar",
     });
 
     dragged = null;
@@ -109,7 +111,9 @@ class Taskbar {
                 <div class="flex flexcenter">
                     <p>{React.use(this.state.time)}</p>
 
-                    <span class="material-symbols-outlined">battery_0_bar</span>
+                    <span class="material-symbols-outlined">
+                        {React.use(this.state.bat_icon)}
+                    </span>
 
                     <span class="material-symbols-outlined">settings</span>
                 </div>
@@ -177,12 +181,18 @@ class Taskbar {
                     hour12: true,
                 })
                 .slice(0, -3);
-            console.log(this.state);
         }, 1000);
+
+        // Battery Status API is deprecated, so Microsoft refuses to create type definitions. :(
+
         // @ts-ignore
-        navigator.getBattery().then((battery) => {
-            console.log(battery);
-        });
+        if (navigator.getBattery) {
+            // @ts-ignore
+            navigator.getBattery().then((battery) => {
+                const bat_bars = Math.round(battery.level * 7) - 1;
+                this.state.bat_icon = `battery_${bat_bars}_bar`;
+            });
+        }
     }
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
