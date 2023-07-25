@@ -118,7 +118,7 @@ class OobeView {
                     </div>
                 </div>
             ),
-            on: () => { },
+            on: () => {},
         },
         {
             elm: (
@@ -145,7 +145,7 @@ class OobeView {
                     </button>
                 </div>
             ),
-            on: () => { },
+            on: () => {},
         },
         {
             elm: (
@@ -165,7 +165,6 @@ class OobeView {
 
                 if (!anura.settings.get("x86-disabled")) {
                     await installx86();
-
                 }
 
                 this.complete();
@@ -195,15 +194,9 @@ class OobeView {
 async function installx86() {
     console.log("installing x86");
     const bzimage = await fetch(anura.config.bzimage);
-    anura.fs.writeFile(
-        "/bzimage",
-        Filer.Buffer(await bzimage.arrayBuffer()),
-    );
+    anura.fs.writeFile("/bzimage", Filer.Buffer(await bzimage.arrayBuffer()));
     const initrd = await fetch(anura.config.initrd);
-    anura.fs.writeFile(
-        "/initrd.img",
-        Filer.Buffer(await initrd.arrayBuffer()),
-    );
+    anura.fs.writeFile("/initrd.img", Filer.Buffer(await initrd.arrayBuffer()));
 
     const rootfs = await fetch(anura.config.rootfs);
     console.log("fetched");

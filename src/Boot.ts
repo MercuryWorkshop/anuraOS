@@ -137,7 +137,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     (window as any).taskbar = taskbar;
 
-    document.addEventListener("contextmenu", function(e) {
+    document.addEventListener("contextmenu", function (e) {
         if (e.shiftKey) return;
         e.preventDefault();
         //     const menu: any = document.querySelector(".custom-menu");
@@ -161,7 +161,6 @@ document.addEventListener("anura-login-completed", async () => {
     taskbar.updateTaskbar();
 });
 async function bootx86() {
-
     const mgr = new x86MgrApp();
     await anura.registerApp(mgr);
     anura.x86 = new V86Backend(anura.x86hdd, mgr);
