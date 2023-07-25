@@ -13,9 +13,12 @@
     ],
     "defaultsettings": {
         "use-sw-cache": true,
-        "applist": ["anura.settings"],
-        "wsproxy-url": "http://localhost:8080/idk",
-        "bare-url": "http://localhost:8080/bare/",
+        "applist": [
+            "anura.browser",
+            "anura.settings",
+            "anura.fsapp",
+            "anura.term"
+        ],
         "relay-url": "ws://localhost:8001/"
     },
     "bzimage": "/images/debian-boot/vmlinuz-6.1.0-10-686",

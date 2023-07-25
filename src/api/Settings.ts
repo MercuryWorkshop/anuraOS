@@ -16,15 +16,37 @@ class Settings {
             });
             console.log(
                 "ANURA-SW: For this boot, cache will be " +
-                    (this.cache["use-sw-cache"] ? "enabled" : "disabled") +
-                    "bare-url will be set to " +
-                    this.cache["bare-url"],
+                s.cache["use-sw-cache"] ? "enabled" : "disabled") +
+                e-url will be set to " +
+                .cache["bare-url"],
             );
         });
     }
 
     static async new(fs: FilerFS, defaultsettings: { [key: string]: any }) {
         const initial = defaultsettings;
+
+        if (!initial["wsproxy-url"]) {
+            let url = "";
+            if (location.protocol == "https:") {
+                url += "wss://";
+            } else {
+                url += "ws://";
+            }
+            url += window.location.origin.split("://")[1];
+            url += "/";
+            initial["wsproxy-url"] = url;
+        }
+
+        if (!initial["bare-url"]) {
+            initial["bare-url"] = location.origin + "/bare";
+        }
+        if (!initial["relay-url"]) {
+            alert("figure this out later");
+        }
+
+
+
         try {
             const text = await fs.readFileSync("/anura_settings.json");
             Object.assign(initial, JSON.parse(text));
