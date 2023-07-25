@@ -3,8 +3,10 @@ class Taskbar {
 
     state: {
         apps: App[];
+        time: string;
     } = stateful({
         apps: [],
+        time: "",
     });
 
     dragged = null;
@@ -105,7 +107,7 @@ class Taskbar {
                 }}
             >
                 <div class="flex flexcenter">
-                    <p>19:23</p>
+                    <p>{React.use(this.state.time)}</p>
 
                     <span class="material-symbols-outlined">battery_0_bar</span>
 
@@ -165,7 +167,23 @@ class Taskbar {
     }
 
     // shortcuts: { [key: string]: Shortcut } = {};
-    constructor() {}
+    constructor() {
+        setInterval(() => {
+            const date = new Date();
+            this.state.time = date
+                .toLocaleTimeString(navigator.language, {
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                })
+                .slice(0, -3);
+            console.log(this.state);
+        }, 1000);
+        // @ts-ignore
+        navigator.getBattery().then((battery) => {
+            console.log(battery);
+        });
+    }
     addShortcut(app: App) {
         // const shortcut = new Shortcut(app);
         // this.shortcuts[app.package] = shortcut;
