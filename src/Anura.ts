@@ -52,7 +52,7 @@ class Anura {
         warn: console.warn.bind(console, "anuraOS:"),
         error: console.error.bind(console, "anuraOS:"),
     };
-    net = new Networking();
+    // net = new Networking();
     async registerApp(app: App) {
         if (app.package in this.apps) {
             throw "Application already installed";

@@ -170,29 +170,3 @@ hr {
     opacity: 0.25;
     width: 100%;
 }
-
-#contextMenu {
-    position: absolute;
-    background-color: #414559;
-    display: flex;
-    flex-direction: column;
-}
-#contextMenu button {
-    padding-left: 2em;
-    padding-right: 3em;
-    border: none;
-    border-radius: 0;
-    background-color: transparent;
-    text-align: left;
-    height: 2em;
-}
-#contextMenu button[aria-disabled="true"] {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-#contextMenu button:hover {
-    background-color: #51576d;
-}
-#contextMenu button:active {
-    background-color: #626880;
-}
