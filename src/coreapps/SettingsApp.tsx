@@ -1,4 +1,8 @@
 css = styled.new`
+    .self {
+        color: white;
+    }
+
     /* The switch - the box around the slider */
     .switch {
         position: relative;
