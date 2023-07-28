@@ -27,12 +27,13 @@ addEventListener("message", (event) => {
         uv.address = event.data.value;
         uv.config.bare = event.data.value;
         uv.bareClient.server = url;
-        uv.bareClient.client.base = url;
-        uv.bareClient.client.getMeta = url;
-        uv.bareClient.client.http = url;
-        uv.bareClient.client.newMeta = url;
-        uv.bareClient.client.ws = url;
-
+        if (uv.bareClient && uv.bareClient.client) {
+            uv.bareClient.client.base = url;
+            uv.bareClient.client.getMeta = url;
+            uv.bareClient.client.http = url;
+            uv.bareClient.client.newMeta = url;
+            uv.bareClient.client.ws = url;
+        }
         cacheenabled = event.data.value;
     }
     if (event.data.anura_target === "anura.cache") {
