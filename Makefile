@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json
+all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json
 
 full: all prod rootfs
 
@@ -37,7 +37,9 @@ v86dirty:
 
 v86: libv86.js build/lib/v86.wasm
 	cp -r v86/bios public
-	
+
+build/cache-load.json: FORCE
+	(find apps/ | jq -Rnc '[inputs]') > build/cache-load.json
 
 libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 	cd v86; make build/libv86.js

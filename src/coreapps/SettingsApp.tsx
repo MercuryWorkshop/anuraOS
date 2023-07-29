@@ -2,68 +2,63 @@ css = styled.new`
     .self {
         color: white;
     }
-
-    /* The switch - the box around the slider */
+    /* https://codepen.io/sajran/pen/dMKvpb */
     .switch {
-        position: relative;
         display: inline-block;
-        width: 60px;
-        height: 34px;
+        position: relative;
+        margin: 0 0 10px;
+        font-size: 16px;
+        line-height: 24px;
     }
-
-    /* Hide default HTML checkbox */
-    .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    /* The slider */
-    .slider {
+    .switch__input {
         position: absolute;
-        cursor: pointer;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        -webkit-transition: 0.4s;
-        transition: 0.4s;
+        width: 36px;
+        height: 20px;
+        opacity: 0;
+        z-index: 0;
     }
-
-    .slider:before {
-        position: absolute;
+    .switch__label {
+        display: block;
+        padding: 0 0 0 44px;
+        cursor: pointer;
+    }
+    .switch__label:before {
         content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        -webkit-transition: 0.4s;
-        transition: 0.4s;
+        position: absolute;
+        top: 5px;
+        left: 0;
+        width: 36px;
+        height: 14px;
+        background-color: rgba(255, 255, 255, 0.26);
+        border-radius: 14px;
+        z-index: 1;
+        transition: background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    input:checked + .slider {
-        background-color: #2196f3;
+    .switch__label:after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        background-color: #fff;
+        border-radius: 14px;
+        box-shadow:
+            0 2px 2px 0 rgba(0, 0, 0, 0.14),
+            0 3px 1px -2px rgba(0, 0, 0, 0.2),
+            0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        z-index: 2;
+        transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        transition-property: left, background-color;
     }
-
-    input:focus + .slider {
-        box-shadow: 0 0 1px #2196f3;
+    .switch__input:checked + .switch__label:before {
+        background-color: rgba(63, 81, 181, 0.5);
     }
-
-    input:checked + .slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
-    }
-
-    /* Rounded sliders */
-    .slider.round {
-        border-radius: 34px;
-    }
-
-    .slider.round:before {
-        border-radius: 50%;
+    .switch__input:checked + .switch__label:after {
+        left: 16px;
+        background-color: #3f51b5;
     }
 `;
 
@@ -183,10 +178,19 @@ class SettingsApp implements App {
 
     toggle(name: string, setting: string) {
         const val = anura.settings.get(setting);
+        const checkboxID = crypto.randomUUID();
         const checkbox = (
             <input
                 type="checkbox"
+                class="switch__input"
+                id={checkboxID}
                 on:click={() => {
+                    // if (checkbox.checked) {
+                    //     checkbox.checked = false;
+                    // } else {
+                    //     checkbox.checked = true;
+                    // }
+                    console.log("thing");
                     anura.settings.set(setting, checkbox.checked);
                 }}
             />
@@ -194,17 +198,17 @@ class SettingsApp implements App {
         if (val) {
             checkbox.checked = true;
         }
-
-        return (
+        const full: HTMLElement = (
             <div>
                 {name}
-
-                <label class="switch">
+                <div class="switch" style="top: -6px;">
                     {checkbox}
-                    <span class="slider round"></span>
-                </label>
+                    <label class="switch__label"></label>
+                </div>
             </div>
         );
+        full.getElementsByTagName("label")[0]?.setAttribute("for", checkboxID); // AliceJS bug workaround
+        return full;
     }
     textbox(name: string, setting: string, multiline: boolean) {
         const textbox = (
