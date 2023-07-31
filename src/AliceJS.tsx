@@ -130,8 +130,10 @@ class React {
                                 const value = val[index];
 
                                 const part = closure(value, index, val);
-                                __elms.push(part);
-                                elm.appendChild(part);
+                                if (part instanceof HTMLElement) {
+                                    __elms.push(part);
+                                    elm.appendChild(part);
+                                }
                             }
 
                             lastpredicate = [];
@@ -142,7 +144,8 @@ class React {
                         const value = predicate[index];
 
                         const part = closure(value, index, predicate);
-                        elm.appendChild(part);
+
+                        if (part instanceof Node) elm.appendChild(part);
                     }
                 }
 

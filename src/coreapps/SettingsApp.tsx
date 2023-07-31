@@ -317,6 +317,7 @@ class SettingsApp implements App {
                     class="settings-section"
                     if={React.use(this.state.show_x86)}
                     then={(() => {
+                        console.log("redrawing");
                         const disksize = (
                             <input
                                 style="float: right; margin-right: 5px"
@@ -353,21 +354,71 @@ class SettingsApp implements App {
                                     </div>,
                                 )}
                                 {this.row(
-                                    <button
-                                        style="width: 100%"
-                                        on:click={() => {
-                                            this.state.show_x86 = false;
-                                            anura.settings.set(
-                                                "x86-disabled",
-                                                true,
-                                            );
-                                            anura.x86hdd.delete();
-                                        }}
-                                        class="pure-material-button-contained"
-                                    >
-                                        Disable x86 subsystem (will remove all
-                                        data)
-                                    </button>,
+                                    <>
+                                        <button
+                                            on:click={() => {
+                                                this.state.show_x86 = false;
+                                                anura.settings.set(
+                                                    "x86-disabled",
+                                                    true,
+                                                );
+                                                anura.x86hdd.delete();
+                                            }}
+                                            class="pure-material-button-contained"
+                                        >
+                                            Disable x86 subsystem (will remove
+                                            all data)
+                                        </button>
+                                        <button
+                                            on:click={() => {
+                                                //@ts-ignore
+                                                const el = $el;
+                                                if (
+                                                    confirm(
+                                                        "WARNING: CUSTOM ROOTFSES ARE NOT SUPPORTED!! You will likely break all integration and be left with an inferior experience. DO YOU KNOW WHAT YOU ARE DOING?",
+                                                    )
+                                                ) {
+                                                    const inp = (
+                                                        <input
+                                                            type="file"
+                                                            on:change={async () => {
+                                                                if (
+                                                                    inp.files[0]
+                                                                ) {
+                                                                    try {
+                                                                        //@ts-ignore
+                                                                        await anura.x86hdd.loadfile(
+                                                                            inp
+                                                                                .files[0],
+                                                                        );
+                                                                        el.replaceWith(
+                                                                            <p>
+                                                                                rootfs
+                                                                                uploaded
+                                                                                sucessfully
+                                                                            </p>,
+                                                                        );
+                                                                    } catch (e) {
+                                                                        el.replaceWith(
+                                                                            <p>
+                                                                                error
+                                                                                uploading
+                                                                                rootfs
+                                                                            </p>,
+                                                                        );
+                                                                    }
+                                                                }
+                                                            }}
+                                                        />
+                                                    );
+                                                    inp.click();
+                                                }
+                                            }}
+                                            class="pure-material-button-contained"
+                                        >
+                                            Upload custom x86 rootfs
+                                        </button>
+                                    </>,
                                 )}
                             </>
                         );

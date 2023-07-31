@@ -34,7 +34,6 @@ addEventListener("message", (event) => {
             uv.bareClient.client.newMeta = url;
             uv.bareClient.client.ws = url;
         }
-        cacheenabled = event.data.value;
     }
     if (event.data.anura_target === "anura.cache") {
         cacheenabled = event.data.value;
