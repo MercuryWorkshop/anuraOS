@@ -1,12 +1,12 @@
 class Taskbar {
-    activeTray: HTMLElement;
-
     state: {
-        apps: App[];
+        pinnedApps: App[];
+        activeApps: App[];
         time: string;
         bat_icon: string;
     } = stateful({
-        apps: [],
+        pinnedApps: [],
+        activeApps: [],
         time: "",
         bat_icon: "battery_0_bar",
     });
@@ -40,66 +40,22 @@ class Taskbar {
                 }}
             >
                 <ul
-                    bind:activeTray={this}
-                    for={React.use(this.state.apps)}
-                    do={(app: App) => {
-                        if (!app) return;
-                        const t = (
-                            <li class="taskbar-button" bind:tmp={this}>
-                                <input
-                                    type="image"
-                                    draggable="true"
-                                    src={app?.icon || ""}
-                                    on:dragend={() => {
-                                        if (!this.insidedrag) {
-                                            for (const i of app.windows) {
-                                                i.close();
-                                            }
-                                            anura.settings.set(
-                                                "applist",
-                                                anura.settings
-                                                    .get("applist")
-                                                    .filter(
-                                                        (p: string) =>
-                                                            p != app.package,
-                                                    ),
-                                            );
-                                            this.updateTaskbar();
-                                        }
-                                        this.dragged = null;
-                                        this.insidedrag = false;
-                                    }}
-                                    on:dragstart={() => {
-                                        this.dragged = t;
-                                    }}
-                                    class="showDialog"
-                                    on:click={(e: MouseEvent) => {
-                                        console.log("???");
-                                        console.log(app.windows.length);
-                                        if (app.windows.length == 1) {
-                                            app.windows[0]!.focus();
-                                        } else {
-                                            this.showcontext(app, e);
-                                        }
-                                    }}
-                                    on:contextmenu={(e: MouseEvent) => {
-                                        this.showcontext(app, e);
-                                    }}
-                                />
-                                <div
-                                    class="lightbar"
-                                    style={
-                                        "position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%)" +
-                                        (app.windows?.length == 0
-                                            ? ";visibility:hidden"
-                                            : "")
-                                    }
-                                    bind:lightbar={this}
-                                ></div>
-                            </li>
-                        );
-                        return t;
-                    }}
+                    for={React.use(this.state.pinnedApps)}
+                    do={this.shortcut.bind(this)}
+                ></ul>
+                <div
+                    class={styled.new`
+                        self {
+                            border: 2px solid white;
+                            height: 70%;
+                            border-radius: 1px;
+                            margin: 1em;
+                        }
+                    `}
+                ></div>
+                <ul
+                    for={React.use(this.state.activeApps)}
+                    do={this.shortcut.bind(this)}
                 ></ul>
             </nav>
             <div
@@ -120,6 +76,58 @@ class Taskbar {
             </div>
         </footer>
     );
+
+    shortcut(app: App) {
+        if (!app) return;
+        return (
+            <li class="taskbar-button" bind:tmp={this}>
+                <input
+                    type="image"
+                    draggable="true"
+                    src={app?.icon || ""}
+                    on:dragend={() => {
+                        if (!this.insidedrag) {
+                            for (const i of app.windows) {
+                                i.close();
+                            }
+                            anura.settings.set(
+                                "applist",
+                                anura.settings
+                                    .get("applist")
+                                    .filter((p: string) => p != app.package),
+                            );
+                            this.updateTaskbar();
+                        }
+                        this.dragged = null;
+                        this.insidedrag = false;
+                    }}
+                    on:dragstart={() => {
+                        // @ts-ignore
+                        this.dragged = $el;
+                    }}
+                    class="showDialog"
+                    on:click={(e: MouseEvent) => {
+                        if (app.windows.length == 1) {
+                            app.windows[0]!.focus();
+                        } else {
+                            this.showcontext(app, e);
+                        }
+                    }}
+                    on:contextmenu={(e: MouseEvent) => {
+                        this.showcontext(app, e);
+                    }}
+                />
+                <div
+                    class="lightbar"
+                    style={
+                        "position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%)" +
+                        (app.windows?.length == 0 ? ";visibility:hidden" : "")
+                    }
+                    bind:lightbar={this}
+                ></div>
+            </li>
+        );
+    }
 
     showcontext(app: App, e: MouseEvent) {
         if (app.windows.length > 0) {
@@ -154,6 +162,7 @@ class Taskbar {
                         app.package,
                     ]);
                 }
+                this.updateTaskbar();
             });
 
             newcontextmenu.addItem("Uninstall", () => {
@@ -206,11 +215,15 @@ class Taskbar {
         const pinned = anura.settings
             .get("applist")
             .map((id: string) => anura.apps[id]);
-        const activewindows = Object.values(anura.apps).filter(
+        const activewindows: App[] = Object.values(anura.apps).filter(
             (a: App) => a.windows.length > 0,
-        );
+        ) as App[];
 
-        this.state.apps = [...new Set([...pinned, ...activewindows])];
+        this.state.pinnedApps = pinned;
+        this.state.activeApps = activewindows.filter(
+            (app: App) => !pinned.includes(app),
+        );
+        console.log(this.state.activeApps);
     }
     // removeShortcuts() {
     //     for (const name in this.shortcuts) {
