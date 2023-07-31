@@ -60,6 +60,214 @@ css = styled.new`
         left: 16px;
         background-color: #3f51b5;
     }
+    /* https://codepen.io/finnhvman/pen/MQyJxV */
+    .pure-material-button-contained {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 4px;
+        padding: 0 16px;
+        min-width: 64px;
+        height: 36px;
+        vertical-align: middle;
+        text-align: center;
+        text-overflow: ellipsis;
+        text-transform: uppercase;
+        color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+        background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+        box-shadow:
+            0 3px 1px -2px rgba(0, 0, 0, 0.2),
+            0 2px 2px 0 rgba(0, 0, 0, 0.14),
+            0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        font-family: var(
+            --pure-material-font,
+            "Roboto",
+            "Segoe UI",
+            BlinkMacSystemFont,
+            system-ui,
+            -apple-system
+        );
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 36px;
+        overflow: hidden;
+        outline: none;
+        cursor: pointer;
+        transition: box-shadow 0.2s;
+    }
+
+    .pure-material-button-contained::-moz-focus-inner {
+        border: none;
+    }
+
+    /* Overlay */
+    .pure-material-button-contained::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgb(
+            var(--pure-material-onprimary-rgb, 255, 255, 255)
+        );
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    /* Ripple */
+    .pure-material-button-contained::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        border-radius: 50%;
+        padding: 50%;
+        width: 32px; /* Safari */
+        height: 32px; /* Safari */
+        background-color: rgb(
+            var(--pure-material-onprimary-rgb, 255, 255, 255)
+        );
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1);
+        transition:
+            opacity 1s,
+            transform 0.5s;
+    }
+
+    /* Hover, Focus */
+    .pure-material-button-contained:hover,
+    .pure-material-button-contained:focus {
+        box-shadow:
+            0 2px 4px -1px rgba(0, 0, 0, 0.2),
+            0 4px 5px 0 rgba(0, 0, 0, 0.14),
+            0 1px 10px 0 rgba(0, 0, 0, 0.12);
+    }
+
+    .pure-material-button-contained:hover::before {
+        opacity: 0.08;
+    }
+
+    .pure-material-button-contained:focus::before {
+        opacity: 0.24;
+    }
+
+    .pure-material-button-contained:hover:focus::before {
+        opacity: 0.3;
+    }
+
+    /* Active */
+    .pure-material-button-contained:active {
+        box-shadow:
+            0 5px 5px -3px rgba(0, 0, 0, 0.2),
+            0 8px 10px 1px rgba(0, 0, 0, 0.14),
+            0 3px 14px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .pure-material-button-contained:active::after {
+        opacity: 0.32;
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0s;
+    }
+
+    /* Disabled */
+    .pure-material-button-contained:disabled {
+        color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
+        background-color: rgba(
+            var(--pure-material-onsurface-rgb, 0, 0, 0),
+            0.12
+        );
+        box-shadow: none;
+        cursor: initial;
+    }
+
+    .pure-material-button-contained:disabled::before {
+        opacity: 0;
+    }
+
+    .pure-material-button-contained:disabled::after {
+        opacity: 0;
+    }
+    .form__group {
+        position: relative;
+        padding: 15px 0 0;
+        margin-top: 10px;
+    }
+
+    .form__field {
+        font-family: inherit;
+        /*width: 100%;*/
+        border: 0;
+        border-bottom: 1px solid #d2d2d2;
+        outline: 0;
+        font-size: 16px;
+        color: white;
+        padding: 7px 0;
+        background: transparent;
+        transition: border-color 0.2s;
+    }
+
+    .form__field::placeholder {
+        color: transparent;
+    }
+
+    .form__field:focus {
+        padding-bottom: 6px;
+        border-bottom: 2px solid #009788;
+    }
+
+    /* end plagarized code */
+    .header {
+        border-bottom-color: #555;
+        border-bottom-width: 5px;
+        width: 100%;
+    }
+    .rows {
+        display: flex;
+        flex-direction: column;
+        /* align-items: center;
+        justify-content: center; */
+        font-size: 16px;
+        font-weight: 500;
+        height: 58px;
+        width: calc(100% - 40px);
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .rowsbtn {
+        background-color: #292a2d;
+        color: white;
+        border-radius: 0;
+        height: 100%;
+        width: 100%;
+        border: none;
+        text-align: left;
+    }
+
+    .rows:first-child .rowsbtn {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom: 0.5px solid #3f4042;
+    }
+
+    .rows:last-child .rowsbtn {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-top: 0.5px solid #3f4042;
+    }
+    .rowswrapper {
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .rows:not(:first-child):not(:last-child) .rowsbtn {
+        border-bottom: 0.5px solid #3f4042;
+        border-top: 0.5px solid #3f4042;
+    }
+    h4 {
+        padding-left: 20px;
+    }
 `;
 
 class SettingsApp implements App {
@@ -78,48 +286,89 @@ class SettingsApp implements App {
             class={`background ${css}`}
             style="height:100%;width:100%;position:absolute"
         >
-            <div css={this.state}>
-                <h1>General</h1>
-                {this.toggle("Allow offline use", "use-sw-cache")}
-                {this.textbox("Custom WSproxy URL", "wsproxy-url", false)}
-                {this.textbox("Custom Bare Server URL", "bare-url", false)}
+            <div class="header">
+                <h3 color="white">Settings (Under Construction)</h3>
+            </div>
 
-                <h1>Anura x86 Subsystem</h1>
+            <div css={this.state}>
+                <h4>General</h4>
+                <div class="rowswrapper">
+                    {this.row(this.toggle("Allow offline use", "use-sw-cache"))}
+
+                    {this.row(
+                        this.textbox(
+                            "Custom WSproxy URL",
+                            "wsproxy-url",
+                            false,
+                        ),
+                    )}
+
+                    {this.row(
+                        this.textbox(
+                            "Custom Bare Server URL",
+                            "bare-url",
+                            false,
+                        ),
+                    )}
+                </div>
+
+                <h4>Anura x86 Subsystem</h4>
                 <div
                     class="settings-section"
                     if={React.use(this.state.show_x86)}
                     then={(() => {
-                        const disksize = <input type="number" />;
+                        const disksize = (
+                            <input
+                                style="float: right; margin-right: 5px"
+                                class="form__field"
+                                type="number"
+                            />
+                        );
                         disksize.value = anura.x86hdd.size;
                         return (
                             <>
-                                {this.textbox(
-                                    "Custom x86 network relay URL",
-                                    "relay-url",
-                                    false,
+                                {this.row(
+                                    this.textbox(
+                                        "Custom x86 network relay URL",
+                                        "relay-url",
+                                        false,
+                                    ),
                                 )}
-                                x86 disk size (bytes)
-                                {disksize}
-                                <button
-                                    on:click={() => {
-                                        anura.x86hdd.resize(disksize.value);
-                                    }}
-                                >
-                                    Resize x86 webdisk (slow, risk of losing
-                                    data)
-                                </button>
-                                <button
-                                    on:click={() => {
-                                        this.state.show_x86 = false;
-                                        anura.settings.set(
-                                            "x86-disabled",
-                                            true,
-                                        );
-                                        anura.x86hdd.delete();
-                                    }}
-                                >
-                                    Disable x86 subsystem (will remove all data)
-                                </button>
+                                {this.row(
+                                    <div>
+                                        x86 disk size (bytes)
+                                        <button
+                                            on:click={() => {
+                                                anura.x86hdd.resize(
+                                                    disksize.value,
+                                                );
+                                            }}
+                                            style="float: right"
+                                            class="pure-material-button-contained"
+                                        >
+                                            Resize x86 webdisk (slow, risk of
+                                            losing data)
+                                        </button>
+                                        {disksize}
+                                    </div>,
+                                )}
+                                {this.row(
+                                    <button
+                                        style="width: 100%"
+                                        on:click={() => {
+                                            this.state.show_x86 = false;
+                                            anura.settings.set(
+                                                "x86-disabled",
+                                                true,
+                                            );
+                                            anura.x86hdd.delete();
+                                        }}
+                                        class="pure-material-button-contained"
+                                    >
+                                        Disable x86 subsystem (will remove all
+                                        data)
+                                    </button>,
+                                )}
                             </>
                         );
                     })()}
@@ -142,7 +391,7 @@ class SettingsApp implements App {
                                     />
                                 </>
                             }
-                            else={
+                            else={this.row(
                                 <button
                                     on:click={async () => {
                                         this.state.x86_installing = true;
@@ -165,10 +414,12 @@ class SettingsApp implements App {
                                         this.state.x86_installing = false;
                                         this.state.show_x86 = true;
                                     }}
+                                    style="width: 100%"
+                                    class="pure-material-button-contained"
                                 >
                                     Install x86 subsystem OS
-                                </button>
-                            }
+                                </button>,
+                            )}
                         ></div>
                     }
                 />
@@ -201,7 +452,7 @@ class SettingsApp implements App {
         const full: HTMLElement = (
             <div>
                 {name}
-                <div class="switch" style="top: -6px;">
+                <div class="switch" style="top: -6px; float: right">
                     {checkbox}
                     <label class="switch__label"></label>
                 </div>
@@ -210,10 +461,19 @@ class SettingsApp implements App {
         full.getElementsByTagName("label")[0]?.setAttribute("for", checkboxID); // AliceJS bug workaround
         return full;
     }
+    row(item: HTMLElement) {
+        return (
+            <div class="rows">
+                <button class="rowsbtn">{item}</button>
+            </div>
+        );
+    }
     textbox(name: string, setting: string, multiline: boolean) {
         const textbox = (
             <input
                 type="text"
+                class="form__field"
+                style="float: right"
                 on:change={() => {
                     anura.settings.set(setting, textbox.value);
                 }}
@@ -235,8 +495,8 @@ class SettingsApp implements App {
     async open(): Promise<WMWindow | undefined> {
         const win = AliceWM.create({
             title: "",
-            width: "700px",
-            height: "500px",
+            width: "900px",
+            height: "600px",
         } as unknown as any);
 
         win.content.appendChild(this.page);
