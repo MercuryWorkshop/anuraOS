@@ -9,7 +9,8 @@
         "apps/fsapp.app",
         "apps/chideNewNew.app",
         "apps/python.app",
-        "apps/workstore.app"
+        "apps/workstore.app",
+        "apps/taskbarMan.app"
     ],
     "defaultsettings": {
         "use-sw-cache": true,
