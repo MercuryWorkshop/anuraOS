@@ -36,3 +36,8 @@ rm -rf "$OUT_ROOTFS_MNT"
 rm anurad.c
 
 echo "done! created"
+cd "$IMAGES"
+mkdir -p debian-rootfs
+split -b50M debian-rootfs.bin debian-rootfs/
+cd ../
+find images/debian-rootfs/* | jq -Rnc "[inputs]"

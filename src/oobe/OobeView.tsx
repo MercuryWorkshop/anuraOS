@@ -198,10 +198,26 @@ async function installx86() {
     const initrd = await fetch(anura.config.initrd);
     anura.fs.writeFile("/initrd.img", Filer.Buffer(await initrd.arrayBuffer()));
 
-    const rootfs = await fetch(anura.config.rootfs);
-    console.log("fetched");
-    const blob = await rootfs.blob();
-    //@ts-ignore
-    await anura.x86hdd.loadfile(blob);
+    if (typeof anura.config.rootfs === "string") {
+        const rootfs = await fetch(anura.config.rootfs);
+        const blob = await rootfs.blob();
+        //@ts-ignore
+        await anura.x86hdd.loadfile(blob);
+    } else if (anura.config.rootfs) {
+        // TODO: add batching, this will bottleneck and OOM if the rootfs is too large
+
+        console.log("fetching");
+        const files = await Promise.all(
+            anura.config.rootfs.map((part: string) => fetch(part)),
+        );
+        console.log(files);
+        console.log("constructing blobs...");
+        const blobs = await Promise.all(files.map((file) => file.blob()));
+        console.log(blobs);
+        //@ts-ignore
+        await anura.x86hdd.loadfile(new Blob(blobs));
+    }
+
+    alert("todo: x86 won't work until reload");
     console.log("done");
 }
