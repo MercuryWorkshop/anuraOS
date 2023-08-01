@@ -11,11 +11,10 @@ css = styled.new`
     }
 `;
 
-class x86MgrApp implements App {
+class x86MgrApp extends App {
     name = "x86 Manager";
     package = "anura.x86mgr";
     icon = "/assets/xorg.svg";
-    windows: WMWindow[];
     source: string;
 
     screen_container = (
@@ -26,7 +25,7 @@ class x86MgrApp implements App {
     );
 
     constructor() {
-        this.windows = [];
+        super();
     }
     async open(): Promise<WMWindow | undefined> {
         const win = AliceWM.create({

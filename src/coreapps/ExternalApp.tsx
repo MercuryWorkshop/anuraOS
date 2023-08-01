@@ -1,13 +1,9 @@
-class ExternalApp implements App {
+class ExternalApp extends App {
     manifest: AppManifest;
-    name: string;
-    icon: string;
-    package: string;
-    windows: WMWindow[];
     source: string;
 
     constructor(manifest: AppManifest, source: string) {
-        this.windows = [];
+        super();
         this.manifest = manifest;
         this.name = manifest.name;
         this.icon = source + "/" + manifest.icon;
@@ -18,7 +14,7 @@ class ExternalApp implements App {
         //  TODO: have a "allowmultiinstance" option in manifest? it might confuse users, some windows open a second, some focus
         // if (this.windowinstance) return;
         if (this.manifest.type === "auto") {
-            const win = AliceWM.create(this.manifest.wininfo);
+            const win = anura.wm.create(this, this.manifest.wininfo);
 
             const iframe = document.createElement("iframe");
             // CSS injection here but it's no big deal

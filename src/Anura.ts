@@ -45,6 +45,8 @@ class Anura {
         return anuraPartial;
     }
 
+    wm = new WMAPI();
+
     apps: any = {};
     logger = {
         log: console.log.bind(console, "anuraOS:"),
@@ -120,14 +122,6 @@ class Anura {
     get wsproxyURL() {
         return this.settings.get("wsproxy-url");
     }
-}
-
-interface App {
-    open(): Promise<WMWindow | undefined>;
-    icon: string;
-    package: string;
-    name: string;
-    windows: WMWindow[];
 }
 
 interface AppManifest {

@@ -1,19 +1,18 @@
-class BrowserApp implements App {
+class BrowserApp extends App {
     name = "Anura Browser";
     package = "anura.browser";
     icon = "/assets/chrome.svg";
-    windows: WMWindow[];
     source: string;
 
     constructor() {
-        this.windows = [];
+        super();
     }
     async open(): Promise<WMWindow | undefined> {
-        const browser = AliceWM.create({
+        const browser = anura.wm.create(this, {
             title: "",
             width: "700px",
             height: "500px",
-        } as unknown as any);
+        });
         const iframe = document.createElement("iframe");
         //@ts-ignore
         iframe.style =

@@ -216,7 +216,7 @@ class Taskbar {
             .get("applist")
             .map((id: string) => anura.apps[id]);
         const activewindows: App[] = Object.values(anura.apps).filter(
-            (a: App) => a.windows.length > 0,
+            (a: App) => a.windows && a.windows.length > 0,
         ) as App[];
 
         this.state.pinnedApps = pinned;

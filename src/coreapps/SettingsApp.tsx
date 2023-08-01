@@ -270,18 +270,17 @@ css = styled.new`
     }
 `;
 
-class SettingsApp implements App {
+class SettingsApp extends App {
     name = "Settings";
     package = "anura.settings";
     icon = "/assets/icons/settings.png";
-    windows: WMWindow[];
 
     state = stateful({
         show_x86: !anura.settings.get("x86-disabled"),
         x86_installing: false,
     });
 
-    page = (
+    page = () => (
         <div
             class={`background ${css}`}
             style="height:100%;width:100%;position:absolute"
@@ -541,16 +540,16 @@ class SettingsApp implements App {
     }
 
     constructor() {
-        this.windows = [];
+        super();
     }
     async open(): Promise<WMWindow | undefined> {
-        const win = AliceWM.create({
+        const win = anura.wm.create(this, {
             title: "",
             width: "900px",
             height: "600px",
-        } as unknown as any);
+        });
 
-        win.content.appendChild(this.page);
+        win.content.appendChild(this.page());
 
         this.windows.push(win);
 

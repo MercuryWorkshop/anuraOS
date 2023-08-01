@@ -224,15 +224,19 @@ async function installx86() {
     console.log("done");
 }
 async function preloadFiles() {
-    const list = await (await fetch("cache-load.json")).json();
-    /*
-     * The list has a few items that aren't exactly real
-     * as a result of the developers schizophrenia.
-     * Because of this, there will be a few errors on the fetch.
-     * These can safely be ignored, just like the voices in
-     * the developers head.
-     */
-    for (const item in list) {
-        await fetch(list[item]);
+    try {
+        const list = await (await fetch("cache-load.json")).json();
+        /*
+         * The list has a few items that aren't exactly real
+         * as a result of the developers schizophrenia.
+         * Because of this, there will be a few errors on the fetch.
+         * These can safely be ignored, just like the voices in
+         * the developers head.
+         */
+        for (const item in list) {
+            await fetch(list[item]);
+        }
+    } catch (e) {
+        console.warn("error durring oobe preload", e);
     }
 }

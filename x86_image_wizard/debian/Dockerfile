@@ -10,11 +10,10 @@ RUN apt update && \
         libterm-readline-perl-perl \
         gcc make libc6-dev \
         unzip bzip2 xz-utils \
-        # fluxbox \
-        # xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-input-evdev \
-        # xserver-xorg-video-fbdev xserver-xorg-video-vesa \
-        # xserver-xorg x11-xserver-utils xinit dbus-x11 \
-        # libgdk-pixbuf2.0 libpango-1.0 libpangocairo-1.0 libgtk2.0-bin \
+        fluxbox \
+        xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-input-evdev \
+        xserver-xorg-video-fbdev xserver-xorg-video-vesa \
+        xserver-xorg x11-xserver-utils xinit dbus-x11 \
         htop iputils-ping \
         libc-l10n locales \
         fonts-noto fonts-droid-fallback \
@@ -25,6 +24,10 @@ RUN apt update && \
         mesa-utils libgl1-mesa-dri \
         openssl \
         libcurl4-openssl-dev \
+        npm nodejs \
+        xdotool \
+        linux-headers-6.1.0-10-686 \
+        procps \
     && \
     touch /root/.Xdefaults && \
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \

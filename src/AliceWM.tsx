@@ -1,7 +1,7 @@
 /**
  * the purpose of the following code is to give a demo of
  * how to realize the floating dialog using javascript.
- * It was written without any consideration of cross-browser compatibility,
+ *It was written without any consideration of cross-browser compatibility,
  * and it can be run successfully under the firefox 3.5.7.
  *
  * nope nope this code has NOT been stolen rafflesia did NOT make it :thumbsup:
@@ -41,6 +41,9 @@ class WMWindow {
     mouseLeft: number;
     mouseTop: number;
     wininfo: WindowInformation;
+
+    onfocus: () => void;
+    onresize: (w: number, h: number) => void;
 
     justresized = false;
 
@@ -291,6 +294,20 @@ class WMWindow {
                         this.element.style.height = height + "px";
                     }
                 }
+
+                if (this.onresize)
+                    this.onresize(
+                        parseFloat(
+                            getComputedStyle(this.element, null)
+                                .getPropertyValue("width")
+                                .replace("px", ""),
+                        ),
+                        parseFloat(
+                            getComputedStyle(this.element, null)
+                                .getPropertyValue("height")
+                                .replace("px", ""),
+                        ),
+                    );
             };
         }
 
@@ -324,6 +341,8 @@ class WMWindow {
             (getHighestZindex() + 1).toString(),
         );
         normalizeZindex();
+
+        if (this.onfocus) this.onfocus();
     }
     close() {
         this.element.remove();
