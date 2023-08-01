@@ -227,6 +227,8 @@ class V86Backend {
 
     barepty: number;
 
+    xpty: number;
+
     emulator;
     //
 
@@ -322,7 +324,12 @@ class V86Backend {
         this.barepty = await this.openpty("echo 1", 1, 1, (data) => {
             console.log("BARE: " + data);
         });
-        await sleep(5000); // to be safe
+        await sleep(3000); // to be safe
+
+        this.xpty = await this.openpty("startx /bin/xfrog", 1, 1, (data) => {
+            console.log("XFROG: " + data);
+        });
+        await sleep(3000); // to be safe
         anura.apps["anura.term"].open();
 
         await sleep(5000); // to be safe

@@ -20,7 +20,7 @@ class x86MgrApp extends App {
     screen_container = (
         <div id="screen_container" class={css}>
             <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-            <canvas></canvas>
+            <canvas on:click={() => $el.requestPointerLock()}></canvas>
         </div>
     );
 

@@ -10,6 +10,8 @@ IMAGE_NAME=i386/debian-full
 
 rm -rf "$IMAGES/debian-boot" || :
 cp ../anurad.c .
+cp ../xfrog.sh .
+cp ../xsetrandr.sh .
 
 mkdir -p "$IMAGES"
 docker build . --platform linux/386 --rm --tag "$IMAGE_NAME"

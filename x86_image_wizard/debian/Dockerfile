@@ -11,7 +11,7 @@ RUN apt update && \
         gcc make libc6-dev \
         unzip bzip2 xz-utils \
         fluxbox \
-        xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-input-evdev \
+        xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-input-evdev xcvt \
         xserver-xorg-video-fbdev xserver-xorg-video-vesa \
         xserver-xorg x11-xserver-utils xinit dbus-x11 \
         htop iputils-ping \
@@ -53,6 +53,9 @@ COPY logind.conf /etc/systemd/logind.conf
 #COPY xinitrc /root/.xinitrc
 COPY xorg.conf /etc/X11/
 COPY anura-boot.sh /bin/
+
+COPY xfrog.sh /bin/
+COPY xsetrandr.sh /bin/
 
 
 COPY anurad.c /etc/
