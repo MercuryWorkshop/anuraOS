@@ -1,0 +1,2 @@
+https://htmldom.dev/  - For splits code
+https://github.com/microsoft/monaco-editor/ - For editor base
