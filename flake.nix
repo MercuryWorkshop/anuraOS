@@ -33,6 +33,7 @@
               pkgs.jre
               pkgs.pkgsi686Linux.glibc
               pkgs.llvmPackages.bintools-unwrapped
+              pkgs.inotify-tools
             ];
           };
         });

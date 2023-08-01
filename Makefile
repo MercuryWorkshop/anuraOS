@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+SHELL := bash
 
 RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/interpreter.rs v86/src/rust/gen/interpreter0f.rs \
