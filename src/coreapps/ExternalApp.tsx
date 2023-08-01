@@ -14,7 +14,7 @@ class ExternalApp extends App {
         //  TODO: have a "allowmultiinstance" option in manifest? it might confuse users, some windows open a second, some focus
         // if (this.windowinstance) return;
         if (this.manifest.type === "auto") {
-            const win = anura.wm.create(this, this.manifest.wininfo);
+            const win = anura.wm.create(this, this.manifest.wininfo as object);
 
             const iframe = document.createElement("iframe");
             // CSS injection here but it's no big deal
