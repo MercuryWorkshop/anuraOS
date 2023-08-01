@@ -260,7 +260,7 @@ class V86Backend {
 
             cmdline:
                 "rw init=/bin/systemd root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
-            filesystem: { fs, sh, Path, Buffer },
+            // filesystem: { fs, sh, Path, Buffer },
 
             bios: { url: "/bios/seabios.bin" },
             vga_bios: { url: "/bios/vgabios.bin" },
@@ -500,6 +500,17 @@ class V86Backend {
         const bytes = [i, i >> 8, i >> 16, i >> 24].map((a) => a % 256);
         this.emulator.write_memory(bytes, addr);
     }
+}
+async function savestate() {
+    const new_state = await anura.x86!.emulator.save_state();
+    const a = document.createElement("a");
+    a.download = "v86state.bin";
+    a.href = window.URL.createObjectURL(new Blob([new_state]));
+    a.dataset.downloadurl =
+        "application/octet-stream:" + a.download + ":" + a.href;
+    a.click();
+
+    this.blur();
 }
 async function a() {
     const emulator = anura.x86!.emulator;
