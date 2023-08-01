@@ -162,10 +162,12 @@ class OobeView {
             on: async () => {
                 this.state.color = "var(--material-bg)";
                 this.state.text = "whitesmoke";
-
                 if (!anura.settings.get("x86-disabled")) {
                     await installx86();
                 }
+
+                await preloadFiles();
+                console.log("Cached important files");
 
                 this.complete();
             },
@@ -220,4 +222,17 @@ async function installx86() {
 
     alert("todo: x86 won't work until reload");
     console.log("done");
+}
+async function preloadFiles() {
+    const list = await (await fetch("cache-load.json")).json();
+    /*
+     * The list has a few items that aren't exactly real
+     * as a result of the developers schizophrenia.
+     * Because of this, there will be a few errors on the fetch.
+     * These can safely be ignored, just like the voices in
+     * the developers head.
+     */
+    for (const item in list) {
+        await fetch(list[item]);
+    }
 }

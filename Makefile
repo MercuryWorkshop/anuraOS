@@ -39,7 +39,7 @@ v86: libv86.js build/lib/v86.wasm
 	cp -r v86/bios public
 
 build/cache-load.json: FORCE
-	(find apps/ | jq -Rnc '[inputs]') > build/cache-load.json
+	((find apps/ -name node_modules -prune -o -name '*' -type f && cd build/ && find lib/ -name node_modules -prune -o -name '*' -type f && cd ../public && find . -name node_modules -prune -o -name '*' -type f) | jq -Rnc '[inputs]') > build/cache-load.json
 
 libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 	cd v86; make build/libv86.js
