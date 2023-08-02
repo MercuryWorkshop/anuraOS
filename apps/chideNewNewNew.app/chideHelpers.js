@@ -1,49 +1,53 @@
 // Initialization
-require.config({ paths: { vs: 'node_modules/monaco-editor/min/vs' } });
+require.config({ paths: { vs: "node_modules/monaco-editor/min/vs" } });
 
-require(['vs/editor/editor.main'], function () {
-    require.config({ paths: { vs: 'node_modules/monaco-editor/min/vs' } });0
+require(["vs/editor/editor.main"], function () {
+    require.config({ paths: { vs: "node_modules/monaco-editor/min/vs" } });
+    0;
 
-    require(['vs/editor/editor.main'], function () {
-        window.editor = monaco.editor.create(document.getElementById('monaco-container'), {
-            value: ['Click a file to get started'].join('\n'),
+    require(["vs/editor/editor.main"], function () {
+        window.editor = monaco.editor.create(
+            document.getElementById("monaco-container"),
+            {
+                value: ["Click a file to get started"].join("\n"),
                 theme: "vs-dark",
                 automaticLayout: true,
-                language: 'plaintext'
-        });
+                language: "plaintext",
+            },
+        );
     });
 });
 
 /**
- * 
- * @param {string} name 
+ *
+ * @param {string} name
  */
 function getFileType(name) {
-    let language = "plaintext"
-    switch (name.split('.').pop()) {
+    let language = "plaintext";
+    switch (name.split(".").pop()) {
         case "js":
         case "jsx":
-            language = "javascript"
+            language = "javascript";
             break;
         case "ts":
         case "tsx":
-            language = "javascript"
+            language = "javascript";
             break;
         case "sh":
-            language = "shell"
+            language = "shell";
             break;
         case "htm":
         case "html":
-            language = "html"
+            language = "html";
             break;
         case "c":
-            language = "c"
+            language = "c";
             break;
         case "cpp":
-            language = "cpp"
+            language = "cpp";
             break;
         case "css":
-            language = "css"
+            language = "css";
             break;
     }
     return language;

@@ -1,6 +1,7 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener("DOMContentLoaded", function () {
     const resizable = function (resizer) {
-        const direction = resizer.getAttribute('data-direction') || 'horizontal';
+        const direction =
+            resizer.getAttribute("data-direction") || "horizontal";
         const prevSibling = resizer.previousElementSibling;
         const nextSibling = resizer.nextElementSibling;
 
@@ -21,8 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
             prevSiblingWidth = rect.width;
 
             // Attach the listeners to `document`
-            document.addEventListener('mousemove', mouseMoveHandler);
-            document.addEventListener('mouseup', mouseUpHandler);
+            document.addEventListener("mousemove", mouseMoveHandler);
+            document.addEventListener("mouseup", mouseUpHandler);
         };
 
         const mouseMoveHandler = function (e) {
@@ -31,52 +32,54 @@ document.addEventListener('DOMContentLoaded', function () {
             const dy = e.clientY - y;
 
             switch (direction) {
-                case 'vertical':
+                case "vertical":
                     const h =
                         ((prevSiblingHeight + dy) * 100) /
                         resizer.parentNode.getBoundingClientRect().height;
                     prevSibling.style.height = `${h}%`;
                     break;
-                case 'horizontal':
+                case "horizontal":
                 default:
                     const w =
-                        ((prevSiblingWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
+                        ((prevSiblingWidth + dx) * 100) /
+                        resizer.parentNode.getBoundingClientRect().width;
                     prevSibling.style.width = `${w}%`;
                     break;
             }
 
-            const cursor = direction === 'horizontal' ? 'col-resize' : 'row-resize';
+            const cursor =
+                direction === "horizontal" ? "col-resize" : "row-resize";
             resizer.style.cursor = cursor;
             document.body.style.cursor = cursor;
 
-            prevSibling.style.userSelect = 'none';
-            prevSibling.style.pointerEvents = 'none';
+            prevSibling.style.userSelect = "none";
+            prevSibling.style.pointerEvents = "none";
 
-            nextSibling.style.userSelect = 'none';
-            nextSibling.style.pointerEvents = 'none';
+            nextSibling.style.userSelect = "none";
+            nextSibling.style.pointerEvents = "none";
         };
 
         const mouseUpHandler = function () {
-            resizer.style.removeProperty('cursor');
-            document.body.style.removeProperty('cursor');
+            resizer.style.removeProperty("cursor");
+            document.body.style.removeProperty("cursor");
 
-            prevSibling.style.removeProperty('user-select');
-            prevSibling.style.removeProperty('pointer-events');
+            prevSibling.style.removeProperty("user-select");
+            prevSibling.style.removeProperty("pointer-events");
 
-            nextSibling.style.removeProperty('user-select');
-            nextSibling.style.removeProperty('pointer-events');
+            nextSibling.style.removeProperty("user-select");
+            nextSibling.style.removeProperty("pointer-events");
 
             // Remove the handlers of `mousemove` and `mouseup`
-            document.removeEventListener('mousemove', mouseMoveHandler);
-            document.removeEventListener('mouseup', mouseUpHandler);
+            document.removeEventListener("mousemove", mouseMoveHandler);
+            document.removeEventListener("mouseup", mouseUpHandler);
         };
 
         // Attach the handler
-        resizer.addEventListener('mousedown', mouseDownHandler);
+        resizer.addEventListener("mousedown", mouseDownHandler);
     };
 
     // Query all resizers
-    document.querySelectorAll('.resizer').forEach(function (ele) {
+    document.querySelectorAll(".resizer").forEach(function (ele) {
         resizable(ele);
     });
 });
