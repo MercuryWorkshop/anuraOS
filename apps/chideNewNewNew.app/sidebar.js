@@ -90,7 +90,7 @@ function createRow(RowElement, isFolder, path, file) {
             loadFile(path, file);
             setActiveElement(name);
         });
-        RowElement.setAttribute("data-type", "file");
+        RowElement.setAttribute("data-type", getFileType(file));
         RowElement.setAttribute("data-path", `${path}/${file}`);
     }
     RowElement.appendChild(name);

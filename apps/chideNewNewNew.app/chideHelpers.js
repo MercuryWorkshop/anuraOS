@@ -31,7 +31,7 @@ function getFileType(name) {
             break;
         case "ts":
         case "tsx":
-            language = "javascript";
+            language = "typescript";
             break;
         case "sh":
             language = "shell";
@@ -48,6 +48,18 @@ function getFileType(name) {
             break;
         case "css":
             language = "css";
+            break;
+        case "json":
+            language = "json";
+            break;
+        case "svg":
+            language = "svg";
+            break;
+        case "img":
+            language = "img";
+            break;
+        case undefined:
+            language = "img"
             break;
     }
     return language;

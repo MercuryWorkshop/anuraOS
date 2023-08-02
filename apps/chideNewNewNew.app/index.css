@@ -1,3 +1,10 @@
+@import url('fa-brands-400.ttf');
+
+@font-face {
+    font-family: NerdFonts;
+    src: url("SymbolsNerdFont-Regular.ttf") format("truetype");
+}
+
 body {
     color: white;
     overflow-y: hidden;
@@ -85,3 +92,51 @@ span:hover {
 [active="true"] {
     background-color: #3e3e42;
 }
+
+/* 
+* This is the section where you add your icons
+*/
+[data-type="plaintext"]::marker {
+    content: " "; /* FontAwesome Unicode */
+    font-family: NerdFonts;
+}
+[data-type="javascript"]::marker {
+    content: " "; /* FontAwesome Unicode */
+    color: yellow;
+    font-family: NerdFonts;
+}
+[data-type="typescript"]::marker {
+    content: "󰛦 "; /* FontAwesome Unicode */
+    color: yellow;
+    font-family: NerdFonts;
+}
+[data-type="json"]::marker {
+    content: "󰘦 "; /* FontAwesome Unicode */
+    color: yellow;
+    font-family: NerdFonts;
+}
+[data-type="dir"]::marker {
+    content: " "; /* FontAwesome Unicode */
+    color: peachpuff;
+    font-family: NerdFonts;
+}
+[data-type="svg"]::marker {
+    content: " "; /* FontAwesome Unicode */
+    color: lightblue;
+    font-family: NerdFonts;
+}
+[data-type="shell"]::marker {
+    content: " "; /* FontAwesome Unicode */
+    color: white;
+    font-family: NerdFonts;
+}
+[data-type="img"]::marker {
+    content: "󰟜 "; /* FontAwesome Unicode */
+    color: white;
+    font-family: NerdFonts;
+}
+::marker {
+    padding-left: 20px;
+    right: 2px;
+}
+
