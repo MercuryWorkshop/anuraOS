@@ -219,6 +219,8 @@ class V86Backend {
     private s_cols_phys_addr: number;
     private resize_intent_phys_addr: number;
 
+    vgacanvas: HTMLCanvasElement;
+
     screen_container = (
         <div
             id="screen_container"
@@ -232,7 +234,7 @@ class V86Backend {
             `}
         >
             <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-            <canvas on:click={() => $el.requestPointerLock()}></canvas>
+            <canvas bind:vgacanvas={this}></canvas>
         </div>
     );
 

@@ -38,6 +38,9 @@ class WMWindow {
     originalLeft: number;
     originalTop: number;
 
+    width: number;
+    height: number;
+
     mouseLeft: number;
     mouseTop: number;
     wininfo: WindowInformation;
@@ -148,6 +151,16 @@ class WMWindow {
                     style="width: 100%; padding:0; margin:0;"
                 ></div>
             </div>
+        );
+        this.width = parseFloat(
+            getComputedStyle(this.element, null)
+                .getPropertyValue("width")
+                .replace("px", ""),
+        );
+        this.height = parseFloat(
+            getComputedStyle(this.element, null)
+                .getPropertyValue("height")
+                .replace("px", ""),
         );
 
         document.addEventListener("mousemove", (evt) => {
@@ -294,20 +307,17 @@ class WMWindow {
                         this.element.style.height = height + "px";
                     }
                 }
-
-                if (this.onresize)
-                    this.onresize(
-                        parseFloat(
-                            getComputedStyle(this.element, null)
-                                .getPropertyValue("width")
-                                .replace("px", ""),
-                        ),
-                        parseFloat(
-                            getComputedStyle(this.element, null)
-                                .getPropertyValue("height")
-                                .replace("px", ""),
-                        ),
-                    );
+                this.width = parseFloat(
+                    getComputedStyle(this.element, null)
+                        .getPropertyValue("width")
+                        .replace("px", ""),
+                );
+                this.height = parseFloat(
+                    getComputedStyle(this.element, null)
+                        .getPropertyValue("height")
+                        .replace("px", ""),
+                );
+                if (this.onresize) this.onresize(this.width, this.height);
             };
         }
 
