@@ -54,13 +54,13 @@ class React {
         if (props) {
             if ("if" in props) {
                 const cond = props["if"];
-                const then = props["then"];
-                const elseelm = props["else"];
+                let then = props["then"];
+                let elseelm = props["else"];
 
                 if (typeof cond === "object" && "__alicejs_marker" in cond) {
-                    if (then) elm.appendChild(asNode(then));
+                    if (then) elm.appendChild((then = asNode(then)));
 
-                    if (elseelm) elm.appendChild(asNode(elseelm));
+                    if (elseelm) elm.appendChild((elseelm = asNode(elseelm)));
 
                     handle(cond, (val: any) => {
                         if (then) {
