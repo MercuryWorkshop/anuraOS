@@ -551,10 +551,6 @@ class SettingsApp extends App {
 
         win.content.appendChild(this.page());
 
-        this.windows.push(win);
-
-        taskbar.updateTaskbar();
-
         return win;
     }
     wsurl() {

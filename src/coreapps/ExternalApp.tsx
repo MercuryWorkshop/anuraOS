@@ -28,12 +28,9 @@ class ExternalApp extends App {
             iframe.setAttribute("src", `${this.source}/${this.manifest.index}`);
             win.content.appendChild(iframe);
 
-            this.windows.push(win);
-
             (iframe.contentWindow as any).anura = anura;
             (iframe.contentWindow as any).AliceWM = AliceWM;
 
-            taskbar.updateTaskbar();
             return win;
         } else {
             // This type of application is reserved only for scripts meant for hacking anura internals

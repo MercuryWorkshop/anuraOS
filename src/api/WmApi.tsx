@@ -15,6 +15,8 @@ class WMAPI {
         };
         ctx.windows.push(win);
         this.windows.push(new WeakRef(win));
+
+        taskbar.updateTaskbar();
         return win;
     }
 }

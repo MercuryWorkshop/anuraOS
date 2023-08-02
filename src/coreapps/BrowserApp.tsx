@@ -32,8 +32,6 @@ class BrowserApp extends App {
                 "background-color"
             ] = "rgba(0, 0, 0, 0)";
         }
-        this.windows.push(browser);
-        taskbar.updateTaskbar();
 
         return browser;
     }
