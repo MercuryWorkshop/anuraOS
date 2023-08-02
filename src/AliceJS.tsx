@@ -91,7 +91,7 @@ class React {
                 delete props["then"];
                 delete props["else"];
             }
-            if ("for" in props) {
+            if ("for" in props && "do" in props) {
                 const predicate = props["for"];
                 const closure = props["do"];
 
