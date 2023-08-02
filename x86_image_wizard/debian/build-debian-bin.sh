@@ -36,6 +36,8 @@ sudo losetup -d "$loop"
 rm "$OUT_ROOTFS_TAR"
 rm -rf "$OUT_ROOTFS_MNT"
 rm anurad.c
+rm xfrog.sh
+rm xsetrandr.sh
 
 echo "done! created"
 cd "$IMAGES"

@@ -54,13 +54,13 @@ COPY logind.conf /etc/systemd/logind.conf
 COPY xorg.conf /etc/X11/
 COPY anura-boot.sh /bin/
 
-COPY xfrog.sh /bin/
-COPY xsetrandr.sh /bin/
+COPY xfrog.sh /bin/xfrog
+COPY xsetrandr.sh /bin/xsetrandr
 
 
 COPY anurad.c /etc/
 
-RUN chmod u+x /bin/anura-boot.sh
+RUN chmod u+x /bin/anura-boot.sh /bin/xfrog /bin/xsetrandr
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil
 COPY anura-boot.service /etc/systemd/system
 COPY anurad.service /etc/systemd/system

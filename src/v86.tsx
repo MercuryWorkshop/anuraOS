@@ -219,6 +219,23 @@ class V86Backend {
     private s_cols_phys_addr: number;
     private resize_intent_phys_addr: number;
 
+    screen_container = (
+        <div
+            id="screen_container"
+            class={styled.new`
+                self {
+                    background-color: #000;
+                }
+                canvas {
+                    background-color: #000;
+                }
+            `}
+        >
+            <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
+            <canvas on:click={() => $el.requestPointerLock()}></canvas>
+        </div>
+    );
+
     ready = true;
     act = false;
     cmd_q: string | null = null;
@@ -232,7 +249,7 @@ class V86Backend {
     emulator;
     //
 
-    constructor(virt_hda: FakeFile, mgr: x86MgrApp) {
+    constructor(virt_hda: FakeFile) {
         console.log(virt_hda);
         this.virt_hda = virt_hda;
 
@@ -245,7 +262,7 @@ class V86Backend {
             wasm_path: "/lib/v86.wasm",
             memory_size: 512 * 1024 * 1024,
             vga_memory_size: 8 * 1024 * 1024,
-            screen_container: mgr.screen_container,
+            screen_container: this.screen_container,
 
             initrd: {
                 url: "/fs/initrd.img",
@@ -324,15 +341,15 @@ class V86Backend {
         this.barepty = await this.openpty("echo 1", 1, 1, (data) => {
             console.log("BARE: " + data);
         });
-        await sleep(3000); // to be safe
+        await sleep(2000); // to be safe
 
         this.xpty = await this.openpty("startx /bin/xfrog", 1, 1, (data) => {
             console.log("XFROG: " + data);
         });
-        await sleep(3000); // to be safe
+        await sleep(2000); // to be safe
         anura.apps["anura.term"].open();
 
-        await sleep(5000); // to be safe
+        await sleep(2000); // to be safe
         navigator.serviceWorker.addEventListener("message", async (event) => {
             if (event.data?.anura_target == "anura.x86.proxy") {
                 const id = event.data.id;

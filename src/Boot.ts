@@ -188,5 +188,7 @@ document.addEventListener("anura-login-completed", async () => {
 async function bootx86() {
     const mgr = new x86MgrApp();
     await anura.registerApp(mgr);
-    anura.x86 = new V86Backend(anura.x86hdd, mgr);
+
+    await anura.registerApp(new XFrogApp());
+    anura.x86 = new V86Backend(anura.x86hdd);
 }
