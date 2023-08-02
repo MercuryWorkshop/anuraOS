@@ -118,7 +118,21 @@ class Launcher {
     );
 
     clickoffChecker = (
-        <div id="clickoffChecker" class="clickoffChecker"></div>
+        <div
+            id="clickoffChecker"
+            class={styled.new`
+                self {
+                    display: none;
+                }
+
+                #clickoffChecker.self.active {
+                    position: absolute;
+                    width: 100%;
+                    height: calc(100%);
+                    display: block;
+                }
+            `}
+        ></div>
     );
 
     constructor() {}

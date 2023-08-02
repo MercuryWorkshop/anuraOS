@@ -19,3 +19,7 @@
 #launcher-button img {
     border-radius: 50%;
 }
+.hw-screen {
+    height: 100%;
+    width: 100%;
+}
