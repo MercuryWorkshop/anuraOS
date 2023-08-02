@@ -4,12 +4,14 @@ namespace JSX {
 
 let __effects: any = [];
 
-function asNode(node: unknown): Node {
+function asElement(node: Node | string): Node {
     if (node instanceof Node) {
         return node;
     }
     if (typeof node === "string") {
-        return document.createTextNode(node);
+        const span = document.createElement("span");
+        span.innerText = node;
+        return span;
     }
     throw new Error("Expected a node");
 }
@@ -54,13 +56,13 @@ class React {
         if (props) {
             if ("if" in props) {
                 const cond = props["if"];
-                let then = props["then"];
-                let elseelm = props["else"];
+                const then = props["then"] && asElement(props["then"]);
+                const elseelm = props["else"] && asElement(props["else"]);
 
                 if (typeof cond === "object" && "__alicejs_marker" in cond) {
-                    if (then) elm.appendChild((then = asNode(then)));
+                    if (then) elm.appendChild(then);
 
-                    if (elseelm) elm.appendChild((elseelm = asNode(elseelm)));
+                    if (elseelm) elm.appendChild(elseelm);
 
                     handle(cond, (val: any) => {
                         if (then) {
@@ -182,8 +184,10 @@ class React {
                 handle(child, (val) => {
                     text.textContent = val;
                 });
+            } else if (child instanceof Node) {
+                elm.appendChild(child);
             } else {
-                elm.appendChild(asNode(child));
+                elm.appendChild(document.createTextNode(child));
             }
         }
 
