@@ -10,11 +10,7 @@ require(['vs/editor/editor.main'], function () {
             value: ['Click a file to get started'].join('\n'),
                 theme: "vs-dark",
                 automaticLayout: true,
-                language: 'javascript'
-        });
-        window.editor.getModel().onDidChangeContent((event) => {
-            if (window.currentlyOpenFile)
-                anura.fs.writeFile(window.currentlyOpenFile, editor.getValue())
+                language: 'plaintext'
         });
     });
 });
@@ -97,6 +93,10 @@ function pageLoaded() {
                                         theme: "vs-dark",
                                         automaticLayout: true,
                                         language: getFileType(file)
+                                });
+                                window.editor.getModel().onDidChangeContent((event) => {
+                                    if (window.currentlyOpenFile)
+                                        anura.fs.writeFile(window.currentlyOpenFile, editor.getValue())
                                 });
                                 
                             })

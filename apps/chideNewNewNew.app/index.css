@@ -2,6 +2,8 @@ body {
     color: white;
     overflow-y: hidden;
     user-select: none;
+    margin: 0px;
+    font-family: system-ui,Ubuntu,Droid Sans,sans-serif;
 }
 .monaco-editor { 
     position: absolute !important; /* Fix for monaco editor resize bug */
@@ -9,10 +11,9 @@ body {
 
 .container {
     display: flex;
-
     /* Misc */
-    border: 1px solid #cbd5e0;
-    height: 32rem;
+    /* border: 1px solid #cbd5e0; */
+    /* height: 32rem; */
     width: 100%;
     height: 100%;
 }
@@ -31,7 +32,7 @@ body {
 .container__left {
     /* Initially, the left takes 1/4 width */
     width: 25%;
-
+    overflow:auto;
     /* Misc */
     /* align-items: center; */
     display: flex;
