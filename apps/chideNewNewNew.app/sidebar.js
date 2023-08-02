@@ -69,7 +69,7 @@ function createRow(RowElement, isFolder, path, file) {
                 RowElement.appendChild(childContainer)
                 RowElement.setAttribute("expanded", "true")
             } else {
-                RowElement.removeChild(item.getElementsByTagName("ul")[0])
+                RowElement.removeChild(RowElement.getElementsByTagName("ul")[0])
                 RowElement.setAttribute("expanded", "false")
             }
         });
