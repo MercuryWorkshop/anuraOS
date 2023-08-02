@@ -4,6 +4,16 @@ namespace JSX {
 
 let __effects: any = [];
 
+function asNode(node: unknown): Node {
+    if (node instanceof Node) {
+        return node;
+    }
+    if (typeof node === "string") {
+        return document.createTextNode(node);
+    }
+    throw new Error("Expected a node");
+}
+
 class React {
     static get use(): (sink: any, mapping?: (...args: any[]) => any) => any {
         // documentation, in case anyone looks in here. the below is a simple way you would use reactivity.
@@ -48,9 +58,9 @@ class React {
                 const elseelm = props["else"];
 
                 if (typeof cond === "object" && "__alicejs_marker" in cond) {
-                    if (then) elm.appendChild(then);
+                    if (then) elm.appendChild(asNode(then));
 
-                    if (elseelm) elm.appendChild(elseelm);
+                    if (elseelm) elm.appendChild(asNode(elseelm));
 
                     handle(cond, (val: any) => {
                         if (then) {
@@ -172,10 +182,8 @@ class React {
                 handle(child, (val) => {
                     text.textContent = val;
                 });
-            } else if (child instanceof Node) {
-                elm.appendChild(child);
             } else {
-                elm.appendChild(document.createTextNode(child));
+                elm.appendChild(asNode(child));
             }
         }
 
