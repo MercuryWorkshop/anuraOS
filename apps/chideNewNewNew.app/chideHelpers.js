@@ -58,9 +58,13 @@ function getFileType(name) {
         case "img":
             language = "img";
             break;
-        case undefined:
+        case 'bzimage':
             language = "img"
             break;
+        case 'ttf':
+        case 'woff':
+        case 'woff2':
+            language = "font"
     }
     return language;
 }

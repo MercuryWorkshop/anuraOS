@@ -1,5 +1,3 @@
-@import url('fa-brands-400.ttf');
-
 @font-face {
     font-family: NerdFonts;
     src: url("SymbolsNerdFont-Regular.ttf") format("truetype");
@@ -135,6 +133,12 @@ span:hover {
     color: white;
     font-family: NerdFonts;
 }
+[data-type="font"]::marker {
+    content: " "; /* FontAwesome Unicode */
+    color: white;
+    font-family: NerdFonts;
+}
+
 ::marker {
     padding-left: 20px;
     right: 2px;
