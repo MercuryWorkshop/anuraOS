@@ -1,6 +1,8 @@
 let anura = window.parent.anura;
 window.fs = anura.fs;
 
+let activeElement;
+
 /**
  *
  * @param {HTMLElement} parent
@@ -57,8 +59,11 @@ function loadFile(path, file) {
  * @param {string} file
  */
 function createRow(RowElement, isFolder, path, file) {
+    if (path === '/') // Fix that stops filepaths from being //file
+        path = ''
+
+    let name = document.createElement("span");
     if (isFolder) {
-        let name = document.createElement("span");
         name.innerText = `${file}/`;
 
         name.addEventListener("click", function () {
@@ -66,7 +71,7 @@ function createRow(RowElement, isFolder, path, file) {
                 console.debug("Expanding");
                 let childContainer = document.createElement("ul");
 
-                loadPath(childContainer, `/${path}/${file}/`);
+                loadPath(childContainer, `${path}/${file}`);
                 RowElement.appendChild(childContainer);
                 RowElement.setAttribute("expanded", "true");
             } else {
@@ -76,18 +81,30 @@ function createRow(RowElement, isFolder, path, file) {
                 RowElement.setAttribute("expanded", "false");
             }
         });
-        RowElement.appendChild(name);
         RowElement.setAttribute("expanded", "false");
         RowElement.setAttribute("data-type", "dir");
         RowElement.setAttribute("data-path", `${path}/${file}`);
     } else {
-        RowElement.innerText = `${file}`;
-        RowElement.addEventListener("click", function () {
+        name.innerText = `${file}`;
+        name.addEventListener("click", function () {
             loadFile(path, file);
+            setActiveElement(name);
         });
         RowElement.setAttribute("data-type", "file");
         RowElement.setAttribute("data-path", `${path}/${file}`);
     }
+    RowElement.appendChild(name);
 }
 
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+function setActiveElement(element) {
+    if (activeElement)
+        activeElement.removeAttribute("active")
+    element.setAttribute("active", "true")
+    activeElement = element;
+}
 loadPath(document.getElementById("root"), "/");

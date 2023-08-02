@@ -77,3 +77,11 @@ body {
     width: 100%;
     height: 100%;
 }
+
+span:hover {
+    background-color: #3e3e42;
+}
+
+[active="true"] {
+    background-color: #3e3e42;
+}
