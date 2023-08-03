@@ -16,11 +16,11 @@ body {
 body {
     overflow: hidden;
     background: url(/assets/wallpaper/wallpaper.png) no-repeat center center 
-		fixed;
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
-	background-size: cover;
+	fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     user-select: none;
     font-family: "Roboto", sans-serif;
 }
