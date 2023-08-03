@@ -1,6 +1,8 @@
 class XFrogApp extends App {
     manifest: AppManifest;
 
+    activeWin: WMWindow;
+
     xwindows: { [wid: string]: WMWindow } = {};
 
     constructor() {
@@ -13,7 +15,7 @@ class XFrogApp extends App {
         console.log("Starting Xfrog Client");
         let buf: string[] = [];
         await anura.x86!.openpty(
-            'while true; do DISPLAY=:0 xdotool search ".*" 2>/dev/null; echo EOF;sleep 2; done',
+            'while true; do DISPLAY=:0 xdotool search --maxdepth 1 ".*" 2>/dev/null; echo EOF;sleep 2; done',
             0,
             0,
             (data) => {
@@ -52,6 +54,41 @@ class XFrogApp extends App {
     }
 
     async spawn_xwindow(xwid: string) {
+        let timeout: any;
+
+        const sfocus = async () => {
+            if (this.activeWin) {
+                const newImg = document.createElement("img");
+
+                const blob: any = await new Promise(
+                    (resolve) => anura.x86?.vgacanvas.toBlob(resolve),
+                )!;
+                const url = URL.createObjectURL(blob);
+                newImg.src = url;
+                this.activeWin.content.appendChild(newImg);
+            }
+
+            this.activeWin = win;
+
+            if (win.content.querySelector("img")) {
+                URL.revokeObjectURL(win.content.querySelector("img")!.src);
+                win.content.querySelector("img")!.remove();
+            }
+
+            if (timeout) clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                // DISPLAY=:0 xdotool windowmap $(xwininfo -children -id ${xwid} | grep -o '^ \\+0x[0-9a-f]\\+');
+                anura.x86!.runcmd(
+                    `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${win.width} ${win.height}`,
+                );
+
+                win.content.appendChild(anura.x86?.screen_container);
+                anura.x86?.vgacanvas.requestPointerLock();
+                anura.x86?.vgacanvas.addEventListener("click", () => {
+                    anura.x86?.vgacanvas.requestPointerLock();
+                });
+            }, 50);
+        };
         const win = anura.wm.create(
             this,
             {
@@ -61,6 +98,8 @@ class XFrogApp extends App {
             },
             () => sfocus(),
         );
+
+        this.xwindows[xwid] = win;
 
         await anura.x86?.openpty(
             `while true; do DISPLAY=:0 xdotool getwindowname ${xwid}; sleep 5; done`,
@@ -75,29 +114,6 @@ class XFrogApp extends App {
                 }
             },
         );
-        this.xwindows[xwid] = win;
-
-        let timeout: any;
-
-        async function sfocus() {
-            win.content.appendChild(anura.x86?.screen_container);
-            anura.x86?.vgacanvas.requestPointerLock();
-            anura.x86?.vgacanvas.addEventListener("click", () => {
-                anura.x86?.vgacanvas.requestPointerLock();
-            });
-
-            if (timeout) clearTimeout(timeout);
-            timeout = setTimeout(
-                () =>
-                    anura.x86!.openpty(
-                        `DISPLAY=:0 xdotool search --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${win.width} ${win.height}`,
-                        0,
-                        0,
-                        console.log,
-                    ),
-                100,
-            );
-        }
     }
 
     async open() {

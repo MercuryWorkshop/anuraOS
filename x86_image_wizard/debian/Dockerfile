@@ -11,7 +11,7 @@ RUN apt update && \
         gcc make libc6-dev \
         unzip bzip2 xz-utils \
         fluxbox \
-        xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-input-evdev xcvt \
+        xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-input-evdev xcvt x11-utils x11-apps \
         xserver-xorg-video-fbdev xserver-xorg-video-vesa \
         xserver-xorg x11-xserver-utils xinit dbus-x11 \
         htop iputils-ping \

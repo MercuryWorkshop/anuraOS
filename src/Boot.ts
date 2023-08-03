@@ -190,5 +190,10 @@ async function bootx86() {
     await anura.registerApp(mgr);
 
     await anura.registerApp(new XFrogApp());
+
+    await anura.registerApp(
+        new XAppStub("X Calculator", "anura.xcalc", "", "xcalc"),
+    );
+    await anura.registerApp(new XAppStub("XTerm", "anura.xterm", "", "xterm"));
     anura.x86 = new V86Backend(anura.x86hdd);
 }

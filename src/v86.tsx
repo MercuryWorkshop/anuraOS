@@ -248,6 +248,8 @@ class V86Backend {
 
     xpty: number;
 
+    runpty: number;
+
     emulator;
     //
 
@@ -332,7 +334,7 @@ class V86Backend {
         if (this.registered) return;
         this.registered = true;
 
-        await sleep(8000); // to be safe
+        await sleep(500); // to be safe
 
         anura.notifications.add({
             title: "x86 Subsystem Ready",
@@ -343,7 +345,7 @@ class V86Backend {
         this.barepty = await this.openpty("echo 1", 1, 1, (data) => {
             console.log("BARE: " + data);
         });
-        await sleep(2000); // to be safe
+        await sleep(1000); // to be safe
 
         this.xpty = await this.openpty("startx /bin/xfrog", 1, 1, (data) => {
             console.debug("XFROG " + data);
@@ -351,10 +353,15 @@ class V86Backend {
                 anura.apps["anura.xfrog"].startup();
             }
         });
-        await sleep(2000); // to be safe
+
+        await sleep(200);
+
+        this.runpty = await this.openpty("DISPLAY=:0 bash", 1, 1, (data) => {
+            console.debug("RUNPTY" + data);
+        });
+        await sleep(200);
         anura.apps["anura.term"].open();
 
-        await sleep(2000); // to be safe
         navigator.serviceWorker.addEventListener("message", async (event) => {
             if (event.data?.anura_target == "anura.x86.proxy") {
                 const id = event.data.id;
@@ -369,16 +376,25 @@ class V86Backend {
             }
         });
     }
+    runcmd(cmd: string) {
+        this.writepty(this.runpty, `( ${cmd} ) & \n`);
+    }
 
     closepty(TTYn: number) {
         this.emulator.serial0_send(`c\n${TTYn}`);
     }
+    canopenpty = true;
+    opensafeQueue: any = [];
     openpty(
         command: string,
         cols: number,
         rows: number,
         onData: (string: string) => void,
     ): Promise<number> {
+        if (!this.canopenpty) {
+            return new Promise((resolve) => this.opensafeQueue.push(resolve));
+        }
+
         this.write_uint(rows, this.s_rows_phys_addr);
         this.write_uint(cols, this.s_cols_phys_addr);
         this.write_uint(1, this.new_intent_phys_addr);
@@ -392,6 +408,7 @@ class V86Backend {
             this.cmd_q = command;
             this.act = true;
         }
+        // this.canopenpty = false;
 
         return new Promise((resolve) => {
             this.openQueue.push((number: number) => {
