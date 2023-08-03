@@ -45,6 +45,8 @@ class WMWindow {
     mouseTop: number;
     wininfo: WindowInformation;
 
+    state: { title: string };
+
     onfocus: () => void;
     onresize: (w: number, h: number) => void;
 
@@ -55,6 +57,9 @@ class WMWindow {
     maximizeImg: HTMLImageElement;
     constructor(wininfo: WindowInformation) {
         this.wininfo = wininfo;
+        this.state = stateful({
+            title: wininfo.title,
+        });
         this.element = (
             <div
                 class="aliceWMwin opacity0"
@@ -108,7 +113,9 @@ class WMWindow {
                         }
                     }}
                 >
-                    <div class="titleContent">{wininfo.title}</div>
+                    <div class="titleContent">
+                        {React.use(this.state.title)}
+                    </div>
 
                     <button
                         class="windowButton"

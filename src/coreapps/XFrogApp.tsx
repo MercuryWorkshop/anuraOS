@@ -10,6 +10,7 @@ class XFrogApp extends App {
     }
 
     async startup() {
+        console.log("Starting Xfrog Client");
         let buf: string[] = [];
         await anura.x86!.openpty(
             'while true; do DISPLAY=:0 xdotool search ".*" 2>/dev/null; echo EOF;sleep 2; done',
@@ -45,6 +46,7 @@ class XFrogApp extends App {
             if (!wids.includes(wid)) {
                 // xorg window has since been closed. dispose
                 this.xwindows[wid]?.close();
+                delete this.xwindows[wid];
             }
         }
     }
@@ -58,6 +60,20 @@ class XFrogApp extends App {
                 height: "500px",
             },
             () => sfocus(),
+        );
+
+        await anura.x86?.openpty(
+            `while true; do DISPLAY=:0 xdotool getwindowname ${xwid}; sleep 5; done`,
+            0,
+            0,
+            (name) => {
+                name = name.replaceAll("\r", "").replaceAll("\n", "");
+                if (name.includes("of failed request")) {
+                    // window has since been closed
+                } else if (name) {
+                    win.state.title = "X window: " + name;
+                }
+            },
         );
         this.xwindows[xwid] = win;
 
@@ -79,7 +95,7 @@ class XFrogApp extends App {
                         0,
                         console.log,
                     ),
-                250,
+                100,
             );
         }
     }

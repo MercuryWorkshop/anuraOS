@@ -346,7 +346,10 @@ class V86Backend {
         await sleep(2000); // to be safe
 
         this.xpty = await this.openpty("startx /bin/xfrog", 1, 1, (data) => {
-            console.log("XFROG: " + data);
+            console.debug("XFROG " + data);
+            if (data.includes("XFROG-INIT")) {
+                anura.apps["anura.xfrog"].startup();
+            }
         });
         await sleep(2000); // to be safe
         anura.apps["anura.term"].open();

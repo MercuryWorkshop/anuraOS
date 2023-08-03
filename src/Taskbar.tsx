@@ -136,11 +136,10 @@ class Taskbar {
                 app.open();
             });
 
-            let winEnumerator = 0;
+            let winEnumerator = 1;
             for (const win of app.windows) {
-                let displayTitle = win.wininfo.title;
-                if (win.wininfo.title === "")
-                    displayTitle = "Window " + winEnumerator;
+                const displayTitle =
+                    win.state.title || "Window " + winEnumerator;
                 newcontextmenu.addItem(displayTitle, () => {
                     win.focus();
                     win.unminimize();
