@@ -29,7 +29,7 @@ window.addEventListener("load", async () => {
 
     t.setBackgroundColor("#141516");
     t.setCursorColor("#bbb");
-    const pty = await anura.x86.openpty("TERM=xterm bash", t.screenSize.width, t.screenSize.height, (data) => {
+    const pty = await anura.x86.openpty("TERM=xterm DISPLAY=:0 bash", t.screenSize.width, t.screenSize.height, (data) => {
       io.print(data);
     });
 

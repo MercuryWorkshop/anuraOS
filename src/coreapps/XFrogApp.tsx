@@ -1,21 +1,55 @@
 class XFrogApp extends App {
     manifest: AppManifest;
 
+    xwindows: { [wid: string]: WMWindow } = {};
+
     constructor() {
         super();
         this.name = "XFROG";
         this.package = "anura.xfrog";
     }
-    async open() {
-        const apppty = await anura.x86!.openpty(
-            "DISPLAY=:0 glxgears",
-            1,
-            1,
+
+    async startup() {
+        let buf: string[] = [];
+        await anura.x86!.openpty(
+            'while true; do DISPLAY=:0 xdotool search ".*" 2>/dev/null; echo EOF;sleep 2; done',
+            0,
+            0,
             (data) => {
-                console.log("XF86: " + data);
+                for (const wid of data.split("\n")) {
+                    if (wid.includes("EOF")) {
+                        // remove root window from array
+                        buf.shift();
+
+                        this.proc_xwids(buf);
+
+                        buf = [];
+                    } else {
+                        const stripped = wid.replaceAll("\r", "");
+                        if (stripped) buf.push(stripped);
+                    }
+                }
             },
         );
-        await sleep(5000);
+    }
+
+    async proc_xwids(wids: string[]) {
+        console.log("xwids: " + wids);
+
+        for (const wid of wids) {
+            if (!this.xwindows[wid]) {
+                await this.spawn_xwindow(wid);
+            }
+        }
+        for (const wid in this.xwindows) {
+            if (!wids.includes(wid)) {
+                // xorg window has since been closed. dispose
+                this.xwindows[wid]?.close();
+            }
+        }
+    }
+
+    async spawn_xwindow(xwid: string) {
         const win = anura.wm.create(
             this,
             {
@@ -25,15 +59,7 @@ class XFrogApp extends App {
             },
             () => sfocus(),
         );
-
-        const xwid = await new Promise((resolve) => {
-            anura.x86!.openpty(
-                'DISPLAY=:0 xdotool search --onlyvisible ".*" 2>/dev/null | tail -1',
-                0,
-                0,
-                (num) => resolve(num.replaceAll("\r\n", "")),
-            );
-        });
+        this.xwindows[xwid] = win;
 
         let timeout: any;
 
@@ -56,5 +82,9 @@ class XFrogApp extends App {
                 250,
             );
         }
+    }
+
+    async open() {
+        this.startup();
     }
 }
