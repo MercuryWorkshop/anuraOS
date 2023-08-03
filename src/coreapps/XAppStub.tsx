@@ -14,5 +14,6 @@ class XAppStub extends App {
     }
     async open() {
         anura.x86?.runcmd(this.command);
+        anura.x86?.vgacanvas.remove();
     }
 }

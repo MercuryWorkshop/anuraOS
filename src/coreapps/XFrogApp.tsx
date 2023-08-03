@@ -7,7 +7,7 @@ class XFrogApp extends App {
 
     constructor() {
         super();
-        this.name = "XFROG";
+        this.name = "XFrog86";
         this.package = "anura.xfrog";
     }
 
@@ -114,6 +114,7 @@ class XFrogApp extends App {
                 }
             },
         );
+        sfocus();
     }
 
     async open() {
