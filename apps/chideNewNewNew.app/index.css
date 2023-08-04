@@ -1,9 +1,10 @@
 @font-face {
     font-family: NerdFonts;
     src: url("SymbolsNerdFont-Regular.ttf") format("truetype");
-}
-
-body {
+ }
+ 
+ 
+ body {
     color: white;
     overflow-y: hidden;
     user-select: none;
@@ -14,32 +15,33 @@ body {
         Droid Sans,
         sans-serif;
     background-color: #252526;
-}
-.monaco-editor {
+ }
+ .monaco-editor {
     position: absolute !important; /* Fix for monaco editor resize bug */
-}
-
-.container {
+ }
+ 
+ 
+ .container {
     display: flex;
     /* Misc */
     /* border: 1px solid #cbd5e0; */
     /* height: 32rem; */
     width: 100%;
     height: 100%;
-}
-.resizer[data-direction="horizontal"] {
+ }
+ .resizer[data-direction="horizontal"] {
     background-color: #cbd5e0;
     cursor: ew-resize;
     height: 100%;
     width: 2px;
-}
-.resizer[data-direction="vertical"] {
+ }
+ .resizer[data-direction="vertical"] {
     background-color: #cbd5e0;
     cursor: ns-resize;
     height: 2px;
     width: 100%;
-}
-.container__left {
+ }
+ .container__left {
     /* Initially, the left takes 1/4 width */
     width: 25%;
     overflow: auto;
@@ -47,18 +49,19 @@ body {
     /* align-items: center; */
     display: flex;
     /* justify-content: center; */
-}
-.container__right {
+ }
+ .container__right {
     /* Take the remaining width */
     flex: 1;
-
+ 
+ 
     /* Misc */
     align-items: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-.container__top {
+ }
+ .container__top {
     /* Initial height */
     height: 12rem;
     width: 100%;
@@ -66,8 +69,8 @@ body {
     align-items: center;
     display: flex;
     justify-content: center;
-}
-.container__bottom {
+ }
+ .container__bottom {
     /* Take the remaining height */
     flex: 1;
     width: 100%;
@@ -76,71 +79,78 @@ body {
     align-items: center;
     display: flex;
     justify-content: center;
-}
-
-#monaco-container {
+ }
+ 
+ 
+ #monaco-container {
     width: 100%;
     height: 100%;
-}
-
-span:hover {
+ }
+ 
+ 
+ span:hover {
     background-color: #3e3e42;
-}
-
-[active="true"] {
+ }
+ 
+ 
+ [active="true"] {
     background-color: #3e3e42;
-}
-
-/* 
-* This is the section where you add your icons
-*/
-[data-type="plaintext"]::marker {
-    content: " "; /* FontAwesome Unicode */
+ }
+ 
+ 
+ /*
+ * This is the section where you add your icons
+ */
+ [data-type="plaintext"]::marker {
+    content: " "; /* FontAwesome Unicode */
     font-family: NerdFonts;
-}
-[data-type="javascript"]::marker {
-    content: " "; /* FontAwesome Unicode */
+ }
+ [data-type="javascript"]::marker {
+    content: " "; /* FontAwesome Unicode */
     color: yellow;
     font-family: NerdFonts;
-}
-[data-type="typescript"]::marker {
+ }
+ [data-type="typescript"]::marker {
     content: "󰛦 "; /* FontAwesome Unicode */
     color: yellow;
     font-family: NerdFonts;
-}
-[data-type="json"]::marker {
+ }
+ [data-type="json"]::marker {
     content: "󰘦 "; /* FontAwesome Unicode */
     color: yellow;
     font-family: NerdFonts;
-}
-[data-type="dir"]::marker {
-    content: " "; /* FontAwesome Unicode */
+ }
+ [data-type="dir"]::marker {
+    content: " "; /* FontAwesome Unicode */
     color: peachpuff;
     font-family: NerdFonts;
-}
-[data-type="svg"]::marker {
-    content: " "; /* FontAwesome Unicode */
+ }
+ [data-type="svg"]::marker {
+    content: " "; /* FontAwesome Unicode */
     color: lightblue;
     font-family: NerdFonts;
-}
-[data-type="shell"]::marker {
-    content: " "; /* FontAwesome Unicode */
+ }
+ [data-type="shell"]::marker {
+    content: " "; /* FontAwesome Unicode */
     color: white;
     font-family: NerdFonts;
-}
-[data-type="img"]::marker {
+ }
+ [data-type="img"]::marker {
     content: "󰟜 "; /* FontAwesome Unicode */
     color: white;
     font-family: NerdFonts;
-}
-[data-type="font"]::marker {
-    content: " "; /* FontAwesome Unicode */
+ }
+ [data-type="font"]::marker {
+    content: " "; /* FontAwesome Unicode */
     color: white;
     font-family: NerdFonts;
-}
-
-::marker {
+ }
+ 
+ 
+ ::marker {
     padding-left: 20px;
     right: 2px;
-}
+ }
 
+ 
+ 
