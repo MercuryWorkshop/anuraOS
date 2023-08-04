@@ -2,11 +2,13 @@ class Taskbar {
     state: {
         pinnedApps: App[];
         activeApps: App[];
+        showBar: boolean;
         time: string;
         bat_icon: string;
     } = stateful({
         pinnedApps: [],
         activeApps: [],
+        showBar: false,
         time: "",
         bat_icon: "battery_0_bar",
     });
@@ -44,6 +46,7 @@ class Taskbar {
                     do={this.shortcut.bind(this)}
                 ></ul>
                 <div
+                    if={React.use(this.state.showBar)}
                     class={styled.new`
                         self {
                             border: 2px solid white;
@@ -53,6 +56,7 @@ class Taskbar {
                         }
                     `}
                 ></div>
+
                 <ul
                     for={React.use(this.state.activeApps)}
                     do={this.shortcut.bind(this)}
@@ -222,6 +226,11 @@ class Taskbar {
         this.state.activeApps = activewindows.filter(
             (app: App) => !pinned.includes(app),
         );
+
+        this.state.showBar =
+            this.state.pinnedApps.length > 0 &&
+            this.state.activeApps.length > 0;
+
         console.log(this.state.activeApps);
     }
     // removeShortcuts() {
