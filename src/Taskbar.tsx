@@ -65,13 +65,13 @@ class Taskbar {
                 }}
             >
                 <div class="flex flexcenter">
-                    <p>{React.use(this.state.time)}</p>
+                    <span class="material-symbols-outlined">settings</span>
 
                     <span class="material-symbols-outlined">
                         {React.use(this.state.bat_icon)}
                     </span>
 
-                    <span class="material-symbols-outlined">settings</span>
+                    <p>{React.use(this.state.time)}</p>
                 </div>
             </div>
         </footer>
