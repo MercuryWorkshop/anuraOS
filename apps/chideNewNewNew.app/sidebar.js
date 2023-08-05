@@ -34,20 +34,11 @@ function loadPath(parent, path) {
 function loadFile(path, file) {
     anura.fs.readFile(`${path}/${file}`, function (err, data) {
         if (err) throw err;
+    
         window.currentlyOpenFile = `${path}/${file}`;
-        window.editor = monaco.editor.create(
-            document.getElementById("monaco-container"),
-            {
-                value: new TextDecoder().decode(data),
-                theme: "vs-dark",
-                automaticLayout: true,
-                language: getFileType(file),
-            },
-        );
-        window.editor.getModel().onDidChangeContent((event) => {
-            if (window.currentlyOpenFile)
-                anura.fs.writeFile(window.currentlyOpenFile, editor.getValue());
-        });
+        window.editor.setValue(new TextDecoder().decode(data))
+        monaco.editor.setModelLanguage(window.editor.getModel(), getFileType(file))
+
     });
 }
 

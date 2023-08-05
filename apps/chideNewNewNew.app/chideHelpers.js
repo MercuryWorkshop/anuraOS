@@ -1,7 +1,7 @@
 // Initialization
 require.config({ paths: { vs: "node_modules/monaco-editor/min/vs" } });
 
-require(["vs/editor/editor.main"], function () {
+require(["vs/editor/editor.main"], function () {    
     require.config({ paths: { vs: "node_modules/monaco-editor/min/vs" } });
     0;
 
@@ -15,6 +15,10 @@ require(["vs/editor/editor.main"], function () {
                 language: "plaintext",
             },
         );
+        window.editor.getModel().onDidChangeContent((event) => {
+            if (window.currentlyOpenFile)
+                anura.fs.writeFile(window.currentlyOpenFile, editor.getValue());
+        });
     });
 });
 
