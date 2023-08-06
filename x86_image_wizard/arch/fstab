@@ -1,0 +1,6 @@
+# Static information about the filesystems.
+# See fstab(5) for details.
+
+# <file system> <dir> <type> <options> <dump> <pass>
+/dev/sda2 / ext4 rw,relatime 0 0
+tmpfs /tmp tmpfs nodev,nosuid 0 0

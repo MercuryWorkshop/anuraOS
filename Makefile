@@ -30,7 +30,7 @@ clean:
 	rm -rf build/*
 
 rootfs: FORCE
-	cd x86_image_wizard/debian; sh build-debian-bin.sh
+	cd x86_image_wizard; sh x86_image_wizard.sh
 
 v86dirty: 
 	touch v86timestamp # makes it "dirty" and forces recompilation

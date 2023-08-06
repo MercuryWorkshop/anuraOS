@@ -2,18 +2,19 @@
 set -veu
 
 IMAGES="$(dirname "$0")"/../../build/images
-OUT_ROOTFS_TAR="$IMAGES"/debian-rootfs.tar
-OUT_ROOTFS_BIN="$IMAGES"/debian-rootfs.bin
-OUT_ROOTFS_MNT="$IMAGES"/debian-rootfs.mntpoint
-CONTAINER_NAME=debian-full
-IMAGE_NAME=i386/debian-full
+OUT_ROOTFS_TAR="$IMAGES"/arch-rootfs.tar
+OUT_ROOTFS_BIN="$IMAGES"/arch-rootfs.bin
+OUT_ROOTFS_MNT="$IMAGES"/arch-rootfs.mntpoint
+CONTAINER_NAME=arch-full
+IMAGE_NAME=ljmf00/archlinux:latest
 
-rm -rf "$IMAGES/debian-boot" || :
+rm -rf "$IMAGES/arch-boot" || :
 cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
 
 mkdir -p "$IMAGES"
+docker pull ljmf00/archlinux:latest
 docker build . --platform linux/386 --rm --tag "$IMAGE_NAME"
 docker rm "$CONTAINER_NAME" || true
 docker create --platform linux/386 -t -i --name "$CONTAINER_NAME" "$IMAGE_NAME" bash
@@ -29,7 +30,7 @@ sudo mount "$loop" "$OUT_ROOTFS_MNT"
 
 sudo tar -xf "$OUT_ROOTFS_TAR" -C "$OUT_ROOTFS_MNT"
 
-cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/debian-boot"
+sudo cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/arch-boot"
 
 sudo umount -R "$OUT_ROOTFS_MNT"
 sudo losetup -d "$loop"
@@ -40,8 +41,9 @@ rm xfrog.sh
 rm xsetrandr.sh
 
 echo "done! created"
+sudo chown -R $USER:$USER $IMAGES/arch-boot
 cd "$IMAGES"
-mkdir -p debian-rootfs
-split -b50M debian-rootfs.bin debian-rootfs/
+mkdir -p arch-rootfs
+split -b50M arch-rootfs.bin arch-rootfs/
 cd ../
-find images/debian-rootfs/* | jq -Rnc "[inputs]"
+find images/arch-rootfs/* | jq -Rnc "[inputs]"
