@@ -178,6 +178,12 @@ document.addEventListener("anura-login-completed", async () => {
     //     ).style.setProperty("display", "none");
     // });
 
+    const altTabView = AltTabView.create();
+    altTabView.show();
+    document.addEventListener("keydown", (e) => {
+        console.log("keydown", e);
+    });
+
     // This feels wrong but it works and makes TSC happy
     launcher.clickoffChecker?.addEventListener("click", () => {
         launcher.toggleVisible();

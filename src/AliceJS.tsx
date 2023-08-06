@@ -4,18 +4,6 @@ namespace JSX {
 
 let __effects: any = [];
 
-function asElement(node: Node | string): Node {
-    if (node instanceof Node) {
-        return node;
-    }
-    if (typeof node === "string") {
-        const span = document.createElement("span");
-        span.innerText = node;
-        return span;
-    }
-    throw new Error("Expected a node");
-}
-
 class React {
     static get use(): (sink: any, mapping?: (...args: any[]) => any) => any {
         // documentation, in case anyone looks in here. the below is a simple way you would use reactivity.
@@ -56,8 +44,8 @@ class React {
         if (props) {
             if ("if" in props) {
                 const cond = props["if"];
-                const then = props["then"] && asElement(props["then"]);
-                const elseelm = props["else"] && asElement(props["else"]);
+                const then = props["then"];
+                const elseelm = props["else"];
 
                 if (typeof cond === "object" && "__alicejs_marker" in cond) {
                     if (then) elm.appendChild(then);
