@@ -14,7 +14,7 @@ cp ../xfrog.sh .
 cp ../xsetrandr.sh .
 
 mkdir -p "$IMAGES"
-docker pull ljmf00/archlinux:latest
+docker pull $IMAGE_NAME
 docker build . --platform linux/386 --rm --tag "$IMAGE_NAME"
 docker rm "$CONTAINER_NAME" || true
 docker create --platform linux/386 -t -i --name "$CONTAINER_NAME" "$IMAGE_NAME" bash

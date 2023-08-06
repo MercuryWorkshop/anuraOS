@@ -29,10 +29,10 @@ RUN pacman -Sy && \
     passwd -d root && \
     # mkdir -p /etc/systemd/system/serial-getty@ttyS0.service.d/ && \
     # systemctl enable serial-getty@ttyS0.service && \
+    rm /etc/systemd/system/getty.target.wants/getty@tty1.service && \
+    # systemctl disable getty@tty1.service && \
     # rm /lib/systemd/system/getty.target.wants/getty-static.service && \
     # rm /etc/motd /etc/issue && \
-    # systemctl disable apt-daily.timer && \
-    # systemctl disable apt-daily-upgrade.timer && \
     echo ""
 
 RUN yes | pacman -Scc
