@@ -17,6 +17,7 @@ class WMAPI {
         this.windows.push(new WeakRef(win));
 
         taskbar.updateTaskbar();
+        alttab.update();
         return win;
     }
 }

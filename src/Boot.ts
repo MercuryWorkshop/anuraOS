@@ -26,6 +26,7 @@ const launcher = new Launcher();
 const contextMenu = new ContextMenu();
 const bootsplash = new Bootsplash();
 const oobeview = new OobeView();
+const alttab = new AltTabView();
 
 let anura: Anura;
 // global
@@ -159,6 +160,7 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(launcher.element);
     document.body.appendChild(launcher.clickoffChecker);
     document.body.appendChild(taskbar.element);
+    document.body.appendChild(alttab.element);
 
     (window as any).taskbar = taskbar;
 
@@ -178,8 +180,7 @@ document.addEventListener("anura-login-completed", async () => {
     //     ).style.setProperty("display", "none");
     // });
 
-    const altTabView = AltTabView.create();
-    altTabView.show();
+    alttab.show();
     document.addEventListener("keydown", (e) => {
         console.log("keydown", e);
     });
@@ -190,6 +191,7 @@ document.addEventListener("anura-login-completed", async () => {
     });
     anura.initComplete = true;
     taskbar.updateTaskbar();
+    alttab.update();
 });
 async function bootx86() {
     const mgr = new x86MgrApp();

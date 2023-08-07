@@ -1,5 +1,5 @@
 interface AltTabViewState {
-    windows: WMWindow[];
+    windows: [App, WMWindow][];
     index: number;
 }
 
@@ -7,37 +7,46 @@ class AltTabView {
     element: HTMLElement;
     state: AltTabViewState;
 
-    constructor() {
-        this.state = stateful({ windows: [], index: 0 });
-        this.element = this.view();
-    }
-
-    static create() {
-        const inst = new AltTabView();
-        inst.hide();
-        document.body.appendChild(inst.element);
-        return inst;
+    viewWindow([app, win]: [App, WMWindow]) {
+        return <p>{app.name}</p>;
     }
 
     view() {
-        const inner = (
-            <p>{React.use(this.state.windows, (w) => w.length)} windows</p>
-        );
         return (
             <div
                 class="alttab-container"
                 if={React.use(this.state.windows, (w) => Boolean(w.length))}
-                then={inner}
+                then={
+                    <div
+                        for={React.use(this.state.windows)}
+                        do={this.viewWindow.bind(this)}
+                    />
+                }
                 else={<p>No windows</p>}
             />
         );
+    }
+
+    constructor() {
+        this.state = stateful({ windows: [], index: 0 });
+        this.element = this.view();
+        this.hide();
     }
 
     hide() {
         this.element.style.display = "none";
     }
 
-    update() {}
+    update() {
+        this.state.windows = Object.values(anura.apps).flatMap(
+            (a: App): [App, WMWindow][] => a.windows.map((w) => [a, w]),
+        );
+        // ensure index doesn't overflow
+        this.state.index = Math.min(
+            this.state.index,
+            this.state.windows.length - 1,
+        );
+    }
 
     show() {
         this.element.style.display = "block";
