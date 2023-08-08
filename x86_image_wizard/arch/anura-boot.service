@@ -3,7 +3,8 @@ Description=Run Anura Boot Scripts
 After=basic.target
 StartLimitIntervalSec=0
 [Service]
-Type=oneshot
+Type=simple
+User=root
 ExecStart=/bin/anura-boot.sh
 
 [Install]
