@@ -7,3 +7,26 @@
     border: 2px solid black;
     border-radius: 0.25rem;
 }
+
+.alttab-window-list {
+    display: flex;
+}
+
+.alttab-window {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    min-width: 10rem;
+}
+
+.alttab-window-icon-container {
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.alttab-window-icon {
+    width: 3rem;
+    height: 3rem;
+}

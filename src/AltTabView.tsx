@@ -8,7 +8,18 @@ class AltTabView {
     state: AltTabViewState;
 
     viewWindow([app, win]: [App, WMWindow]) {
-        return <p>{app.name}</p>;
+        return (
+            <div class="alttab-window">
+                <div class="alttab-window-icon-container">
+                    <img
+                        class="alttab-window-icon"
+                        src={app?.icon}
+                        alt="App Icon"
+                    />
+                </div>
+                <div>{app.name}</div>
+            </div>
+        );
     }
 
     view() {
@@ -18,6 +29,7 @@ class AltTabView {
                 if={React.use(this.state.windows, (w) => Boolean(w.length))}
                 then={
                     <div
+                        class="alttab-window-list"
                         for={React.use(this.state.windows)}
                         do={this.viewWindow.bind(this)}
                     />
@@ -33,10 +45,6 @@ class AltTabView {
         this.hide();
     }
 
-    hide() {
-        this.element.style.display = "none";
-    }
-
     update() {
         this.state.windows = Object.values(anura.apps).flatMap(
             (a: App): [App, WMWindow][] => a.windows.map((w) => [a, w]),
@@ -48,7 +56,11 @@ class AltTabView {
         );
     }
 
+    hide() {
+        this.element.style.visibility = "hidden";
+    }
+
     show() {
-        this.element.style.display = "block";
+        this.element.style.visibility = "visible";
     }
 }
