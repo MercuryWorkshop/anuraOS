@@ -7,9 +7,24 @@ class AltTabView {
     element: HTMLElement;
     state: AltTabViewState;
 
-    viewWindow([app, win]: [App, WMWindow]) {
+    viewWindow([app, win, index]: [App, WMWindow, number]) {
+        console.log(
+            "app.name",
+            app.name,
+            "index",
+            index,
+            "this.state.index",
+            this.state.index,
+        );
         return (
-            <div class="alttab-window">
+            <div
+                class={React.use(
+                    this.state.index,
+                    (stateIndex) =>
+                        "alttab-window " +
+                        (index == stateIndex ? "alttab-window-selected" : ""),
+                )}
+            >
                 <div class="alttab-window-icon-container">
                     <img
                         class="alttab-window-icon"
@@ -17,7 +32,9 @@ class AltTabView {
                         alt="App Icon"
                     />
                 </div>
-                <div>{app.name}</div>
+                <div>
+                    {app.name} {React.use(this.state.index)}
+                </div>
             </div>
         );
     }
@@ -30,11 +47,19 @@ class AltTabView {
                 then={
                     <div
                         class="alttab-window-list"
-                        for={React.use(this.state.windows)}
+                        for={React.use(
+                            this.state.windows,
+                            (windows: [App, WMWindow][]) =>
+                                windows.map(([a, w], i) => [a, w, i]),
+                        )}
                         do={this.viewWindow.bind(this)}
                     />
                 }
-                else={<p>No windows</p>}
+                else={
+                    <div class="alttab-nowindows">
+                        <p>No windows</p>
+                    </div>
+                }
             />
         );
     }
@@ -49,10 +74,10 @@ class AltTabView {
         this.state.windows = Object.values(anura.apps).flatMap(
             (a: App): [App, WMWindow][] => a.windows.map((w) => [a, w]),
         );
-        // ensure index doesn't overflow
-        this.state.index = Math.min(
-            this.state.index,
-            this.state.windows.length - 1,
+        // ensure index doesn't underflow or overflow
+        this.state.index = Math.max(
+            0,
+            Math.min(this.state.index, 0, this.state.windows.length - 1),
         );
     }
 

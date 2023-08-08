@@ -3,13 +3,28 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 2em;
-    border: 2px solid black;
+    padding: 1em;
     border-radius: 0.25rem;
+    background-color: #374144ab;
 }
 
 .alttab-window-list {
     display: flex;
+}
+
+.alttab-nowindows {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alttab-window,
+.alttab-nowindows {
+    min-width: 10rem;
+    min-height: 5.625rem;
+    padding: 1em;
+    border: 0.125rem solid #00000000;
+    border-radius: 0.25rem;
 }
 
 .alttab-window {
@@ -17,7 +32,10 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    min-width: 10rem;
+}
+
+.alttab-window-selected {
+    border-color: #4698af;
 }
 
 .alttab-window-icon-container {
