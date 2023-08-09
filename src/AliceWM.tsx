@@ -358,6 +358,7 @@ class WMWindow {
             (getHighestZindex() + 1).toString(),
         );
         normalizeZindex();
+        alttab.update();
 
         if (this.onfocus) this.onfocus();
     }

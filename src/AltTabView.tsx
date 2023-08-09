@@ -73,9 +73,17 @@ class AltTabView {
     }
 
     update() {
-        this.state.windows = Object.values(anura.apps).flatMap(
+        const windows = Object.values(anura.apps).flatMap(
             (a: App): [App, WMWindow][] => a.windows.map((w) => [a, w]),
         );
+        console.log("windows", { windows });
+        windows.sort(
+            ([_appA, winA], [_appB, winB]) =>
+                Number(winA.element.style.zIndex) -
+                Number(winB.element.style.zIndex),
+        );
+        console.log("windows", { windows });
+        this.state.windows = windows;
         // ensure index doesn't underflow or overflow
         this.state.index = Math.max(
             0,
