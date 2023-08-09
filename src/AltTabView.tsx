@@ -9,7 +9,6 @@ class AltTabView {
     state: AltTabViewState;
 
     viewWindow([app, win, index]: [App, WMWindow, number]) {
-        console.log(win.element);
         return (
             <div>
                 <div
@@ -84,13 +83,11 @@ class AltTabView {
         const windows = Object.values(anura.apps).flatMap(
             (a: App): [App, WMWindow][] => a.windows.map((w) => [a, w]),
         );
-        console.log("windows", { windows });
         windows.sort(
             ([_appA, winA], [_appB, winB]) =>
-                Number(winA.element.style.zIndex) -
-                Number(winB.element.style.zIndex),
+                Number(winB.element.style.zIndex) -
+                Number(winA.element.style.zIndex),
         );
-        console.log("windows", { windows });
         this.state.windows = windows;
         // ensure index doesn't underflow or overflow
         this.state.index = Math.max(
@@ -106,13 +103,26 @@ class AltTabView {
     }
 
     onComboPress() {
-        this.state.index = (this.state.index + 1) % this.state.windows.length;
-        this.state.active = true;
         console.log("comboPress");
+        console.log("index", this.state.index, "windows", {
+            windows: this.state.windows,
+        });
+        if (!this.state.active) {
+            this.state.index = 1 % this.state.windows.length;
+            this.state.active = true;
+            return;
+        }
+        this.state.index = (this.state.index + 1) % this.state.windows.length;
     }
 
     onModRelease() {
-        this.state.active = false;
         console.log("modRelease");
+        if (this.state.active) {
+            this.state.active = false;
+            const appWin = this.state.windows[this.state.index]!;
+            if (!appWin) return;
+            const [_app, win] = appWin;
+            win.focus();
+        }
     }
 }
