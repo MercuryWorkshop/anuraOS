@@ -11,6 +11,7 @@ class WMAPI {
         win.onfocus = () => {
             //@ts-ignore
             document.activeElement?.blur();
+            alttab.update();
             if (onfocus) onfocus();
         };
         ctx.windows.push(win);
