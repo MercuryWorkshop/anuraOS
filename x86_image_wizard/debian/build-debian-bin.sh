@@ -31,7 +31,7 @@ sudo tar -xf "$OUT_ROOTFS_TAR" -C "$OUT_ROOTFS_MNT"
 
 cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/debian-boot"
 
-sudo umount -R "$OUT_ROOTFS_MNT"
+sudo umount "$loop"
 sudo losetup -d "$loop"
 rm "$OUT_ROOTFS_TAR"
 rm -rf "$OUT_ROOTFS_MNT"
