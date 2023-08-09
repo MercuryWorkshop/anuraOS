@@ -35,7 +35,7 @@ class AltTabView {
                         src={app?.icon}
                         alt="App Icon"
                     />
-                    <p>{app.name}</p>
+                    <span class="alttab-window-title-text">{app.name}</span>
                 </div>
             </div>
         );
@@ -63,7 +63,7 @@ class AltTabView {
                 }
                 else={
                     <div class="alttab-nowindows">
-                        <p>No windows</p>
+                        <span>No windows</span>
                     </div>
                 }
             />
