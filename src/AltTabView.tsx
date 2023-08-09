@@ -1,7 +1,8 @@
-interface AltTabViewState {
+type AltTabViewState = {
     windows: [App, WMWindow][];
     index: number;
-}
+    active: boolean;
+};
 
 class AltTabView {
     element: HTMLElement;
@@ -44,7 +45,11 @@ class AltTabView {
     view() {
         return (
             <div
-                class="alttab-container"
+                class={React.use(
+                    this.state.active,
+                    (active) =>
+                        "alttab-container " + (active ? "" : "alttab-hidden"),
+                )}
                 if={React.use(this.state.windows, (w) => Boolean(w.length))}
                 then={
                     <div
@@ -67,9 +72,12 @@ class AltTabView {
     }
 
     constructor() {
-        this.state = stateful({ windows: [], index: 0 });
+        this.state = stateful<AltTabViewState>({
+            windows: [],
+            index: 0,
+            active: false,
+        });
         this.element = this.view();
-        this.hide();
     }
 
     update() {
@@ -89,13 +97,22 @@ class AltTabView {
             0,
             Math.min(this.state.index, 0, this.state.windows.length - 1),
         );
+
+        this.element.style.setProperty(
+            "z-index",
+            (getHighestZindex() + 1).toString(),
+        );
+        normalizeZindex();
     }
 
-    hide() {
-        this.element.style.visibility = "hidden";
+    onComboPress() {
+        this.state.index = (this.state.index + 1) % this.state.windows.length;
+        this.state.active = true;
+        console.log("comboPress");
     }
 
-    show() {
-        this.element.style.visibility = "visible";
+    onModRelease() {
+        this.state.active = false;
+        console.log("modRelease");
     }
 }

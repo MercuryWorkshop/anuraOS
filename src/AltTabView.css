@@ -9,6 +9,10 @@
     color: #eee;
 }
 
+.alttab-hidden {
+    display: none;
+}
+
 .alttab-window-list {
     display: flex;
 }

@@ -180,9 +180,18 @@ document.addEventListener("anura-login-completed", async () => {
     //     ).style.setProperty("display", "none");
     // });
 
-    alttab.show();
     document.addEventListener("keydown", (e) => {
-        console.log("keydown", e);
+        if (e.shiftKey && e.key.toLowerCase() == "tab") {
+            e.preventDefault();
+            alttab.onComboPress();
+        }
+    });
+    document.addEventListener("keyup", (e) => {
+        console.log("keyup", e);
+        if (e.key.toLowerCase() === "shift") {
+            alttab.onModRelease();
+            return;
+        }
     });
 
     // This feels wrong but it works and makes TSC happy
