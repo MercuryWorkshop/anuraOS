@@ -56,11 +56,12 @@ COPY anura-boot.sh /bin/
 
 COPY xfrog.sh /bin/xfrog
 COPY xsetrandr.sh /bin/xsetrandr
+COPY ptynet.sh /bin/ptynet
 
 
 COPY anurad.c /etc/
 
-RUN chmod u+x /bin/anura-boot.sh /bin/xfrog /bin/xsetrandr
+RUN chmod u+x /bin/anura-boot.sh /bin/xfrog /bin/xsetrandr /bin/ptynet
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil
 COPY anura-boot.service /etc/systemd/system
 COPY anurad.service /etc/systemd/system

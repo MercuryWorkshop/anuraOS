@@ -329,6 +329,8 @@ class V86Backend {
         });
     }
 
+    netids: string[] = [];
+
     registered = false;
     async onboot() {
         if (this.registered) return;
@@ -342,8 +344,28 @@ class V86Backend {
             timeout: 5000,
         });
 
-        this.barepty = await this.openpty("echo 1", 1, 1, (data) => {
+        let buffer = "";
+
+        this.barepty = await this.openpty("/bin/ptynet", 1, 1, (data) => {
             console.log("BARE: " + data);
+            data = data.replaceAll("\r\n", "\n");
+
+            const split = data.split("\x03");
+            if (split[1]) {
+                buffer += split[0];
+                console.log("recieved" + buffer);
+                navigator.serviceWorker.controller?.postMessage({
+                    anura_target: "anura.x86.proxy",
+                    id: this.netids.shift(),
+                    value: {
+                        body: buffer,
+                        status: 200,
+                    },
+                });
+                buffer = split[1];
+            } else {
+                buffer += split[0];
+            }
         });
         await sleep(1000); // to be safe
 
@@ -365,14 +387,9 @@ class V86Backend {
         navigator.serviceWorker.addEventListener("message", async (event) => {
             if (event.data?.anura_target == "anura.x86.proxy") {
                 const id = event.data.id;
-                navigator.serviceWorker.controller?.postMessage({
-                    anura_target: event.data.anura_target,
-                    id: id,
-                    value: {
-                        body: "hur",
-                        status: 200,
-                    },
-                });
+                console.log(event);
+                this.netids.push(id);
+                this.writepty(this.barepty, event.data.value.url + "\n");
             }
         });
     }

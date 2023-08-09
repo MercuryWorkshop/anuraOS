@@ -74,10 +74,13 @@ class XFrogApp extends App {
             if (timeout) clearTimeout(timeout);
             timeout = setTimeout(() => {
                 // DISPLAY=:0 xdotool windowmap $(xwininfo -children -id ${xwid} | grep -o '^ \\+0x[0-9a-f]\\+');
-                anura.x86!.runcmd(
+                anura.x86!.openpty(
                     `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                         win!.width
                     } ${win!.height}`,
+                    0,
+                    0,
+                    console.log,
                 );
 
                 setTimeout(() => {
@@ -88,12 +91,12 @@ class XFrogApp extends App {
                         win!.content.querySelector("img")!.remove();
                     }
                     win!.content.appendChild(anura.x86?.screen_container);
-                }, 100);
 
-                anura.x86?.vgacanvas.requestPointerLock();
-                anura.x86?.vgacanvas.addEventListener("click", () => {
                     anura.x86?.vgacanvas.requestPointerLock();
-                });
+                    anura.x86?.vgacanvas.addEventListener("click", () => {
+                        anura.x86?.vgacanvas.requestPointerLock();
+                    });
+                }, 100);
             }, 50);
         };
 
