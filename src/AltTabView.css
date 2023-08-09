@@ -45,7 +45,19 @@
     justify-content: center;
 }
 
-.alttab-window-icon {
+.alttab-icon-large {
     width: 3rem;
     height: 3rem;
+}
+
+.alttab-icon-inline {
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0 0.25em;
+}
+
+.alttab-titlebar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

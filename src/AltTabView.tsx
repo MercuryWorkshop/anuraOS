@@ -8,32 +8,34 @@ class AltTabView {
     state: AltTabViewState;
 
     viewWindow([app, win, index]: [App, WMWindow, number]) {
-        console.log(
-            "app.name",
-            app.name,
-            "index",
-            index,
-            "this.state.index",
-            this.state.index,
-        );
+        console.log(win.element);
         return (
-            <div
-                class={React.use(
-                    this.state.index,
-                    (stateIndex) =>
-                        "alttab-window " +
-                        (index == stateIndex ? "alttab-window-selected" : ""),
-                )}
-            >
-                <div class="alttab-window-icon-container">
+            <div>
+                <div
+                    class={React.use(
+                        this.state.index,
+                        (stateIndex) =>
+                            "alttab-window " +
+                            (index == stateIndex
+                                ? "alttab-window-selected"
+                                : ""),
+                    )}
+                >
+                    <div class="alttab-window-icon-container">
+                        <img
+                            class="alttab-icon-large"
+                            src={app?.icon}
+                            alt="App Icon"
+                        />
+                    </div>
+                </div>
+                <div class="alttab-titlebar">
                     <img
-                        class="alttab-window-icon"
+                        class="alttab-icon-inline"
                         src={app?.icon}
                         alt="App Icon"
                     />
-                </div>
-                <div>
-                    {app.name} {React.use(this.state.index)}
+                    <p>{app.name}</p>
                 </div>
             </div>
         );
