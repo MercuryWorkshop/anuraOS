@@ -8,6 +8,8 @@ class WMAPI {
     ): WMWindow {
         const win = AliceWM.create(info as unknown as any);
 
+        win.focus();
+
         win.onfocus = () => {
             //@ts-ignore
             document.activeElement?.blur();
