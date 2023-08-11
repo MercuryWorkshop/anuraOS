@@ -12,6 +12,8 @@ class WMAPI {
             //@ts-ignore
             document.activeElement?.blur();
             alttab.update();
+
+            taskbar.element.style.zIndex = getHighestZindex() + 3;
             if (onfocus) onfocus();
         };
         ctx.windows.push(win);
