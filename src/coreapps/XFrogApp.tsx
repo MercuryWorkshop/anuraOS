@@ -63,6 +63,7 @@ class XFrogApp extends App {
         let win: WMWindow | null = null;
 
         const sfocus = async () => {
+            let isNew = false;
             if (this.activeWin && this.activeWin != win) {
                 const newImg = document.createElement("img");
 
@@ -71,6 +72,7 @@ class XFrogApp extends App {
                 )!;
                 const url = URL.createObjectURL(blob);
                 newImg.src = url;
+                isNew = true;
                 this.activeWin.content.appendChild(newImg);
             }
 
@@ -79,14 +81,15 @@ class XFrogApp extends App {
             if (timeout) clearTimeout(timeout);
             timeout = setTimeout(() => {
                 // DISPLAY=:0 xdotool windowmap $(xwininfo -children -id ${xwid} | grep -o '^ \\+0x[0-9a-f]\\+');
-                anura.x86!.openpty(
-                    `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
-                        win!.width
-                    } ${win!.height - 28}`,
-                    0,
-                    0,
-                    console.log,
-                );
+                if (isNew)
+                    anura.x86!.openpty(
+                        `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
+                            win!.width
+                        } ${win!.height - 28}`,
+                        0,
+                        0,
+                        console.log,
+                    );
 
                 setTimeout(() => {
                     if (win!.content.querySelector("img")) {
