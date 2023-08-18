@@ -9,6 +9,7 @@ class XFrogApp extends App {
         super();
         this.name = "XFrog86";
         this.package = "anura.xfrog";
+        this.icon = "/assets/icons/xfrog.png";
     }
 
     async startup() {
