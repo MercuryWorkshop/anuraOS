@@ -369,12 +369,24 @@ class V86Backend {
         });
         await sleep(1000); // to be safe
 
-        this.xpty = await this.openpty("startx /bin/xfrog", 1, 1, (data) => {
-            console.debug("XFROG " + data);
-            if (data.includes("XFROG-INIT")) {
-                anura.apps["anura.xfrog"].startup();
-            }
-        });
+        this.xpty = await this.openpty(
+            "startx /bin/xfrog",
+            1,
+            1,
+            async (data) => {
+                console.debug("XFROG " + data);
+                if (data.includes("XFROG-INIT")) {
+                    anura.apps["anura.xfrog"].startup();
+                    await sleep(1000); // to be safer?? (some PTY bug occurs without this, I'm not a racist but it feels like a race condition)
+                    this.startMouseDriver();
+                    anura.notifications.add({
+                        title: "x86 Subsystem",
+                        description: "Started XFrog Window Manager",
+                        timeout: 5000,
+                    });
+                }
+            },
+        );
 
         await sleep(200);
 
@@ -445,6 +457,42 @@ class V86Backend {
         } else {
             this.act = true;
         }
+    }
+    async startMouseDriver() {
+        let ready = false;
+        function pack(value1: number, value2: number) {
+            const result = (value1 << 16) + value2;
+            return result;
+        }
+        let pointer = "";
+        const pty = await this.openpty(
+            "TERM=xterm DISPLAY=:0 /bin/anuramouse",
+            100,
+            100,
+            (data) => {
+                pointer = data.slice(0, -2);
+                console.log(pointer);
+                ready = true;
+            },
+        );
+        function write_uint(i: number, addr: number) {
+            // I have to redefine this here because "this" breaks
+            const bytes = [i, i >> 8, i >> 16, i >> 24].map((a) => a % 256);
+            anura.x86!.emulator.write_memory(bytes, addr);
+        }
+        function movemouse(x: number, y: number) {
+            if (!ready) return;
+            write_uint(pack(x, y), Number(pointer));
+        }
+
+        const vgacanvas = this.vgacanvas;
+        function mouseHandler(event: MouseEvent) {
+            const rect = vgacanvas.getBoundingClientRect();
+            const x = event.clientX - rect.x;
+            const y = event.clientY - rect.y;
+            movemouse(x, y);
+        }
+        this.vgacanvas.onmousemove = mouseHandler;
     }
     writepty(TTYn: number, data: string) {
         const bytes = encoder.encode(data);

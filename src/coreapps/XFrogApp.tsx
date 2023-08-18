@@ -47,7 +47,11 @@ class XFrogApp extends App {
         for (const wid in this.xwindows) {
             if (!wids.includes(wid)) {
                 // xorg window has since been closed. dispose
-                this.xwindows[wid]?.close();
+                try {
+                    this.xwindows[wid]?.close();
+                } catch (e) {
+                    anura.logger.debug("Preclosed window " + e);
+                }
                 delete this.xwindows[wid];
             }
         }
