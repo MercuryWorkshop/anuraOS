@@ -14,7 +14,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h> /* pread, sysconf */
-#define SHARED_BUFFER_MAX_SIZE 64
+#define SHARED_BUFFER_MAX_SIZE 2048
 
 typedef struct {
   uint64_t pfn : 55;
@@ -144,6 +144,8 @@ uintptr_t resize_intent_phys_addr;
 uintptr_t write_nbytes_phys_addr;
 uintptr_t write_intent_phys_addr;
 uintptr_t new_intent_phys_addr;
+
+void *shared_out_buffer;
 pid_t pid;
 
 void alloc_aty(pty_t *pty, char *argv[], char *envp[]) {
@@ -208,7 +210,7 @@ void *readLoop() {
     //
     // printf("fd: %i\n", fds[0].fd);
 
-    int ret = poll(fds, cur_num_ptys, 5000);
+    int ret = poll(fds, cur_num_ptys, 100);
 
     for (int i = 0; i < cur_num_ptys; i++) {
       // printf("to: %i %i %i\n", i, ptys[i].master, ptys[i].slave);
@@ -223,7 +225,7 @@ void *readLoop() {
       // printf("total avail: %lu bytes\n", count);
       if (count > SHARED_BUFFER_MAX_SIZE)
         count = SHARED_BUFFER_MAX_SIZE;
-      char shared_out_buffer[count];
+      // char shared_out_buffer[count];
       // shared_buffer is the pointer that can be read by the host
 
       count = read(pty.master, shared_out_buffer, count);
@@ -237,6 +239,26 @@ void *readLoop() {
   }
 }
 
+void *try_mmap_contig() {
+  int diff = -1;
+  while (1) {
+
+    unsigned long start;
+    unsigned long end;
+
+    void *ptr = malloc(SHARED_BUFFER_MAX_SIZE);
+    virt_to_phys_user(&start, pid, (uintptr_t)ptr);
+    virt_to_phys_user(&end, pid, (uintptr_t)ptr + SHARED_BUFFER_MAX_SIZE - 1);
+
+    printf("ix: %lu\n", end - start);
+    if (end - start == SHARED_BUFFER_MAX_SIZE - 1) {
+      mlock(ptr, SHARED_BUFFER_MAX_SIZE);
+      return ptr;
+    }
+    free(ptr);
+  }
+}
+
 int main() {
   FILE *fo = fopen("/dev/ttyS0", "r");
   FILE *fi = fopen("/dev/ttyS0", "w");
@@ -246,6 +268,8 @@ int main() {
   // THIS IS USERSPACE DMA BITCH!! WE COMPILE IN THIS MUTHAFUCKER BETTER TAKE YO
   // SENSITIVE ASS BACK TO KERNEL DRIVER
   pid = getpid();
+
+  shared_out_buffer = try_mmap_contig();
   printf("pid: %u\n", pid);
 
   virt_to_phys_user(&read_intent_phys_addr, pid, (uintptr_t)&read_intent);

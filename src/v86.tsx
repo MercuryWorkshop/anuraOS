@@ -329,6 +329,8 @@ class V86Backend {
         });
     }
 
+    netids: string[] = [];
+
     registered = false;
     async onboot() {
         if (this.registered) return;
@@ -342,17 +344,49 @@ class V86Backend {
             timeout: 5000,
         });
 
-        this.barepty = await this.openpty("echo 1", 1, 1, (data) => {
+        let buffer = "";
+
+        this.barepty = await this.openpty("/bin/ptynet", 1, 1, (data) => {
             console.log("BARE: " + data);
+            data = data.replaceAll("\r\n", "\n");
+
+            const split = data.split("\x03");
+            if (split[1]) {
+                buffer += split[0];
+                console.log("recieved" + buffer);
+                navigator.serviceWorker.controller?.postMessage({
+                    anura_target: "anura.x86.proxy",
+                    id: this.netids.shift(),
+                    value: {
+                        body: buffer,
+                        status: 200,
+                    },
+                });
+                buffer = split[1];
+            } else {
+                buffer += split[0];
+            }
         });
         await sleep(1000); // to be safe
 
-        this.xpty = await this.openpty("startx /bin/xfrog", 1, 1, (data) => {
-            console.debug("XFROG " + data);
-            if (data.includes("XFROG-INIT")) {
-                anura.apps["anura.xfrog"].startup();
-            }
-        });
+        this.xpty = await this.openpty(
+            "startx /bin/xfrog",
+            1,
+            1,
+            async (data) => {
+                console.debug("XFROG " + data);
+                if (data.includes("XFROG-INIT")) {
+                    anura.apps["anura.xfrog"].startup();
+                    await sleep(1000); // to be safer?? (some PTY bug occurs without this, I'm not a racist but it feels like a race condition)
+                    this.startMouseDriver();
+                    anura.notifications.add({
+                        title: "x86 Subsystem",
+                        description: "Started XFrog Window Manager",
+                        timeout: 5000,
+                    });
+                }
+            },
+        );
 
         await sleep(200);
 
@@ -365,14 +399,9 @@ class V86Backend {
         navigator.serviceWorker.addEventListener("message", async (event) => {
             if (event.data?.anura_target == "anura.x86.proxy") {
                 const id = event.data.id;
-                navigator.serviceWorker.controller?.postMessage({
-                    anura_target: event.data.anura_target,
-                    id: id,
-                    value: {
-                        body: "hur",
-                        status: 200,
-                    },
-                });
+                console.log(event);
+                this.netids.push(id);
+                this.writepty(this.barepty, event.data.value.url + "\n");
             }
         });
     }
@@ -428,6 +457,42 @@ class V86Backend {
         } else {
             this.act = true;
         }
+    }
+    async startMouseDriver() {
+        let ready = false;
+        function pack(value1: number, value2: number) {
+            const result = (value1 << 16) + value2;
+            return result;
+        }
+        let pointer = "";
+        const pty = await this.openpty(
+            "TERM=xterm DISPLAY=:0 /bin/anuramouse",
+            100,
+            100,
+            (data) => {
+                pointer = data.slice(0, -2);
+                console.log(pointer);
+                ready = true;
+            },
+        );
+        function write_uint(i: number, addr: number) {
+            // I have to redefine this here because "this" breaks
+            const bytes = [i, i >> 8, i >> 16, i >> 24].map((a) => a % 256);
+            anura.x86!.emulator.write_memory(bytes, addr);
+        }
+        function movemouse(x: number, y: number) {
+            if (!ready) return;
+            write_uint(pack(x, y), Number(pointer));
+        }
+
+        const vgacanvas = this.vgacanvas;
+        function mouseHandler(event: MouseEvent) {
+            const rect = vgacanvas.getBoundingClientRect();
+            const x = event.clientX - rect.x;
+            const y = event.clientY - rect.y;
+            movemouse(x, y);
+        }
+        this.vgacanvas.onmousemove = mouseHandler;
     }
     writepty(TTYn: number, data: string) {
         const bytes = encoder.encode(data);

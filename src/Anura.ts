@@ -65,7 +65,10 @@ class Anura {
 
         this.apps[app.package] = app;
 
-        if (this.initComplete) taskbar.updateTaskbar();
+        if (this.initComplete) {
+            taskbar.updateTaskbar();
+            alttab.update();
+        }
         return app;
     }
     async registerExternalApp(source: string): Promise<ExternalApp> {
@@ -86,6 +89,7 @@ class Anura {
             });
         }
         taskbar.updateTaskbar();
+        alttab.update();
     }
     async python(appname: string) {
         return await new Promise((resolve, reject) => {

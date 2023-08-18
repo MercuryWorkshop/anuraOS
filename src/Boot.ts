@@ -26,6 +26,7 @@ const launcher = new Launcher();
 const contextMenu = new ContextMenu();
 const bootsplash = new Bootsplash();
 const oobeview = new OobeView();
+const alttab = new AltTabView();
 
 let anura: Anura;
 // global
@@ -159,6 +160,7 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(launcher.element);
     document.body.appendChild(launcher.clickoffChecker);
     document.body.appendChild(taskbar.element);
+    document.body.appendChild(alttab.element);
 
     (window as any).taskbar = taskbar;
 
@@ -178,12 +180,27 @@ document.addEventListener("anura-login-completed", async () => {
     //     ).style.setProperty("display", "none");
     // });
 
+    document.addEventListener("keydown", (e) => {
+        if (e.shiftKey && e.key.toLowerCase() == "tab") {
+            e.preventDefault();
+            alttab.onComboPress();
+        }
+    });
+    document.addEventListener("keyup", (e) => {
+        console.log("keyup", e);
+        if (e.key.toLowerCase() === "shift") {
+            alttab.onModRelease();
+            return;
+        }
+    });
+
     // This feels wrong but it works and makes TSC happy
     launcher.clickoffChecker?.addEventListener("click", () => {
         launcher.toggleVisible();
     });
     anura.initComplete = true;
     taskbar.updateTaskbar();
+    alttab.update();
 });
 async function bootx86() {
     const mgr = new x86MgrApp();

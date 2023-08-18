@@ -1,0 +1,71 @@
+.alttab-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0.5em;
+    border-radius: 0.25rem;
+    background-color: #374144ab;
+    color: #eee;
+}
+
+.alttab-hidden {
+    display: none;
+}
+
+.alttab-window-list {
+    display: flex;
+}
+
+.alttab-nowindows {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alttab-window,
+.alttab-nowindows {
+    min-width: 10rem;
+    min-height: 5.625rem;
+    padding: 1em;
+    border: 0.125rem solid #00000000;
+    border-radius: 0.25rem;
+}
+
+.alttab-window {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.alttab-window-selected {
+    border-color: #4698af;
+}
+
+.alttab-window-icon-container {
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.alttab-icon-large {
+    width: 3rem;
+    height: 3rem;
+}
+
+.alttab-icon-inline {
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0 0.25em;
+}
+
+.alttab-titlebar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alttab-window-title-text {
+    margin: 0.5em;
+}

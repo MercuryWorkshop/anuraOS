@@ -41,6 +41,7 @@ class ExternalApp extends App {
             loadingScript(this.source, this);
 
             taskbar.updateTaskbar();
+            alttab.update();
 
             return;
         }

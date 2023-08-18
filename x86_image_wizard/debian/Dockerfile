@@ -13,7 +13,7 @@ RUN apt update && \
         fluxbox \
         xserver-xorg-input-kbd xserver-xorg-input-mouse xserver-xorg-input-evdev xcvt x11-utils x11-apps \
         xserver-xorg-video-fbdev xserver-xorg-video-vesa \
-        xserver-xorg x11-xserver-utils xinit dbus-x11 \
+        xserver-xorg x11-xserver-utils xinit dbus-x11 libx11-dev \
         htop iputils-ping \
         libc-l10n locales \
         fonts-noto fonts-droid-fallback \
@@ -56,12 +56,17 @@ COPY anura-boot.sh /bin/
 
 COPY xfrog.sh /bin/xfrog
 COPY xsetrandr.sh /bin/xsetrandr
+COPY ptynet.sh /bin/ptynet
 
 
 COPY anurad.c /etc/
+COPY anuramouse/* /etc/anuramouse/
+# COPY anuramouse/pack.c /etc/anuramouse/
+# COPY anuramouse/userdma.c /etc/anuramouse/
 
-RUN chmod u+x /bin/anura-boot.sh /bin/xfrog /bin/xsetrandr
+RUN chmod u+x /bin/anura-boot.sh /bin/xfrog /bin/xsetrandr /bin/ptynet
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil
+RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anura-boot.service /etc/systemd/system
 COPY anurad.service /etc/systemd/system
 

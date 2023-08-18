@@ -132,11 +132,11 @@ class Taskbar {
             </li>
         );
     }
-
+    #contextMenu = new ContextMenuAPI(); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
     showcontext(app: App, e: MouseEvent) {
         if (app.windows.length > 0) {
-            const newcontextmenu = new anura.ContextMenu();
-            newcontextmenu.addItem("New Window", () => {
+            this.#contextMenu.removeAllItems();
+            this.#contextMenu.addItem("New Window", () => {
                 app.open();
             });
 
@@ -144,14 +144,14 @@ class Taskbar {
             for (const win of app.windows) {
                 const displayTitle =
                     win.state.title || "Window " + winEnumerator;
-                newcontextmenu.addItem(displayTitle, () => {
+                this.#contextMenu.addItem(displayTitle, () => {
                     win.focus();
                     win.unminimize();
                 });
                 winEnumerator++;
             }
             const pinned = anura.settings.get("applist").includes(app.package);
-            newcontextmenu.addItem(pinned ? "Unpin" : "Pin", () => {
+            this.#contextMenu.addItem(pinned ? "Unpin" : "Pin", () => {
                 if (pinned) {
                     anura.settings.set(
                         "applist",
@@ -168,10 +168,10 @@ class Taskbar {
                 this.updateTaskbar();
             });
 
-            newcontextmenu.addItem("Uninstall", () => {
+            this.#contextMenu.addItem("Uninstall", () => {
                 alert("todo");
             });
-            const c = newcontextmenu.show(e.x, 0);
+            const c = this.#contextMenu.show(e.x, 0);
             // HACK HACK DUMB HACK
             c.style.top = "";
             c.style.bottom = "69px";

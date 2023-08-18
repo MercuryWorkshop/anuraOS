@@ -4,18 +4,6 @@ namespace JSX {
 
 let __effects: any = [];
 
-function asElement(node: Node | string): Node {
-    if (node instanceof Node) {
-        return node;
-    }
-    if (typeof node === "string") {
-        const span = document.createElement("span");
-        span.innerText = node;
-        return span;
-    }
-    throw new Error("Expected a node");
-}
-
 class React {
     static get use(): (sink: any, mapping?: (...args: any[]) => any) => any {
         // documentation, in case anyone looks in here. the below is a simple way you would use reactivity.
@@ -56,8 +44,8 @@ class React {
         if (props) {
             if ("if" in props) {
                 const cond = props["if"];
-                const then = props["then"] && asElement(props["then"]);
-                const elseelm = props["else"] && asElement(props["else"]);
+                const then = props["then"];
+                const elseelm = props["else"];
 
                 if (typeof cond === "object" && "__alicejs_marker" in cond) {
                     if (then) elm.appendChild(then);
@@ -283,7 +271,6 @@ function stateful<T>(target: T): T {
 
 function handle(used: [any, any, any][], callback: (val: any) => void) {
     if ("__alicejs_mapping" in used) {
-        console.log(used);
         const mapping: any = used["__alicejs_mapping"];
         const used_props: any[] = [];
         const used_targets: any[] = [];
@@ -299,7 +286,6 @@ function handle(used: [any, any, any][], callback: (val: any) => void) {
         };
 
         const full_update = () => {
-            console.log(values);
             const flattened_values = pairs.map(
                 (pair) => values.get(pair[0])[pair[1]],
             );
@@ -310,7 +296,6 @@ function handle(used: [any, any, any][], callback: (val: any) => void) {
         };
 
         for (const p of used) {
-            console.log(p);
             const target = p[0];
             const prop = p[1];
 
@@ -394,7 +379,6 @@ class styled {
 
         //@ts-ignore
         for (const rule of virtualStyleElement.sheet.cssRules) {
-            console.log(rule.selectorText.includes("self"));
             rule.selectorText = rule.selectorText.includes("self")
                 ? `.${uid}.self${rule.selectorText.replace("self", "")}`
                 : `.${uid} ${rule.selectorText}`;

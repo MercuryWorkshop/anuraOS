@@ -17,6 +17,7 @@ class x86MgrApp extends App {
         win.content.appendChild(anura.x86!.screen_container);
 
         taskbar.updateTaskbar();
+        alttab.update();
 
         return win;
     }
