@@ -232,6 +232,7 @@ class WMWindow {
                 window.addEventListener("mouseup", () => {
                     reactivateFrames();
                     window.removeEventListener("mousemove", resize);
+                    if (this.onresize) this.onresize(this.width, this.height);
                 });
             });
 
@@ -324,7 +325,6 @@ class WMWindow {
                         .getPropertyValue("height")
                         .replace("px", ""),
                 );
-                if (this.onresize) this.onresize(this.width, this.height);
             };
         }
 
