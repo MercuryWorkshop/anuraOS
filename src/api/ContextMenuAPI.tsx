@@ -23,6 +23,9 @@ class ContextMenuAPI {
             100,
         );
     }
+    removeAllItems() {
+        this.#element.innerHTML = "";
+    }
     addItem(text: string, callback: VoidFunction) {
         this.#element.appendChild(
             this.item(text, function () {
