@@ -77,7 +77,7 @@ class XFrogApp extends App {
                 anura.x86!.openpty(
                     `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                         win!.width
-                    } ${win!.height}`,
+                    } ${win!.height - 28}`,
                     0,
                     0,
                     console.log,
@@ -92,10 +92,10 @@ class XFrogApp extends App {
                     }
                     win!.content.appendChild(anura.x86?.screen_container);
 
-                    anura.x86?.vgacanvas.requestPointerLock();
-                    anura.x86?.vgacanvas.addEventListener("click", () => {
-                        anura.x86?.vgacanvas.requestPointerLock();
-                    });
+                    // anura.x86?.vgacanvas.requestPointerLock();
+                    // anura.x86?.vgacanvas.addEventListener("click", () => {
+                    // anura.x86?.vgacanvas.requestPointerLock();
+                    // });
                 }, 100);
             }, 50);
         };
@@ -117,11 +117,10 @@ class XFrogApp extends App {
                         {
                             title: "X window",
                             width: `${dimensions[0]}px`,
-                            height: `${dimensions[1]}px`,
+                            height: `${Number(dimensions[1]!) + 28}px`,
                         },
                         () => sfocus(),
                     );
-
                     this.xwindows[xwid] = win;
                     // sfocus();
                 } else {
