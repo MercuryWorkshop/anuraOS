@@ -151,6 +151,9 @@ class XFrogApp extends App {
                         win.state.title = "X window: " + name;
                     }
                 }
+                // Hide cursor when hovering over XFrog app
+                // to prevent multiple cursors from displaying on screen
+                win.content.style.cursor = "none";
             },
         );
     }

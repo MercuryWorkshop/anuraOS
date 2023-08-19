@@ -493,6 +493,11 @@ class V86Backend {
             movemouse(x, y);
         }
         this.vgacanvas.onmousemove = mouseHandler;
+        // Move mouse to edge of X screen when mousing off
+        // to prevent multiple cursors from displaying on screen
+        this.vgacanvas.onmouseleave = function () {
+            movemouse(0, 768);
+        };
     }
     writepty(TTYn: number, data: string) {
         const bytes = encoder.encode(data);
