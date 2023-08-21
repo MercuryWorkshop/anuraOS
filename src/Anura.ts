@@ -91,6 +91,7 @@ class Anura {
         taskbar.updateTaskbar();
         alttab.update();
     }
+    files = new FilesAPI();
     async python(appname: string) {
         return await new Promise((resolve, reject) => {
             const iframe = document.createElement("iframe");
