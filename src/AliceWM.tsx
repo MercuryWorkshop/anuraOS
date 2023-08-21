@@ -440,6 +440,7 @@ const AliceWM = {
 
         const win = new WMWindow(wininfo);
         document.body.appendChild(win.element);
+        win.focus();
         return win;
     },
 };
