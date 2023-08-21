@@ -91,10 +91,13 @@ document.addEventListener("anura-boot-completed", async () => {
 
 document.addEventListener("anura-login-completed", async () => {
     const browser = new BrowserApp();
+    anura.registerApp(browser);
 
     const settings = new SettingsApp();
-    anura.registerApp(browser);
     anura.registerApp(settings);
+
+    const about = new AboutApp();
+    anura.registerApp(about);
 
     for (const app of anura.config.apps) {
         anura.registerExternalApp(app);
