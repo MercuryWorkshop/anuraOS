@@ -2,11 +2,13 @@
     background-color: var(--material-bg);
     height: 100%;
     width: 100%;
+    position: absolute;
     display: flex;
     padding: 0;
     flex-direction: column;
     flex-grow: 1;
     align-items: center;
+    justify-content: center;
     height: 100%;
 }
 
@@ -23,6 +25,7 @@
     margin-bottom: 1rem;
     height: 1px;
     background-color: #9ca3af;
+    flex-shrink: 0;
     width: 22rem;
 }
 

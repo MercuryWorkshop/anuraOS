@@ -64,6 +64,16 @@ class AboutApp extends App {
 
         aboutview.content.appendChild(await this.page());
 
+        // make borderless
+        aboutview.content.style.position = "absolute";
+        aboutview.content.style.height = "100%";
+        aboutview.content.style.display = "inline-block";
+
+        const container = aboutview.content.parentElement;
+
+        (container!.querySelector(".title") as any).style["background-color"] =
+            "rgba(0, 0, 0, 0)";
+
         return aboutview;
     }
 
