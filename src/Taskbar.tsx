@@ -75,8 +75,6 @@ class Taskbar {
                     </span>
 
                     <span class="material-symbols-outlined">
-                        // This will eventually have a small popup with the
-                        battery percentage discharging time.
                         {React.use(this.state.bat_icon)}
                     </span>
 
@@ -215,6 +213,17 @@ class Taskbar {
                     this.state.bat_icon = "battery_charging_full";
                     return;
                 }
+                // I have almost no clue if this will work but im praying.
+                battery.onchargingchange = () => {
+                    if (battery.charging) {
+                        this.state.bat_icon = "battery_charging_full";
+                        return;
+                    } else {
+                        const bat_bars = Math.round(battery.level * 7) - 1;
+                        this.state.bat_icon = `battery_${bat_bars}_bar`;
+                        return;
+                    }
+                };
                 const bat_bars = Math.round(battery.level * 7) - 1;
                 this.state.bat_icon = `battery_${bat_bars}_bar`;
             });
