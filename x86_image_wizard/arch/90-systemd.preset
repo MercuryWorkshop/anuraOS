@@ -8,6 +8,7 @@ enable anura.service
 
 disable console-getty.service
 disable debug-shell.service
+disable dhcpcd.service
 
 disable halt.target
 disable kexec.target

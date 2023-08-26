@@ -6,12 +6,14 @@ OUT_ROOTFS_TAR="$IMAGES"/arch-rootfs.tar
 OUT_ROOTFS_BIN="$IMAGES"/arch-rootfs.bin
 OUT_ROOTFS_MNT="$IMAGES"/arch-rootfs.mntpoint
 CONTAINER_NAME=arch-full
-IMAGE_NAME=ljmf00/archlinux:latest
+IMAGE_NAME=i386/arch-full
 
 rm -rf "$IMAGES/arch-boot" || :
 cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
+cp ../ptynet.sh .
+cp -r ../anuramouse .
 
 mkdir -p "$IMAGES"
 docker build . --platform linux/386 --rm --tag "$IMAGE_NAME"
@@ -38,6 +40,8 @@ rm -rf "$OUT_ROOTFS_MNT"
 rm anurad.c
 rm xfrog.sh
 rm xsetrandr.sh
+rm ptynet.sh
+rm -rf anuramouse
 
 echo "done! created"
 sudo chown -R $USER:$USER $IMAGES/arch-boot
