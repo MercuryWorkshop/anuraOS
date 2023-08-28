@@ -1,5 +1,5 @@
 class Anura {
-    version: ["1.0.0", "alpha", "Lag Train"];
+    version = { semantic: "1.0.0", buildstate: "alpha", codename: "Lag Train" };
     initComplete = false;
     x86: null | V86Backend;
     settings: Settings;
