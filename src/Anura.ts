@@ -1,4 +1,5 @@
 class Anura {
+    version: ["1.0.0", "alpha", "Lag Train"];
     initComplete = false;
     x86: null | V86Backend;
     settings: Settings;
@@ -30,6 +31,7 @@ class Anura {
         });
 
         // don't like this... but whatever
+        // Neither do I, preferably, I'd wrap all the FS things in another way, this is just to make python "workish"
         fs.readFileSync = async (path: string) => {
             return await new Promise((resolve, reject) => {
                 return fs.readFile(path, function async(err: any, data: any) {
