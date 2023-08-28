@@ -62,14 +62,17 @@ class Taskbar {
                     do={this.shortcut.bind(this)}
                 ></ul>
             </nav>
-            <div
-                id="taskinfo-container"
-                on:click={() => {
-                    anura.apps["anura.settings"].open();
-                }}
-            >
+            <div id="taskinfo-container">
                 <div class="flex flexcenter">
-                    <span class="material-symbols-outlined">settings</span>
+                    <span
+                        id="settings-icn"
+                        on:click={() => {
+                            anura.apps["anura.settings"].open();
+                        }}
+                        class="material-symbols-outlined"
+                    >
+                        settings
+                    </span>
 
                     <span class="material-symbols-outlined">
                         {React.use(this.state.bat_icon)}
@@ -201,6 +204,26 @@ class Taskbar {
         if (navigator.getBattery) {
             // @ts-ignore
             navigator.getBattery().then((battery) => {
+                // Gonna comment this out for now to see if you guys actually want this as a feature.
+                // if (battery.dischargingTime == Infinity) {
+                //     this.state.bat_icon = "";
+                //     return;
+                // }
+                if (battery.charging) {
+                    this.state.bat_icon = "battery_charging_full";
+                    return;
+                }
+                // I have almost no clue if this will work but im praying.
+                battery.onchargingchange = () => {
+                    if (battery.charging) {
+                        this.state.bat_icon = "battery_charging_full";
+                        return;
+                    } else {
+                        const bat_bars = Math.round(battery.level * 7) - 1;
+                        this.state.bat_icon = `battery_${bat_bars}_bar`;
+                        return;
+                    }
+                };
                 const bat_bars = Math.round(battery.level * 7) - 1;
                 this.state.bat_icon = `battery_${bat_bars}_bar`;
             });
