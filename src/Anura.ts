@@ -1,5 +1,17 @@
 class Anura {
-    version = { semantic: "1.0.0", buildstate: "alpha", codename: "Lag Train" };
+    version = {
+        semantic: {
+            major: "1",
+            minor: "0",
+            patch: "0",
+        },
+        buildstate: "alpha",
+        codename: "Lag Train",
+        get pretty() {
+            const semantic = anura.version.semantic;
+            return `${semantic.major}.${semantic.minor}.${semantic.patch} ${anura.version.buildstate}`;
+        },
+    };
     initComplete = false;
     x86: null | V86Backend;
     settings: Settings;

@@ -14,7 +14,10 @@ class AboutApp extends App {
             <div class="aboutapp-logo-divider"></div>
             <div class="aboutapp-content">
                 <p>AnuraOS</p>
-                <p>Version TODO (OS build {await this.getOSBuild()})</p>
+                <p>
+                    Version {anura.version.codename} ({anura.version.pretty})
+                    (OS build {await this.getOSBuild()})
+                </p>
                 <p>© Mercury Workshop. All rights reserved.</p>
                 <br />
                 <p if={!anura.settings.get("x86-disabled")}>
@@ -59,7 +62,7 @@ class AboutApp extends App {
         const aboutview = anura.wm.create(this, {
             title: "",
             width: "400px",
-            height: "600px",
+            height: "450px",
         });
 
         aboutview.content.appendChild(await this.page());
