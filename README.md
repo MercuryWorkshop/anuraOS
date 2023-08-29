@@ -1,4 +1,4 @@
-# AnuraOS
+# AnuraOS [NOTE: This branch contains code for debug only, DO NOT push to prod/MAIN]
 
 WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
 Formerly known as Chimera. Based off of the AliceWM.
