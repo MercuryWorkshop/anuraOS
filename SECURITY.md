@@ -16,6 +16,11 @@ currently being supported with security updates.
 
 In the case that you somehow manage to find a vulnerability in Anura please contact $SECURITY-POC
 
+REMEMBER: Please DO NOT report vulnerabilities in the repository Issues tab. 
+
+
+## What You Should Report
+
 If you are wondering what counts as a vulnerability, heres a good list:
 
  - XSS in the Anura URL
