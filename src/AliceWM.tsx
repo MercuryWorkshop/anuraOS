@@ -209,6 +209,7 @@ class WMWindow {
         let original_y = 0;
         let original_mouse_x = 0;
         let original_mouse_y = 0;
+        let sentResize = false;
         for (let i = 0; i < resizers.length; i++) {
             const currentResizer = resizers[i];
             currentResizer.addEventListener("mousedown", (e: MouseEvent) => {
@@ -229,13 +230,19 @@ class WMWindow {
                 original_mouse_x = e.pageX;
                 original_mouse_y = e.pageY;
                 window.addEventListener("mousemove", resize);
+
                 window.addEventListener("mouseup", () => {
                     reactivateFrames();
                     window.removeEventListener("mousemove", resize);
+                    if (!sentResize) {
+                        this.onresize(this.width, this.height);
+                        sentResize = true;
+                    }
                 });
             });
 
             const resize = (e: MouseEvent) => {
+                sentResize = false;
                 if (this.maximized) {
                     this.unmaximize();
                 }
@@ -324,7 +331,6 @@ class WMWindow {
                         .getPropertyValue("height")
                         .replace("px", ""),
                 );
-                if (this.onresize) this.onresize(this.width, this.height);
             };
         }
 
@@ -434,6 +440,7 @@ const AliceWM = {
 
         const win = new WMWindow(wininfo);
         document.body.appendChild(win.element);
+        win.focus();
         return win;
     },
 };

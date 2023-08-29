@@ -18,6 +18,9 @@ class WMAPI {
             taskbar.element.style.zIndex = getHighestZindex() + 3;
             if (onfocus) onfocus();
         };
+        win.onresize = (width: number, height: number) => {
+            if (onresize) onresize(width, height);
+        };
         ctx.windows.push(win);
         this.windows.push(new WeakRef(win));
 

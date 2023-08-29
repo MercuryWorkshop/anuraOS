@@ -22,8 +22,8 @@
         ],
         "relay-url": "ws://localhost:8001/"
     },
-    "bzimage": "/images/debian-boot/vmlinuz-6.1.0-10-686",
-    "initrd": "/images/debian-boot/initrd.img-6.1.0-10-686",
+    "bzimage": "/images/debian-boot/vmlinuz-6.1.0-11-686",
+    "initrd": "/images/debian-boot/initrd.img-6.1.0-11-686",
     "rootfs": [
         "images/debian-rootfs/aa",
         "images/debian-rootfs/ab",

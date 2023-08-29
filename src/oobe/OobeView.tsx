@@ -168,6 +168,21 @@ class OobeView {
 
                 await preloadFiles();
                 console.log("Cached important files");
+                // Register default filehandlers
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "txt");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "mp3");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "flac");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "wav");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "ogg");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "mp4");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "mov");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "webm");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "gif");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "png");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "jpg");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "jpeg");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "pdf");
+                anura.files.set("/apps/libfileview.app/fileHandler.js", "py");
 
                 this.complete();
             },

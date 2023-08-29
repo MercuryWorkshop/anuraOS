@@ -41,7 +41,6 @@
 #taskinfo-container {
     position: absolute;
     height: 70%;
-    cursor: pointer;
 
     /* border: 2px solid rgba(22, 22, 22, 0.6); */
 
@@ -64,4 +63,5 @@
 
 #taskinfo-container > * {
     color: whitesmoke;
+    cursor: pointer;
 }

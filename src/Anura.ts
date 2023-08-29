@@ -1,4 +1,17 @@
 class Anura {
+    version = {
+        semantic: {
+            major: "1",
+            minor: "0",
+            patch: "0",
+        },
+        buildstate: "alpha",
+        codename: "Lag Train",
+        get pretty() {
+            const semantic = anura.version.semantic;
+            return `${semantic.major}.${semantic.minor}.${semantic.patch} ${anura.version.buildstate}`;
+        },
+    };
     initComplete = false;
     x86: null | V86Backend;
     settings: Settings;
@@ -30,6 +43,7 @@ class Anura {
         });
 
         // don't like this... but whatever
+        // Neither do I, preferably, I'd wrap all the FS things in another way, this is just to make python "workish"
         fs.readFileSync = async (path: string) => {
             return await new Promise((resolve, reject) => {
                 return fs.readFile(path, function async(err: any, data: any) {
@@ -91,6 +105,7 @@ class Anura {
         taskbar.updateTaskbar();
         alttab.update();
     }
+    files = new FilesAPI();
     async python(appname: string) {
         return await new Promise((resolve, reject) => {
             const iframe = document.createElement("iframe");

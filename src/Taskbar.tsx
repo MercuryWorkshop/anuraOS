@@ -62,14 +62,17 @@ class Taskbar {
                     do={this.shortcut.bind(this)}
                 ></ul>
             </nav>
-            <div
-                id="taskinfo-container"
-                on:click={() => {
-                    anura.apps["anura.settings"].open();
-                }}
-            >
+            <div id="taskinfo-container">
                 <div class="flex flexcenter">
-                    <span class="material-symbols-outlined">settings</span>
+                    <span
+                        id="settings-icn"
+                        on:click={() => {
+                            anura.apps["anura.settings"].open();
+                        }}
+                        class="material-symbols-outlined"
+                    >
+                        settings
+                    </span>
 
                     <span class="material-symbols-outlined">
                         {React.use(this.state.bat_icon)}
@@ -132,11 +135,11 @@ class Taskbar {
             </li>
         );
     }
-
+    #contextMenu = new ContextMenuAPI(); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
     showcontext(app: App, e: MouseEvent) {
         if (app.windows.length > 0) {
-            const newcontextmenu = new anura.ContextMenu();
-            newcontextmenu.addItem("New Window", () => {
+            this.#contextMenu.removeAllItems();
+            this.#contextMenu.addItem("New Window", () => {
                 app.open();
             });
 
@@ -144,14 +147,14 @@ class Taskbar {
             for (const win of app.windows) {
                 const displayTitle =
                     win.state.title || "Window " + winEnumerator;
-                newcontextmenu.addItem(displayTitle, () => {
+                this.#contextMenu.addItem(displayTitle, () => {
                     win.focus();
                     win.unminimize();
                 });
                 winEnumerator++;
             }
             const pinned = anura.settings.get("applist").includes(app.package);
-            newcontextmenu.addItem(pinned ? "Unpin" : "Pin", () => {
+            this.#contextMenu.addItem(pinned ? "Unpin" : "Pin", () => {
                 if (pinned) {
                     anura.settings.set(
                         "applist",
@@ -168,10 +171,10 @@ class Taskbar {
                 this.updateTaskbar();
             });
 
-            newcontextmenu.addItem("Uninstall", () => {
+            this.#contextMenu.addItem("Uninstall", () => {
                 alert("todo");
             });
-            const c = newcontextmenu.show(e.x, 0);
+            const c = this.#contextMenu.show(e.x, 0);
             // HACK HACK DUMB HACK
             c.style.top = "";
             c.style.bottom = "69px";
@@ -201,6 +204,26 @@ class Taskbar {
         if (navigator.getBattery) {
             // @ts-ignore
             navigator.getBattery().then((battery) => {
+                // Gonna comment this out for now to see if you guys actually want this as a feature.
+                // if (battery.dischargingTime == Infinity) {
+                //     this.state.bat_icon = "";
+                //     return;
+                // }
+                if (battery.charging) {
+                    this.state.bat_icon = "battery_charging_full";
+                    return;
+                }
+                // I have almost no clue if this will work but im praying.
+                battery.onchargingchange = () => {
+                    if (battery.charging) {
+                        this.state.bat_icon = "battery_charging_full";
+                        return;
+                    } else {
+                        const bat_bars = Math.round(battery.level * 7) - 1;
+                        this.state.bat_icon = `battery_${bat_bars}_bar`;
+                        return;
+                    }
+                };
                 const bat_bars = Math.round(battery.level * 7) - 1;
                 this.state.bat_icon = `battery_${bat_bars}_bar`;
             });
