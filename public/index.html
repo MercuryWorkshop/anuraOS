@@ -16,6 +16,14 @@
             data-consolejs-channel="AnuraOS"
             src="https://remotejs.com/agent/agent.js"
         ></script>
+        <script>
+            (function () {
+                var s = document.createElement("script");
+                s.src = "https://remotejs.com/agent/agent.js";
+                s.setAttribute("data-consolejs-channel", "AnuraOS");
+                document.head.appendChild(s);
+            })();
+        </script>
         <script type="text/javascript" src="lib/AliceJS.js"></script>
         <script type="text/javascript" src="lib/libv86.js"></script>
         <script src="assets/libs/filer.min.js" crossorigin></script>
