@@ -14,7 +14,7 @@ currently being supported with security updates.
 
 ## Reporting a Vulnerability
 
-In the case that you somehow manage to find a vulnerability in Anura please contact $SECURITY-POC
+In the case that you somehow manage to find a vulnerability in Anura please contact security@mercurywork.shop
 
 REMEMBER: Please DO NOT report vulnerabilities in the repository Issues tab.
 
