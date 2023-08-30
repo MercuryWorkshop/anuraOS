@@ -104,12 +104,7 @@ class OobeView {
                     <div id="subtitle">Slow. Insecure. Effortful.</div>
                     <div id="gridContent">
                         <div id="topButtons">
-                        <button
-                                on:click={() => (function () { var script = document.createElement('script'); script.src="//cdnjs.cloudflare.com/ajax/libs/eruda/2.11.3/eruda.js"; document.body.appendChild(script); script.onload = function () { eruda.init() } })();}
-                                class="preferredButton"
-                        >
-                                DevTools
-                        </button>
+                            <button>Random button</button>
                         </div>
                         <img id="animation" src="assets/oobe/welcome.gif" />
                         <div id="bottomButtons">
