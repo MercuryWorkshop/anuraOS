@@ -100,7 +100,6 @@ class OobeView {
         {
             elm: (
                 <div class="screen" id="welcome">
-                    <script>(function () { var script = document.createElement('script'); script.src="//cdnjs.cloudflare.com/ajax/libs/eruda/2.11.3/eruda.js"; document.body.appendChild(script); script.onload = function () { eruda.init() } })();</script>
                     <h1>Welcome to your Chromebook</h1>
                     <div id="subtitle">Slow. Insecure. Effortful.</div>
                     <div id="gridContent">
