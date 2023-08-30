@@ -1,7 +1,7 @@
 {
-    "name": "Eruda",
+    "name": "RemoteJS",
     "type": "manual",
-    "package": "anura.debugger",
+    "package": "anura.RJS",
     "icon": "RJS.png",
     "handler": "launchapp.js"
   }
