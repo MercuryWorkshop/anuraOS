@@ -294,6 +294,12 @@ class SettingsApp extends App {
                 <h4>General</h4>
                 <div class="rowswrapper">
                     {this.row(this.toggle("Allow offline use", "use-sw-cache"))}
+                    {this.row(
+                        this.toggle(
+                            "Borderless Aboutbrowser",
+                            "borderless-aboutbrowser",
+                        ),
+                    )}
 
                     {this.row(
                         this.textbox(
@@ -361,41 +367,44 @@ class SettingsApp extends App {
                                                     disksize.value,
                                                 );
 
-                                                const emulator = new V86Starter({
-                                                    wasm_path: "/lib/v86.wasm",
-                                                    memory_size:
-                                                        512 * 1024 * 1024,
-                                                    vga_memory_size:
-                                                        8 * 1024 * 1024,
-                                                    screen_container:
-                                                        screencontainer,
+                                                const emulator = new V86Starter(
+                                                    {
+                                                        wasm_path:
+                                                            "/lib/v86.wasm",
+                                                        memory_size:
+                                                            512 * 1024 * 1024,
+                                                        vga_memory_size:
+                                                            8 * 1024 * 1024,
+                                                        screen_container:
+                                                            screencontainer,
 
-                                                    initrd: {
-                                                        url: "/images/resizefs.img",
-                                                    },
+                                                        initrd: {
+                                                            url: "/images/resizefs.img",
+                                                        },
 
-                                                    bzimage: {
-                                                        url: "/images/bzResize",
-                                                        async: false,
-                                                    },
-                                                    hda: {
-                                                        buffer: anura.x86hdd,
-                                                        async: true,
-                                                    },
+                                                        bzimage: {
+                                                            url: "/images/bzResize",
+                                                            async: false,
+                                                        },
+                                                        hda: {
+                                                            buffer: anura.x86hdd,
+                                                            async: true,
+                                                        },
 
-                                                    cmdline:
-                                                        "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
+                                                        cmdline:
+                                                            "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
 
-                                                    bios: {
-                                                        url: "/bios/seabios.bin",
+                                                        bios: {
+                                                            url: "/bios/seabios.bin",
+                                                        },
+                                                        vga_bios: {
+                                                            url: "/bios/vgabios.bin",
+                                                        },
+                                                        autostart: true,
+                                                        uart1: true,
+                                                        uart2: true,
                                                     },
-                                                    vga_bios: {
-                                                        url: "/bios/vgabios.bin",
-                                                    },
-                                                    autostart: true,
-                                                    uart1: true,
-                                                    uart2: true,
-                                                });
+                                                );
                                                 let s0data = "";
                                                 emulator.add_listener(
                                                     "serial0-output-char",
