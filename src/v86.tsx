@@ -92,6 +92,7 @@ async function InitV86Hdd(): Promise<FakeFile> {
                 .transaction("parts", "readwrite")
                 .objectStore("parts");
             trn.put(f.size, "size");
+            fakefile.size = f.size;
 
             let i = 0;
             while (i * SLICE_SIZE < f.size) {
