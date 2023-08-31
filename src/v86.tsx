@@ -363,7 +363,7 @@ class V86Backend {
         if (this.registered) return;
         this.registered = true;
 
-        await sleep(500); // to be safe
+        // await sleep(500); // to be safe
 
         anura.notifications.add({
             title: "x86 Subsystem Ready",
@@ -394,7 +394,7 @@ class V86Backend {
                 buffer += split[0];
             }
         });
-        await sleep(1000); // to be safe
+        // await sleep(1000); // to be safe
 
         this.xpty = await this.openpty(
             "startx /bin/xfrog",
@@ -404,7 +404,7 @@ class V86Backend {
                 console.debug("XFROG " + data);
                 if (data.includes("XFROG-INIT")) {
                     anura.apps["anura.xfrog"].startup();
-                    await sleep(1000); // to be safer?? (some PTY bug occurs without this, I'm not a racist but it feels like a race condition)
+                    // await sleep(1000); // to be safer?? (some PTY bug occurs without this, I'm not a racist but it feels like a race condition)
                     this.startMouseDriver();
                     anura.notifications.add({
                         title: "x86 Subsystem",
@@ -415,12 +415,12 @@ class V86Backend {
             },
         );
 
-        await sleep(200);
+        // await sleep(200);
 
         this.runpty = await this.openpty("DISPLAY=:0 bash", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
         });
-        await sleep(200);
+        // await sleep(200);
         anura.apps["anura.term"].open();
 
         navigator.serviceWorker.addEventListener("message", async (event) => {
@@ -439,6 +439,18 @@ class V86Backend {
     closepty(TTYn: number) {
         this.emulator.serial0_send(`c\n${TTYn}`);
     }
+    async #waitAndTry(
+        command: string,
+        cols: number,
+        rows: number,
+        onData: (string: string) => void,
+    ) {
+        while (!anura.x86!.canopenpty) {
+            console.log("waiting for pty");
+            await sleep(1000);
+        }
+        return await this.openpty(command, cols, rows, onData);
+    }
     canopenpty = true;
     opensafeQueue: any = [];
     openpty(
@@ -447,9 +459,12 @@ class V86Backend {
         rows: number,
         onData: (string: string) => void,
     ): Promise<number> {
-        if (!this.canopenpty) {
-            return new Promise((resolve) => this.opensafeQueue.push(resolve));
+        if (!anura.x86!.canopenpty) {
+            // return new Promise((resolve) => this.opensafeQueue.push(resolve));
+            return this.#waitAndTry(command, cols, rows, onData);
         }
+
+        anura.x86!.canopenpty = false;
 
         this.write_uint(rows, this.s_rows_phys_addr);
         this.write_uint(cols, this.s_cols_phys_addr);
@@ -464,12 +479,18 @@ class V86Backend {
             this.cmd_q = command;
             this.act = true;
         }
-        // this.canopenpty = false;
+        const waitAndLet = async () => {
+            await sleep(10);
+            anura.x86!.canopenpty = true;
+        };
 
         return new Promise((resolve) => {
             this.openQueue.push((number: number) => {
                 this.onDataCallbacks[number] = onData;
                 resolve(number);
+                anura.logger.debug("Resolved PTY with ID: " + number);
+                waitAndLet();
+                //
             });
         });
     }

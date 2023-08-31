@@ -294,6 +294,12 @@ class SettingsApp extends App {
                 <h4>General</h4>
                 <div class="rowswrapper">
                     {this.row(this.toggle("Allow offline use", "use-sw-cache"))}
+                    {this.row(
+                        this.toggle(
+                            "Borderless Aboutbrowser",
+                            "borderless-aboutbrowser",
+                        ),
+                    )}
 
                     {this.row(
                         this.textbox(
