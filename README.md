@@ -3,6 +3,15 @@
 WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
 Formerly known as Chimera. Based off of the AliceWM.
 
+### Easy Install(When in a codespace)
+
+- Run `bash codespace-basic-setup.sh` 
+
+**NOTE**: If you are not in a codespace skip to the regular installation steps.
+
+**NOTE**: This does NOT build RootFS.
+
+
 ### Installation
 
 -   Make sure you have `rustup` and run the command: `rustup target add wasm32-unknown-unknown`
