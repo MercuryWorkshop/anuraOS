@@ -47,7 +47,6 @@ class Settings {
             const text = await fs.readFileSync("/anura_settings.json");
             Object.assign(initial, JSON.parse(text));
         } catch (e) {
-            console.error(e);
             fs.writeFile("/anura_settings.json", JSON.stringify(initial));
         }
 

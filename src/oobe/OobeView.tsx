@@ -235,7 +235,6 @@ async function installx86() {
         await anura.x86hdd.loadfile(new Blob(blobs));
     }
 
-    alert("todo: x86 won't work until reload");
     console.log("done");
 }
 async function preloadFiles() {

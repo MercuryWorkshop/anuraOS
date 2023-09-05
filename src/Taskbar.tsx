@@ -171,9 +171,6 @@ class Taskbar {
                 this.updateTaskbar();
             });
 
-            this.#contextMenu.addItem("Uninstall", () => {
-                alert("todo");
-            });
             const c = this.#contextMenu.show(e.x, 0);
             // HACK HACK DUMB HACK
             c.style.top = "";
