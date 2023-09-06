@@ -1,6 +1,6 @@
 let anura = window.parent.anura;
-const fs = anura.fs
-const Buffer = window.parent.Filer.Buffer;
+const fs = Filer.fs
+const Buffer = Filer.Buffer;
 let repos = anura.settings.get('workstore-repos') || {"Main repo": "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/"}
 
 const repoList = document.getElementById('repoList');
@@ -49,6 +49,10 @@ async function loadappListScreen(repo) {
                     timeout: 5000
                 })
             }
+            const path = '/userApps/' + itemText.innerText + '.app';
+            await new Promise((resolve) => (new fs.Shell()).mkdirp('/userApps/element.app', function () {
+                resolve()
+            }))
             
             anura.notifications.add({
                 title: "Workstore application",
@@ -56,8 +60,6 @@ async function loadappListScreen(repo) {
                 timeout: 5000
             })
             let zip = await JSZip.loadAsync(file);
-            const path = '/userApps/' + itemText.innerText + '.app';
-            await (new fs.Shell()).mkdirp(path)
             console.log(path)
             try {
                 await zip.forEach(async function (relativePath, zipEntry) {  // 2) print entries
@@ -66,13 +68,13 @@ async function loadappListScreen(repo) {
                     } else {
                         console.log(zipEntry)
                         console.log(await zipEntry.async("arraybuffer"))
-                        fs.writeFile(`${path}/${zipEntry.name}`, Buffer.from(await zipEntry.async("arraybuffer")))
+                        fs.writeFile(`${path}/${zipEntry.name}`, await Buffer.from(await zipEntry.async("arraybuffer")))
                         if (zipEntry.name == "manifest.json") {
                             await anura.registerExternalApp('/fs' + path)
                             anura.notifications.add(
                                 {
                                     title: "Application Installed",
-                                    description: `Application ${fileSelected.getAttribute("file-name")} has been installed.`,
+                                    description: `Application ${itemText.innerText} has been installed.`,
                                     timeout: 50000
                                 })
                         }
