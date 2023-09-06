@@ -26,9 +26,12 @@ async function loadappListScreen(repo) {
         const app = document.createElement('button')
         const thumbnail = document.createElement('img')
         const itemText = document.createElement('span')
+        
         itemText.innerText = repoItems['apps'][item]['name']
         thumbnail.src = repos[repo] + repoItems['apps'][item]['icon']
+        app.title = repoItems['apps'][item]['desc'] // idk why the tooltip is called title but whatever
         app.className = 'app'
+        
         app.appendChild(itemText);
         app.appendChild(thumbnail);
         const dataUrl = repos[repo] + repoItems['apps'][item]['data']
