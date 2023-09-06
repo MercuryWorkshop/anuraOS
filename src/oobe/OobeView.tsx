@@ -132,7 +132,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        Developer (enable v86)
+                        Debian Fangirl (enable v86 with Debian) - ~2.1GB
                     </button>
                     <br />
                     <button
@@ -141,7 +141,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        watcher of porn on aboutbrowser (disable v86)
+                        Normal User (disable v86) ~100MB
                     </button>
                 </div>
             ),
