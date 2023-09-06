@@ -125,7 +125,7 @@ class Launcher {
                     display: none;
                 }
 
-                #clickoffChecker.self.active {
+                self.active {
                     position: absolute;
                     width: 100%;
                     height: calc(100%);
