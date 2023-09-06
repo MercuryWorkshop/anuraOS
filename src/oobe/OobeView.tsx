@@ -79,6 +79,7 @@ class OobeView {
             border: 1px solid gray;
             color: rgb(26, 115, 232);
             height: 2em;
+            margin: 0.5em;
             padding-left: 1em;
             padding-right: 1em;
         }
