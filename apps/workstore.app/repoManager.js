@@ -31,6 +31,8 @@ async function loadMainScreen() {
             }
             repoItem.className = "repoItem";
             repoList.appendChild(repoItem)
+            anura.settings.set('workstore-repos', repos)
+            window.location.reload()
         }
         newRepo.className = "repoItem"
         newRepo.appendChild(newRepoName)
