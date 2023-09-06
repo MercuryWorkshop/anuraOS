@@ -17,6 +17,7 @@ class Launcher {
             opacity: 0;
             z-index: -1;
             visibility: hidden;
+            left: 10px;
         }
 
         self.active {
