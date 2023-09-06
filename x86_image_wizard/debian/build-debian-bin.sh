@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -veu
 
+if groups $USER | grep -qw 'docker'
+then
+    echo true
+else 
+    echo "You aren't in the docker group, please run usermod -a -G docker $USER && newgrp docker"
+    exit 2
+fi
+
+
 IMAGES="$(dirname "$0")"/../../build/images
 OUT_ROOTFS_TAR="$IMAGES"/debian-rootfs.tar
 OUT_ROOTFS_BIN="$IMAGES"/debian-rootfs.bin
