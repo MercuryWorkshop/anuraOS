@@ -144,6 +144,17 @@ class OobeView {
                     >
                         Normal User (disable v86) ~100MB
                     </button>
+                    <br />
+                    <button
+                        on:click={() => {
+                            anura.settings.set("x86-disabled", true);
+                            anura.settings.set("use-sw-cache", false);
+                            this.nextStep();
+                        }}
+                    >
+                        Bypass File Cache (disable v86, and disable offline
+                        functionality) ~instant
+                    </button>
                 </div>
             ),
             on: () => {},
@@ -166,8 +177,7 @@ class OobeView {
                 if (!anura.settings.get("x86-disabled")) {
                     await installx86();
                 }
-
-                await preloadFiles();
+                if (anura.settings.get("use-sw-cache")) await preloadFiles();
                 console.log("Cached important files");
                 // Register default filehandlers
                 anura.files.set("/apps/libfileview.app/fileHandler.js", "txt");
