@@ -53,7 +53,7 @@ async function loadappListScreen(repo) {
                 })
             }
             const path = '/userApps/' + itemText.innerText + '.app';
-            await new Promise((resolve) => (new fs.Shell()).mkdirp('/userApps/element.app', function () {
+            await new Promise((resolve) => (new fs.Shell()).mkdirp(path, function () {
                 resolve()
             }))
             
