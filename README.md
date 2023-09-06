@@ -5,12 +5,11 @@ Formerly known as Chimera. Based off of the AliceWM.
 
 ### Easy Install(When in a codespace)
 
-- Run `bash codespace-basic-setup.sh` 
+-   Run `bash codespace-basic-setup.sh`
 
 **NOTE**: If you are not in a codespace skip to the regular installation steps.
 
 **NOTE**: This does NOT build RootFS.
-
 
 ### Installation
 
