@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -veu
 
-if groups $USER | grep -qw 'docker'
+if [ -w /var/run/docker.sock ]
 then
     echo true
 else 
