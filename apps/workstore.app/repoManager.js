@@ -1,5 +1,8 @@
 async function loadMainScreen() {
     repoList.innerHTML = ''
+    appListScreen.style.display = 'none'
+    repoList.style.display = ''
+    
     for (repo in repos) {
         const repoItem = document.createElement('div')
         repoItem.innerText = repo
