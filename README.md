@@ -58,7 +58,7 @@ Will be utilized after the first Build of AnuraOS.
 
 ## Documentation
 
-Still being written.
+Still being written.(See documentation folder)
 
 <sub>
 The AnuraOS Team and Mercury Workshop are both not liable to any loss of braincells and maybe even your sanity after working with this product.
