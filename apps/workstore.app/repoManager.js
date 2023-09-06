@@ -4,7 +4,7 @@ async function loadMainScreen() {
         const repoItem = document.createElement('div')
         repoItem.innerText = repo
         repoItem.onclick = function() {
-            loadappListScreen(repo)
+            loadappListScreen(repoItem.innerText) // Weird hack to work around the fact that repo doesn't work but the innertext of the repoitem does
         }
         repoItem.className = "repoItem"
         repoList.appendChild(repoItem)
