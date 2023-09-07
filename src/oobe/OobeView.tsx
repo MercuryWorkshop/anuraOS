@@ -258,7 +258,7 @@ async function preloadFiles() {
          * These can safely be ignored, just like the voices in
          * the developers head.
          */
-        let promises = [];
+        const promises = [];
         for (const item in list) {
             promises.push(fetch(list[item]));
         }
