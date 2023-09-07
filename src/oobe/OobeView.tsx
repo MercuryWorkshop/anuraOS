@@ -258,9 +258,11 @@ async function preloadFiles() {
          * These can safely be ignored, just like the voices in
          * the developers head.
          */
+        let promises = [];
         for (const item in list) {
-            await fetch(list[item]);
+            promises.push(fetch(list[item]));
         }
+        await Promise.all(promises);
     } catch (e) {
         console.warn("error durring oobe preload", e);
     }
