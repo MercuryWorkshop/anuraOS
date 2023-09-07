@@ -1,14 +1,14 @@
 class AboutApp extends App {
     name = "About Anura";
     package = "anura.about";
-    icon = "/assets/icons/about.png";
+    icon = "/icon.png";
 
     page = async () => (
         <div class="aboutapp-container">
             <div class="aboutapp-logo">
                 <img
-                    src={this.icon}
-                    title="Temporary logo until official AnuraOS logo is chosen"
+                    src="/assets/icons/about.png"
+                    title="離れ離れの街を繋ぐ列車は行ってしまったね.."
                 />
             </div>
             <div class="aboutapp-logo-divider"></div>
