@@ -142,7 +142,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        Normal User (disable v86) ~100MB
+                        Normal User (disable v86) ~23.3MB
                     </button>
                     <br />
                     <button
