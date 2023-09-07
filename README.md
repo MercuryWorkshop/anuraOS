@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
+
 # AnuraOS
 
 WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
