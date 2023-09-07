@@ -60,6 +60,10 @@ Will be utilized after the first Build of AnuraOS.
 
 Still being written. (See documentation folder)
 
+## Security
+
+See [SECURITY.md](./SECURITY.md) for reporting instructions.
+
 <sub>
 The AnuraOS Team and Mercury Workshop are both not liable to any loss of braincells and maybe even your sanity after working with this product.
 </sub>
