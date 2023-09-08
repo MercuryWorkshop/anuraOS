@@ -32,7 +32,7 @@
         "typescript": "=5.0.4"
     },
     "devDependencies": {
-        "@types/node": "^20.4.2",
+        "@types/node": "^20.5.9",
         "prettier": "^3.0.0"
     }
 }
