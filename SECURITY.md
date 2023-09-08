@@ -1,3 +1,5 @@
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
 # Security Policy
 
 ## Supported Versions(Will be added in prod)

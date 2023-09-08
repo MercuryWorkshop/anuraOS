@@ -1,3 +1,6 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
+
 # AnuraOS
 
 WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
@@ -5,12 +8,11 @@ Formerly known as Chimera. Based off of the AliceWM.
 
 ### Easy Install(When in a codespace)
 
-- Run `bash codespace-basic-setup.sh` 
+-   Run `bash codespace-basic-setup.sh`
 
 **NOTE**: If you are not in a codespace skip to the regular installation steps.
 
 **NOTE**: This does NOT build RootFS.
-
 
 ### Installation
 
@@ -59,7 +61,11 @@ Will be utilized after the first Build of AnuraOS.
 
 ## Documentation
 
-Still being written.
+Still being written. (See documentation folder)
+
+## Security
+
+See [SECURITY.md](./SECURITY.md) for reporting instructions.
 
 <sub>
 The AnuraOS Team and Mercury Workshop are both not liable to any loss of braincells and maybe even your sanity after working with this product.

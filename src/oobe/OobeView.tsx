@@ -79,6 +79,7 @@ class OobeView {
             border: 1px solid gray;
             color: rgb(26, 115, 232);
             height: 2em;
+            margin: 0.5em;
             padding-left: 1em;
             padding-right: 1em;
         }
@@ -132,7 +133,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        Developer (enable v86)
+                        Debian Fangirl (enable v86 with Debian) - ~2.1GB
                     </button>
                     <br />
                     <button
@@ -141,7 +142,18 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        watcher of porn on aboutbrowser (disable v86)
+                        Normal User (disable v86) ~23.3MB
+                    </button>
+                    <br />
+                    <button
+                        on:click={() => {
+                            anura.settings.set("x86-disabled", true);
+                            anura.settings.set("use-sw-cache", false);
+                            this.nextStep();
+                        }}
+                    >
+                        Bypass File Cache (disable v86, and disable offline
+                        functionality) ~instant
                     </button>
                 </div>
             ),
@@ -165,8 +177,7 @@ class OobeView {
                 if (!anura.settings.get("x86-disabled")) {
                     await installx86();
                 }
-
-                await preloadFiles();
+                if (anura.settings.get("use-sw-cache")) await preloadFiles();
                 console.log("Cached important files");
                 // Register default filehandlers
                 anura.files.set("/apps/libfileview.app/fileHandler.js", "txt");
@@ -247,9 +258,15 @@ async function preloadFiles() {
          * These can safely be ignored, just like the voices in
          * the developers head.
          */
+        const chunkSize = 10;
+        const promises = [];
         for (const item in list) {
-            await fetch(list[item]);
+            promises.push(fetch(list[item]));
+            if (Number(item) % chunkSize === chunkSize - 1) {
+                await Promise.all(promises);
+            }
         }
+        await Promise.all(promises);
     } catch (e) {
         console.warn("error durring oobe preload", e);
     }

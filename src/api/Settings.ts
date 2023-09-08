@@ -37,7 +37,7 @@ class Settings {
         }
 
         if (!initial["bare-url"]) {
-            initial["bare-url"] = location.origin + "/bare";
+            initial["bare-url"] = location.origin + "/bare/";
         }
         if (!initial["relay-url"]) {
             alert("figure this out later");

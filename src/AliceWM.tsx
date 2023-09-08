@@ -381,8 +381,7 @@ class WMWindow {
     }
     maximize() {
         if (this.maximized) {
-            // Unmaximize if already maximized
-            this.unmaximize();
+            // Unmaximize if already maximized (this will be done anyways) because titlebar click
             return;
         }
         this.oldstyle = this.element.getAttribute("style");
@@ -405,10 +404,12 @@ class WMWindow {
         this.justresized = true;
         this.maximized = true;
     }
-    unmaximize() {
+    async unmaximize() {
+        console.log("restoring");
         this.element.setAttribute("style", this.oldstyle!);
         this.maximizeImg.src = "/assets/window/maximize.svg";
 
+        await sleep(10); // Race condition as a feature
         this.justresized = true;
         this.maximized = false;
     }
