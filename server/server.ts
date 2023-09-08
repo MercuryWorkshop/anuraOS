@@ -26,6 +26,14 @@ spawn(
     },
 );
 
+function cryptoRandom() {
+  const typedArray = new Uint8Array(1);
+  const randomValue = crypto.getRandomValues(typedArray)[0];
+  const randomFloat = randomValue / Math.pow(2, 8);
+  return randomFloat;
+}
+
+
 function shutdown() {
     console.log();
     // https://expressjs.com/en/advanced/healthcheck-graceful-shutdown.html
@@ -180,7 +188,7 @@ function sessionPassword(length: number) {
     let counter = 0;
     while (counter < length) {
         result += characters.charAt(
-            Math.floor(Math.random() * charactersLength),
+            Math.floor(cryptoRandom() * charactersLength),
         );
         counter += 1;
     }
