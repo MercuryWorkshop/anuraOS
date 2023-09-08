@@ -102,6 +102,7 @@ async function loadappListScreen(repo) {
         }
         appList.appendChild(app)
     }
+    
     appListScreen.appendChild(appList)
 
 }
