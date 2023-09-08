@@ -235,9 +235,59 @@ async function installx86() {
         // TODO: add batching, this will bottleneck and OOM if the rootfs is too large
 
         console.log("fetching");
-        const files = await Promise.all(
-            anura.config.rootfs.map((part: string) => fetch(part)),
-        );
+        // const files = await Promise.all(
+        //     anura.config.rootfs.map((part: string) => fetch(part)),
+        // );
+
+        const files: Response[] = [];
+        let limit = 4;
+        let i = 0;
+        let done = false;
+        let doneSoFar = 0;
+        const doWhenAvail = function () {
+            if (limit == 0) return;
+            limit--;
+            const assigned = i;
+            i++;
+            fetch(anura.config.rootfs[assigned])
+                .then((response) => {
+                    if (response.status != 200) {
+                        console.log("Status code bad on chunk " + assigned);
+                        console.log(anura.config.rootfs[assigned]);
+                        console.log(
+                            "Finished " + doneSoFar + " chunks before error",
+                        );
+                        return;
+                    }
+                    files[assigned] = response;
+                    limit++;
+                    doneSoFar++;
+
+                    if (i < anura.config.rootfs.length) {
+                        doWhenAvail();
+                    }
+                    if (doneSoFar == anura.config.rootfs.length) {
+                        done = true;
+                    }
+                    console.log(
+                        anura.config.rootfs.length -
+                            doneSoFar +
+                            " chunks to go",
+                    );
+                })
+
+                .catch((e) => {
+                    console.log("Error on chunk " + assigned);
+                }); // Peak error handling right there
+        };
+        doWhenAvail();
+        doWhenAvail();
+        doWhenAvail();
+        doWhenAvail();
+        while (!done) {
+            await sleep(200);
+        }
+
         console.log(files);
         console.log("constructing blobs...");
         const blobs = await Promise.all(files.map((file) => file.blob()));
