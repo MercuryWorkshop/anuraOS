@@ -193,5 +193,6 @@ function sessionPassword(length: number) {
         );
         counter += 1;
     }
+    console.log("The username for this session is: demouser");
     return result;
 }
