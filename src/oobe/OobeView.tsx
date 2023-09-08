@@ -239,7 +239,7 @@ async function installx86() {
         //     anura.config.rootfs.map((part: string) => fetch(part)),
         // );
 
-        const files: Response[] = [];
+        const files: Blob[] = [];
         let limit = 4;
         let i = 0;
         let done = false;
@@ -250,7 +250,7 @@ async function installx86() {
             const assigned = i;
             i++;
             fetch(anura.config.rootfs[assigned])
-                .then((response) => {
+                .then(async (response) => {
                     if (response.status != 200) {
                         console.log("Status code bad on chunk " + assigned);
                         console.log(anura.config.rootfs[assigned]);
@@ -259,7 +259,7 @@ async function installx86() {
                         );
                         return;
                     }
-                    files[assigned] = response;
+                    files[assigned] = await response.blob();
                     limit++;
                     doneSoFar++;
 
@@ -290,10 +290,8 @@ async function installx86() {
 
         console.log(files);
         console.log("constructing blobs...");
-        const blobs = await Promise.all(files.map((file) => file.blob()));
-        console.log(blobs);
         //@ts-ignore
-        await anura.x86hdd.loadfile(new Blob(blobs));
+        await anura.x86hdd.loadfile(new Blob(files));
     }
 
     console.log("done");
