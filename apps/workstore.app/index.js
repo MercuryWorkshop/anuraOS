@@ -1,7 +1,7 @@
 let anura = window.parent.anura;
 const fs = Filer.fs
 const Buffer = Filer.Buffer;
-let repos = anura.settings.get('workstore-repos') || {"Main repo": "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/"}
+let repos = anura.settings.get('workstore-repos') || {"Anura App Repository": "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/"}
 
 const repoList = document.getElementById('repoList');
 const repoScreen = document.getElementById('repoScreen');
@@ -27,13 +27,15 @@ async function loadappListScreen(repo) {
         const thumbnail = document.createElement('img')
         const itemText = document.createElement('span')
         
-        itemText.innerText = repoItems['apps'][item]['name']
+        
         thumbnail.src = repos[repo] + repoItems['apps'][item]['icon']
+        itemText.innerText = repoItems['apps'][item]['name']
         app.title = repoItems['apps'][item]['desc'] // idk why the tooltip is called title but whatever
         app.className = 'app'
         
-        app.appendChild(itemText);
+        
         app.appendChild(thumbnail);
+        app.appendChild(itemText);
         const dataUrl = repos[repo] + repoItems['apps'][item]['data']
         app.onclick = async function() {
             anura.notifications.add({
