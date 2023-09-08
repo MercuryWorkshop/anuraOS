@@ -5,27 +5,42 @@ body {
     padding-top: 70px;
 }
 .app {
-    height: 200px;
-    width: 200px;
-    border-color: #fff;
+    height: 175px;
+    width: 150px;
+    border-color: #222222;
     border-style: solid;
-    border-width: 2px;
-    border-radius: 5px;
-    margin: 10px;
+    border-width: 1px;
+    border-radius: 25px;
+    margin-right: 10px;
+    margin-left: 10px;
+    background-color: #222222;
+    transition: 0.3s;
+}
+
+.app:hover {
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    transition: 0.3s;
 }
 .app > img {
     display: block;
     position: relative;
     height: 150px;
     width: 150px;
-    margin: auto;
     bottom: -5px;
+    background-color: #333;
+    border-radius: 35px;
 }
 .app > span {
     position: block;
     display: block;
-    font-size: large;
+    font-size: 15px;
     top: 2px;
+    text-align: left;
+    padding-top: 15px;
+    color: #ddd;
+    padding-left: 10px;
 }
 nav {
     position: fixed;
@@ -40,18 +55,42 @@ nav {
 }
 nav > h1 {
     /* position: fixed; */
-    margin-left: 10px;
+    margin-top: 18px;
+    text-align: center;
     top: 2px;
 }
+
 .repoItem {
     background-color: #292a2d;
-    margin: auto;
-    height: 50px;
+    margin-right: auto;
+    margin-left: auto;
+    height: 40px;
     width: 500px;
-    border-width: 2px;
-    border-color: black;
+    border-width: 1px;
+    border-color: #444;
+    border-radius: 50px;
     border-style: solid;
     text-align: center;
+    margin-bottom: 10px;
     padding-top: 20px;
+    transition: 0.3s;
+    color: #ddd;
+}
+
+.repoItem:hover {
+    cursor: pointer;
+    width: 550px;
+    transition: 0.3s;
+}
+
+.repoItem > input {
+    border: none;
+    background-color: #444;
+    color: #ddd;
+    margin-right: 5px;
+    margin-left: 5px;
+    border-radius: 25px;
+    box-shadow: none;
+    outline: none;
 }
 
