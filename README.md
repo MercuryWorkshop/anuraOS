@@ -1,4 +1,5 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
 
 # AnuraOS
 
