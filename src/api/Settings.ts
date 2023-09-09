@@ -37,7 +37,7 @@ class Settings {
         }
 
         if (!initial["bare-url"]) {
-            initial["bare-url"] = location.origin + "/bare";
+            initial["bare-url"] = location.origin + "/bare/";
         }
         if (!initial["relay-url"]) {
             alert("figure this out later");
@@ -47,7 +47,6 @@ class Settings {
             const text = await fs.readFileSync("/anura_settings.json");
             Object.assign(initial, JSON.parse(text));
         } catch (e) {
-            console.error(e);
             fs.writeFile("/anura_settings.json", JSON.stringify(initial));
         }
 

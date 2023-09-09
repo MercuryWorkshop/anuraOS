@@ -12,6 +12,8 @@ import basicAuth from "express-basic-auth";
 
 import { readFileSync } from "fs";
 
+import * as crypto from "crypto";
+
 const useAuth = process.argv.includes("--auth");
 const useParanoidAuth = process.argv.includes("--paranoid-auth");
 // paranoid auth requests the user to send the server a passkey instead of a password, it's recommended to generate this passkey
@@ -25,6 +27,13 @@ spawn(
         stdio: [process.stdout, null, process.stderr],
     },
 );
+
+function cryptoRandom() {
+    const typedArray = new Uint8Array(1);
+    const randomValue = crypto.getRandomValues(typedArray)[0];
+    const randomFloat = randomValue / Math.pow(2, 8);
+    return randomFloat;
+}
 
 function shutdown() {
     console.log();
@@ -180,9 +189,10 @@ function sessionPassword(length: number) {
     let counter = 0;
     while (counter < length) {
         result += characters.charAt(
-            Math.floor(Math.random() * charactersLength),
+            Math.floor(cryptoRandom() * charactersLength),
         );
         counter += 1;
     }
+    console.log("The username for this session is: demouser");
     return result;
 }

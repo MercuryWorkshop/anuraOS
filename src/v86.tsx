@@ -92,6 +92,7 @@ async function InitV86Hdd(): Promise<FakeFile> {
                 .transaction("parts", "readwrite")
                 .objectStore("parts");
             trn.put(f.size, "size");
+            fakefile.size = f.size;
 
             let i = 0;
             while (i * SLICE_SIZE < f.size) {
@@ -111,17 +112,44 @@ async function InitV86Hdd(): Promise<FakeFile> {
             }
         },
         delete: async () => {
-            alert("todo!");
+            db.close();
+            indexedDB.deleteDatabase("image");
+            window.location.reload();
         },
-        resize: async (size: number) => {
-            alert("todo!");
-        },
-
         // when a "file" is loaded with v86, it keeps around a "block_cache" so it can write on top of the drive in ram
         // normally changes don't persist, but this function will take the changes made in the cache and propagate them back to indexedDB
-        save: async () => {
+        resize: async (size: number) => {
+            fakefile.size = size;
+            let i = 0;
+            db.transaction("parts", "readwrite")
+                .objectStore("parts")
+                .put(size, "size");
+
+            while (i * SLICE_SIZE < size) {
+                const block: any = await new Promise(
+                    (r) =>
+                        (db
+                            .transaction("parts", "readwrite")
+                            .objectStore("parts")
+                            .get(i).onsuccess = r),
+                );
+                if (!block.target.result) {
+                    await new Promise(
+                        (r) =>
+                            (db
+                                .transaction("parts", "readwrite")
+                                .objectStore("parts")
+                                .put(new ArrayBuffer(SLICE_SIZE), i).onsuccess =
+                                r),
+                    );
+                    console.log("added block " + i);
+                }
+                i++;
+            }
+        },
+        save: async (emulator = anura.x86?.emulator) => {
             const part_cache: any = {};
-            for (const [offset, buffer] of anura.x86!.emulator.disk_images.hda
+            for (const [offset, buffer] of emulator.disk_images.hda
                 .block_cache) {
                 const start = offset * BUF_SIZE;
                 const starti = Math.floor(start / SLICE_SIZE);
@@ -267,7 +295,6 @@ class V86Backend {
             memory_size: 512 * 1024 * 1024,
             vga_memory_size: 8 * 1024 * 1024,
             screen_container: this.screen_container,
-
             initrd: {
                 url: "/fs/initrd.img",
             },
@@ -336,7 +363,7 @@ class V86Backend {
         if (this.registered) return;
         this.registered = true;
 
-        await sleep(500); // to be safe
+        // await sleep(500); // to be safe
 
         anura.notifications.add({
             title: "x86 Subsystem Ready",
@@ -367,7 +394,7 @@ class V86Backend {
                 buffer += split[0];
             }
         });
-        await sleep(1000); // to be safe
+        // await sleep(1000); // to be safe
 
         this.xpty = await this.openpty(
             "startx /bin/xfrog",
@@ -377,7 +404,7 @@ class V86Backend {
                 console.debug("XFROG " + data);
                 if (data.includes("XFROG-INIT")) {
                     anura.apps["anura.xfrog"].startup();
-                    await sleep(1000); // to be safer?? (some PTY bug occurs without this, I'm not a racist but it feels like a race condition)
+                    // await sleep(1000); // to be safer?? (some PTY bug occurs without this, I'm not a racist but it feels like a race condition)
                     this.startMouseDriver();
                     anura.notifications.add({
                         title: "x86 Subsystem",
@@ -388,12 +415,12 @@ class V86Backend {
             },
         );
 
-        await sleep(200);
+        // await sleep(200);
 
         this.runpty = await this.openpty("DISPLAY=:0 bash", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
         });
-        await sleep(200);
+        // await sleep(200);
         anura.apps["anura.term"].open();
 
         navigator.serviceWorker.addEventListener("message", async (event) => {
@@ -412,6 +439,18 @@ class V86Backend {
     closepty(TTYn: number) {
         this.emulator.serial0_send(`c\n${TTYn}`);
     }
+    async #waitAndTry(
+        command: string,
+        cols: number,
+        rows: number,
+        onData: (string: string) => void,
+    ) {
+        while (!anura.x86!.canopenpty) {
+            console.log("waiting for pty");
+            await sleep(1000);
+        }
+        return await this.openpty(command, cols, rows, onData);
+    }
     canopenpty = true;
     opensafeQueue: any = [];
     openpty(
@@ -420,9 +459,12 @@ class V86Backend {
         rows: number,
         onData: (string: string) => void,
     ): Promise<number> {
-        if (!this.canopenpty) {
-            return new Promise((resolve) => this.opensafeQueue.push(resolve));
+        if (!anura.x86!.canopenpty) {
+            // return new Promise((resolve) => this.opensafeQueue.push(resolve));
+            return this.#waitAndTry(command, cols, rows, onData);
         }
+
+        anura.x86!.canopenpty = false;
 
         this.write_uint(rows, this.s_rows_phys_addr);
         this.write_uint(cols, this.s_cols_phys_addr);
@@ -437,12 +479,18 @@ class V86Backend {
             this.cmd_q = command;
             this.act = true;
         }
-        // this.canopenpty = false;
+        const waitAndLet = async () => {
+            await sleep(10);
+            anura.x86!.canopenpty = true;
+        };
 
         return new Promise((resolve) => {
             this.openQueue.push((number: number) => {
                 this.onDataCallbacks[number] = onData;
                 resolve(number);
+                anura.logger.debug("Resolved PTY with ID: " + number);
+                waitAndLet();
+                //
             });
         });
     }
@@ -646,7 +694,7 @@ async function a() {
 
 interface FakeFile {
     slice: (start: number, end: number) => Promise<Blob>;
-    save: () => Promise<void>;
+    save: (emulator?: any) => Promise<void>;
     delete: () => Promise<void>;
     resize: (size: number) => Promise<void>;
     size: number;

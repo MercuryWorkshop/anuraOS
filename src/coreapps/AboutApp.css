@@ -1,0 +1,53 @@
+.aboutapp-container {
+    background-color: var(--material-bg);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    padding: 0;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.aboutapp-logo {
+    height: 128px;
+}
+
+.aboutapp-logo img {
+    height: 100%;
+}
+
+.aboutapp-logo-divider {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    height: 1px;
+    background-color: #9ca3af;
+    flex-shrink: 0;
+    width: 22rem;
+}
+
+.aboutapp-content {
+    color: white;
+}
+
+.aboutapp-content p {
+    margin: 0;
+}
+
+.aboutapp-content a {
+    color: cyan;
+}
+
+.aboutapp-link-button {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    color: cyan;
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: Roboto, sans-serif;
+    font-size: 16px;
+}

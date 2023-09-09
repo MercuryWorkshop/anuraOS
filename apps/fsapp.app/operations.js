@@ -185,7 +185,7 @@ async function fileAction(selected) {
                     },
                 );
             } else {
-                openFile(fileSelected.getAttribute("data-path"));
+                anura.files.open(fileSelected.getAttribute("data-path"));
             }
         } else if (fileSelected.getAttribute("data-type") == "dir") {
             if (

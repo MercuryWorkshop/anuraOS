@@ -122,6 +122,7 @@ class AltTabView {
             const appWin = this.state.windows[this.state.index]!;
             if (!appWin) return;
             const [_app, win] = appWin;
+            win.unminimize();
             win.focus();
         }
     }

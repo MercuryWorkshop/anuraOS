@@ -1,7 +1,18 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
+
 # AnuraOS
 
 WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
 Formerly known as Chimera. Based off of the AliceWM.
+
+### Easy Install(When in a codespace)
+
+-   Run `bash codespace-basic-setup.sh`
+
+**NOTE**: If you are not in a codespace skip to the regular installation steps.
+
+**NOTE**: This does NOT build RootFS.
 
 ### Installation
 
@@ -17,7 +28,7 @@ Formerly known as Chimera. Based off of the AliceWM.
 -   Make sure you have `Docker` installed and running.
 -   Run `make rootfs`
 -   Make sure to add yourself to the Docker group using `usermod -a -G docker $USER`
--   Keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, upload them in file manager and rename them to initrd.img and bzimage respectively.
+-   (Special Use Case) In the event that you should need to override/manually add the initrd and kernel, remember to keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, copy them to the Anura root directory and rename them to initrd.img and bzimage respectively.(See the extended instructions [here](documentation/Kernel%20Override.md).)
 
 ### Running Anura
 
@@ -50,7 +61,11 @@ Will be utilized after the first Build of AnuraOS.
 
 ## Documentation
 
-Still being written.
+Still being written. (See documentation folder)
+
+## Security
+
+See [SECURITY.md](./SECURITY.md) for reporting instructions.
 
 <sub>
 The AnuraOS Team and Mercury Workshop are both not liable to any loss of braincells and maybe even your sanity after working with this product.

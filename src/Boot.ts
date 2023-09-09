@@ -33,14 +33,15 @@ let anura: Anura;
 
 window.addEventListener("load", async () => {
     document.body.appendChild(bootsplash.element);
-    if (!navigator.serviceWorker.controller) window.location.reload();
 
+    await navigator.serviceWorker.register("/anura-sw.js");
     let conf, milestone, instancemilestone;
     try {
         conf = await (await fetch("/config.json")).json();
         milestone = await (await fetch("/MILESTONE")).text();
         instancemilestone = conf.milestone;
 
+        console.log("writing config??");
         Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
     } catch (e) {
         conf = JSON.parse(
@@ -55,8 +56,10 @@ window.addEventListener("load", async () => {
 
     anura = await Anura.new(conf);
     if (milestone) {
-        if (
-            anura.settings.get("milestone") != milestone ||
+        const stored = anura.settings.get("milestone");
+        if (!stored) await anura.settings.set("milestone", milestone);
+        else if (
+            stored != milestone ||
             anura.settings.get("instancemilestone") != instancemilestone
         ) {
             await anura.settings.set("milestone", milestone);
@@ -91,10 +94,13 @@ document.addEventListener("anura-boot-completed", async () => {
 
 document.addEventListener("anura-login-completed", async () => {
     const browser = new BrowserApp();
+    anura.registerApp(browser);
 
     const settings = new SettingsApp();
-    anura.registerApp(browser);
     anura.registerApp(settings);
+
+    const about = new AboutApp();
+    anura.registerApp(about);
 
     for (const app of anura.config.apps) {
         anura.registerExternalApp(app);
