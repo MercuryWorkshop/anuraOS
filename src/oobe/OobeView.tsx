@@ -130,10 +130,11 @@ class OobeView {
                     <button
                         on:click={() => {
                             anura.settings.set("x86-disabled", false);
+                            anura.settings.set("x86-image", "debian");
                             this.nextStep();
                         }}
                     >
-                        Debian Fangirl (enable v86 with Debian) - ~2.1GB
+                        Debian: rootfs (enable v86 with Debian) - ~2.1GB
                     </button>
                     <br />
                     <button
@@ -221,22 +222,23 @@ class OobeView {
 }
 async function installx86() {
     console.log("installing x86");
-    const bzimage = await fetch(anura.config.bzimage);
+    const x86image = anura.settings.get("x86-image");
+    const bzimage = await fetch(anura.config.x86[x86image].bzimage);
     anura.fs.writeFile("/bzimage", Filer.Buffer(await bzimage.arrayBuffer()));
-    const initrd = await fetch(anura.config.initrd);
+    const initrd = await fetch(anura.config.x86[x86image].initrd);
     anura.fs.writeFile("/initrd.img", Filer.Buffer(await initrd.arrayBuffer()));
 
-    if (typeof anura.config.rootfs === "string") {
-        const rootfs = await fetch(anura.config.rootfs);
+    if (typeof anura.config.x86[x86image].rootfs === "string") {
+        const rootfs = await fetch(anura.config.x86[x86image].rootfs);
         const blob = await rootfs.blob();
         //@ts-ignore
         await anura.x86hdd.loadfile(blob);
-    } else if (anura.config.rootfs) {
+    } else if (anura.config.x86[x86image].rootfs) {
         // TODO: add batching, this will bottleneck and OOM if the rootfs is too large
 
         console.log("fetching");
         // const files = await Promise.all(
-        //     anura.config.rootfs.map((part: string) => fetch(part)),
+        //     anura.config.x86[x86image].rootfs.map((part: string) => fetch(part)),
         // );
 
         const files: Blob[] = [];
@@ -249,11 +251,13 @@ async function installx86() {
             limit--;
             const assigned = i;
             i++;
-            fetch(anura.config.rootfs[assigned])
+            fetch(anura.config.x86[x86image].rootfs[assigned])
                 .then(async (response) => {
                     if (response.status != 200) {
                         console.log("Status code bad on chunk " + assigned);
-                        console.log(anura.config.rootfs[assigned]);
+                        console.log(
+                            anura.config.x86[x86image].rootfs[assigned],
+                        );
                         console.log(
                             "Finished " + doneSoFar + " chunks before error",
                         );
@@ -263,14 +267,14 @@ async function installx86() {
                     limit++;
                     doneSoFar++;
 
-                    if (i < anura.config.rootfs.length) {
+                    if (i < anura.config.x86[x86image].rootfs.length) {
                         doWhenAvail();
                     }
-                    if (doneSoFar == anura.config.rootfs.length) {
+                    if (doneSoFar == anura.config.x86[x86image].rootfs.length) {
                         done = true;
                     }
                     console.log(
-                        anura.config.rootfs.length -
+                        anura.config.x86[x86image].rootfs.length -
                             doneSoFar +
                             " chunks to go",
                     );
