@@ -52,6 +52,7 @@ nav {
     border-bottom: gray;
     top: 0;
     left: 0;
+    z-index: 1;
 }
 nav > h1 {
     /* position: fixed; */
