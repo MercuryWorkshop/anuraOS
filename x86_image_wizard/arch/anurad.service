@@ -1,6 +1,6 @@
 [Unit]
 Description=Anura PTY Daemon
-After=basic.target
+After=graphical.target
 StartLimitIntervalSec=0
 [Service]
 Type=simple
@@ -10,4 +10,4 @@ User=root
 ExecStart=/bin/anurad
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical.target

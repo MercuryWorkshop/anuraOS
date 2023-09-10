@@ -57,13 +57,15 @@ RUN cp /usr/lib/systemd/systemd /usr/bin/systemd
 RUN rm /usr/lib/systemd/system/systemd-firstboot.service
 RUN rm -rf /usr/lib/systemd/system-preset/*
 RUN rm /usr/lib/systemd/system/dhcpcd.service
+RUN rm /usr/lib/dhcpcd/dhcpcd-hooks/20-resolv.conf
 
+COPY dhcpcd.exit-hook /etc/dhcpcd.exit-hook
 COPY 90-systemd.preset /usr/lib/systemd/system-preset
 COPY anura-boot.service /etc/systemd/system
 COPY anurad.service /etc/systemd/system
 COPY mkinitcpio.conf /etc/
 
-
+RUN echo -e "i8042\nne2k-pci" > /etc/modules-load.d/modules.conf
 RUN mkinitcpio -P
 RUN systemctl enable anurad
 RUN systemctl enable anura-boot

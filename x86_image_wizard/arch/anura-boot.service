@@ -1,6 +1,6 @@
 [Unit]
 Description=Run Anura Boot Scripts
-After=basic.target
+After=graphical.target
 StartLimitIntervalSec=0
 [Service]
 Type=simple
@@ -8,4 +8,4 @@ User=root
 ExecStart=/bin/anura-boot.sh
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=graphical.target
