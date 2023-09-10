@@ -29,9 +29,10 @@ async function loadappListScreen(repo) {
         
         
         
-        (async () => {
+        async function fetchThumb() {
             thumbnail.src = URL.createObjectURL(await (await fetch(repos[repo] + repoItems['apps'][item]['icon'])).blob())
-        })()
+        }
+        fetchThumb()
 
         itemText.innerText = repoItems['apps'][item]['name']
         app.title = repoItems['apps'][item]['desc'] // idk why the tooltip is called title but whatever
