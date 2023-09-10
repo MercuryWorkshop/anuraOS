@@ -107,9 +107,23 @@ async function loadappListScreen(repo) {
 
 }
 
+async function removeApp(app, package) { // eg: app = "run 3.app", package = "game.run3"
+  const appObject = anura.apps[package]
+  await anura.unregisterApp(appObject)
+  new fs.Shell().rm(`/userApps/${app}`, {
+    recursive: true,
+  })
+
+  anura.notifications.add({
+    title: "Workstore application",
+    description: `Workstore uninstalled ${appObject.package}`,
+    timeout: 5000
+  })
+
+}
 
 async function getRepo(repo) {
-  addCacheFile();
+  await addCacheFile();
 
   return await new Promise((res) => {
     fs.readFile("/workstore_cache.json", async (e, contents) => {
@@ -129,26 +143,46 @@ async function getRepo(repo) {
   })
 
 }
-function addAppReceipt(app, repo, name) {
-  addCacheFile()
+
+function delAppReceipt(app) {
+
   fs.readFile("/workstore_cache.json", (e, contents) => {
     if (e) throw e;
     cacheData = JSON.parse(new TextDecoder("utf-8").decode(contents))
-    cacheData["installedApps"][app] = { "app": app, "repo": repo, "name": name };
+    delete cacheData["installedApps"][app];
+
+    fs.writeFile("/workstore_cache.json", JSON.stringify(cacheData), (e) => { if (e) throw e; })
+  })
+}
+async function addAppReceipt(app, repo, name) {
+  await addCacheFile()
+  fs.readFile("/workstore_cache.json", async (e, contents) => {
+    if (e) throw e;
+    cacheData = JSON.parse(new TextDecoder("utf-8").decode(contents))
+    let package = await new Promise((res) => {
+      fs.readFile(`/userApps/${app}/manifest.json`, (e, contents) => {
+        if (e) throw e;
+        manifestData = JSON.parse(new TextDecoder("utf-8").decode(contents))
+        res(manifestData["package"]);
+      })
+    })
+    cacheData["installedApps"][app] = { "app": app, "repo": repo, "name": name, "package": package };
 
     fs.writeFile("/workstore_cache.json", JSON.stringify(cacheData), (e) => { if (e) throw e; })
   })
 }
 
 function addCacheFile() {
-  fs.exists("/workstore_cache.json", (exists) => {
-    if (exists) return; // TODO: corruption checking should be done here
+  return new Promise((res) => {
+    fs.exists("/workstore_cache.json", (exists) => {
+      if (exists) return; // TODO: corruption checking should be done here
 
-    const cacheTemplate = JSON.stringify({
-      "installedApps": {}, // npm like system @repo/app should be implemented in the future
-      "cachedRepos": {}
+      const cacheTemplate = JSON.stringify({
+        "installedApps": {}, // npm like system @repo/app should be implemented in the future
+        "cachedRepos": {}
+      })
+
+      fs.writeFile("/workstore_cache.json", cacheTemplate, (e) => { res(); if (e) throw e; })
     })
-
-    fs.writeFile("/workstore_cache.json", cacheTemplate, (e) => { if (e) throw e; })
   })
 }

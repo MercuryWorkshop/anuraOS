@@ -160,7 +160,7 @@ class Launcher {
     }
     delShortcut(app: App) {
         this.element
-            .querySelector(`.app [data-package=${app.package}]`)
+            .querySelector(`.app[data-package='${app.package}']`)
             .remove();
     }
 
