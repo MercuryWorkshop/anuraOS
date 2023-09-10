@@ -69,15 +69,30 @@ class Anura {
         error: console.error.bind(console, "anuraOS:"),
     };
     // net = new Networking();
+
     async registerApp(app: App) {
         if (app.package in this.apps) {
             throw "Application already installed";
         }
 
         launcher.addShortcut(app);
-        taskbar.addShortcut(app);
 
         this.apps[app.package] = app;
+
+        if (this.initComplete) {
+            taskbar.updateTaskbar();
+            alttab.update();
+        }
+        return app;
+    }
+    async unregisterApp(app: App) {
+        if (!(app.package in this.apps)) {
+            throw "Application not installed";
+        }
+
+        launcher.delShortcut(app);
+
+        delete this.apps[app.package];
 
         if (this.initComplete) {
             taskbar.updateTaskbar();

@@ -155,12 +155,18 @@ class Launcher {
             this.hide();
             app.open();
         });
+
         this.element.querySelector("#appsView").appendChild(shortcut);
+    }
+    delShortcut(app: App) {
+        this.element
+            .querySelector(`.app [data-package=${app.package}]`)
+            .remove();
     }
 
     shortcutElement(app: App): HTMLElement {
         return (
-            <div class="app">
+            <div class="app" data-package={app.package}>
                 <input
                     class="app-shortcut-image showDialog"
                     type="image"

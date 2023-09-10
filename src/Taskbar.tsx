@@ -226,11 +226,6 @@ class Taskbar {
             });
         }
     }
-    addShortcut(app: App) {
-        // const shortcut = new Shortcut(app);
-        // this.shortcuts[app.package] = shortcut;
-        // return shortcut;
-    }
     killself() {
         this.element.remove();
     }
