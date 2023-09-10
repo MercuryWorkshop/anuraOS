@@ -20,6 +20,7 @@ async function loadappListScreen(repo) {
     
     const repoItems = await (await client.fetch(repos[repo] + 'list.json')).json()
     const appList = document.createElement('div')
+    appList.className = 'center'
     
     for (const item in repoItems['apps']) {
         console.log(item)
