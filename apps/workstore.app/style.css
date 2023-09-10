@@ -13,6 +13,7 @@ body {
     border-radius: 25px;
     margin-right: 10px;
     margin-left: 10px;
+    margin-bottom: 10px;
     background-color: #222222;
     transition: 0.3s;
 }
@@ -52,6 +53,7 @@ nav {
     border-bottom: gray;
     top: 0;
     left: 0;
+    z-index: 1;
 }
 nav > h1 {
     /* position: fixed; */
@@ -94,3 +96,9 @@ nav > h1 {
     outline: none;
 }
 
+.center {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}

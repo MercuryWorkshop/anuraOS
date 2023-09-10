@@ -9,6 +9,21 @@ async function loadMainScreen() {
         repoItem.onclick = function() {
             loadappListScreen(repoItem.innerText) // Weird hack to work around the fact that repo doesn't work but the innertext of the repoitem does
         }
+        repoItem.oncontextmenu = (e) => {
+            const newcontextmenu = new anura.ContextMenu();
+            newcontextmenu.addItem("Delete Repo", async function () {
+                delete repos[repoItem.innerText];
+                await anura.settings.set('workstore-repos', repos)
+                location.reload()
+            });
+            newcontextmenu.show(e.clientX, e.clientY)
+            document.onclick = (e) => {
+                document.onclick = null;
+                newcontextmenu.hide();
+                e.preventDefault();
+            }
+            e.preventDefault()
+        }
         repoItem.className = "repoItem"
         repoList.appendChild(repoItem)
     }
