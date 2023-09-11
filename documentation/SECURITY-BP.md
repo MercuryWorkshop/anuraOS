@@ -5,7 +5,7 @@ This Document will explain what and how security features are implemented in Anu
 
 ## Secure Math
 
-In Anura, when coding in security sensitive context, we replace `Math.random()` with our own function `cryptoRandom()`.  `cryptoRandom()` is a direct replacement for `Math.random()` and the two are fully interchangeable.  If you would like to implement `cryptoRandom()` you can use the following steps(for TypeScript):
+In Anura, when coding in a cryptographic/security sensitive context, we replace `Math.random()` with our own function `cryptoRandom()`.  `cryptoRandom()` is a direct replacement for `Math.random()` and the two are fully interchangeable.  If you would like to implement `cryptoRandom()` you can use the following steps(for TypeScript):
 
  1. If not already installed, run `npm install @types/node`
  2. Add `import * as crypto from "crypto";` to the head of whatever file in which you would like to replace `Math.random()`
