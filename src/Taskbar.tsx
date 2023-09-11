@@ -127,7 +127,7 @@ class Taskbar {
                 <div
                     class="lightbar"
                     style={
-                        "position: relative; bottom: 1px; background-color:#FFF; width:50%; left:50%; transform:translateX(-50%)" +
+                        "position: relative; bottom: 0px; background-color:#FFF; width:30%; left:50%; transform:translateX(-50%)" +
                         (app.windows?.length == 0 ? ";visibility:hidden" : "")
                     }
                     bind:lightbar={this}
