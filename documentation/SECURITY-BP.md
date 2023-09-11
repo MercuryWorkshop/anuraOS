@@ -9,7 +9,7 @@ In Anura, when coding in security sensitive context, we replace `Math.random()` 
 
  1. If not already installed, run `npm install @types/node`
  2. Add `import * as crypto from "crypto";` to the head of whatever file in which you would like to replace `Math.random()`
- 3. add the following function to your code:
+ 3. Add the following function to your code:
  
 ```ts
 function cryptoRandom() {
