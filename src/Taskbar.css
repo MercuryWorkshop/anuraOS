@@ -47,15 +47,15 @@
     background-color: rgba(255, 255, 255, 0.15);
     aspect-ratio: 1/1;
     padding: 0.1em;
-    padding-left: 1em;
+    padding-left: 1.5em;
 
-    padding-right: 1em;
+    padding-right: 1.5em;
     /* width: 5em; */
-    right: 1em;
+    right: 0.3em;
     top: 50%;
     transform: translateY(-50%);
 
-    border-radius: 1em;
+    border-radius: 25px;
     display: flex;
     align-items: center;
     justify-content: center;

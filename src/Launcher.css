@@ -9,15 +9,18 @@
 }
 
 #launcher-button {
-    background-color: gray;
-    opacity: 0.5;
+    background: rgba(255, 255, 255, 0.1);
+
     border-radius: 50%;
-    height: 38px;
-    width: 38px;
+    height: 42px;
+    width: 42px;
 }
 
 #launcher-button img {
     border-radius: 50%;
+    height: 15px;
+    width: 15px;
+    opacity: 100;
 }
 .hw-screen {
     height: 100%;
