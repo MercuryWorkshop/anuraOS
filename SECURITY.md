@@ -29,7 +29,6 @@ If you are wondering what counts as a vulnerability, heres a good list:
 -   The ability to execute arbitrary code on the server hosting Anura(not in Anura itself, as this is an intended feature)
 -   The ability to crash Anura(As in for everyone, not just your browser session)
 
-
 ## Implementing Security(For Project Members and Contributors)
 
 See [SECURITY-BP.md](./documentation/SECURITY-BP.md) for instructions on implementing security in your code.

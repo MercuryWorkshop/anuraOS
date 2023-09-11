@@ -26,7 +26,7 @@ class Launcher {
             opacity: 1;
             height: min(80%, 40em);
             z-index: 9999;
-            transition: all 0.2s ease-in;
+            transition: all 0.1s ease-in;
             visibility: visible;
         }
 
