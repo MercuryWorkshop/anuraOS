@@ -68,10 +68,11 @@ nav li {
 }
 .lightbar {
     width: 40px;
-    height: 5px;
+    height: 2px;
     position: relative;
     bottom: 1px;
     border-radius: 5px;
+    opacity: 0.75;
 }
 
 .bootsplash {
@@ -86,6 +87,7 @@ nav li {
     justify-content: center;
     align-content: center;
     flex-wrap: wrap;
+    transition: 0.3s;
 }
 
 .bootsplash > img {

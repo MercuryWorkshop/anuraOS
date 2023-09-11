@@ -5,10 +5,11 @@ class Launcher {
             width: min(70%, 35em);
             height: min(60%, 30em);
             background-color: rgba(22, 22, 22, 0.8);
-            border: 1px solid rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 0, 0, 1);
+            box-shadow: inset 0 0 0 1px #3e3e3e;
 
             border-radius: 1em;
-            bottom: 4.25em;
+            bottom: 4.5em;
             backdrop-filter: blur(5px);
             display: flex;
             flex-direction: column;
@@ -25,7 +26,7 @@ class Launcher {
             opacity: 1;
             height: min(80%, 40em);
             z-index: 9999;
-            transition: all 0.1s ease-in;
+            transition: all 0.2s ease-in;
             visibility: visible;
         }
 
