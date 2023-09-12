@@ -1,0 +1,13 @@
+{
+    "name": "Style",
+    "type": "auto",
+    "package": "anura.style",
+    "index": "index.html",
+    "icon": "style.png",
+    "wininfo":{
+      "title":"Style",
+      "width":"350px",
+      "height":"350px"
+    }
+  }
+  
