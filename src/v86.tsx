@@ -505,6 +505,11 @@ class V86Backend {
         });
     }
     resizepty(TTYn: number, cols: number, rows: number) {
+        // Until somebody fixes proper resizing, this is what you get, dont like it? fix it.
+        this.runcmd(
+            `stty -F /dev/pts/${TTYn} cols ${cols} && stty -F /dev/pts/${TTYn} rows ${rows}`,
+        );
+        /* 
         if (TTYn == -1) {
             return;
         }
@@ -518,6 +523,7 @@ class V86Backend {
         } else {
             this.act = true;
         }
+        */
     }
     async startMouseDriver() {
         let ready = false;
