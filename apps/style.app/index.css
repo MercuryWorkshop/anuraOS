@@ -1,0 +1,50 @@
+.wrapper {
+    width: auto;
+    height: auto;
+    
+}
+
+.element {
+    width: 200px;
+    height: 150px;
+    background: #333;
+    text-align: center;
+    float: left;
+    border-radius: 25px;
+    margin: 12px;
+}
+
+.element > img {
+    width: 190px;
+    height: 140px;
+    padding-top: 5px;
+    border-radius: 25px;
+}
+
+.element:hover {
+    cursor: pointer;
+}
+
+.upload {
+    width: 100px;
+    height: 25px;
+    background: #333;
+    text-align: center;
+    border-radius: 25px;
+    color: #fff;
+    font-family:
+        system-ui,
+        Ubuntu,
+        Droid Sans,
+        sans-serif;
+    font-size: 13px;
+    margin-left: 12px;
+}
+
+.upload > p {
+    padding-top: 3.5px;
+}
+
+.upload:hover {
+    cursor: pointer;
+}
