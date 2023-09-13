@@ -7,6 +7,7 @@ class AboutApp extends App {
         <div class="aboutapp-container">
             <div class="aboutapp-logo">
                 <img
+                    class="aboutapp-logo-img"
                     src="/assets/icons/about.png"
                     title="離れ離れの街を繋ぐ列車は行ってしまったね.."
                 />

@@ -16,8 +16,9 @@
     height: 128px;
 }
 
-.aboutapp-logo img {
+.aboutapp-logo-img {
     height: 100%;
+    border-radius: 10%;
 }
 
 .aboutapp-logo-divider {
