@@ -536,6 +536,8 @@ class SettingsApp extends App {
                                             }
                                         `}
                                     />
+                                    <br />
+                                    <span id="tracker"></span>
                                 </>
                             }
                             else={this.row(
