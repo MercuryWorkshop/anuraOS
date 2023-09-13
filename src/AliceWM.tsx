@@ -384,6 +384,7 @@ class WMWindow {
             // Unmaximize if already maximized (this will be done anyways) because titlebar click
             return;
         }
+
         this.oldstyle = this.element.getAttribute("style");
         const width =
             window.innerWidth ||
@@ -403,6 +404,7 @@ class WMWindow {
 
         this.justresized = true;
         this.maximized = true;
+        this.onresize(this.width, this.height);
     }
     async unmaximize() {
         console.log("restoring");
@@ -412,6 +414,7 @@ class WMWindow {
         await sleep(10); // Race condition as a feature
         this.justresized = true;
         this.maximized = false;
+        this.onresize(this.width, this.height);
     }
     minimize() {
         this.element.style.display = "none";
