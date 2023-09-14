@@ -1,0 +1,13 @@
+{
+  "name": "Xash3D",
+  "short_name": "Xash3D",
+  "display": "standalone",
+  "background_color": "#555555",
+  "description": "Xash3D Emscripten port",
+  "icons": [{
+    "src": "icon.png",
+    "sizes": "57x57",
+    "type": "image/png"
+  }],
+  "orientation" : "landscape"
+}

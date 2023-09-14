@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en-us">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<meta name="MobileOptimized" content="640"/>
+		<meta name="HandheldFriendly" content="true"/>
+		<title>Xash3D Emscripten Port</title>
+		<style>
+		  body {
+			font-family: arial;
+			margin: 0;
+			padding: none;
+			background-color: #555555;
+			color: #f0b418;
+		  }
+
+		  .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+		  div.emscripten { text-align: center; }
+		  div.emscripten_border { border: 2px solid #F0b418; }
+		  /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+		  canvas.emscripten { border: 0px none; background-color: black; }
+
+		  @-webkit-keyframes rotation {
+			from {-webkit-transform: rotate(0deg);}
+			to {-webkit-transform: rotate(360deg);}
+		  }
+		  @-moz-keyframes rotation {
+			from {-moz-transform: rotate(0deg);}
+			to {-moz-transform: rotate(360deg);}
+		  }
+		  @-o-keyframes rotation {
+			from {-o-transform: rotate(0deg);}
+			to {-o-transform: rotate(360deg);}
+		  }
+		  @keyframes rotation {
+			from {transform: rotate(0deg);}
+			to {transform: rotate(360deg);}
+		  }
+
+
+		  #controls {
+			display: inline-block;
+			float: right;
+			vertical-align: top;
+			margin-top: 5px;
+			margin-right: 20px;
+		  }
+
+		  #output {
+			width: 100%;
+			height: 200px;
+			margin: 0 auto;
+			margin-top: 10px;
+			border-left: 0px;
+			border-right: 0px;
+			border-style: solid;
+			padding-left: 0px;
+			padding-right: 0px;
+			display: block;
+			background-color: black;
+			color: white;
+			font-family: 'Lucida Console', Monaco, monospace;
+			outline: none;
+			border-color:#f0B418;
+		  }
+
+
+		.loader {
+		  border: 4px solid #f3f3f3;
+		  border-radius: 50%;
+		  border-top: 4px solid #ffa600;
+		  width: 16px;
+		  height: 16px;
+		  -webkit-animation: spin 2s linear infinite; /* Safari */
+		  animation: spin 2s linear infinite;
+		}
+
+		/* Safari */
+		@-webkit-keyframes spin {
+		  0% { -webkit-transform: rotate(0deg); }
+		  100% { -webkit-transform: rotate(360deg); }
+		}
+
+		@keyframes spin {
+		  0% { transform: rotate(0deg); }
+		  100% { transform: rotate(360deg); }
+		}
+
+
+
+		a.glow, a.glow:hover, a.glow:focus
+		{
+			text-decoration: none;
+			color: #F0B418;
+			text-shadow: none;
+			-webkit-transition: 500ms linear 0s;
+			-moz-transition: 500ms linear 0s;
+			-o-transition: 500ms linear 0s;
+			transition: 500ms linear 0s;
+			outline: 0 none;
+		}
+		a.glow:hover, a.glow:focus
+		{
+			color: #ffa600;
+			text-shadow: -1px 1px 8px #ffa600, 1px -1px 8px #ffa600;
+		}
+		if (document.createElement("detect").style.textShadow === "") {
+			document.getElementsByTagName("html")[0].className += " textshadow";
+		}
+
+		</style>
+	</head>
+	<body onerror=alert(event); bgcolor=#555555 text=#F0B418 link=#ffa600 vlink=#ffa600>
+		<div class="emscripten_border">
+			<canvas style="display:none" class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+		</div>
+
+		<p><div style=width:100%;height:0px>
+			<div style="float:left;" id="status">Downloading...</div>
+			<div id="progress1" style=position:relative;z-index:10;display:none;float:right;width:70%;border-color:#F0B418;border-style:solid;border-width:2px;height:20px><div id=progress style=text-align:center;background-color:#F0B418;border-color:#555555;border-style:solid:border-width:3px;width:50%;height:20px></div></div><br>
+		</div><br></p>
+
+		<div class="loader" id=loader1></div>
+
+		<div style=width:100%><span id='controls'>
+			<a class="glow"><span><input type="checkbox" id="resize">Resize canvas</span></a>
+			<a class="glow"><span><input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer &nbsp;&nbsp;&nbsp;</span></a>
+			<span><input type="button" value="Fullscreen" onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked, document.getElementById('resize').checked)"></span>
+		</span></div>
+
+		<textarea id="output" rows="8"></textarea><div  id="asyncDialog" style="float:left"></div>
+
+		<a class="glow"><u><div id=optionsTitle><h1>Game Options</h1></u></div></a>
+
+		<form style=display:none id=fSettings>Select filesystem for settings and saverestore:<br><br>
+			<div id=idbHider style=display:none><input name=a type=radio id=rIndexedDB />IndexedDB (Need exit correctly to save changes)<br></div>
+			<input name=a type=radio id=rLocalStorage />LocalStorage (Sometimes not enough space)<br>
+			<input name=a type=radio id=rNone checked=true />None(in RAM)<br><br>
+			<hr>
+			Select game data source:<br><br>
+			<div id=pkgHider style=display:none><input name=b type=radio id=rPackage checked=true />Emscripten package from server (cached in IndexedDB if availiable)<select id=selectPkg style=display:none></select><br></div>
+			<div id=zipHider style=display:none><input name=b type=radio id=rZip />ZIP archive from server (slower, but smaller, no IndexedDB cache)<select id=selectZip style=display:none></select><br></div>
+			<input name=b type=radio id=rLocalZip  />Local ZIP file:<input type=file name=c id=iZipFile /><br><br>
+			<hr>
+			Command-line arguments: <input name=d type=text id=iArgs /><br><br>
+
+			<input type=button onclick="startXash();return false;" value="Launch Xash3D!" />
+
+			<br><hr>
+
+			<div id='linksPlaceholder' style=display:none>Download archives to load locally next time:</div><br>
+		</form>
+
+		<script type='text/javascript' src='browserfs.min.js'></script>
+		<script type='text/javascript'>
+		var zipMods = [];
+		var pkgMods = [];
+		</script>
+
+		<script type='text/javascript' src='mods.js'></script>
+
+		<script type='text/javascript'>
+		var statusElement = document.getElementById('status');
+		var progressElement = document.getElementById('progress');
+		var asyncDialog = document.getElementById('asyncDialog');
+		var myerrorbuf = ''
+		var myerrordate = new Date();
+		var mounted = false;
+		var gamedir = 'valve';
+		var moduleCount = 0;
+		//var mem = 150;
+		var mfs;
+		var zipSize;
+
+
+		// make BrowserFS to work on ES5 browsers
+		if (!ArrayBuffer['isView']) {
+			ArrayBuffer.isView = function(a) {
+				return a !== null && typeof(a) === "object" && a['buffer'] instanceof ArrayBuffer;
+			};
+
+		}
+
+		showElement('optionsTitle', false);
+
+		function prepareSelects()
+		{
+			var len = zipMods.length;
+			var select = document.getElementById('selectZip');
+			if( len )
+			{
+				showElement('zipHider', true);
+
+				if(len > 1)
+				{
+					var links = '';
+					for(var i = 0; i < len; i++)
+					{
+						select.options[i] = new Option(zipMods[i][1], zipMods[i][0]);
+						links += '<br><a href="'+zipMods[i][0]+'">'+zipMods[i][1]+'</a>';
+					}
+					select.style.display = 'block';
+					document.getElementById('linksPlaceholder').innerHTML += links;
+					showElement('linksPlaceholder', true);
+				}
+			}
+			else
+				document.getElementById('rZip').checked = false;
+			len = pkgMods.length;
+			select = document.getElementById('selectPkg');
+			if( len )
+			{
+				showElement('pkgHider', true);
+
+				if(len > 1)
+				{
+					for(var i = 0; i < len; i++)
+						select.options[i] = new Option(pkgMods[i][1], pkgMods[i][0]);
+					select.style.display = 'block';
+				}
+			}
+			else
+				document.getElementById('rPackage').checked = false;
+
+			if( !zipMods.length && !len )
+			{
+				document.getElementById('rLocalZip').checked = true;
+				showElement('rLocalZip', false);
+			}
+		}
+
+		try{mem = Math.round(window.location.hash.substring(1));}catch(e){};
+
+		var Module = {
+			TOTAL_MEMORY: mem * 1024 * 1024,
+			preRun: [],
+			postRun: [],
+			print: (function() {
+				var element = document.getElementById('output');
+				if (element) element.value = ''; // clear browser cache
+				return function(text) {
+					if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+					// These replacements are necessary if you render to raw HTML
+					//text = text.replace(/&/g, "&amp;");
+					//text = text.replace(/</g, "&lt;");
+					//text = text.replace(/>/g, "&gt;");
+					//text = text.replace('\n', '<br>', 'g');
+					//console.log(text);
+					if(text)
+						myerrorbuf += text + '\n';
+					if (element) {
+						if(element.value.length > 65536)
+							element.value = element.value.substring(512) + myerrorbuf;
+						else
+							element.value += myerrorbuf;
+						element.scrollTop = element.scrollHeight; // focus on bottom
+					}
+					myerrorbuf = ''
+				};
+			})(),
+			printErr: function(text) {
+				if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+				if (0) { // XXX disabled for safety typeof dump == 'function') {
+					dump(text + '\n'); // fast, straight to the real console
+				} else {
+					if( myerrorbuf.length > 2048 )
+					myerrorbuf = 'some lines skipped\n'+ myerrorbuf.substring(512);
+					myerrorbuf += text + '\n';
+					if(  new Date() - myerrordate > 3000 )
+					{
+						myerrordate = new Date();
+						Module.print();
+					}
+				}
+			},
+			canvas: (function() {
+				var canvas = document.getElementById('canvas');
+
+				// As a default initial behavior, pop up an alert when webgl context is lost. To make your
+				// application robust, you may want to override this behavior before shipping!
+				// See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+				canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+				return canvas;
+			})(),
+			setStatus: function(text) {
+				if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+				if (text === Module.setStatus.text) return;
+				if(  new Date() - myerrordate > 3000 )
+				{
+					myerrordate = new Date();
+					Module.print();
+				}
+
+				statusElement.innerHTML = text;
+				if( progressElement )
+				{
+					var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+
+					if(m)
+					{
+						var progress = Math.round(parseInt(m[2])*100/parseInt(m[4]));
+						progressElement.style.color = progress > 5?'#303030':'#aaa000';
+						progressElement.style.width = progressElement.innerHTML = ''+progress+'%';
+					}
+					showElement('progress1', !!m);
+				}
+			},
+			totalDependencies: 0,
+			monitorRunDependencies: function(left) {
+				this.totalDependencies = Math.max(this.totalDependencies, left);
+				if(left)
+					Module.setStatus('Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')');
+			}
+		};
+		window.onerror = function(event) {
+			if(mounted)
+				FS.syncfs(false, function(err){Module.print('Saving IDBFS: '+err);});
+			if( (''+event).indexOf('SimulateInfiniteLoop') > 0 )
+				return;
+			var text = 'Exception thrown: ' + event;
+			text = text.replace(/&/g, "&amp;");
+			text = text.replace(/</g, "&lt;");
+			text = text.replace(/>/g, "&gt;");
+			text = text.replace('\n', '<br>', 'g');
+			Module.setStatus(text);
+			Module.print('Exception thrown: ' + event);
+		};
+
+		function haltRun()
+		{
+		}
+
+		var savedRun;
+
+		function radioChecked(id)
+		{
+			var r = document.getElementById('r'+id);
+			if(r) return r.checked;
+			return false;
+		}
+
+		function showElement(id, show)
+		{
+			var e = document.getElementById(id);
+			if(!e) return;
+			e.style.display=show?'block':'none';
+		}
+		Module.setStatus('Downloading...');
+
+
+
+		function startXash()
+		{
+			showElement('loader1', false);
+			showElement('optionsTitle', false);
+			showElement('fSettings', false);
+			setupFS();
+			Module.arguments = document.getElementById('iArgs').value.split(' ');
+			Module.run = run = savedRun;
+			if( radioChecked('Zip') )
+				fetchZIP(zipMods.length>1?document.getElementById('selectZip').value:zipMods[0][0], savedRun);
+			else if( (!zipMods.length && !pkgMods.length) || radioChecked('LocalZip') )
+			{
+			var reader = new FileReader();
+				reader.onload = function(){
+					mountZIP(reader.result);
+					Module.print("Loaded zip data");
+					savedRun();
+				};
+				reader.readAsArrayBuffer(document.getElementById('iZipFile').files[0]);
+			}
+			else if( radioChecked('Package') )
+			{
+				var script = document.createElement('script');
+				script.onload = savedRun;
+				document.body.appendChild(script);
+				script.src = pkgMods.length>1?document.getElementById('selectPkg').value:pkgMods[0][0];
+			}
+			showElement('canvas', true);
+
+			window.addEventListener("beforeunload", function (e) {
+				var confirmationMessage = 'Leave the game?';
+
+				(e || window.event).returnValue = confirmationMessage; //Gecko + IE
+				return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+			});
+		}
+
+		function mountZIP(data)
+		{
+			var Buffer = BrowserFS.BFSRequire('buffer').Buffer;
+			mfs.mount('/zip', new BrowserFS.FileSystem.ZipFS(Buffer.from(data)));
+			FS.mount(new BrowserFS.EmscriptenFS(), {root:'/zip'}, '/rodir');
+		}
+
+		function fetchZIP(packageName, cb)
+		{
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', packageName, true);
+			xhr.responseType = 'arraybuffer';
+
+			xhr.onprogress = function(event) {
+				var url = packageName;
+				var size;
+				if (event.total) size = event.total;
+				else size = zipMods[document.getElementById('selectZip').selectedIndex][2];
+				if (event.loaded) {
+					var total = size;
+					var loaded = event.loaded;
+					var num = 0;
+					if (Module['setStatus']) Module['setStatus']('Downloading data... (' + loaded + '/' + total + ')');
+				} else if (!Module.dataFileDownloads) {
+					if (Module['setStatus']) Module['setStatus']('Downloading data...');
+				}
+			};
+			xhr.onerror = function(event) {
+				throw new Error("NetworkError");
+			}
+			xhr.onload = function(event) {
+				if (xhr.status == 200 || xhr.status == 304 || xhr.status == 206 || (xhr.status == 0 && xhr.response)) { // file URLs can return 0
+					mountZIP(xhr.response);
+					cb();
+				} else {
+					throw new Error(xhr.statusText + " : " + xhr.responseURL);
+				}
+			};
+			xhr.send(null);
+		}
+
+		function setupFS()
+		{
+			FS.mkdir('/rodir');
+			FS.mkdir('/xash');
+			try
+			{
+				mfs = new BrowserFS.FileSystem.MountableFileSystem();
+				BrowserFS.initialize(mfs);
+			}
+			catch(e)
+			{
+				mfs = undefined;
+				Module.print('Failed to initialize BrowserFS: '+e);
+			}
+
+			if( radioChecked('IndexedDB'))
+			{
+				FS.mount(IDBFS,{},'/xash');
+				FS.syncfs(true,function(err){if(err)Module.print('Loading IDBFS: ' + err);});
+				mounted = true;
+			}
+
+			if( radioChecked('LocalStorage') && mfs)
+			{
+				mfs.mount('/ls', new BrowserFS.FileSystem.LocalStorage());
+				FS.mount(new BrowserFS.EmscriptenFS(), {root:'/ls'}, '/xash');
+				Module.print('LocalStorage mounted');
+			}
+
+			FS.chdir('/xash/');
+		}
+
+		function skipRun()
+		{
+			savedRun = run;
+			Module.run = haltRun;
+			run = haltRun;
+
+			Module.setStatus("Engine downloaded!");
+			showElement('loader1', false);
+			showElement('optionsTitle', true);
+
+			if(window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB)
+				showElement('idbHider', true);
+			prepareSelects();
+			showElement('fSettings',true);
+
+			ENV.XASH3D_GAMEDIR = gamedir;
+			ENV.XASH3D_RODIR = '/rodir'
+
+			function loadModule(name)
+			{
+				var script = document.createElement('script');
+				script.onload = function(){moduleCount++;if(moduleCount==3){Module.setStatus("Scripts downloaded!");}};
+				document.body.appendChild(script);
+				script.src = name + ".js";
+			}
+
+			loadModule("server");
+			loadModule("client");
+			loadModule("menu");
+		};
+
+		Module.preInit = [skipRun];
+		Module.websocket = [];
+		Module.websocket.url = 'wsproxy://the-swank.pp.ua:3000/'
+		ENV = [];
+		</script>
+
+		<script>
+          (function() {
+            var memoryInitializer = 'xash.html.mem';
+            if (typeof Module['locateFile'] === 'function') {
+              memoryInitializer = Module['locateFile'](memoryInitializer);
+            } else if (Module['memoryInitializerPrefixURL']) {
+              memoryInitializer = Module['memoryInitializerPrefixURL'] + memoryInitializer;
+            }
+            var xhr = Module['memoryInitializerRequest'] = new XMLHttpRequest();
+            xhr.open('GET', memoryInitializer, true);
+            xhr.responseType = 'arraybuffer';
+            xhr.send(null);
+          })();
+
+          var script = document.createElement('script');
+          script.src = "xash.js";
+          document.body.appendChild(script);
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-68666752-4', 'auto');
+  ga('send', 'pageview');
+
+</script>
+	</body>
+</html>

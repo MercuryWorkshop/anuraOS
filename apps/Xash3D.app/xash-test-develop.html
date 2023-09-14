@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en-us">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<meta name="MobileOptimized" content="640"/>
+		<meta name="HandheldFriendly" content="true"/>
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<link rel="apple-touch-icon" href="icon.png" />
+		<link rel="apple-touch-startup-image" href="home.png" />
+		<meta name="apple-mobile-web-app-title" content="Xash3D">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="manifest" href="xash.webmanifest">
+		<title>Xash3D Emscripten Port</title>
+		<style>
+		  html {
+			-webkit-text-size-adjust: 100%;
+		  }
+		  body {
+			font-family: arial;
+			margin: 0;
+			padding: none;
+			background-color: #555555;
+			color: #f0b418;
+		  }
+
+		  .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+		  div.emscripten { text-align: center; }
+		  div.emscripten_border { border: 0px solid #000000; }
+		  /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+		  canvas.emscripten { border: 0px none; background-color: black; }
+
+		  #output {
+			width: 100%;
+			max-width: 100%;
+			min-width: 100%;
+			height: 200px;
+			margin: 0 auto;
+			margin-top: 10px;
+			border-left: 0px;
+			border-right: 0px;
+			border-style: solid;
+			padding-left: 0px;
+			padding-right: 0px;
+			display: block;
+			background-color: black;
+			color: white;
+			font-family: 'Lucida Console', Monaco, monospace;
+			outline: none;
+			border-color:#f0B418;
+		  }
+		</style>
+	</head>
+	<body onerror=alert(event); bgcolor=#555555 text=#F0B418 link=#aaa000 vlink=#aaa000>
+		<div class="emscripten_border">
+			<canvas style="display:none" class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+		</div>
+
+		<p><div style=width:100%;height:0px>
+			<div style="float:left;margin:15px" id="status">Downloading...</div>
+			<div id="progress1" style=position:relative;z-index:10;display:none;float:right;width:70%;border-color:#F0B418;border-style:solid;border-width:2px;height:20px><div id=progress style=text-align:center;background-color:#F0B418;border-color:#555555;border-style:solid:border-width:3px;width:50%;height:20px></div></div><br>
+		</div><br></p>
+
+
+
+
+		<textarea id="output" rows="8"></textarea><div  id="asyncDialog" style="float:left"></div>
+		<form style="display:none;margin:10px" id=fSettings>Select filesystem for settings and saverestore:<br>
+			<div id=idbHider style=display:none><input name=a type=radio id=rIndexedDB />IndexedDB (Need exit correctly to save changes)<br></div>
+			<input name=a type=radio id=rLocalStorage />LocalStorage (Only 5MB availiable, downloads ignored)<br>
+			<input name=a type=radio id=rNone checked=true />None(in RAM)<br>
+			Select game data source:<br>
+			<div id=pkgHider style=display:none><input name=b type=radio id=rPackage checked=true />Emscripten package from server (cached in IndexedDB if availiable)<select id=selectPkg style=display:none></select><br></div>
+			<div id=zipHider style=display:none><input name=b type=radio id=rZip />ZIP archive from server (slower, but smaller, IndexedDB cache if availiable)<select id=selectZip style=display:none></select><br></div>
+			<div id=aczHider style=display:none><input name=b type=radio id=rACZip />ZIP archive with offline cache (maybe unstable)<select id=selectACZip style=display:none></select><br></div>
+			<input name=b type=radio id=rLocalZip  />Local ZIP file:<input type=file name=c id=iZipFile /><br>
+			Command-line arguments: <input name=d type=text id=iArgs /><br>
+
+			<input type=button onclick="startXash();return false;" value="Launch Xash3D" />
+			<input type=button onclick="savePageArgs();saveHash();return false;" value="Update link" />
+			
+			<div id='linksPlaceholder' style=display:none>Download archives to load locally next time:</div>
+		</form>
+		<div style=width:100%><span id='controls' style='display:none;'>
+			<span><input type="button" value="Fullscreen" onclick="Module.requestFullscreen(false, false)"></span>
+		</span></div>
+
+		<script type='text/javascript' src='browserfs.min.js'></script>
+		<script type='text/javascript'>
+		var zipMods = [];
+		var pkgMods = [];
+		var aczMods = [];
+		</script>
+
+		<script type='text/javascript' src='mods.js'></script>
+
+		<script type='text/javascript' src='xash-test-develop.js'>
+
+		</script>
+
+		<script>
+          (function() {
+            var memoryInitializer = 'xash.html.mem';
+            if (typeof Module['locateFile'] === 'function') {
+              memoryInitializer = Module['locateFile'](memoryInitializer);
+            } else if (Module['memoryInitializerPrefixURL']) {
+              memoryInitializer = Module['memoryInitializerPrefixURL'] + memoryInitializer;
+            }
+            var xhr = Module['memoryInitializerRequest'] = new XMLHttpRequest();
+            xhr.open('GET', memoryInitializer, true);
+            xhr.responseType = 'arraybuffer';
+            xhr.send(null);
+          })();
+
+          var script = document.createElement('script');
+          script.src = "xash.js";
+          document.body.appendChild(script);
+		</script>
+	</body>
+</html>

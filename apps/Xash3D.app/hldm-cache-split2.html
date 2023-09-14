@@ -1,0 +1,64 @@
+<html manifest="hldm-split-2.appcache">
+<body onerror="alert(event)">
+<script>
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position){
+      position = position || 0;
+      return this.substr(position, searchString.length) === searchString;
+  };
+}
+		if( !parent )
+			document.write("This must be loaded as frame!");
+		var Module = parent.window.Module;
+		var appCache = window.applicationCache;
+		var mounted = false;
+		var packageName = 'hldm-split.zip.part2';
+	
+		function mountCache()
+		{
+			if( mounted ) return;
+			mounted = true;
+			Module.setStatus('Preparing part2');
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', packageName, true);
+			xhr.responseType = 'arraybuffer';
+			xhr.onerror = function(event) {
+				throw new Error("NetworkError");
+				parent.window.offlineCacheFallback()
+			}
+			xhr.onload = function(event) {
+				if (xhr.status == 200 || xhr.status == 304 || xhr.status == 206 || (xhr.status == 0 && xhr.response)) { // file URLs can return 0
+					parent.window.partCb(1, xhr.response);
+				} else {
+					Module.print(xhr.statusText + " : " + xhr.responseURL);
+					parent.window.offlineCacheFallback();
+				}
+			};
+			xhr.send(null);
+
+		}
+		if( appCache )
+		{
+			var initState = appCache.status;
+			if( initState == 1 || initState == 2 || initState == 4 )
+				mountCache();
+			else
+				Module.setStatus('Cache not ready!');
+			Module.print("appCache status: "+ appCache.status);
+			appCache.addEventListener('cached', function(e) {Module.print('Appcache cached, status:' + appCache.status);mountCache();}, false);
+			appCache.addEventListener('downloading', function(e) {Module.setStatus('Starting download offline cache');
+			Module.print('Appcache downloading, status:' + appCache.status)}, false);
+			appCache.addEventListener('progress', function(e) {Module.setStatus('Downloading offline cache');Module.print('Appcache progress, status:' + appCache.status); if(initState != 0 && appCache.status == 0) Module.print("appCache error detected");},	false);
+			appCache.addEventListener('updateready', function(e) {Module.print('Appcache updateready, status:' + appCache.status);mountCache();}, false);
+			appCache.addEventListener('error', function(e) {Module.setStatus('Error: failed to activate caching!');parent.window.offlineCacheFallback();}, false);
+			appCache.addEventListener('checking', function(e) {Module.print('Appcache checking, status:' + appCache.status); if( appCache.status == 2 ) mountCache();}, false);
+
+		}
+		else
+		{
+			Module.print("appCache not supported!");
+			parent.window.offlineCacheFallback();
+		}
+</script>
+</body>
+</html>
