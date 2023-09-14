@@ -6,11 +6,10 @@ class AboutApp extends App {
     page = async () => (
         <div class="aboutapp-container">
             <div class="aboutapp-logo">
-                <img
+                <div
                     class="aboutapp-logo-img"
-                    src="/assets/icons/about.png"
-                    title="離れ離れの街を繋ぐ列車は行ってしまったね.."
-                />
+                    title="離れ離れ街を繋ぐ列車は行ってしまったね.."
+                ></div>
             </div>
             <div class="aboutapp-logo-divider"></div>
             <div class="aboutapp-content">
