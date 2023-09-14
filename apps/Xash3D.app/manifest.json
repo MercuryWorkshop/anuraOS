@@ -3,7 +3,7 @@
   "type": "auto",
   "package": "anura.Xash",
   "index": "index.html",
-  "icon": "terminal.svg",
+  "icon": "favicon.ico",
   "wininfo":{
     "title":"Xash3D",
     "width":"700px",

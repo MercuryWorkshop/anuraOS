@@ -1,5 +1,5 @@
 function loadingScript(currentpath) {
-    let glxgears = AliceWM.create("SSH")
+    let glxgears = AliceWM.create("Xash")
 
     let iframe = document.createElement("iframe")
     iframe.style = "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;"
