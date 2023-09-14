@@ -2,7 +2,7 @@
   "name": "Xash3D",
   "type": "auto",
   "package": "anura.Xash",
-  "index": "index.html",
+  "index": "xash.html",
   "icon": "favicon.ico",
   "wininfo":{
     "title":"Xash3D",
