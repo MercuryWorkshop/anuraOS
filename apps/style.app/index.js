@@ -4,4 +4,6 @@ function changeWallpaper(wallpaper) {
     window.parent.document.body.style.backgroundSize = "cover";
     window.parent.document.body.style.backgroundPositionY = "center";
 }
+
+
 // background: url(/assets/wallpaper/touhou.jpg) no-repeat center center
