@@ -21,13 +21,13 @@ function disableStylesheet(node) {
 }
 
 function enableNormal() {
-    window.parent.document.querySelectorAll('link[rel=stylesheet].alternate').forEach(disableStylesheet);
+    window.parent.document.querySelectorAll('link[rel=stylesheet].compact').forEach(disableStylesheet);
     window.parent.document.querySelectorAll('link[rel=stylesheet].main').forEach(enableStylesheet);
     localStorage.setItem("env", "n");
 }
 
 function enableCompact() {
-    window.parent.document.querySelectorAll('link[rel=stylesheet].alternate').forEach(enableStylesheet);
+    window.parent.document.querySelectorAll('link[rel=stylesheet].compact').forEach(enableStylesheet);
     window.parent.document.querySelectorAll('link[rel=stylesheet].main').forEach(disableStylesheet);
     localStorage.setItem("env", "c");
 }
