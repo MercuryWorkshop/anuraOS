@@ -1,0 +1,648 @@
+.aliceWMwin {
+    user-select: none; /* FUCK ie and safari no one uses them anyways */
+    height: 200px;
+    width: 500px;
+    background: white;
+    position: fixed;
+    overflow: hidden;
+    z-index: 91;
+    display: flex; /* FLEXBOX #2 */
+    border: 2px solid var(--material-border);
+    flex-direction: column;
+    box-shadow:
+        0 4px 8px 0 rgba(0, 0, 0, 0.2),
+        0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius: 3px;
+    transition:
+        visibility 0s,
+        opacity 0.2s linear;
+    opacity: 1;
+}
+.opacity0 {
+    opacity: 0;
+}
+
+.aliceWMwin .title {
+    display: flex;
+    background-color: var(--material-bg);
+    font-weight: bold;
+    color: white;
+    height: 24px;
+    padding: 2px;
+    align-items: center;
+    z-index: 1;
+}
+
+.aliceWMwin .titleContent {
+    flex: 1;
+}
+
+.aliceWMwin .content {
+    padding: 2px;
+    flex: 1;
+}
+
+.aliceWMwin .title:hover {
+    cursor: move;
+}
+
+.aliceWMwin .windowButton {
+    background-color: transparent;
+    color: white;
+    border: none;
+    border-radius: 100%;
+    margin: 2px;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease-in-out;
+    z-index: 2;
+}
+
+.aliceWMwin .windowButton > span {
+    font-size: 16px;
+}
+
+.aliceWMwin .windowButton:hover {
+    background-color: #333;
+}
+
+.aliceWMwin .windowButton:active {
+    background-color: gray;
+}
+
+.resize-corner {
+    width: 10px;
+    height: 10px;
+
+    position: absolute;
+    z-index: 2;
+}
+.resize-edge {
+    position: absolute;
+    z-index: 2;
+    padding: 5px;
+}
+.resize-edge.left {
+    left: -5px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resize-edge.right {
+    right: -5px;
+    height: 100%;
+    cursor: e-resize;
+}
+.resize-edge.top {
+    top: -5px;
+    width: 100%;
+    cursor: s-resize;
+}
+.resize-edge.bottom {
+    bottom: -5px;
+    width: 100%;
+    cursor: s-resize;
+}
+.resize-corner.top-left {
+    left: -5px;
+    top: -5px;
+    cursor: nwse-resize; /*resizer cursor*/
+}
+.resize-corner.top-right {
+    right: -5px;
+    top: -5px;
+    cursor: nesw-resize;
+}
+.resize-corner.bottom-left {
+    left: -5px;
+    bottom: -5px;
+    cursor: nesw-resize;
+}
+.resize-corner.bottom-right {
+    right: -5px;
+    bottom: -5px;
+    cursor: nwse-resize;
+}
+.alttab-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0.5em;
+    border-radius: 0.25rem;
+    background-color: #374144ab;
+    color: #eee;
+}
+
+.alttab-hidden {
+    display: none;
+}
+
+.alttab-window-list {
+    display: flex;
+}
+
+.alttab-nowindows {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alttab-window,
+.alttab-nowindows {
+    min-width: 10rem;
+    min-height: 5.625rem;
+    padding: 1em;
+    border: 0.125rem solid #00000000;
+    border-radius: 0.25rem;
+}
+
+.alttab-window {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.alttab-window-selected {
+    border-color: #4698af;
+}
+
+.alttab-window-icon-container {
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.alttab-icon-large {
+    width: 3rem;
+    height: 3rem;
+}
+
+.alttab-icon-inline {
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0 0.25em;
+}
+
+.alttab-titlebar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alttab-window-title-text {
+    margin: 0.5em;
+}
+#launcher-button-container {
+    position: absolute;
+    height: 100%;
+    aspect-ratio: 1/1;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.3em;
+}
+
+#launcher-button {
+    background: rgba(255, 255, 255, 0.1);
+
+    border-radius: 50%;
+    height: 42px;
+    width: 42px;
+}
+
+#launcher-button img {
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+    opacity: 100;
+}
+.hw-screen {
+    height: 100%;
+    width: 100%;
+}
+.notif-container {
+    position: absolute;
+    float: right;
+    bottom: 70px;
+    right: 20px;
+    z-index: 9997;
+}
+
+#seperator {
+    background: #666;
+    width: 2px;
+    height: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.notif {
+    position: relative;
+    font-family: "Roboto";
+    background-color: rgba(22, 22, 22, 0.8);
+    border-radius: 12px;
+    color: white;
+    min-height: 115px;
+    width: 400px;
+    cursor: pointer;
+    margin: 10px;
+    left: 525px;
+    animation: slideIn 0.5s ease-in-out forwards;
+    opacity: 1;
+    transition: 350ms ease-in-out;
+    border: 1px solid rgba(0, 0, 0, 1);
+    box-shadow: inset 0 0 0 1px #3e3e3e;
+}
+
+@keyframes slideIn {
+    from {
+        left: 500px;
+    }
+    to {
+        left: 0px;
+    }
+}
+@keyframes slide-in {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(-5%);
+    }
+}
+@keyframes slide-out {
+    from {
+        transform: translateY(0%);
+    }
+    to {
+        transform: translateY(100%);
+    }
+}
+.notif-body {
+    margin: 10px;
+    padding-top: 5px;
+}
+
+.notif-description {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    font-size: 16px;
+}
+.notif-title {
+    font-size: 18px;
+    padding-left: 10px;
+    padding-top: 10px;
+    font-weight: bold;
+}
+.notif-close-indicator {
+    position: absolute;
+    top: 6px;
+    left: 370px;
+}
+#taskbar-bar {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    height: 60px;
+    /* height: 100%; */
+    margin-left: 60px;
+}
+
+#taskbar-separator {
+    background-color: rgba(255, 255, 255, 0.1);
+    height: 20px;
+    width: 1px;
+    border-radius: 10px;
+}
+
+.hoverMenu {
+    display: none;
+    bottom: 50px;
+    transform: translate(
+        -40%
+    ); /* 40% is entirely arbritrary and looks centerish, while 50% doesn't */
+}
+
+.taskbar-app:hover .hoverMenu {
+    display: block;
+}
+.lightbar {
+    transition:
+        visibility 0s,
+        opacity 5s linear;
+    opacity: 1;
+}
+.lightbar-hidden {
+    visibility: hidden;
+    opacity: 0;
+}
+/*
+.taskbar-button {
+ filter: drop-shadow(0px 3px 7px #111);
+}
+*/
+#taskinfo-container {
+    position: absolute;
+    height: 70%;
+
+    /* border: 2px solid rgba(22, 22, 22, 0.6); */
+
+    background-color: rgba(255, 255, 255, 0.15);
+    aspect-ratio: 1/1;
+    padding: 0.1em;
+    padding-left: 1.5em;
+
+    padding-right: 1.5em;
+    /* width: 5em; */
+    right: 0.5em;
+    top: 50%;
+    transform: translateY(-50%);
+
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#taskinfo-container > * {
+    color: whitesmoke;
+    cursor: pointer;
+}
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    --oobe-bg: #fff;
+}
+#overlay {
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    right: 0;
+    position: fixed;
+    background: gray;
+    opacity: 0.5;
+    z-index: 98;
+}
+
+body {
+    overflow: hidden;
+    background: url(/assets/wallpaper/wallpaper-yellow.png) no-repeat center
+        center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    user-select: none;
+    font-family: "Roboto", sans-serif;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: -2px;
+    width: 100%;
+
+    /* background-color: rgba(0, 0, 0, 0.55); */
+    background-color: rgba(22, 22, 22, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 0 1px #3e3e3e;
+    border-bottom: none;
+    backdrop-filter: blur(5px);
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+nav li {
+    display: inline-block;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding-top: 5px;
+}
+
+.showDialog {
+    width: 40px;
+    height: 40px;
+}
+.lightbar {
+    width: 40px;
+    height: 2px;
+    position: relative;
+    bottom: 1px;
+    border-radius: 5px;
+    opacity: 0.75;
+}
+
+.bootsplash {
+    background-color: black;
+    z-index: 9999999999; /* It's over 9000!!! */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+    transition: 0.3s;
+}
+
+.bootsplash > img {
+    width: 300px;
+    height: 80px;
+}
+
+.flex {
+    display: flex;
+}
+.flexcenter {
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.custom-menu {
+    position: absolute;
+    border: 1px solid #000000;
+    background-color: rgba(0, 0, 0, 0.55);
+    border-radius: 25px;
+    padding: 10px 0;
+    width: 300px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+
+    z-index: 10000;
+    overflow: hidden;
+}
+.custom-menu-item {
+    padding: 8px 12px;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+}
+.custom-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.material-symbols-outlined {
+    font-family: "Material Symbols Outlined", sans-serif;
+}
+.custom-menu-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-menu-item .material-symbols-outlined {
+    margin-top: 0.05px;
+    margin-right: 5px;
+    padding-left: 1px;
+}
+
+.custom-menu .extra-menu-wrapper {
+    position: fixed;
+}
+
+.custom-menu .extra-menu {
+    position: relative;
+    left: 303px;
+    bottom: 0.75em;
+}
+.aboutapp-container {
+    background-color: var(--material-bg);
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    display: flex;
+    padding: 0;
+    flex-direction: column;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.aboutapp-logo {
+    height: 128px;
+}
+
+.aboutapp-logo img {
+    height: 100%;
+}
+
+.aboutapp-logo-divider {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    height: 1px;
+    background-color: #9ca3af;
+    flex-shrink: 0;
+    width: 22rem;
+}
+
+.aboutapp-content {
+    color: white;
+}
+
+.aboutapp-content p {
+    margin: 0;
+}
+
+.aboutapp-content a {
+    color: cyan;
+}
+
+.aboutapp-link-button {
+    background: none !important;
+    border: none;
+    padding: 0 !important;
+    color: cyan;
+    text-decoration: underline;
+    cursor: pointer;
+    font-family: Roboto, sans-serif;
+    font-size: 16px;
+}
+/* cyrillic-ext */
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/KFOmCnqEu92Fr1Mu72xKOzY.woff2) format("woff2");
+    unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F,
+        U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/KFOmCnqEu92Fr1Mu5mxKOzY.woff2) format("woff2");
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/KFOmCnqEu92Fr1Mu7mxKOzY.woff2) format("woff2");
+    unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/KFOmCnqEu92Fr1Mu4WxKOzY.woff2) format("woff2");
+    unicode-range: U+0370-03FF;
+}
+/* vietnamese */
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/KFOmCnqEu92Fr1Mu7WxKOzY.woff2) format("woff2");
+    unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169,
+        U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323,
+        U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/KFOmCnqEu92Fr1Mu7GxKOzY.woff2) format("woff2");
+    unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF,
+        U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+    font-family: "Roboto";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/assets/fonts/KFOmCnqEu92Fr1Mu4mxK.woff2) format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+        U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122,
+        U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

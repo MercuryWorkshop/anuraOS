@@ -5,8 +5,9 @@
             http-equiv="Content-Type"
             content="text/html; charset=iso-8859-1"
         />
-        <link rel="stylesheet" href="/bundle.css" />
+        <link rel="stylesheet" href="/bundle.css" class="main" />
         <link rel="stylesheet" href="/theme.css" />
+        <link rel="stylesheet" href="themes/bundle-w.css" class="alternate" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="stylesheet" href="/assets/materialsymbols.css" />
@@ -45,6 +46,7 @@
         <script type="text/javascript" src="lib/Launcher.js"></script>
         <script type="text/javascript" src="lib/Bootsplash.js"></script>
         <script type="text/javascript" src="lib/oobe/OobeView.js"></script>
+        <!--- <script type="text/javascript" src="lib/Desktop.js"></script> --->
 
         <script type="text/javascript" src="lib/Utils.js"></script>
         <script type="text/javascript" src="lib/api/Files.js"></script>
@@ -64,7 +66,46 @@
             async
             defer
         ></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let env = localStorage.getItem("env");
+                alert(env);
 
+                function enableStylesheet(node) {
+                    node.disabled = false;
+                }
+
+                function disableStylesheet(node) {
+                    node.disabled = true;
+                }
+
+                if (env == "n") {
+                    alert("n");
+                    document
+                        .querySelectorAll("link[rel=stylesheet].alternate")
+                        .forEach(disableStylesheet);
+                    document
+                        .querySelectorAll("link[rel=stylesheet].main")
+                        .forEach(enableStylesheet);
+                } else if (env == "c") {
+                    alert("frebrbdd");
+                    document
+                        .querySelectorAll("link[rel=stylesheet].alternate")
+                        .forEach(enableStylesheet);
+                    document
+                        .querySelectorAll("link[rel=stylesheet].main")
+                        .forEach(disableStylesheet);
+                } else {
+                    alert("aaaaaaaaaaaaa");
+                    document
+                        .querySelectorAll("link[rel=stylesheet].alternate")
+                        .forEach(disableStylesheet);
+                    document
+                        .querySelectorAll("link[rel=stylesheet].main")
+                        .forEach(enableStylesheet);
+                }
+            });
+        </script>
         <link rel="manifest" href="manifest.json" />
 
         <!-- <script type="text/javascript" src="/dist.js"></script> -->
