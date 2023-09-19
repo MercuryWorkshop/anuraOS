@@ -5,6 +5,10 @@
     </head>
 
     <body>
+        <p class="label">Change Desktop Layout</p>
+        <input class="upload" type="button" onclick="enableNormal();" value="Normal">
+        <input class="upload" type="button" onclick="enableCompact();" value="Compact">
+        <hr color="#666666">
         <div class="upload"><p>Upload</p></div>
         <div class="wrapper">
             <div class="element" onclick="changeWallpaper('/assets/wallpaper/wallpaper.png');"><img src="/assets/wallpaper/wallpaper.png"></div>
@@ -15,9 +19,6 @@
             <div class="element" onclick="changeWallpaper('/assets/wallpaper/sunset.jpg');"><img src="/assets/wallpaper/sunset.jpg"></div>
             <div class="element" onclick="changeWallpaper('/assets/wallpaper/touhou.jpg');"><img src="/assets/wallpaper/touhou.jpg"></div>
         </div>
-
-        <input type="button" onclick="enableNormal();">Normal</button>
-        <input type="button" onclick="enableCompact();">Compact</button>
         
     </body>
 </html>

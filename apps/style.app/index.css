@@ -48,3 +48,18 @@
 .upload:hover {
     cursor: pointer;
 }
+
+.label {
+    font-family:
+        system-ui,
+        Ubuntu,
+        Droid Sans,
+        sans-serif;
+    color: #fff;
+    font-size: 12px;
+    padding-left: 10px;
+}
+
+hr {
+    color: #666;
+}
