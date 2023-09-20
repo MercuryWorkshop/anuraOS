@@ -11,7 +11,8 @@
         "apps/python.app",
         "apps/workstore.app",
         "apps/taskbarMan.app",
-        "apps/style.app"
+        "apps/style.app",
+        "apps/quake.app"
     ],
     "defaultsettings": {
         "use-sw-cache": true,
