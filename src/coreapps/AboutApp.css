@@ -16,8 +16,20 @@
     height: 128px;
 }
 
-.aboutapp-logo img {
-    height: 100%;
+.aboutapp-logo-img {
+    transition: background 1s ease-in-out;
+    /* height: 100%; */
+    border-radius: 10%;
+    background: url(/assets/icons/about.png);
+    background-size: cover;
+    height: 128px;
+    width: 128px;
+}
+.aboutapp-logo-img:hover {
+    background: url(/assets/images/lagtrain.gif);
+    background-size: cover;
+    height: 128px;
+    width: 128px;
 }
 
 .aboutapp-logo-divider {
