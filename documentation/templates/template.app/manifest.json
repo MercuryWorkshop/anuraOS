@@ -1,0 +1,12 @@
+{
+    "name": "Template",
+    "type": "auto",
+    "package": "anura.TEMPLATE",
+    "index": "index.html",
+    "icon": "terminal.svg",
+    "wininfo": {
+        "title": "TEMPLATE",
+        "width": "700px",
+        "height": "500px"
+    }
+}
