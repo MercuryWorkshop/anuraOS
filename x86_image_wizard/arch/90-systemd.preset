@@ -4,7 +4,7 @@ enable machines.target
 
 disable systemd-networkd*
 enable anura-boot.service
-enable anura.service
+enable anurad.service
 
 disable console-getty.service
 disable debug-shell.service
@@ -21,6 +21,10 @@ disable systemd-networkd-wait-online.service
 disable systemd-time-wait-sync.service
 disable systemd-boot-check-no-failures.service
 disable proc-sys-fs-binfmt_misc.mount
+disable systemd-resolved.service
+disable lm_sensors.service
+disable sensord.service
+disable systemd-homed.service
 
 disable syslog.socket
 

@@ -15,11 +15,11 @@ RUN pacman -Sy && \
         wpa_supplicant \
         unzip bzip2 xz tar \
         fluxbox \
-        xorg-server xorg-xinit xorg-apps dbus \
+        xorg-server xorg-xinit xorg-apps xorg-xcalc dbus \
         xf86-video-fbdev xf86-video-vesa xf86-input-evdev \
         htop \
         noto-fonts ttf-droid \
-        strace xterm vim \
+        strace xterm vim nano  \
         dhcpcd \
         wget curl \
         net-tools \
@@ -35,7 +35,8 @@ RUN pacman -Sy && \
     echo 'LANG="en_US.UTF-8"' > /etc/default/locale && \
     passwd -d root && \
     rm /usr/lib/systemd/system/systemd-networkd* && \
-    echo "tmpfs /tmp tmpfs nodev,nosuid 0 0" >> /etc/fstab
+    echo "tmpfs /tmp tmpfs nodev,nosuid 0 0" >> /etc/fstab && \
+    echo "host9p /root 9p defaults 0 0" >> /etc/fstab
 
 COPY logind.conf /etc/systemd/logind.conf
 
@@ -65,7 +66,6 @@ COPY anura-boot.service /etc/systemd/system
 COPY anurad.service /etc/systemd/system
 COPY mkinitcpio.conf /etc/
 
-RUN echo -e "i8042\nne2k-pci" > /etc/modules-load.d/modules.conf
 RUN mkinitcpio -P
 RUN systemctl enable anurad
 RUN systemctl enable anura-boot
