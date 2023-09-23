@@ -42,16 +42,6 @@ class Anura {
             provider: new Filer.FileSystem.providers.IndexedDB(),
         });
 
-        // don't like this... but whatever
-        // Neither do I, preferably, I'd wrap all the FS things in another way, this is just to make python "workish"
-        fs.readFileSync = async (path: string) => {
-            return await new Promise((resolve, reject) => {
-                return fs.readFile(path, function async(err: any, data: any) {
-                    resolve(new TextDecoder("utf8").decode(data));
-                });
-            });
-        };
-
         const settings = await Settings.new(fs, config.defaultsettings);
 
         const hdd = await InitV86Hdd();

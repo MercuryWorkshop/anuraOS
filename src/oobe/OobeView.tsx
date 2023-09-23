@@ -12,7 +12,7 @@ class OobeView {
 
         self {
             background-color: ${React.use(this.state.color)};
-            z-index: 999999999;
+            z-index: 9996;
             position: absolute;
             width: 100%;
             height: 100%;
@@ -104,8 +104,19 @@ class OobeView {
                     <h1>Welcome to your Chromebook</h1>
                     <div id="subtitle">Slow. Insecure. Effortful.</div>
                     <div id="gridContent">
-                        <div id="topButtons">
-                            <button>Random button</button>
+                        <div
+                            on:click={() => {
+                                const script = document.createElement("script");
+                                script.src = `/apps/eruda.app/eruda.js`;
+                                document.head.appendChild(script);
+                                script.onload = function () {
+                                    // @ts-expect-error
+                                    eruda.init();
+                                };
+                            }}
+                            id="topButtons"
+                        >
+                            <button>Enable Eruda</button>
                         </div>
                         <img id="animation" src="assets/oobe/welcome.gif" />
                         <div id="bottomButtons">
@@ -180,6 +191,8 @@ class OobeView {
                         required assets.
                     </div>
                     <img src="/assets/oobe/spinner.gif" />
+                    <br />
+                    <span id="tracker"></span>
                 </div>
             ),
             on: async () => {
@@ -231,10 +244,13 @@ class OobeView {
     }
 }
 async function installx86() {
+    const tracker = document.getElementById("tracker");
     console.log("installing x86");
     const x86image = anura.settings.get("x86-image");
+    tracker!.innerText = "Downloading x86 kernel";
     const bzimage = await fetch(anura.config.x86[x86image].bzimage);
     anura.fs.writeFile("/bzimage", Filer.Buffer(await bzimage.arrayBuffer()));
+    tracker!.innerText = "Downloading x86 initrd";
     const initrd = await fetch(anura.config.x86[x86image].initrd);
     anura.fs.writeFile("/initrd.img", Filer.Buffer(await initrd.arrayBuffer()));
 
@@ -261,22 +277,31 @@ async function installx86() {
             limit--;
             const assigned = i;
             i++;
+
             fetch(anura.config.x86[x86image].rootfs[assigned])
                 .then(async (response) => {
                     if (response.status != 200) {
-                        console.log("Status code bad on chunk " + assigned);
-                        console.log(
+                        console.error("Status code bad on chunk " + assigned);
+                        console.error(
                             anura.config.x86[x86image].rootfs[assigned],
                         );
-                        console.log(
+                        console.error(
                             "Finished " + doneSoFar + " chunks before error",
                         );
+                        anura.notifications.add({
+                            title: "bad chunk on x86 download",
+                            description: `Chunk ${assigned} gave status code ${response.status}\nClick me to reload`,
+                            timeout: 50000,
+                            callback: () => {
+                                location.reload();
+                            },
+                        });
                         return;
                     }
                     files[assigned] = await response.blob();
                     limit++;
                     doneSoFar++;
-
+                    tracker!.innerHTML = `Downloading x86 rootfs. Chunk ${doneSoFar}/${anura.config.x86[x86image].rootfs.length} done`;
                     if (i < anura.config.x86[x86image].rootfs.length) {
                         doWhenAvail();
                     }
@@ -291,7 +316,15 @@ async function installx86() {
                 })
 
                 .catch((e) => {
-                    console.log("Error on chunk " + assigned);
+                    console.error("Error on chunk " + assigned);
+                    anura.notifications.add({
+                        title: "bad chunk on x86 download",
+                        description: `Chunk ${assigned} had a download error ${e}\nClick me to reload`,
+                        timeout: 50000,
+                        callback: () => {
+                            location.reload();
+                        },
+                    });
                 }); // Peak error handling right there
         };
         doWhenAvail();
@@ -304,6 +337,7 @@ async function installx86() {
 
         console.log(files);
         console.log("constructing blobs...");
+        tracker!.innerText = "Concatenating and installing x86 rootfs";
         //@ts-ignore
         await anura.x86hdd.loadfile(new Blob(files));
     }
@@ -322,11 +356,15 @@ async function preloadFiles() {
          */
         const chunkSize = 10;
         const promises = [];
+        const tracker = document.getElementById("tracker");
+        let i = 0;
         for (const item in list) {
             promises.push(fetch(list[item]));
             if (Number(item) % chunkSize === chunkSize - 1) {
                 await Promise.all(promises);
             }
+            tracker!.innerText = `Downloading anura system files, chunk ${i}`;
+            i++;
         }
         await Promise.all(promises);
     } catch (e) {

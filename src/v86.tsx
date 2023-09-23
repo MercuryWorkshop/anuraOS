@@ -359,6 +359,7 @@ class V86Backend {
     netids: string[] = [];
 
     registered = false;
+    termready = false;
     async onboot() {
         if (this.registered) return;
         this.registered = true;
@@ -370,6 +371,7 @@ class V86Backend {
             description: "x86 OS has booted and is ready for use",
             timeout: 5000,
         });
+        this.termready = true;
 
         let buffer = "";
 
@@ -459,6 +461,14 @@ class V86Backend {
         rows: number,
         onData: (string: string) => void,
     ): Promise<number> {
+        if (!anura.x86!.termready) {
+            onData(
+                "the x86 subsystem hasn't booted yet, please try again later",
+            );
+            return new Promise((resolve) => {
+                resolve(-1);
+            });
+        }
         if (!anura.x86!.canopenpty) {
             // return new Promise((resolve) => this.opensafeQueue.push(resolve));
             return this.#waitAndTry(command, cols, rows, onData);
@@ -495,6 +505,14 @@ class V86Backend {
         });
     }
     resizepty(TTYn: number, cols: number, rows: number) {
+        // Until somebody fixes proper resizing, this is what you get, dont like it? fix it.
+        this.runcmd(
+            `stty -F /dev/pts/${TTYn} cols ${cols} && stty -F /dev/pts/${TTYn} rows ${rows}`,
+        );
+        /* 
+        if (TTYn == -1) {
+            return;
+        }
         this.write_uint(rows, this.s_rows_phys_addr);
         this.write_uint(cols, this.s_cols_phys_addr);
         this.write_uint(TTYn + 1, this.resize_intent_phys_addr);
@@ -505,6 +523,7 @@ class V86Backend {
         } else {
             this.act = true;
         }
+        */
     }
     async startMouseDriver() {
         let ready = false;
@@ -548,6 +567,9 @@ class V86Backend {
         };
     }
     writepty(TTYn: number, data: string) {
+        if (TTYn == -1) {
+            return;
+        }
         const bytes = encoder.encode(data);
 
         if (this.nextWrite) {

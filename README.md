@@ -6,7 +6,7 @@
 WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
 Formerly known as Chimera. Based off of the AliceWM.
 
-### Easy Install(When in a codespace)
+### Easy Install (When in a codespace)
 
 -   Run `bash codespace-basic-setup.sh`
 

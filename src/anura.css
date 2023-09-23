@@ -40,8 +40,10 @@ footer {
     width: 100%;
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
+    /* background-color: rgba(0, 0, 0, 0.55); */
     background-color: rgba(22, 22, 22, 0.8);
-    border: 2px solid rgba(22, 22, 22, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 0 1px #3e3e3e;
     border-bottom: none;
     backdrop-filter: blur(5px);
 }
@@ -66,10 +68,11 @@ nav li {
 }
 .lightbar {
     width: 40px;
-    height: 5px;
+    height: 2px;
     position: relative;
     bottom: 1px;
     border-radius: 5px;
+    opacity: 0.75;
 }
 
 .bootsplash {
@@ -84,6 +87,7 @@ nav li {
     justify-content: center;
     align-content: center;
     flex-wrap: wrap;
+    transition: 0.3s;
 }
 
 .bootsplash > img {

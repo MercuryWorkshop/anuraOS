@@ -1,6 +1,6 @@
 # Application development
 
-all of the below is undergoing change. see public/glxgears.app for an example
+See [This Document](./templates/template.app/README.md) for instructions on how to set up a basic iFrame app.
 
 <!-- Every application is a .app folder with an entry file called launchapp.js. In this file, a function called loadingScript is called with the path of the app  -->
 <!---->
@@ -40,4 +40,4 @@ all of the below is undergoing change. see public/glxgears.app for an example
 <!-- } -->
 <!-- ``` -->
 
-you can create a C app by crying
+<!-- you can create a C app by crying -->

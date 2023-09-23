@@ -9,17 +9,19 @@
 .notif {
     position: relative;
     font-family: "Roboto";
-    background-color: rgba(28, 28, 28, 0.85);
+    background-color: rgba(22, 22, 22, 0.8);
     border-radius: 7px;
     color: white;
     min-height: 115px;
     width: 400px;
     cursor: pointer;
     margin: 10px;
-    left: 500px;
+    left: 525px;
     animation: slideIn 0.5s ease-in-out forwards;
     opacity: 1;
     transition: 350ms ease-in-out;
+    border: 1px solid rgba(0, 0, 0, 1);
+    box-shadow: inset 0 0 0 1px #3e3e3e;
 }
 
 @keyframes slideIn {
@@ -55,12 +57,13 @@
     padding-top: 10px;
     padding-left: 10px;
     padding-bottom: 10px;
-    font-size: 18px;
+    font-size: 16px;
 }
 .notif-title {
-    font-size: 24px;
+    font-size: 18px;
     padding-left: 10px;
     padding-top: 10px;
+    font-weight: bold;
 }
 .notif-close-indicator {
     position: absolute;
