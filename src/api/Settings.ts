@@ -44,7 +44,7 @@ class Settings {
         }
 
         try {
-            const text = await fs.readFileSync("/anura_settings.json");
+            const text = await fs.promises.readFile("/anura_settings.json");
             Object.assign(initial, JSON.parse(text));
         } catch (e) {
             fs.writeFile("/anura_settings.json", JSON.stringify(initial));
