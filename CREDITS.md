@@ -8,6 +8,7 @@
 
     -   Filesystem - [Filer.js](https://filer.js.org/)
     -   Filesystem HTTP bridge - [MercuryWorkshop Nohost](https://github.com/MercuryWorkshop/nohost) (Fork of [Humphd Nohost](https://github.com/humphd/nohost))
+    -   Websocket to TCP Bridge - [WSProxy](https://github.com/herenow/wsProxy)
     -   x86 Emulation - [v86](https://copy.sh/v86/)
     -   A full list of dependencies can be found [here](https://github.com/MercuryWorkshop/anuraOS/network/dependencies)
 
