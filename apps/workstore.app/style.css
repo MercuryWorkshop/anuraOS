@@ -73,10 +73,7 @@ nav > h1:hover {
     margin-left: auto;
     height: 40px;
     width: 500px;
-    border-width: 1px;
-    border-color: #444;
     border-radius: 50px;
-    border-style: solid;
     text-align: center;
     margin-bottom: 10px;
     padding-top: 20px;
@@ -88,6 +85,8 @@ nav > h1:hover {
     cursor: pointer;
     width: 550px;
     transition: 0.3s;
+    background-color: #48c76a;
+    color: #222;
 }
 
 .repoItem > input {
