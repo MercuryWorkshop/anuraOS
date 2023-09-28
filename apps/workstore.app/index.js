@@ -8,7 +8,15 @@ const repoScreen = document.getElementById('repoScreen');
 const appListScreen = document.getElementById('appListScreen')
 const appInstallerScreen = document.getElementById('appInstallerScreen');
 
+parent.document.body.querySelector(".title").style["background-color"] = "#222";
+parent.document.body.querySelector(".title").style["background-image"] = "radial-gradient(#666 1px, transparent 0)";
+parent.document.body.querySelector(".title").style["background-size"] = "20px 20px";
+parent.document.body.querySelector(".title").style["background-position"] = "-19px -19px";
 
+
+// background-image: radial-gradient(#666 1px, transparent 0);
+ //   background-size: 20px 20px;
+//   background-position: -19px -19px;
 
 async function loadappListScreen(repo) {
     
