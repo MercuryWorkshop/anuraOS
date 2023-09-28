@@ -17,10 +17,9 @@ async function loadappListScreen(repo) {
     appListScreen.style.display = ''
     appListScreen.innerHTML = ''
     repoList.style.display = 'none'
-    
+    document.getElementById("head").innerHTML = "< Go Back";
     const repoItems = await (await client.fetch(repos[repo] + 'list.json')).json()
     const appList = document.createElement('div')
-    appList.className = 'center'
     
     for (const item in repoItems['apps']) {
         console.log(item)
@@ -29,12 +28,7 @@ async function loadappListScreen(repo) {
         const itemText = document.createElement('span')
         
         
-        
-        async function fetchThumb() {
-            thumbnail.src = URL.createObjectURL(await (await fetch(repos[repo] + repoItems['apps'][item]['icon'])).blob())
-        }
-        fetchThumb()
-
+        thumbnail.src = repos[repo] + repoItems['apps'][item]['icon']
         itemText.innerText = repoItems['apps'][item]['name']
         app.title = repoItems['apps'][item]['desc'] // idk why the tooltip is called title but whatever
         app.className = 'app'
