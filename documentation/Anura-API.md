@@ -4,7 +4,7 @@ This document has a brief explanation of all the Anura JS APIs and how to use th
 
 ## anura.settings
 
-This API used to define system settings in Anura, it is a key value store of JS objects.
+This API is used to define system settings in Anura, it is a key value store of JS objects.
 
 **Usage:**
 
@@ -16,7 +16,7 @@ anura.settings.get("applist", ["anura.x86mgr", "anura.browser"]); // Set pinned 
 
 ## anura.x86
 
-This API provides access to Anura's x86 backend. Which is used to create PTYs, write directly to serial terminals (not recommended) or access v86 itself.
+This API provides access to Anura's x86 backend; Which is used to create PTYs, write directly to serial terminals (not recommended) or access v86 itself.
 
 **Usage:**
 
