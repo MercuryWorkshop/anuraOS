@@ -28,7 +28,7 @@ Formerly known as Chimera. Based off of the AliceWM.
 -   Make sure you have `Docker` installed and running.
 -   Run `make rootfs`
 -   Make sure to add yourself to the Docker group using `usermod -a -G docker $USER`
--   (Special Use Case) In the event that you should need to override/manually add the initrd and kernel, remember to keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, copy them to the Anura root directory and rename them to initrd.img and bzimage respectively.(See the extended instructions [here](documentation/Kernel%20Override.md).)
+-   (Special Use Case) In the event that you should need to override/manually add the initrd and kernel, remember to keep track of the file names of initrd and vmlinuz in build/images/debian-boot/. Then, copy them to the Anura root directory and rename them to initrd.img and bzimage respectively.(See the extended instructions [here](./documentation/Kernel_Override.md).)
 
 ### Running Anura
 
@@ -61,7 +61,7 @@ Will be utilized after the first Build of AnuraOS.
 
 ## Documentation
 
-Still being written. (See documentation folder)
+Still being written. (See the current index of documentation [here](./documentation/README.md))
 
 ## Security
 
