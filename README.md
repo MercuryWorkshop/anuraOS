@@ -6,6 +6,9 @@
 WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
 Formerly known as Chimera. Based off of the AliceWM.
 
+> [!IMPORTANT]  
+> Anura will not build on Windows. Please use a Linux VM or WSL.
+
 ### Easy Install (When in a codespace)
 
 -   Run `bash codespace-basic-setup.sh`
