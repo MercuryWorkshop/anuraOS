@@ -1,0 +1,468 @@
+! $XFree86: xc/programs/xedit/Xedit.ad,v 1.23 2002/09/22 07:09:05 paulo Exp $
+
+*geometry:				590x440
+*input:					TRUE
+*enableBackups:				True
+*backupNameSuffix:			~
+*changedBitmap:				xlogo11
+*international:				False
+
+*hints:\
+Use Control-S and Control-R to Search.\n\
+Use Control-Shift-_ to Undo. Control-G to switch between Undo and Redo.\n\
+Use Control-A to jump to the beginning of the line.\n\
+Use Control-E to jump to the end of the line.\n\
+Use Control-T to transpose characters.\n\
+Use Control-K to cut to the end of the line. Control-Y to paste.\n\
+Use Control-Q to escape control characters.\n\
+Use Control-U[,<number>] to multiply actions. Control-G to cancel.\n\
+Use Control-Z to scroll one line up. Meta-Z to scroll one line down.\n\
+Use Meta-Q to format a paragraph.\n\
+Use Right-Button to extend selections.\n\
+Use Meta-I to insert a file.\n\
+Use Control-W to delete a selection, and/or jump to the selection mark.\n\
+Use Control-X,Control-F to find a file. Tab for filename completion.\n\
+Use Control-X,Control-S to save.\n\
+Use Control-X,Control-C to exit.\n\
+Use Control-C to paste the selection at CUT_BUFFER0.\n\
+Use Control Left-Button to popup the File Menu.\n\
+Use Control Middle-Button to popup the Edit Menu.\n\
+Use Control Right-Button to popup the Option Menu.\n\
+Use Control-X,Tab to Indent.\n\
+Use Control-X,0 to delete current splitted window.\n\
+Use Control-X,1 to delete other splitted window.\n\
+Use Control-X,2 to split the window vertically.\n\
+Use Control-X,3 to split the window horizontally.\n\
+Use Control-X,b to switch to another file.\n\
+Use Control-X,d to list directory. Control-G to Cancel.\n\
+Use Control-X,k to close file being edited.\n\
+Use Control-X,o to switch to another splitted window.\n\
+Use Control-X,u to undo. Control-G to switch between Undo and Redo.\n\
+Use Insert to toggle Overwrite mode.\n\
+Use Control-G to interrupt the lisp subprocess.\n\
+Use Escape to enter or leave regex search and replace mode.\n\
+Use Alt-. to search tags for the selected symbol or find the next match.
+
+*formWindow*defaultDistance:		2
+*formWindow.?.borderWidth:		0
+*formWindow.min:			18
+*formWindow.max:			18
+*formWindow.showGrip:			False
+*positionWindow.fromHoriz:		labelWindow
+*positionWindow.horizDistance:		0
+*positionWindow.left:			chainRight
+*positionWindow.right:			chainRight
+*positionWindow.width:			90
+*positionWindow.label:			error
+*positionWindow.justify:		left
+*labelWindow*justify:			center
+*labelWindow*label:			no file yet
+*labelWindow.left:			chainLeft
+*labelWindow.right:			chainRight
+
+*quit.label:				Quit
+*quit.tip:				Close xedit window
+*save.label:				Save
+*save.tip:				Save current file
+*load.label:				Load
+*load.tip:				Load a new file
+
+*buttons*orientation:			horizontal
+*buttons*showGrip:			False
+*buttons.min:				18
+
+*messageWindow.height:			50
+*messageWindow.min:			18
+*Paned*Text*allowResize:		True
+
+*messageWindow.autoFill:		False
+*messageWindow.scrollVertical:		Never
+
+*editWindow.autoFill:			False
+*editWindow.scrollVertical:		Always
+*editWindow.showGrip:			True
+xedit.textSource*enableUndo:		True
+
+*bc_label*label:			Use Control-S and Control-R to Search.
+*bc_label*showGrip:			False
+*bc_label.min:				18
+
+*dirlabel.showGrip:			False
+*dirlabel.min:				18
+*dirlabel.max:				18
+
+*dirwindow.defaultColumns:		0
+*dirwindow.verticalList:		True
+
+*viewport.forceBars:			True
+*viewport.allowVert:			1
+
+*insertFile*text.width:			141
+*insertFile*text.?.pieceSize:		256
+*search*searchText.width:		157
+*search*replaceText.width:		157
+*search*case.horizDistance:		25
+*search*Text.?.pieceSize:		256
+
+*SimpleMenu.BackingStore:		NotUseful
+*SimpleMenu.menuLabel.vertSpace:	80
+*SimpleMenu.SmeBSB.HorizontalMargins:	16
+*SimpleMenu.justify:			center
+*SimpleMenu.menuLabel.height:		250
+*SimpleMenu*cursor:			left_ptr
+
+*fileMenu.label:			File Menu
+*optionsMenu.label:			Option Menu
+*optionsMenu.ispell.label:		ispell...
+*editMenu.label:			Edit Menu
+*editMenu.wrapMenuItem.label:		Wrapping
+*editMenu.wrapMenuItem.leftBitmap:	menu12
+*wrapMenu.never.label:			Never
+*wrapMenu.line.label:			Line
+*wrapMenu.word.label:			Word
+*editMenu.autoFill.label:		Auto Fill
+*editMenu.justifyMenuItem.label:	Justification
+*editMenu.justifyMenuItem.leftBitmap:	menu12
+*justifyMenu.left.label:		Left
+*justifyMenu.right.label:		Right
+*justifyMenu.center.label:		Center
+*justifyMenu.full.label:		Full
+*editMenu.breakColumns.label:		Break Columns...
+*editMenu.scrollMenuItem.label:		Scrollbars
+*editMenu.scrollMenuItem.leftBitmap:	menu12
+*scrollMenu.vertical.label:		Vertical
+*scrollMenu.horizontal.label:		Horizontal
+*editMenu.modeMenuItem.leftBitmap:	menu12
+*editMenu.modeMenuItem.label:		Edit Mode
+*editModes.none.label:			Plain/None
+
+*TransientShell*Text.translations: #override \
+c<Key>S:	no-op(r)\n\
+c<Key>R:	no-op(r)\n\
+m<Key>I:	no-op(r)
+
+*search.translations: #override \
+<Create>:get-values(my, $w, width, $h, height)\
+	set-values(1, minWidth, $w, minHeight, $h, maxHeight, $h, allowShellResize, False)
+
+*insertFile.title:			Insert File
+*insertFile.translations: #override \
+<Create>:get-values(my, $w, width, $h, height)\
+	set-values(1, minWidth, $w, minHeight, $h, maxHeight, $h, allowShellResize, False)
+
+*baseTranslations: #override \
+<Ctrl>X,<Ctrl>C:quit()\n\
+<Ctrl>X,<Ctrl>S:save-file()\n\
+<Ctrl>X,<Ctrl>F:find-file()\n\
+<Key>Escape:	line-edit()
+
+*messageWindow.Translations: #override \
+<Ctrl>X,<Ctrl>C:quit()\n\
+<Ctrl>X,<Ctrl>S:save-file()\n\
+<Ctrl>X,<Ctrl>F:find-file()\n\
+<Enter>:	no-op()\n\
+<Leave>:	no-op()\n\
+<Btn1Down>:	set-keyboard-focus() select-start()
+
+*searchText.Translations: #override \
+<Enter>:	no-op()\n\
+<Leave>:	no-op()\n\
+<Btn1Down>:	set-keyboard-focus() select-start()
+
+*replaceText.Translations: #override \
+<Enter>:	no-op()\n\
+<Leave>:	no-op()\n\
+<Btn1Down>:	set-keyboard-focus() select-start()
+
+*editWindow.translations: #override \
+<Ctrl>X,<Ctrl>E:lisp-eval()\n\
+<Ctrl>X,<Key>Tab:indent()\n\
+<Ctrl>X,:<Key>0:delete-window(current)\n\
+<Ctrl>X,:<Key>1:delete-window(other)\n\
+<Ctrl>X,:<Key>2:split-window(vertical)\n\
+<Ctrl>X,:<Key>3:split-window(horizontal)\n\
+<Ctrl>X,!l @Num_Lock<Key>b:switch-source()\n\
+<Ctrl>X,!l <Key>b:switch-source()\n\
+<Ctrl>X,!@Num_Lock<Key>b:switch-source()\n\
+<Ctrl>X,!<Key>b:switch-source()\n\
+<Ctrl>X,!l @Num_Lock<Key>d:dir-window()\n\
+<Ctrl>X,!l <Key>d:dir-window()\n\
+<Ctrl>X,!@Num_Lock<Key>d:dir-window()\n\
+<Ctrl>X,!<Key>d:dir-window()\n\
+<Ctrl>X,!l @Num_Lock<Key>k:kill-file()\n\
+<Ctrl>X,!l <Key>k:kill-file()\n\
+<Ctrl>X,!@Num_Lock<Key>k:kill-file()\n\
+<Ctrl>X,!<Key>k:kill-file()\n\
+<Ctrl>X,!l @Num_Lock<Key>o:other-window()\n\
+<Ctrl>X,!l <Key>o:other-window()\n\
+<Ctrl>X,!@Num_Lock<Key>o:other-window()\n\
+<Ctrl>X,!<Key>o:other-window()\n\
+<Ctrl>X,!l @Num_Lock<Key>u:undo()\n\
+<Ctrl>X,!l <Key>u:undo()\n\
+<Ctrl>X,!@Num_Lock<Key>u:undo()\n\
+<Ctrl>X,!<Key>u:undo()\n\
+<Ctrl>G:	xedit-keyboard-reset()\n\
+<Ctrl>J:	xedit-print-lisp-eval()\n\
+:m<Key>.:	tags()\n\
+<Key>Tab:	insert-char()\n\
+!l @Num_Lock<Key>b:insert-char()\n\
+!l <Key>b:	insert-char()\n\
+!@Num_Lock<Key>b:insert-char()\n\
+!<Key>b:	insert-char()\n\
+!l @Num_Lock<Key>d:insert-char()\n\
+!l <Key>d:	insert-char()\n\
+!@Num_Lock<Key>d:insert-char()\n\
+!<Key>d:	insert-char()\n\
+!l <Key>k:	insert-char()\n\
+!l @Num_Lock<Key>k:insert-char()\n\
+!@Num_Lock<Key>k:insert-char()\n\
+!<Key>k:	insert-char()\n\
+!l @Num_Lock<Key>o:insert-char()\n\
+!l <Key>o:	insert-char()\n\
+!@Num_Lock<Key>o:insert-char()\n\
+!<Key>o:	insert-char()\n\
+!l @Num_Lock<Key>u:insert-char()\n\
+!l <Key>u:	insert-char()\n\
+!@Num_Lock<Key>u:insert-char()\n\
+!<Key>u:	insert-char()\n\
+~s <Key>Insert:	toggle-overwrite()\n\
+c l @Num_Lock<Btn1Down>:xedit-focus() popup-menu(fileMenu)\n\
+c @Num_Lock<Btn1Down>:xedit-focus() popup-menu(fileMenu)\n\
+c l<Btn1Down>:	xedit-focus() popup-menu(fileMenu)\n\
+c<Btn1Down>:	xedit-focus() popup-menu(fileMenu)\n\
+c l @Num_Lock<Btn2Down>:xedit-focus() popup-menu(editMenu)\n\
+c @Num_Lock<Btn2Down>:xedit-focus() popup-menu(editMenu)\n\
+c l<Btn2Down>:	xedit-focus() popup-menu(editMenu)\n\
+c<Btn2Down>:	xedit-focus() popup-menu(editMenu)\n\
+c l @Num_Lock<Btn3Down>:xedit-focus() popup-menu(optionsMenu)\n\
+c @Num_Lock<Btn3Down>:xedit-focus() popup-menu(optionsMenu)\n\
+c l<Btn3Down>:xedit-focus() popup-menu(optionsMenu)\n\
+c<Btn3Down>:	xedit-focus() popup-menu(optionsMenu)\n\
+<Btn1Down>:	xedit-focus() select-start()\n\
+<Btn4Down>:	scroll-one-line-down()\n\
+<Btn5Down>:	scroll-one-line-up()
+
+*filename.?.pieceSize:			256
+*filename.translations: #override \
+c<Key>S:	no-op(r)\n\
+c<Key>R:	no-op(r)\n\
+m<Key>I:	no-op(r)\n\
+c<Key>G:	cancel-find-file()\n\
+<Key>Return:	load-file()\n\
+<Key>Tab:	file-completion(h)\n\
+<Key>Escape:	cancel-find-file()\n\
+<Enter>:	no-op()\n\
+<Leave>:	no-op()\n\
+<Btn1Down>:	set-keyboard-focus() select-start()
+
+*ispell.translations:	#override \
+<Message>WM_PROTOCOLS:	ispell(end)
+
+! Sample dictionary, word chars and text mode resources setup
+!*ispell.dictionary:			br
+!*ispell.dictionaries:			br american americanmed+ english
+!*ispell*br.wordChars:			·ÈÌÛ˙Á¡…Õ”⁄«‡¿‚ÍÙ¬ ‘¸‹„ı√’-
+*ispell.ispellCommand:			/usr/bin/aspell -B -m
+*ispell.lookCommand:			/bin/egrep
+!*ispell*text.skipLines:		.#
+
+*ispell.geometry:			0x0
+*ispell.minWidth:			320
+*ispell.minHeight:			245
+*ispell*Label.borderWidth:		0
+*ispell*Label.internalHeight:		4
+*ispell*Label.justify:			right
+*ispell*Label.width:			112
+*ispell*Label.left:			chainLeft
+*ispell*Label.right:			chainLeft
+*ispell*Label.top:			chainTop
+*ispell*Label.bottom:			chainTop
+*ispell*mispelled.label:		Misspelled word:
+*ispell*mispelled.top:			chainTop
+*ispell*mispelled.bottom:		chainTop
+*ispell*mispelled.internalWidth:	0
+*ispell*repeated.label:			Repeated words:
+*ispell*repeated.internalWidth:		0
+*ispell*replacement.label:		Replace with:
+*ispell*word.fromHoriz:			mispelled
+*ispell*word.justify:			left
+*ispell*word.borderWidth:		1
+*ispell*word.internalWidth:		4
+*ispell*word.internalHeight:		3
+*ispell*word.width:			194
+*ispell*word.left:			chainLeft
+*ispell*word.right:			chainRight
+*ispell*word.top:			chainTop
+*ispell*word.bottom:			chainTop
+*ispell*word.label:
+*ispell*word.tip:			Press here to select this text
+*ispell*word.highlightThickness:	0
+*ispell*text.fromHoriz:			replacement
+*ispell*replacement.fromVert:		mispelled
+*ispell*replacement.internalWidth:	0
+*ispell*form.text.fromVert:		word
+*ispell*form.text.width:		194
+*ispell*form.text.top:			chainTop
+*ispell*form.text.bottom:		chainTop
+*ispell*form.text.left:			chainLeft
+*ispell*form.text.right:		chainRight
+*ispell*form.text.leftMargin:		4
+*ispell*form.text.?.pieceSize:		256
+*ispell*suggestions.label:		Suggestions:
+*ispell*suggestions.fromVert:		replacement
+*ispell*suggestions.internalWidth:	0
+*ispell*viewport.fromHoriz:		suggestions
+*ispell*viewport.fromVert:		text
+*ispell*viewport.width:			194
+*ispell*viewport.height:		143
+*ispell*viewport.top:			chainTop
+*ispell*viewport.bottom:		chainBottom
+*ispell*viewport.left:			chainLeft
+*ispell*viewport.right:			chainRight
+*ispell*viewport.forceBars:		1
+*ispell*viewport.allowVert:		1
+*ispell*list.defaultColumns:		1
+*ispell*list.longest:			16384
+*ispell*commands.vertDistance:		5
+*ispell*commands.fromVert:		suggestions
+*ispell*commands.top:			chainBottom
+*ispell*commands.bottom:		chainBottom
+*ispell*commands.right:			chainLeft
+*ispell*commands.left:			chainLeft
+*ispell*check.label:			Check
+*ispell*check.width:			54
+*ispell*check.tip:			Ask ispell about the word in the text field
+*ispell*look.label:			Look
+*ispell*look.fromHoriz:			check
+*ispell*look.horizDistance:		0
+*ispell*look.width:			46
+*ispell*look.tip:			Runs the look command
+*ispell*undo.fromVert:			check
+*ispell*undo.label:			Undo
+*ispell*undo.width:			102
+*ispell*undo.tip:			Undo last action
+*ispell*replace.fromVert:		undo
+*ispell*replace.label:			Replace
+*ispell*replace.tip:			Replace occurence of the word
+*ispell*replaceAll.fromVert:		undo
+*ispell*replaceAll.fromHoriz:		replace
+*ispell*replaceAll.label:		All
+*ispell*replaceAll.tip:			Replace all occurences of the word
+*ispell*ignore.fromVert:		replace
+*ispell*ignore.label:			Ignore
+*ispell*ignore.tip:			Ignore this word
+*ispell*ignoreAll.fromVert:		replaceAll
+*ispell*ignoreAll.fromHoriz:		ignore
+*ispell*ignoreAll.label:		All
+*ispell*ignoreAll.tip:			Ignore all ocurrences of the word
+*ispell*add.fromVert:			ignore
+*ispell*add.label:			Add
+*ispell*add.width:			50
+*ispell*add.tip:			Add word to your private dictionary
+*ispell*addUncap.fromVert:		ignoreAll
+*ispell*addUncap.fromHoriz:		add
+*ispell*addUncap.label:			Uncap
+*ispell*addUncap.horizDistance:		0
+*ispell*addUncap.width:			50
+*ispell*addUncap.tip:			Add word uncapitalized, to your private dictionary
+*ispell*suspend.fromVert:		add
+*ispell*suspend.label:			Suspend
+*ispell*suspend.width:			57
+*ispell*suspend.tip:			Suspend ispell execution
+*ispell*cancel.fromHoriz:		suspend
+*ispell*cancel.fromVert:		addUncap
+*ispell*cancel.label:			Close
+*ispell*cancel.width:			43
+*ispell*cancel.horizDistance:		0
+*ispell*cancel.tip:			Terminates ispell process
+*ispell*replace.width:			65
+*ispell*ignore.width:			65
+*ispell*replaceAll.width:		35
+*ispell*replaceAll.horizDistance:	0
+*ispell*ignoreAll.width:		35
+*ispell*ignoreAll.horizDistance:	0
+*ispell*terse.fromVert:			cancel
+*ispell*terse.Label:			Terse Mode
+*ispell*terse.width:			104
+*ispell*terse.borderWidth:		0
+*ispell*terse.tip:			Switch terse mode
+*ispell*status.fromVert:		viewport
+*ispell*status.fromHoriz:		suggestions
+*ispell*status.top:			chainBottom
+*ispell*status.bottom:			chainBottom
+*ispell*status.left:			chainLeft
+*ispell*status.right:			chainRight
+*ispell*status.width:			194
+*ispell*status.borderWidth:		1
+*ispell*status.justify:			left
+*ispell*status.internalHeight:		2
+*ispell*status.vertDistance:		2
+*ispell*options.fromVert:		status
+*ispell*options.fromHoriz:		commands
+*ispell*options.bottom:			chainBottom
+*ispell*options.top:			chainBottom
+*ispell*options.left:			chainLeft
+*ispell*options.right:			chainRight
+*ispell*options.dict.width:		121
+*ispell*options.horizDistance:		2
+*ispell*options.vertDistance:		2
+*ispell*options.defaultDistance:	2
+*ispell*dict.highlightThickness:	0
+*ispell*dict.justify:			left
+*ispell*dict.resizable:			False
+*ispell*dict.leftBitmap:		menu12
+*ispell*dict.label:			Dictionary
+*ispell*dict.tip:			Change dictionary
+*ispell*options.format.width:		65
+*ispell*format.highlightThickness:	0
+*ispell*format.justify:			left
+*ispell*format.resizable:		False
+*ispell*format.leftBitmap:		menu12
+*ispell*format.fromHoriz:		dict
+*ispell*format.horizDistance:		0
+*ispell*format.tip:			Select text type
+
+*columns.minWidth:			140
+*columns.minHeight:			76
+*columns.maxWidth:			140
+*columns.maxHeight:			76
+*columns.form*defaultDistance:		4
+*columns*left:				chainLeft
+*columns*right:				chainLeft
+*columns*top:				chainTop
+*columns*bottom:			chainTop
+*columns*Label.width:			96
+*columns*Label.borderWidth:		0
+*columns*Label.internalHeight:		4
+*columns*Label.internalWidth:		2
+*columns*Label.justify:			right
+*columns*Text.width:			30
+*columns*Command.width:			58
+*columns*leftLabel.label:		Left Column:
+*columns*left.fromHoriz:		leftLabel
+*columns*rightLabel.label:		Right Column:
+*columns*rightLabel.fromVert:		leftLabel
+*columns*right.fromHoriz:		rightLabel
+*columns*right.fromVert:		left
+*columns*ok.fromVert:			rightLabel
+*columns*cancel.fromHoriz:		ok
+*columns*cancel.fromVert:		rightLabel
+*columns*cancel.horizDistance:		12
+*columns*Text.?.pieceSize:		8
+
+*columns*Text.translations: #override \
+c<Key>S:	no-op(r)\n\
+c<Key>R:	no-op(r)\n\
+m<Key>I:	no-op(r)\n\
+<Key>Return:	set-columns(ok)\n\
+<Key>Tab:	change-field()\n\
+c<Key>G:	set-columns(cancel)\n\
+<Key>Escape:	set-columns(cancel)\n\
+<Enter>:	no-op()\n\
+<Leave>:	no-op()\n\
+<Btn1Down>:	set-keyboard-focus() select-start()
+
+*columns.translations:	#override \
+<Message>WM_PROTOCOLS:	set-columns(cancel)
+
+! EOF.

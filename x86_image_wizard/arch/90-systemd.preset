@@ -3,7 +3,6 @@ enable remote-cryptsetup.target
 enable machines.target
 
 disable systemd-networkd*
-enable anura-boot.service
 enable anurad.service
 
 disable console-getty.service

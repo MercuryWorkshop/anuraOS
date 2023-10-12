@@ -32,6 +32,7 @@ sudo mount "$loop" "$OUT_ROOTFS_MNT"
 sudo tar -xf "$OUT_ROOTFS_TAR" -C "$OUT_ROOTFS_MNT"
 
 sudo cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/arch-boot"
+sudo rm -rf "$OUT_ROOTFS_MNT/boot"
 
 sudo umount "$loop"
 sudo losetup -d "$loop"
