@@ -71,5 +71,5 @@ Still being written. (See the current index of documentation [here](./documentat
 See [SECURITY.md](./SECURITY.md) for reporting instructions.
 
 <sub>
-The AnuraOS Team and Mercury Workshop are both not liable to any loss of braincells and maybe even your sanity after working with this product.
+The AnuraOS Team and Mercury Workshop are both not liable to any loss of braincells and maybe even your sanity after working with this product. Since development on Anura is "Dead" Koaku is the offical maintainer of the project. If you have any questions, dm `dvcu` on Discord or create a new Issue.
 </sub>
