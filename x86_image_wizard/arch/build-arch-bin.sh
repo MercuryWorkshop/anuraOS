@@ -1,23 +1,14 @@
 #!/usr/bin/env bash
 set -veu
 
-if [ -w /var/run/docker.sock ]
-then
-    echo true
-else 
-    echo "You aren't in the docker group, please run usermod -a -G docker $USER && newgrp docker"
-    exit 2
-fi
-
-
 IMAGES="$(dirname "$0")"/../../build/images
-OUT_ROOTFS_TAR="$IMAGES"/debian-rootfs.tar
-OUT_ROOTFS_BIN="$IMAGES"/debian-rootfs.bin
-OUT_ROOTFS_MNT="$IMAGES"/debian-rootfs.mntpoint
-CONTAINER_NAME=debian-full
-IMAGE_NAME=i386/debian-full
+OUT_ROOTFS_TAR="$IMAGES"/arch-rootfs.tar
+OUT_ROOTFS_BIN="$IMAGES"/arch-rootfs.bin
+OUT_ROOTFS_MNT="$IMAGES"/arch-rootfs.mntpoint
+CONTAINER_NAME=arch-full
+IMAGE_NAME=i386/arch-full
 
-rm -rf "$IMAGES/debian-boot" || :
+rm -rf "$IMAGES/arch-boot" || :
 cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
@@ -40,7 +31,8 @@ sudo mount "$loop" "$OUT_ROOTFS_MNT"
 
 sudo tar -xf "$OUT_ROOTFS_TAR" -C "$OUT_ROOTFS_MNT"
 
-cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/debian-boot"
+sudo cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/arch-boot"
+sudo rm -rf "$OUT_ROOTFS_MNT/boot"
 
 sudo umount "$loop"
 sudo losetup -d "$loop"
@@ -53,8 +45,9 @@ rm ptynet.sh
 rm -rf anuramouse
 
 echo "done! created"
+sudo chown -R $USER:$USER $IMAGES/arch-boot
 cd "$IMAGES"
-mkdir -p debian-rootfs
-split -b50M debian-rootfs.bin debian-rootfs/
+mkdir -p arch-rootfs
+split -b50M arch-rootfs.bin arch-rootfs/
 cd ../
-find images/debian-rootfs/* | jq -Rnc "[inputs]"
+find images/arch-rootfs/* | jq -Rnc "[inputs]"

@@ -1,0 +1,285 @@
+! The App-defaults file for Editres.
+
+Editres.Geometry:			500x568
+
+*ShapeStyle:				Oval
+*Tree*ShapeStyle:			Rectangle
+
+! The rest of this file are either button names, or important for
+! functionality, modifying these values may cause strange program
+! behavior.
+
+*flash.BorderWidth:			0
+
+! Menu Button Names
+
+*Box.commands.Label:			Commands
+*Box.treeCommands.Label:		Tree
+
+*porthole.tree.width:			500
+*porthole.tree.height:			480
+
+! Universal Menu Entry Names
+*xt.sendTree.Label:		Get Tree
+*xt.quit.Label:			Quit
+
+*xt.selectAll.Label:		Select All
+*xt.unselectAll.Label:		Unselect All
+*xt.invertAll.Label:		Invert All
+*xt.selectChildren.Label:		Select Children
+*xt.selectParent.Label:		Select Parent
+*xt.selectDescendants.Label:	Select Descendants
+*xt.selectAncestors.Label:		Select Ancestors
+
+! Xt Menu Entry Names
+
+*xt.refreshTree.Label:		Refresh Current Widget Tree
+*xt.dumpTreeToFile.Label:	Dump Widget Tree to a File
+*xt.getResourceList.Label:	Show Resource Box
+*xt.setValues.Label:		Set Resource
+
+*xt.showClientWidget.Label:	Select Widget in Client
+*xt.showWidgetNames.Label:	Show Widget Names
+*xt.showClassNames.Label:	Show Class Names
+*xt.showWidgetIDs.Label:	Show Widget IDs
+*xt.showWidgetWindows.Label:	Show Widget Windows
+*xt.flashActiveWidgets.Label:	Flash Active Widgets
+
+! InterViews Menu Entry Names
+
+*iv*refreshTree.Label:		Refresh Current Style Tree
+*iv*dumpTreeToFile.Label:	Dump Style Tree to a File
+*iv*getResourceList.Label:	Show Attribute Box
+*iv*setValues.Label:		Set Attribute
+
+*iv*showClientWidget.Label:	Select Style in Client
+*iv*showWidgetNames.Label:	Show Style Names
+*iv*showClassNames.Label:	Show Class Names
+*iv*showWidgetIDs.Label:	Show Style IDs
+*iv*showWidgetWindows.Label:	Show Style Windows
+*iv*flashActiveWidgets.Label:	Flash Active Styles
+
+! Universal Toolkit Messages
+
+*label0: Action `%s' must have the Editres Protocol.
+*label1: Action %s's argument must be either `cancel' or `okay'.
+*label2: Action `%s' must have exactly one argument.
+*label3: Unknown parameter to action `%s' must be one of:\n
+*label4: It appears that this client does not understand\nthe Editres Protocol.
+*label5: Can't grab the mouse.\n
+*label6: Click the mouse pointer on any toolkit client.
+*label8: Message sent to client%s.
+*label9: Incorrectly formatted message from client.
+*label10: Unable to own the Resource Editor Command Selection
+*label11: Unknown Error code %d
+*label13: Welcome to the X Resource Editor version 1.1
+*label15: That window does not appear to be\nin the currently displayed client.
+*label16: Editres Internal Error: Unable to FindNode.\n
+*label18: There are no active nodes.
+*label20: ApplyResource: found no matches.
+*label21: Error: SVActiveEntry Action must have exactly one argument.
+*label22: Error: SVActiveEntry Action's first Argument must be either 'Resource' or 'Value'.
+*label24: Unable to open the file `%s' for writing.
+*label25: Error while trying to save Context\nAborting file dialog popup.
+*label26: Error while trying to find Context\nAborting...
+*label28: Loop in tree: node %s's parent (%s) has not been created yet\n
+*label30: There are no active nodes.
+*label31: Internal Error: Unknown select type.
+*label32: Internal Error: Unknown label type.
+*label33: Internal Error: Unknown activate type.
+*label34: Only one Resource Box can be active at a time.
+*label35: Unable to unpack protocol request.
+*label36: This version of editres uses protocol version %s,\nbut the client speaks version %s.
+
+! Xt Messages
+
+*xt*label7: Unable to own the Resource Selection
+*xt*label12: Widget Tree for client %s(%s).
+*xt*label14: Click on any widget in the client.\nEditres will select that widget in the tree display.
+*xt*label17: No widget Tree is avaliable.
+*xt*label19: This function requires exactly one (1) widget to be selected.
+*xt*label23: There are no currently active widgets.
+*xt*label27: There is no widget tree to display.
+*xt*label29: XSaveContext failed on widget %s.
+
+! InterViews Messages
+
+*iv*label7: Unable to own the Attribute Selection
+*iv*label12: Style Tree for client %s(%s).
+*iv*label14: Click on any style in the client.\nEditres will select that style in the tree display.
+*iv*label17: No style Tree is avaliable.
+*iv*label19: This function requires exactly one (1) style to be selected.
+*iv*label23: There are no currently active styles.
+*iv*label27: There is no style tree to display.
+*iv*label29: XSaveContext failed on style %s.
+
+*MenuButton.leftBitmap:			menu10
+
+! For the Top Area
+
+*hPane.orientation:			horizontal
+*hPane.preferredPaneSize:		100
+*hPane.Panner.width:			100
+*hPane.Panner.height:			100
+*hPane.Panner.preferredPaneSize:	100
+*Paned.Panner.showGrip:			False
+*Paned.box.showGrip:			False
+*Paned.hPane.showGrip:			True
+
+! For the Filename popup dialog.
+
+*fileDialog*value:
+*fileDialog*allowShellResize:		True
+*fileDialog*Text.baseTranslations:	#override \n\
+	<Key>Return:		PopdownFileDialog(okay)
+
+
+! Universal Resources for the Resource Box.
+
+*mainViewport*resourceLabel.font:		\
+-*-new century schoolbook-bold-r-*-*-14-*-*-*-*-*-*-*
+*allowShellResize:				True
+*resourceLabel.allowResize:			True
+*List.verticalList:				True
+*namesAndClasses*BorderWidth:		0
+*star.Label:				*
+*dot.Label:					.
+*namesLabel.font:				\
+-*-new century schoolbook-bold-r-*-*-14-*-*-*-*-*-*-*
+*constraintLabel.font:			\
+-*-new century schoolbook-bold-r-*-*-14-*-*-*-*-*-*-*
+*valueLabel.BorderWidth:			0
+*valueForm*preferredPaneSize:		40
+*valueForm*min:				28
+*valueText*editType:			edit
+*valueText.Scroll:				WhenNeeded
+*valueText.width:			297
+*setValuesPopup*resourceText.width:	297
+*setFile.Label:				Set Save File
+*save.Label:				Save
+*apply.Label:				Apply
+*saveAndApply.Label:			Save and Apply
+*commandBox.show.Label:		        Show
+*commandBox.min:			28
+
+! InterViews Resources for the Resource Box.
+
+*iv*single.Label:				Any Style
+*iv*any.Label:					Any Style Chain
+*iv*namesLabel.Label:				Normal Attributes: mb2 gets a value
+*iv*constraintLabel.Label:			Constraint Attributes
+*iv*valueLabel.Label:				Enter Attribute Value:
+*iv*commandBox.cancel.Label:			Popdown Attribute Box
+
+! Xt Resources for the Resource Box.
+
+*xt*single.Label:                              ?
+*xt*any.Label:                                 *
+*xt*namesLabel.Label:                          Normal Resources: mb2 gets a value
+*xt*constraintLabel.Label:                     Constraint Resources
+*xt*valueLabel.Label:                          Enter Resource Value:
+*xt*commandBox.cancel.Label:                   Popdown Resource Box
+
+! This gives us an exactly one of many toggle, if toggle is
+! not set in each group the application will probabally core dump.
+
+*namesAndClasses*Toggle.baseTranslations: #override \n\
+	<Btn1Down>,<Btn1Up>:   set() notify()
+
+
+*commandBox.skipAdjust:				True
+
+! Get resource values action binding.
+
+*List.baseTranslations: #override \n\
+	<Btn2Down>,<Btn2Up>:		Set() EnableGetVal() Notify()
+
+! Keyboard Actions for Tree and children of the Tree.
+
+*Tree.baseTranslations:	#override \n\
+	:<Key>space:		Select(nothing) \n\
+	:<Key>w:		Select(widget) \n\
+	:<Key>s:		Select(all) \n\
+	:<Key>i:		Select(invert) \n\
+	:<Key>c:		Select(children) \n\
+	:<Key>d:		Select(descendants) \n\
+	:<Key>p:		Select(parent) \n\
+	:<Key>a:		Select(ancestors) \n\
+	:<Key>N:		Relabel(name) \n\
+	:<Key>C:		Relabel(class) \n\
+	:<Key>I:		Relabel(id) \n\
+	:<Key>W:		Relabel(window)
+
+*Tree.Toggle.baseTranslations:	#override \n\
+	:<Key>space:		Select(nothing) \n\
+	:<Key>w:		Select(widget) \n\
+	:<Key>s:		Select(all) \n\
+	:<Key>i:		Select(invert) \n\
+	:<Key>c:		Select(children) \n\
+	:<Key>d:		Select(descendants) \n\
+	:<Key>p:		Select(parent) \n\
+	:<Key>a:		Select(ancestors) \n\
+	:<Key>N:		Relabel(name) \n\
+	:<Key>C:		Relabel(class) \n\
+	:<Key>I:		Relabel(id) \n\
+	:<Key>W:		Relabel(window) \n\
+	<Btn2Down>,<Btn2Up>:	Select(nothing) toggle() notify() \n\
+	<Btn3Down>,<Btn3Up>:	Relabel(toggle)
+
+! For the SetValues popup
+
+*setValuesPopup.form.?.resizable:		True
+*setValuesPopup.form.?.left:			ChainLeft
+*setValuesPopup.form.?.right:			ChainLeft
+
+*setValuesPopup.form.label.Label:		Use <Tab> to Change Fields.
+*setValuesPopup.form.Label.BorderWidth:	0
+
+*xt*setValuesPopup.form.resourceLabel.Label:	Resource Name:
+*xt*setValuesPopup.form.resourceLabel.width:	114
+*xt*setValuesPopup.form.resourceLabel.justify:	right
+*xt*setValuesPopup.form.valueLabel.Label:	Resource Value:
+*xt*setValuesPopup.form.valueLabel.width:	114
+*xt*setValuesPopup.form.setValues.Label:	Apply
+*xt*setValuesPopup.form.cancel.Label:		Cancel
+
+*setValuesPopup.form.Text.?.EditType:		Edit
+*setValuesPopup.form.Text.resize:		Width
+
+*setValuesPopup.form.resourceText.baseTranslations: #override \
+  <Key>Return:     	   no-op(RingBell) \n\
+   Ctrl<Key>q,<Key>Tab:    insert-char()    \n\
+   <Btn1Down>:             select-start() SVActiveEntry(Resource) \n\
+   <Key>Tab:               SVActiveEntry(Value)
+
+*setValuesPopup.form.valueText.baseTranslations: #override \
+   <Key>Return:     	   no-op(RingBell) \n\
+   Ctrl<Key>q,<Key>Tab:    insert-char()     \n\
+   <Btn1Down>:             select-start() SVActiveEntry(Value)\n\
+   <Key>Tab:               SVActiveEntry(Resource)
+
+*Text.translations: #override \
+   m<Key>I:		no-op(r)\n\
+   c<Key>S:		no-op(r)\n\
+   c<Key>R:		no-op(r)\n\
+   <Key>Escape:		no-op()
+
+*fileDialog.?.Text.width:	280
+
+! New resource settings
+*normalViewport.min:					19
+*normalViewport.allowVert:				True
+*constraintViewport.min:				19
+*constraintViewport.allowVert:				True
+*mainViewport.allowHoriz:				True
+*mainViewport.pane.namesAndClasses.defaultDistance:	0
+*mainViewport.useBottom:				True
+*mainViewport.pane.Label.min:				22
+*mainViewport.pane.Label.max:				22
+*mainViewport.pane.Form.showGrip:			False
+*mainViewport.pane.Label.showGrip:			False
+*mainViewport.pane.Form.min:				66
+*mainViewport.pane.Form.max:				66
+*tree*TransientShell.translations: #override \
+<Map>:	get-values(1, $w, width) \
+	set-values(1, maxWidth, $w)

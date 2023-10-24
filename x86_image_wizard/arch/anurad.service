@@ -1,0 +1,13 @@
+[Unit]
+Description=Anura PTY Daemon
+After=graphical.target
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/bin/anurad
+
+[Install]
+WantedBy=graphical.target

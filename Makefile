@@ -7,7 +7,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 
 all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json
 
-full: all rootfs
+full: all rootfs-debian rootfs-arch
 
 hooks: FORCE
 	mkdir -p .git/hooks
@@ -29,8 +29,14 @@ clean:
 	cd v86; make clean
 	rm -rf build/*
 
-rootfs: FORCE
+rootfs-debian: FORCE
 	cd x86_image_wizard/debian; sh build-debian-bin.sh
+
+rootfs-arch: FORCE
+	cd x86_image_wizard/arch; sh build-arch-bin.sh
+
+rootfs: FORCE
+	cd x86_image_wizard; sh x86_image_wizard.sh
 
 v86dirty: 
 	touch v86timestamp # makes it "dirty" and forces recompilation

@@ -150,6 +150,16 @@ class OobeView {
                     <br />
                     <button
                         on:click={() => {
+                            anura.settings.set("x86-disabled", false);
+                            anura.settings.set("x86-image", "arch");
+                            this.nextStep();
+                        }}
+                    >
+                        Arch: rootfs (enable v86 with Arch) - ~2.1GB
+                    </button>
+                    <br />
+                    <button
+                        on:click={() => {
                             anura.settings.set("x86-disabled", true);
                             this.nextStep();
                         }}
