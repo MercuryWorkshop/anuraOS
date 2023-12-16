@@ -43,21 +43,27 @@ function loadPath(path) {
                     row.setAttribute("data-type", "dir");
                     row.setAttribute("data-path", `${path}/${file}`);
                 } else {
-                    name.innerText = `${file}`;
-                    description.innerText = "Anura File";
-                    icon.class = "";
-                    date.innerText = new Date(stats.mtime).toLocaleString();
-                    size.innerText = stats.size;
+                    if (selectorType !== "dir") {
+                        let ext = file.split("/").pop().split(".").pop();
 
-                    iconContainer.appendChild(icon);
-                    row.appendChild(iconContainer);
-                    row.appendChild(name);
-                    row.appendChild(size);
-                    row.appendChild(description);
-                    row.appendChild(date);
+                        if (fileRegex.test(ext)) {
+                            name.innerText = `${file}`;
+                            description.innerText = "Anura File";
+                            icon.class = "";
+                            date.innerText = new Date(stats.mtime).toLocaleString();
+                            size.innerText = stats.size;
 
-                    row.setAttribute("data-type", "file");
-                    row.setAttribute("data-path", `${path}/${file}`);
+                            iconContainer.appendChild(icon);
+                            row.appendChild(iconContainer);
+                            row.appendChild(name);
+                            row.appendChild(size);
+                            row.appendChild(description);
+                            row.appendChild(date);
+
+                            row.setAttribute("data-type", "file");
+                            row.setAttribute("data-path", `${path}/${file}`);
+                        }
+                    }
                 }
                 console.debug("appending");
                 table.appendChild(row);

@@ -81,6 +81,12 @@
         <script src="GUI.js"></script>
         <script>
             let selectorType = "dir"
+            let url = new URL(document.location)
+            let regex = url.searchParams.get("regex")
+            if (regex) {
+                regex = decodeURIComponent(regex)
+                fileRegex = new RegExp(regex)
+            }
         </script>
         <script src="operations.js"></script>
         <div style="display: none" id="contextMenu">

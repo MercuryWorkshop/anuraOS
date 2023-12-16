@@ -14,7 +14,12 @@ selectFile().then((filePath) => {
 // Asynchronously:
 await selectFile()
 
-// Returning
+// Parameters:
+
+// selectFile(fileExtension) 
+// Example: selectFile("txt")
+
+// Returning:
 
 // One file
 "//example.txt"
