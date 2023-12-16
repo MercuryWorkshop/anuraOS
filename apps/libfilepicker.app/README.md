@@ -13,6 +13,14 @@ selectFile().then((filePath) => {
 });
 // Asynchronously:
 await selectFile()
+
+// Returning
+
+// One file
+"//example.txt"
+
+// Multiple files
+["//example.txt", "//example1.txt"]
 ```
 
 Picking a folder:
@@ -23,4 +31,12 @@ selectFolder().then((filePath) => {
 });
 // Asynchronously:
 await selectFolder()
+
+// Returns:
+
+// One folder
+"//folder"
+
+// Multiple folders
+["//folder", "//folder2"]
 ```

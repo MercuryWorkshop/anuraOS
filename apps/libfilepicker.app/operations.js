@@ -129,11 +129,43 @@ function reloadListeners() {
         }
     });
 }
+async function selectAction(selected) {
+    currentlySelected.forEach((row) => {
+        row.classList.remove("selected");
+    });
+    currentlySelected = [];
+    if (selected.length == 1) {
+        var fileSelected = selected[0];
+        if (fileSelected.getAttribute("data-type") == selectorType) {
+            let fileData = {
+                message: 'FileSelected',
+                filePath: fileSelected.getAttribute("data-path")
+            };
 
+            window.parent.postMessage(fileData, '*');
+        }
+    } else if (selected.length > 1) {
+        let dataPaths = [];
+        for (var i = 0; i < selected.length; i++) {
+            var dataType = selected[i].getAttribute("data-type");
+            var dataPath = selected[i].getAttribute("data-path");
+            if (dataType !== selectorType ) {
+                return;
+            }
+            if (dataPath !== null) {
+              dataPaths.push(dataPath);
+            }
+        }
+        let fileData = {
+            message: 'FileSelected',
+            filePath: dataPaths
+        };
+    
+        window.parent.postMessage(fileData, '*');
+    }
+}
 async function fileAction(selected) {
     if (selected.length == 1) {
-        // SINGLE FILE SELECTION //
-
         var fileSelected = selected[0];
 
         if (fileSelected.getAttribute("data-type") == "file") {
@@ -146,20 +178,11 @@ async function fileAction(selected) {
                   window.parent.postMessage(fileData, '*');
             }
         } else if (fileSelected.getAttribute("data-type") == "dir") {
-            if (selectorType == "dir") {
-                let fileData = {
-                    message: 'FileSelected',
-                    filePath: fileSelected.getAttribute("data-path")
-                  };
-            
-                  window.parent.postMessage(fileData, '*');
-            } else {
-                console.debug(
-                    "Changing folder to ",
-                    fileSelected.getAttribute("data-path"),
-                );
-                loadPath(fileSelected.getAttribute("data-path"));
-            }
+            console.debug(
+                "Changing folder to ",
+                fileSelected.getAttribute("data-path"),
+            );
+            loadPath(fileSelected.getAttribute("data-path"));
         } else {
             console.warn(
                 "Unknown filetype ",
@@ -167,10 +190,24 @@ async function fileAction(selected) {
                 " doing nothing!",
             );
         }
-    } else {
-        // MULTIPLE FILE SELECTION //
-
-        console.error("raff please implement");
+    } else if (selected.length > 1) {
+        let dataPaths = [];
+        for (var i = 0; i < selected.length; i++) {
+            var dataType = selected[i].getAttribute("data-type");
+            var dataPath = selected[i].getAttribute("data-path");
+            if (dataType !== selectorType ) {
+                return;
+            }
+            if (dataPath !== null) {
+              dataPaths.push(dataPath);
+            }
+        }
+        let fileData = {
+            message: 'FileSelected',
+            filePath: dataPaths
+        };
+    
+        window.parent.postMessage(fileData, '*');
     }
 }
 
