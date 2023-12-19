@@ -77,6 +77,23 @@ function invalidateCache() {
     console.log("cache invalidated!");
 }
 
+workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
+    console.log("Caught a aboutbrowser extension request");
+    try {
+        return new Response(
+            await fs.promises.readFile(
+                "/" +
+                    "/extension/boojdlpfddgdceanfgoljlcapmnplfac/icon128.png"
+                        .split("/")
+                        .slice(2)
+                        .join("/"),
+            ),
+        );
+    } catch (e) {
+        return new Response("File not found bruh", { status: 404 });
+    }
+});
+
 workbox.routing.registerRoute(
     /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin|\/images\/debian|\/ultraviolet\/))/,
     ({ url }) => {
