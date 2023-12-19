@@ -80,11 +80,7 @@ function invalidateCache() {
 workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
     console.log("Caught a aboutbrowser extension request");
     try {
-        return new Response(
-            await fs.promises.readFile(
-                "/" + url.pathname.split("/").slice(2).join("/"),
-            ),
-        );
+        return new Response(await fs.promises.readFile(url.pathname));
     } catch (e) {
         return new Response("File not found bruh", { status: 404 });
     }
