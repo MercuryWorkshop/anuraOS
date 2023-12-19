@@ -82,11 +82,7 @@ workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
     try {
         return new Response(
             await fs.promises.readFile(
-                "/" +
-                    "/extension/boojdlpfddgdceanfgoljlcapmnplfac/icon128.png"
-                        .split("/")
-                        .slice(2)
-                        .join("/"),
+                "/" + url.pathname.split("/").slice(2).join("/"),
             ),
         );
     } catch (e) {
