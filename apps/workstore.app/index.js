@@ -21,6 +21,30 @@ async function loadappListScreen(repo) {
     appListScreen.innerHTML = ''
     repoList.style.display = 'none'
     document.getElementById("head").innerHTML = "< Go Back";
+
+    const search = document.createElement('input');
+
+    search.setAttribute('type', 'text');
+    search.setAttribute('placeholder', 'Search for apps...');
+
+    search.addEventListener('input', function() {
+        const searchQuery = this.value.toLowerCase();
+        const appButtons = document.querySelectorAll('.app');
+
+        appButtons.forEach(appButton => {
+            const appName = appButton.querySelector('span').innerText.toLowerCase();
+            if (searchQuery === '') {
+                appButton.style.display = '';
+            } else if (appName.includes(searchQuery)) {
+                appButton.style.display = '';
+            } else {
+                appButton.style.display = 'none';
+            }
+        });
+    });
+
+    appListScreen.appendChild(search);
+
     const repoItems = await (await client.fetch(repos[repo] + 'list.json')).json()
     const appList = document.createElement('div')
     
