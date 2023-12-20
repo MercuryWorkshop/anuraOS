@@ -34,7 +34,7 @@ async function loadMainScreen() {
         const newRepoURL = document.createElement('input')
         const newRepoButton = document.createElement('input')
         newRepoName.placeholder = "My Repo"
-        newRepoURL.placeholder = "https://anura.repo"
+        newRepoURL.placeholder = "https://anura.repo/"
         newRepoButton.type = 'submit'
         newRepoButton.value = 'add repo'
         newRepoButton.onclick = function() {
