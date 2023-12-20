@@ -38,7 +38,7 @@ async function loadMainScreen() {
         newRepoButton.type = 'submit'
         newRepoButton.value = 'add repo'
         newRepoButton.onclick = function() {
-            if (!newRepoName.value.endsWith("/")) {
+            if (!newRepoURL.value.endsWith("/")) {
                 anura.notifications.add({
                     title: "Workstore",
                     description: "URL does not end with a \"/\" character",
