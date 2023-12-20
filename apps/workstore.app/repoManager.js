@@ -7,6 +7,21 @@ async function loadMainScreen() {
     for (repo in repos) {
         const repoItem = document.createElement('div')
         repoItem.innerText = repo
+        repoItem.oncontextmenu = (e) => {
+            const newcontextmenu = new anura.ContextMenu();
+            newcontextmenu.addItem("Delete Repo", async function() {
+                delete repos[repoItem.innerText];
+                await anura.settings.set('workstore-repos', repos)
+                location.reload()
+            });
+            newcontextmenu.show(e.clientX, e.clientY)
+            document.onclick = (e) => {
+                document.onclick = null;
+                newcontextmenu.hide();
+                e.preventDefault();
+            }
+            e.preventDefault()
+        }
         repoItem.onclick = function() {
             loadappListScreen(repoItem.innerText) // Weird hack to work around the fact that repo doesn't work but the innertext of the repoitem does
         }
@@ -23,10 +38,22 @@ async function loadMainScreen() {
         newRepoButton.type = 'submit'
         newRepoButton.value = 'add repo'
         newRepoButton.onclick = function() {
+            if (!newRepoName.value.endsWith("/")) {
+                anura.notifications.add({
+                    title: "Workstore",
+                    description: "URL does not end with a \"/\" character",
+                    timeout: 5000,
+                });
+                return;
+            }
             const repoItem = document.createElement('div')
             repoItem.innerText = newRepoName.value
             if (repos[newRepoName.value]) {
-                // send anura notification that repo already exists
+                anura.notifications.add({
+                    title: "Workstore",
+                    description: "Repo is already added",
+                    timeout: 5000,
+                });
                 return;
             }
             repos[newRepoName.value] = newRepoURL.value;
