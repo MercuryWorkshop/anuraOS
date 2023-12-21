@@ -18,6 +18,7 @@ class Launcher {
             transition: all 0.1s ease-out;
             opacity: 0;
             z-index: -1;
+            overflow-y: hidden;
             visibility: hidden;
             left: 10px;
         }
@@ -88,6 +89,8 @@ class Launcher {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
             grid-auto-rows: 8em;
+            max-height: calc(5.9 * 8em);
+            overflow-y: auto;
         }
 
         .appsView .app {
