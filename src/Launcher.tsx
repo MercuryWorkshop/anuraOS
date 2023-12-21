@@ -1,4 +1,5 @@
 class Launcher {
+    private search: HTMLInputElement | null;
     css = styled.new`
         self {
             position: absolute;
@@ -109,7 +110,6 @@ class Launcher {
             <div class="topSearchBar">
                 <img src="/assets/icons/googleg.png"></img>
                 <input
-                    readonly
                     placeholder="Search your tabs, files, apps, and more..."
                     style="outline:none"
                 />
@@ -137,16 +137,56 @@ class Launcher {
         ></div>
     );
 
-    constructor() {}
+    constructor() {
+        this.search = this.element.querySelector(
+            ".topSearchBar input",
+        ) as HTMLInputElement;
+        this.search.addEventListener("input", this.handleSearch.bind(this));
+    }
+
+    handleSearch(event: Event) {
+        const searchQuery = (
+            event.target as HTMLInputElement
+        ).value.toLowerCase();
+        const appsView = this.element.querySelector("#appsView");
+        const apps = appsView.querySelectorAll(".app");
+
+        apps.forEach((app: HTMLElement) => {
+            const appNameElement = app.querySelector(".app-shortcut-name");
+            if (appNameElement) {
+                const appName = appNameElement.textContent?.toLowerCase() || "";
+                if (searchQuery === "") {
+                    app.style.display = "";
+                } else if (appName.includes(searchQuery)) {
+                    app.style.display = "";
+                } else {
+                    app.style.display = "none";
+                }
+            }
+        });
+    }
 
     toggleVisible() {
         this.element.classList.toggle("active");
         this.clickoffChecker.classList.toggle("active");
+        this.clearSearch();
     }
 
     hide() {
         this.element.classList.remove("active");
         this.clickoffChecker.classList.remove("active");
+        this.clearSearch();
+    }
+
+    clearSearch() {
+        if (this.search) {
+            this.search.value = "";
+        }
+        const appsView = this.element.querySelector("#appsView");
+        const apps = appsView.querySelectorAll(".app");
+        apps.forEach((app: HTMLElement) => {
+            app.style.display = "";
+        });
     }
 
     addShortcut(app: App) {
