@@ -81,6 +81,25 @@ class Launcher {
             border-bottom: 1px solid rgb(22 22 22 / 50%);
             padding: 1em 0em;
         }
+        /* https://codepen.io/xtrp/pen/QWjREeo */
+        ::-webkit-scrollbar {
+            width: 20px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #d6dee1;
+            border-radius: 20px;
+            border: 6px solid transparent;
+            background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: #a8bbbf;
+        }
 
         .appsView {
             padding: 1em;
