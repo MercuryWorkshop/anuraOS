@@ -133,7 +133,7 @@ class Launcher {
                 <img src="/assets/icons/googleg.png"></img>
                 <input
                     placeholder="Search your tabs, files, apps, and more..."
-                    style="outline:none"
+                    style="outline: none; color: white"
                 />
             </div>
 
