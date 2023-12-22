@@ -54,8 +54,16 @@ async function loadappListScreen(repo) {
         const thumbnail = document.createElement('img')
         const itemText = document.createElement('span')
         
+        async function thumbLoad() {
+            try {
+                thumbnail.src = URL.createObjectURL(await (await fetch(repos[repo] + repoItems['apps'][item]['icon'])).blob())
+            } catch (e) {
+                // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
+                thumbnail.src = URL.createObjectURL(await (await client.fetch(repos[repo] + repoItems['apps'][item]['icon'])).blob())
+            }
+        }
+        thumbLoad();
         
-        thumbnail.src = repos[repo] + repoItems['apps'][item]['icon']
         itemText.innerText = repoItems['apps'][item]['name']
         app.title = repoItems['apps'][item]['desc'] // idk why the tooltip is called title but whatever
         app.className = 'app'
