@@ -147,7 +147,7 @@
         status("Connecting");
 
         // Build the websocket URL used to connect
-        let url =  anura.wsproxyURL + prompt("Please enter the URL to the VNC Server as HOSTNAME:PORT"); 
+        let url =  window.parent.anura.wsproxyURL + readQueryVariable("hname") + ":" + readQueryVariable("port")
         
         // Creating a new RFB object will start a new connection
         rfb = new RFB(document.getElementById('screen'), url,
