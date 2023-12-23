@@ -90,11 +90,6 @@ nav li {
     transition: 0.3s;
 }
 
-.bootsplash > img {
-    width: 300px;
-    height: 80px;
-}
-
 .flex {
     display: flex;
 }
