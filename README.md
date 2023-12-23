@@ -1,9 +1,10 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
 
-# AnuraOS
+![AnuraOS logo](/assets/logo_dark.png#gh-light-mode-only)
+![AnuraOS logo](/assets/logo_light.png#gh-dark-mode-only)
 
-![AnuraOS logo](/assets/logo_light.png)
+The next-gen webOS and development environment with full linux emulation
 
 ---
 
