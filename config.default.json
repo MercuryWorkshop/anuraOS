@@ -72,7 +72,7 @@
         },
         "arch": {
             "bzimage": "/images/arch-boot/vmlinuz-linux",
-            "initrd": "/images/arch-boot/initramfs-linux-fallback.img",
+            "initrd": "/images/arch-boot/initramfs-linux.img",
             "rootfs": [
                 "images/arch-rootfs/aa",
                 "images/arch-rootfs/ab",
