@@ -3,6 +3,10 @@
 
 # AnuraOS
 
+![AnuraOS logo](/assets/logo_light.png)
+
+---
+
 ## What is AnuraOS?
 
 An entirely local browser "OS" and development environment with complete graphical linux emulation, visually based on chromiumOS. See a demo [here](https://anura.pro), fully in your browser.
