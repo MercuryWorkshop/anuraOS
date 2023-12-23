@@ -3,11 +3,25 @@
 
 # AnuraOS
 
-WebOS complete with v86 integration and a minimal yet capable desktop enviroment.
-Formerly known as Chimera. Based off of the AliceWM.
+## What is AnuraOS?
+An entirely local browser "OS" and development environment with complete graphical linux emulation, visually based on chromiumOS. See a demo [here](https://anura.pro), fully in your browser.
+
+> [!NOTE]  
+> Due to numerous issues with Firefox's implementation of certain web standards, it is not supported on Anura.
+> Please use a chromium-based browser or you will have a significantly diminished user experience
+
+Anura uses the features of a progressive-web-app to make its environment work fully offline, providing a virtual filesystem (synced with the linux emulator), a code editor, and a modular and extensible app system. You can even edit Anura's code live while inside of it!
+
+Anura shows as more of a proof-of-concept with what's possible on the modern web rather than an actual product. However, it proves useful in many actual cases and is a useful educational tool.
+
+## What can AnuraOS do?
+- Run linux GUI apps from a terminal
+![](/assets/showcase1.gif)
+
+# Development
 
 > [!IMPORTANT]  
-> Anura will not build on Windows. Please use a Linux VM or WSL.
+> Anura will not build on Windows. Please use a Linux VM or WSL
 
 ### Easy Install (When in a codespace)
 
@@ -58,9 +72,6 @@ npm start -- --auth
 -   Select the Debian rootfs. If you built it from this repository, its location is `./build/images/debian-rootfs.bin`.
 -   Set up rootfs by entering `await loadfile(document.all.input.files[0])` in your console.
 
-## Changelog
-
-Will be utilized after the first Build of AnuraOS.
 
 ## Documentation
 
@@ -70,6 +81,5 @@ Still being written. (See the current index of documentation [here](./documentat
 
 See [SECURITY.md](./SECURITY.md) for reporting instructions.
 
-<sub>
-The AnuraOS Team and Mercury Workshop are both not liable to any loss of braincells and maybe even your sanity after working with this product. Since development on Anura is "Dead" Koaku is the offical maintainer of the project. If you have any questions, dm `dvcu` on Discord or create a new Issue.
-</sub>
+## Credits
+AnuraOS is created by [Mercury Workshop](https://mercurywork.shop). Linux emulation is based off of the [v86](https://github.com/copy/v86) project
