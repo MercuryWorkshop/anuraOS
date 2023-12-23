@@ -101,8 +101,8 @@ class OobeView {
         {
             elm: (
                 <div class="screen" id="welcome">
-                    <h1>Welcome to your Chromebook</h1>
-                    <div id="subtitle">Slow. Insecure. Effortful.</div>
+                    <h1>Welcome to AnuraOS</h1>
+                    <div id="subtitle">Effortless. Modern. Powerful.</div>
                     <div id="gridContent">
                         <div
                             on:click={() => {
@@ -145,7 +145,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        Debian: rootfs (enable v86 with Debian) - ~2.1GB
+                        Debian Linux - 2.1GB download
                     </button>
                     <br />
                     <button
@@ -155,7 +155,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        Arch: rootfs (enable v86 with Arch) - ~2.1GB
+                        Arch Linux - 2.1GB download
                     </button>
                     <br />
                     <button
@@ -164,7 +164,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        Normal User (disable v86) ~23.3MB
+                        Normal User (disable linux) - 23.3MB download
                     </button>
                     <br />
                     <button
@@ -174,8 +174,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        Bypass File Cache (disable v86, and disable offline
-                        functionality) ~instant
+                        No Download (disable linux and offline functionality)
                     </button>
                 </div>
             ),
