@@ -24,8 +24,8 @@
     },
     "x86": {
         "debian": {
-            "bzimage": "/images/debian-boot/vmlinuz-6.1.0-11-686",
-            "initrd": "/images/debian-boot/initrd.img-6.1.0-11-686",
+            "bzimage": "/images/debian-boot/vmlinuz",
+            "initrd": "/images/debian-boot/initrd.img",
             "rootfs": [
                 "images/debian-rootfs/aa",
                 "images/debian-rootfs/ab",

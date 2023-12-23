@@ -54,6 +54,8 @@ rm -rf anuramouse
 
 echo "done! created"
 cd "$IMAGES"
+mv "debian-boot/initrd.img-"* "debian-boot/initrd.img"
+mv "debian-boot/vmlinuz-"* "debian-boot/vmlinuz"
 mkdir -p debian-rootfs
 split -b50M debian-rootfs.bin debian-rootfs/
 cd ../

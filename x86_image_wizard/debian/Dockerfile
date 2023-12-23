@@ -26,7 +26,7 @@ RUN apt update && \
         libcurl4-openssl-dev \
         npm nodejs \
         xdotool \
-        linux-headers-6.1.0-10-686 \
+        linux-headers-686 \
         procps \
     && \
     touch /root/.Xdefaults && \
