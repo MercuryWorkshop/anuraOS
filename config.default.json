@@ -20,7 +20,7 @@
             "anura.fsapp",
             "anura.term"
         ],
-        "relay-url": "ws://localhost:8001/"
+        "relay-url": "wss://relay.widgetry.org/"
     },
     "x86": {
         "debian": {
