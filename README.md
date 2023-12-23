@@ -4,6 +4,7 @@
 # AnuraOS
 
 ## What is AnuraOS?
+
 An entirely local browser "OS" and development environment with complete graphical linux emulation, visually based on chromiumOS. See a demo [here](https://anura.pro), fully in your browser.
 
 > [!NOTE]  
@@ -15,8 +16,9 @@ Anura uses the features of a progressive-web-app to make its environment work fu
 Anura shows as more of a proof-of-concept with what's possible on the modern web rather than an actual product. However, it proves useful in many actual cases and is a useful educational tool.
 
 ## What can AnuraOS do?
-- Run linux GUI apps from a terminal
-![](/assets/showcase1.gif)
+
+-   Run linux GUI apps from a terminal
+    ![](/assets/showcase1.gif)
 
 # Development
 
@@ -72,7 +74,6 @@ npm start -- --auth
 -   Select the Debian rootfs. If you built it from this repository, its location is `./build/images/debian-rootfs.bin`.
 -   Set up rootfs by entering `await loadfile(document.all.input.files[0])` in your console.
 
-
 ## Documentation
 
 Still being written. (See the current index of documentation [here](./documentation/README.md))
@@ -82,4 +83,5 @@ Still being written. (See the current index of documentation [here](./documentat
 See [SECURITY.md](./SECURITY.md) for reporting instructions.
 
 ## Credits
+
 AnuraOS is created by [Mercury Workshop](https://mercurywork.shop). Linux emulation is based off of the [v86](https://github.com/copy/v86) project
