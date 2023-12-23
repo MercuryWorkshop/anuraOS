@@ -334,7 +334,8 @@ class V86Backend {
             await this.virt_hda.save();
         });
 
-        this.emulator.add_listener("serial0-output-char", (char: string) => {
+        this.emulator.add_listener("serial0-output-byte", (byte: number) => {
+            const char = String.fromCharCode(byte);
             if (char === "\r") {
                 anura.logger.debug(s0data);
 
@@ -344,7 +345,8 @@ class V86Backend {
             }
             s0data += char;
         });
-        this.emulator.add_listener("serial1-output-char", (char: string) => {
+        this.emulator.add_listener("serial1-output-byte", (byte: number) => {
+            const char = String.fromCharCode(byte);
             if (char === "\r") {
                 anura.logger.debug(`111: ${s1data}`);
 
