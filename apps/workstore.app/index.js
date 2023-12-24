@@ -100,32 +100,31 @@ async function loadappListScreen(repo) {
                 timeout: 5000
             })
             let zip = await JSZip.loadAsync(file);
+            let postInstallScript = null;
             console.log(path)
             try {
-                await zip.forEach(async function (relativePath, zipEntry) {  // 2) print entries
+                for (const [relativePath, zipEntry] of Object.entries(zip.files)) {
                     if (zipEntry.dir) {
                         fs.mkdir(`${path}/${zipEntry.name}`)
                     } else {
                         console.log(zipEntry)
                         console.log(await zipEntry.async("arraybuffer"))
-                        fs.writeFile(`${path}/${zipEntry.name}`, await Buffer.from(await zipEntry.async("arraybuffer")))
-                        if (zipEntry.name == "manifest.json") {
-                            await anura.registerExternalApp('/fs' + path)
-                            anura.notifications.add(
-                                {
-                                    title: "Application Installed",
-                                    description: `Application ${itemText.innerText} has been installed.`,
-                                    timeout: 50000
-                                })
+                        if (zipEntry.name == 'post_install.js') {
+                            let script = await zipEntry.async("string")
+                            postInstallScript = script
+                            continue;
                         }
+                        fs.writeFile(`${path}/${zipEntry.name}`, await Buffer.from(await zipEntry.async("arraybuffer")))
                     }
-                }, function (e) {
-                    anura.notifications.add({
-                        title: "Application ZIP extraction error",
-                        description: `Application had an error installing: ${e}`,
-                        timeout: 50000
-                    })
-                    console.error(e)
+                }
+
+                await anura.registerExternalApp('/fs' + path)
+                if (postInstallScript) window.top.eval(postInstallScript)
+                anura.notifications.add(
+                {
+                    title: "Application Installed",
+                    description: `Application ${itemText.innerText} has been installed.`,
+                    timeout: 50000
                 })
             } catch (e) {
                 anura.notifications.add({
@@ -133,6 +132,7 @@ async function loadappListScreen(repo) {
                     description: `Workstore failed to install ${itemText.innerText}`,
                     timeout: 5000
                 })
+                console.error(e)
             }
         }
         appList.appendChild(app)
