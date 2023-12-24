@@ -140,6 +140,9 @@ class XFrogApp extends App {
                                 console.log,
                             );
                         },
+                        () => {
+                            anura.x86!.runcmd(`xkill -id ${xwid}`);
+                        },
                     );
                     this.xwindows[xwid] = win;
                     // sfocus();
