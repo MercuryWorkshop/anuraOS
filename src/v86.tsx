@@ -575,9 +575,6 @@ class V86Backend {
         const bytes = encoder.encode(data);
 
         if (this.nextWrite) {
-            if (this.sendQueue.length > 10)
-                // "jamming" failsafe. if this condition reaches, some sort of race or bug happened in anurad and we will have to drop a character to continue
-                this.nextWrite = null;
             this.sendQueue.push([data, TTYn]);
             return;
         }
