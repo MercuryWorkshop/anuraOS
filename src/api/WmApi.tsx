@@ -5,6 +5,7 @@ class WMAPI {
         info: object,
         onfocus: (() => void) | null = null,
         onresize: ((w: number, h: number) => void) | null = null,
+        onclose: (() => void) | null = null,
     ): WMWindow {
         const win = AliceWM.create(info as unknown as any);
 
@@ -20,6 +21,9 @@ class WMAPI {
         };
         win.onresize = (width: number, height: number) => {
             if (onresize) onresize(width, height);
+        };
+        win.onclose = () => {
+            if (onclose) onclose();
         };
         ctx.windows.push(win);
         this.windows.push(new WeakRef(win));

@@ -49,6 +49,7 @@ class WMWindow {
 
     onfocus: () => void;
     onresize: (w: number, h: number) => void;
+    onclose: () => void;
 
     justresized = false;
 
@@ -371,6 +372,8 @@ class WMWindow {
         this.element.remove();
         // TODO, Remove this and make it an event
         anura.removeStaleApps();
+
+        if (this.onclose) this.onclose();
     }
     togglemaximize() {
         if (!this.maximized) {
