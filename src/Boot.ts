@@ -102,6 +102,12 @@ document.addEventListener("anura-login-completed", async () => {
     const about = new AboutApp();
     anura.registerApp(about);
 
+    const wallpaper = new WallpaperSelector();
+    anura.registerApp(wallpaper);
+
+    // Load wallpaper from anura.settings
+    wallpaper.setWallpaper(anura.settings.get("wallpaper"));
+
     for (const app of anura.config.apps) {
         anura.registerExternalApp(app);
     }
