@@ -61,7 +61,7 @@ function createRow(RowElement, isFolder, path, file) {
                 anura.fs.unlink(`${path}/${file}`)
             });
             newcontextmenu.addItem("New", function () {
-                anura.fs.writeFile(`${path}/${prompt("file name?")}`)
+                anura.fs.writeFile(`${path}/${prompt("file name?")}`,"")
             });
             newcontextmenu.show(e.clientX,e.clientY)
         })
