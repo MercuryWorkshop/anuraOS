@@ -63,7 +63,7 @@ type WallpaperObject = {
 class WallpaperSelector extends App {
     name = "Wallpaper Selector";
     package = "anura.wallpaper";
-    icon = "/assets/icons/settings.png";
+    icon = "/assets/icons/wallpaper.png";
 
     wallpaperList = async () => {
         return await this.loadWallpaperManifest();
