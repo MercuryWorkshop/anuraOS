@@ -60,7 +60,8 @@ function openFile (path) {
     function openVideo(path, mimetype) {
         fs.readFile(path, function(err, data) {
             let fileView = AliceWM.create("Video File")
-            fileView.content.style.overflow = 'auto'
+            fileView.content.style.overflow = 'hidden'
+            fileView.content.style.backgroundColor = "black"
             let bloburl = URL.createObjectURL(new Blob([data]))
             let video = document.createElement('video')
             let source = document.createElement('source')
