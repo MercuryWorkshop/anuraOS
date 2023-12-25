@@ -544,6 +544,12 @@ class SettingsApp extends App {
                                 <button
                                     on:click={async () => {
                                         this.state.x86_installing = true;
+                                        anura.settings.set(
+                                            "x86-image",
+                                            prompt(
+                                                'Please enter "arch" or "debian"',
+                                            ),
+                                        );
                                         await installx86();
                                         anura.settings.set(
                                             "x86-disabled",
