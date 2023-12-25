@@ -1,4 +1,9 @@
-css = styled.new`
+class SettingsApp extends App {
+    name = "Settings";
+    package = "anura.settings";
+    icon = "/assets/icons/settings.png";
+
+    css = styled.new`
     .self {
         color: white;
     }
@@ -270,11 +275,6 @@ css = styled.new`
     }
 `;
 
-class SettingsApp extends App {
-    name = "Settings";
-    package = "anura.settings";
-    icon = "/assets/icons/settings.png";
-
     state = stateful({
         show_x86: !anura.settings.get("x86-disabled"),
         x86_installing: false,
@@ -283,7 +283,7 @@ class SettingsApp extends App {
 
     page = () => (
         <div
-            class={`background ${css}`}
+            class={`background ${this.css}`}
             style="height:100%;width:100%;position:absolute"
         >
             <div class="header">
