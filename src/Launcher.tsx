@@ -12,6 +12,7 @@ class Launcher {
             border-radius: 1em;
             bottom: 4.5em;
             backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
             display: flex;
             flex-direction: column;
             display: block;
