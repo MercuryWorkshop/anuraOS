@@ -348,8 +348,6 @@ class V86Backend {
         this.emulator.add_listener("serial1-output-byte", (byte: number) => {
             const char = String.fromCharCode(byte);
             if (char === "\r") {
-                anura.logger.debug(`111: ${s1data}`);
-
                 this._proc_data(s1data);
                 s1data = "";
                 return;
