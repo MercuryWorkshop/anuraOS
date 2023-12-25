@@ -46,8 +46,7 @@ window.addEventListener("load", async () => {
 		io.sendString = writeData;
 
 		io.onTerminalResize = (cols, rows) => {
-			currentCol = cols;
-            currentRow = rows;
+			anura.x86.resizepty(pty, cols, rows);
 		}
 
 		t.installKeyboard();
@@ -55,9 +54,6 @@ window.addEventListener("load", async () => {
 
 		htermNode.querySelector("iframe").style.position = "relative";
 		console.log("wtf")
-		anura.apps['anura.term'].windows[anura.apps['anura.term'].windows.length - 1].onresize = () => {
-			anura.x86.resizepty(pty, currentCol, currentRow);
-		}
 
 	}
 });
