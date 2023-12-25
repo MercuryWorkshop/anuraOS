@@ -456,7 +456,7 @@ function deactivateFrames() {
     let i;
     const frames = document.getElementsByTagName("iframe");
     for (i = 0; i < frames.length; ++i) {
-        anura.logger.debug(frames[i]);
+        // anura.logger.debug(frames[i]);
         frames[i]!.style.pointerEvents = "none";
     }
 }
@@ -473,7 +473,7 @@ function getHighestZindex() {
     const allWindows: HTMLElement[] = Array.from(
         document.querySelectorAll<HTMLTableElement>(".aliceWMwin"),
     );
-    anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
+    // anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
 
     let highestZindex = 0;
     for (const wmwindow of allWindows) {
@@ -487,7 +487,7 @@ async function normalizeZindex() {
     const allWindows: HTMLElement[] = Array.from(
         document.querySelectorAll<HTMLTableElement>(".aliceWMwin"),
     );
-    anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
+    // anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
 
     let lowestZindex = 9999;
     for (const wmwindow of allWindows) {
