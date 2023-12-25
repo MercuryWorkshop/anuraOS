@@ -16,16 +16,16 @@ await selectFile()
 
 // Parameters:
 
-// selectFile(fileExtension) 
+// selectFile(fileExtension {can use regex or just be a file extension}) 
 // Example: selectFile("txt")
 
 // Returning:
 
 // One file
-"//example.txt"
+"/example.txt"
 
 // Multiple files
-["//example.txt", "//example1.txt"]
+["/example.txt", "/example1.txt"]
 ```
 
 Picking a folder:
@@ -40,8 +40,8 @@ await selectFolder()
 // Returns:
 
 // One folder
-"//folder"
+"/folder"
 
 // Multiple folders
-["//folder", "//folder2"]
+["/folder", "/folder2"]
 ```

@@ -145,7 +145,7 @@ async function selectAction(selected) {
         if (fileSelected.getAttribute("data-type") == selectorType) {
             let fileData = {
                 message: 'FileSelected',
-                filePath: fileSelected.getAttribute("data-path")
+                filePath: fileSelected.getAttribute("data-path").replace(/(\/)\1+/g, "$1")
             };
 
             window.parent.postMessage(fileData, '*');
@@ -159,7 +159,7 @@ async function selectAction(selected) {
                 return;
             }
             if (dataPath !== null) {
-              dataPaths.push(dataPath);
+              dataPaths.push(dataPath.replace(/(\/)\1+/g, "$1"));
             }
         }
         let fileData = {
@@ -168,6 +168,15 @@ async function selectAction(selected) {
         };
     
         window.parent.postMessage(fileData, '*');
+    } else if (selected.length == 0) {
+        if (selectorType == "dir") {
+            let fileData = {
+                message: 'FileSelected',
+                filePath: document.querySelector(".breadcrumbs").getAttribute("data-current-path")
+              };
+        
+              window.parent.postMessage(fileData, '*');
+        }
     }
 }
 async function fileAction(selected) {
@@ -178,7 +187,7 @@ async function fileAction(selected) {
             if (selectorType == "file") {
                 let fileData = {
                     message: 'FileSelected',
-                    filePath: fileSelected.getAttribute("data-path")
+                    filePath: fileSelected.getAttribute("data-path").replace(/(\/)\1+/g, "$1")
                   };
             
                   window.parent.postMessage(fileData, '*');
@@ -205,7 +214,7 @@ async function fileAction(selected) {
                 return;
             }
             if (dataPath !== null) {
-              dataPaths.push(dataPath);
+              dataPaths.push(dataPath.replace(/(\/)\1+/g, "$1"));
             }
         }
         let fileData = {
