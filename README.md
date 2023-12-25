@@ -14,7 +14,8 @@ An entirely local browser "OS" and development environment with complete graphic
 
 > [!NOTE]  
 > Due to numerous issues with Firefox's implementation of certain web standards, it is not supported on Anura.
-> Please use a chromium-based browser or you will have a significantly diminished user experience
+> Please use a chromium-based browser or you will have a significantly diminished user experience.
+> Safari is also fully compatible, as long as you have MacOS Sonoma, or iPadOS/iOS 17 or later.
 
 Anura uses the features of a progressive-web-app to make its environment work fully offline, providing a virtual filesystem (synced with the linux emulator), a code editor, and a modular and extensible app system. You can even edit Anura's code live while inside of it!
 
