@@ -30,15 +30,15 @@
     height: 100%;
  }
  .resizer[data-direction="horizontal"] {
-    background-color: #cbd5e0;
+    background-color: #434546;
     cursor: ew-resize;
     height: 100%;
-    width: 2px;
+    width: 4px;
  }
  .resizer[data-direction="vertical"] {
-    background-color: #cbd5e0;
+    background-color: #434546;
     cursor: ns-resize;
-    height: 2px;
+    height: 4px;
     width: 100%;
  }
  .container__left {

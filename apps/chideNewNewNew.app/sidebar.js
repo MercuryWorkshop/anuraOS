@@ -54,6 +54,17 @@ function createRow(RowElement, isFolder, path, file) {
         path = ''
 
     let name = document.createElement("span");
+    name.addEventListener("contextmenu",e=>{
+            e.preventDefault();
+            const newcontextmenu = new parent.anura.ContextMenu();
+            newcontextmenu.addItem("Delete", function () {
+                anura.fs.unlink(`${path}/${file}`)
+            });
+            newcontextmenu.addItem("New", function () {
+                anura.fs.writeFile(`${path}/${prompt("file name?")}`)
+            });
+            newcontextmenu.show(e.clientX,e.clientY)
+        })
     if (isFolder) {
         name.innerText = `${file}/`;
 
@@ -72,6 +83,7 @@ function createRow(RowElement, isFolder, path, file) {
                 RowElement.setAttribute("expanded", "false");
             }
         });
+        
         RowElement.setAttribute("expanded", "false");
         RowElement.setAttribute("data-type", "dir");
         RowElement.setAttribute("data-path", `${path}/${file}`);
@@ -98,4 +110,23 @@ function setActiveElement(element) {
     element.setAttribute("active", "true")
     activeElement = element;
 }
-loadPath(document.getElementById("root"), "/");
+
+function loadRoot(){
+    [...document.getElementById("root").children].forEach(a=>a.remove());
+    loadPath(document.getElementById("root"), "/");
+}
+loadRoot();
+
+
+let last;
+setInterval(() => {
+    fs.readdir("/", (err, files) => {
+        if (err) throw err;
+        // parent.innerHTML = ''
+        if (last != files.toString()) {
+            loadRoot();
+        }
+        last = files.toString();
+
+    });
+}, 1000);
