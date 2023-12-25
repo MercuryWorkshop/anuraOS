@@ -193,7 +193,7 @@ document.addEventListener("anura-login-completed", async () => {
         }
     });
     document.addEventListener("keyup", (e) => {
-        console.log("keyup", e);
+        // console.log("keyup", e);
         if (e.key.toLowerCase() === "shift") {
             alttab.onModRelease();
             return;
