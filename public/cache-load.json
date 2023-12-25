@@ -448,6 +448,7 @@
     "lib/coreapps/XFrogApp.d.ts",
     "lib/coreapps/ExternalApp.js.map",
     "lib/coreapps/App.js",
+    "lib/coreapps/WallpaperSelector.js",
     "lib/coreapps/XFrogApp.js",
     "lib/coreapps/XAppStub.d.ts",
     "lib/coreapps/AboutApp.js",
