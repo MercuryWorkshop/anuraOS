@@ -106,7 +106,9 @@ class WallpaperSelector extends App {
                 <button
                     on:click={() => {
                         // @ts-ignore
-                        selectFile().then((filename: any) => {
+                        selectFile(
+                            "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
+                        ).then((filename: any) => {
                             if (filename == undefined) return;
                             const wallpaperName = filename.split("/").pop();
                             const wallpaperURL = "/fs" + filename;
