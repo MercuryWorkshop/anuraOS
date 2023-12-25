@@ -31,7 +31,6 @@ function openFile (path) {
     }
     
     function openPDF(path) {
-        alert('Holy shit why are you trying to view a pdf...')
         fs.readFile(path, function(err, data) {
             let fileView = AliceWM.create("PDF File")
             fileView.content.style.overflow = 'auto'
