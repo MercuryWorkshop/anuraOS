@@ -1,672 +1,475 @@
+const settingsCSS = styled.new`
+    .self {
+        color: white;
+    }
+    .header {
+        margin-left: 20px;
+    }
+    .container {
+        display: flex;
+    }
+    .settings-category {
+        margin-left: 20px;
+        width: 100%;
+    }
+    .settings-body {
+        display: flex;
+        width: 100%;
+        margin-right: 20px;
+        flex-direction: column;
+    }
+    .sidebar {
+        margin-left: 20px;
+        margin-top: 15px;
+    }
+    .sidebar-settings-item {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        margin: 5px;
+        width: 150px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: 250ms ease-in-out;
+    }
+    .sidebar-settings-item-name > a:hover {
+        color: #b9b9b9;
+    }
+    .settings-category-name {
+        color: rgb(225 225 225);
+        margin-bottom: 15px;
+    }
+    .settings-item {
+        margin-bottom: 10px;
+        background-color: rgb(20 20 20);
+        height: 40px;
+        display: flex;
+        margin-right: 10px;
+        justify-content: space-between;
+        align-items: center;
+        width: calc(100% - 20px);
+        border-radius: 10px;
+    }
+    .settings-item-name {
+        margin-left: 10px;
+    }
+    .settings-button {
+        background-color: #2f2f2f;
+        border: none;
+        border-radius: 5px;
+        padding: 5px;
+        color: #c1c1c1;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+    .settings-item-text-input {
+        background-color: #2f2f2f;
+        margin-right: 10px;
+        border: none;
+        border-radius: 5px;
+        padding: 5px;
+        color: white;
+    }
+    .settings-item-text-input:focus {
+        outline: none;
+    }
+    .sidebar-settings-item-name > a {
+        color: #c1c1c1;
+        margin-left: 20px;
+        text-decoration: none;
+    }
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 18px;
+        margin-right: 10px;
+    }
+    .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: 0.4s;
+        transition: 0.4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 28px;
+        width: 28px;
+        bottom: -5px;
+        background-color: white;
+        transition: all 0.4s ease 0s;
+    }
+
+    input:checked + .slider {
+        background-color: #2196f3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196f3;
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(34px);
+    }
+    .slider.round {
+        border-radius: 34px;
+    }
+    .slider.round:before {
+        border-radius: 50%;
+    }
+    .disk-info {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+    }
+    .disk-size-bytes {
+        height: 15px;
+        margin-left: 10px;
+    }
+    .settings-button-group {
+        display: flex;
+    }
+    .grouped-btn {
+        width: 100%;
+    }
+`;
+
 class SettingsApp extends App {
     name = "Settings";
     package = "anura.settings";
     icon = "/assets/icons/settings.png";
 
-    css = styled.new`
-    .self {
-        color: white;
-    }
-    /* https://codepen.io/sajran/pen/dMKvpb */
-    .switch {
-        display: inline-block;
-        position: relative;
-        margin: 0 0 10px;
-        font-size: 16px;
-        line-height: 24px;
-    }
-    .switch__input {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 36px;
-        height: 20px;
-        opacity: 0;
-        z-index: 0;
-    }
-    .switch__label {
-        display: block;
-        padding: 0 0 0 44px;
-        cursor: pointer;
-    }
-    .switch__label:before {
-        content: "";
-        position: absolute;
-        top: 5px;
-        left: 0;
-        width: 36px;
-        height: 14px;
-        background-color: rgba(255, 255, 255, 0.26);
-        border-radius: 14px;
-        z-index: 1;
-        transition: background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .switch__label:after {
-        content: "";
-        position: absolute;
-        top: 2px;
-        left: 0;
-        width: 20px;
-        height: 20px;
-        background-color: #fff;
-        border-radius: 14px;
-        box-shadow:
-            0 2px 2px 0 rgba(0, 0, 0, 0.14),
-            0 3px 1px -2px rgba(0, 0, 0, 0.2),
-            0 1px 5px 0 rgba(0, 0, 0, 0.12);
-        z-index: 2;
-        transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-        transition-property: left, background-color;
-    }
-    .switch__input:checked + .switch__label:before {
-        background-color: rgba(63, 81, 181, 0.5);
-    }
-    .switch__input:checked + .switch__label:after {
-        left: 16px;
-        background-color: #3f51b5;
-    }
-    /* https://codepen.io/finnhvman/pen/MQyJxV */
-    .pure-material-button-contained {
-        position: relative;
-        display: inline-block;
-        box-sizing: border-box;
-        border: none;
-        border-radius: 4px;
-        padding: 0 16px;
-        min-width: 64px;
-        height: 36px;
-        vertical-align: middle;
-        text-align: center;
-        text-overflow: ellipsis;
-        text-transform: uppercase;
-        color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
-        background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
-        box-shadow:
-            0 3px 1px -2px rgba(0, 0, 0, 0.2),
-            0 2px 2px 0 rgba(0, 0, 0, 0.14),
-            0 1px 5px 0 rgba(0, 0, 0, 0.12);
-        font-family: var(
-            --pure-material-font,
-            "Roboto",
-            "Segoe UI",
-            BlinkMacSystemFont,
-            system-ui,
-            -apple-system
-        );
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 36px;
-        overflow: hidden;
-        outline: none;
-        cursor: pointer;
-        transition: box-shadow 0.2s;
-    }
-
-    .pure-material-button-contained::-moz-focus-inner {
-        border: none;
-    }
-
-    /* Overlay */
-    .pure-material-button-contained::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background-color: rgb(
-            var(--pure-material-onprimary-rgb, 255, 255, 255)
-        );
-        opacity: 0;
-        transition: opacity 0.2s;
-    }
-
-    /* Ripple */
-    .pure-material-button-contained::after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        border-radius: 50%;
-        padding: 50%;
-        width: 32px; /* Safari */
-        height: 32px; /* Safari */
-        background-color: rgb(
-            var(--pure-material-onprimary-rgb, 255, 255, 255)
-        );
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(1);
-        transition:
-            opacity 1s,
-            transform 0.5s;
-    }
-
-    /* Hover, Focus */
-    .pure-material-button-contained:hover,
-    .pure-material-button-contained:focus {
-        box-shadow:
-            0 2px 4px -1px rgba(0, 0, 0, 0.2),
-            0 4px 5px 0 rgba(0, 0, 0, 0.14),
-            0 1px 10px 0 rgba(0, 0, 0, 0.12);
-    }
-
-    .pure-material-button-contained:hover::before {
-        opacity: 0.08;
-    }
-
-    .pure-material-button-contained:focus::before {
-        opacity: 0.24;
-    }
-
-    .pure-material-button-contained:hover:focus::before {
-        opacity: 0.3;
-    }
-
-    /* Active */
-    .pure-material-button-contained:active {
-        box-shadow:
-            0 5px 5px -3px rgba(0, 0, 0, 0.2),
-            0 8px 10px 1px rgba(0, 0, 0, 0.14),
-            0 3px 14px 2px rgba(0, 0, 0, 0.12);
-    }
-
-    .pure-material-button-contained:active::after {
-        opacity: 0.32;
-        transform: translate(-50%, -50%) scale(0);
-        transition: transform 0s;
-    }
-
-    /* Disabled */
-    .pure-material-button-contained:disabled {
-        color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
-        background-color: rgba(
-            var(--pure-material-onsurface-rgb, 0, 0, 0),
-            0.12
-        );
-        box-shadow: none;
-        cursor: initial;
-    }
-
-    .pure-material-button-contained:disabled::before {
-        opacity: 0;
-    }
-
-    .pure-material-button-contained:disabled::after {
-        opacity: 0;
-    }
-    .form__group {
-        position: relative;
-        padding: 15px 0 0;
-        margin-top: 10px;
-    }
-
-    .form__field {
-        font-family: inherit;
-        /*width: 100%;*/
-        border: 0;
-        border-bottom: 1px solid #d2d2d2;
-        outline: 0;
-        font-size: 16px;
-        color: white;
-        padding: 7px 0;
-        background: transparent;
-        transition: border-color 0.2s;
-    }
-
-    .form__field::placeholder {
-        color: transparent;
-    }
-
-    .form__field:focus {
-        padding-bottom: 6px;
-        border-bottom: 2px solid #009788;
-    }
-
-    /* end plagarized code */
-    .header {
-        border-bottom-color: #555;
-        border-bottom-width: 5px;
-        width: 100%;
-    }
-    .rows {
-        display: flex;
-        flex-direction: column;
-        /* align-items: center;
-        justify-content: center; */
-        font-size: 16px;
-        font-weight: 500;
-        height: 58px;
-        width: calc(100% - 40px);
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-    .rowsbtn {
-        background-color: #292a2d;
-        color: white;
-        border-radius: 0;
-        height: 100%;
-        width: 100%;
-        border: none;
-        text-align: left;
-    }
-
-    .rows:first-child .rowsbtn {
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
-        border-bottom: 0.5px solid #3f4042;
-    }
-
-    .rows:last-child .rowsbtn {
-        border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px;
-        border-top: 0.5px solid #3f4042;
-    }
-    .rowswrapper {
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
-    }
-
-    .rows:not(:first-child):not(:last-child) .rowsbtn {
-        border-bottom: 0.5px solid #3f4042;
-        border-top: 0.5px solid #3f4042;
-    }
-    h4 {
-        padding-left: 20px;
-    }
-`;
-
     state = stateful({
-        show_x86: !anura.settings.get("x86-disabled"),
+        show_x86_install: anura.settings.get("x86-disabled"),
         x86_installing: false,
         resizing: false,
     });
 
-    page = () => (
+    page = async () => (
         <div
-            class={`background ${this.css}`}
             style="height:100%;width:100%;position:absolute"
+            class={`background ${settingsCSS}`}
         >
             <div class="header">
-                <h3 color="white">Settings (Under Construction)</h3>
+                <h2 color="white">Anura Settings</h2>
             </div>
 
-            <div css={this.state}>
-                <h4>General</h4>
-                <div class="rowswrapper">
-                    {this.row(this.toggle("Allow offline use", "use-sw-cache"))}
-                    {this.row(
-                        this.toggle(
-                            "Borderless Aboutbrowser",
-                            "borderless-aboutbrowser",
-                        ),
-                    )}
-
-                    {this.row(
-                        this.textbox(
-                            "Custom WSproxy URL",
-                            "wsproxy-url",
-                            false,
-                        ),
-                    )}
-
-                    {this.row(
-                        this.textbox(
-                            "Custom Bare Server URL",
-                            "bare-url",
-                            false,
-                        ),
-                    )}
+            <div css={this.state} class="container">
+                <div class="sidebar">
+                    <div class="sidebar-settings-item">
+                        <h4 class="sidebar-settings-item-name">
+                            <a href="#general">General</a>
+                        </h4>
+                    </div>
+                    <div class="sidebar-settings-item">
+                        <h4 class="sidebar-settings-item-name">
+                            <a href="#v86">v86</a>
+                        </h4>
+                    </div>
                 </div>
-
-                <h4>Anura x86 Subsystem</h4>
-                <div
-                    class="settings-section"
-                    if={React.use(this.state.show_x86)}
-                    then={(() => {
-                        console.log("redrawing");
-                        const disksize = (
+                <div class="settings-body">
+                    <div id="general" class="general settings-category">
+                        <h3 class="settings-category-name">General</h3>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">
+                                Borderless AboutBrowser
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "borderless-aboutbrowser",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "borderless-aboutbrowser",
+                                                false,
+                                            );
+                                        }
+                                    }}
+                                    id="borderless-aboutbrowser"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">Custom WS Proxy</h4>
                             <input
-                                style="float: right; margin-right: 5px"
-                                class="form__field"
-                                type="number"
+                                class="settings-item-text-input"
+                                on:change={(event: any) => {
+                                    anura.settings.set(
+                                        "wsproxy-url",
+                                        event.target.value,
+                                    );
+                                }}
+                                placeholder={anura.settings.get("wsproxy-url")}
+                                type="text"
                             />
-                        );
-                        const screencontainer = (
-                            <div
-                                class={styled.new`
-                                    canvas {
-                                        display: none;
-                                    }
-                                `}
-                            >
-                                <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-                                <canvas />
-                            </div>
-                        );
-                        disksize.value = anura.x86hdd.size;
-                        return (
-                            <>
-                                {this.row(
-                                    this.textbox(
-                                        "Custom x86 network relay URL",
-                                        "relay-url",
-                                        false,
-                                    ),
-                                )}
-                                {this.row(
-                                    <div>
-                                        x86 disk size (bytes)
-                                        <button
-                                            on:click={async () => {
-                                                anura.x86?.emulator.stop();
-
-                                                this.state.resizing = true;
-                                                await anura.x86hdd.save();
-
-                                                await anura.x86hdd.resize(
-                                                    disksize.value,
-                                                );
-
-                                                const emulator = new V86Starter(
-                                                    {
-                                                        wasm_path:
-                                                            "/lib/v86.wasm",
-                                                        memory_size:
-                                                            512 * 1024 * 1024,
-                                                        vga_memory_size:
-                                                            8 * 1024 * 1024,
-                                                        screen_container:
-                                                            screencontainer,
-
-                                                        initrd: {
-                                                            url: "/images/resizefs.img",
-                                                        },
-
-                                                        bzimage: {
-                                                            url: "/images/bzResize",
-                                                            async: false,
-                                                        },
-                                                        hda: {
-                                                            buffer: anura.x86hdd,
-                                                            async: true,
-                                                        },
-
-                                                        cmdline:
-                                                            "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
-
-                                                        bios: {
-                                                            url: "/bios/seabios.bin",
-                                                        },
-                                                        vga_bios: {
-                                                            url: "/bios/vgabios.bin",
-                                                        },
-                                                        autostart: true,
-                                                        uart1: true,
-                                                        uart2: true,
-                                                    },
-                                                );
-                                                let s0data = "";
-                                                emulator.add_listener(
-                                                    "serial0-output-char",
-                                                    async (char: string) => {
-                                                        if (char === "\r") {
-                                                            anura.logger.debug(
-                                                                s0data,
-                                                            );
-
-                                                            if (
-                                                                s0data.includes(
-                                                                    "Finished Disk",
-                                                                )
-                                                            ) {
-                                                                this.state.resizing =
-                                                                    false;
-                                                                await anura.x86hdd.save(
-                                                                    emulator,
-                                                                );
-                                                                alert(
-                                                                    "finished resizing disk",
-                                                                );
-                                                                // window.location.reload();
-                                                            }
-
-                                                            s0data = "";
-                                                            return;
-                                                        }
-                                                        s0data += char;
-                                                    },
-                                                );
-                                            }}
-                                            style="float: right"
-                                            class="pure-material-button-contained"
-                                        >
-                                            Resize/Repair x86 webdisk
-                                        </button>
-                                        {disksize}
-                                    </div>,
-                                )}
-                                {this.row(
-                                    <>
-                                        <button
-                                            on:click={() => {
-                                                this.state.show_x86 = false;
-                                                anura.settings.set(
-                                                    "x86-disabled",
-                                                    true,
-                                                );
-                                                anura.x86hdd.delete();
-                                            }}
-                                            class="pure-material-button-contained"
-                                        >
-                                            Disable x86 subsystem (will remove
-                                            all data)
-                                        </button>
-                                        <button
-                                            on:click={() => {
-                                                //@ts-ignore
-                                                const el = $el;
-                                                if (
-                                                    confirm(
-                                                        "WARNING: CUSTOM ROOTFSES ARE NOT SUPPORTED!! You will likely break all integration and be left with an inferior experience. DO YOU KNOW WHAT YOU ARE DOING?",
-                                                    )
-                                                ) {
-                                                    const inp = (
-                                                        <input
-                                                            type="file"
-                                                            on:change={async () => {
-                                                                if (
-                                                                    inp.files[0]
-                                                                ) {
-                                                                    try {
-                                                                        //@ts-ignore
-                                                                        await anura.x86hdd.loadfile(
-                                                                            inp
-                                                                                .files[0],
-                                                                        );
-                                                                        el.replaceWith(
-                                                                            <p>
-                                                                                rootfs
-                                                                                uploaded
-                                                                                sucessfully
-                                                                            </p>,
-                                                                        );
-                                                                    } catch (e) {
-                                                                        el.replaceWith(
-                                                                            <p>
-                                                                                error
-                                                                                uploading
-                                                                                rootfs
-                                                                            </p>,
-                                                                        );
-                                                                    }
-                                                                }
-                                                            }}
-                                                        />
-                                                    );
-                                                    inp.click();
-                                                }
-                                            }}
-                                            class="pure-material-button-contained"
-                                        >
-                                            Upload custom x86 rootfs
-                                        </button>
-                                        <div
-                                            if={React.use(this.state.resizing)}
-                                            then={screencontainer}
-                                        />
-                                    </>,
-                                )}
-                            </>
-                        );
-                    })()}
-                    else={
-                        <div
-                            if={React.use(this.state.x86_installing)}
-                            then={
-                                <>
-                                    <h3>
-                                        Installing x86... this may take a while
-                                    </h3>
-                                    <img
-                                        src="/assets/oobe/spinner.gif"
-                                        class={styled.new`
-                                            self {
-                                                width: 10%;
-                                                aspect-ratio: 1/1;
-                                            }
-                                        `}
-                                    />
-                                    <br />
-                                    <span id="tracker"></span>
-                                </>
-                            }
-                            else={this.row(
+                        </div>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">Custom Bare URL</h4>
+                            <input
+                                class="settings-item-text-input"
+                                on:change={(event: any) => {
+                                    anura.settings.set(
+                                        "bare-url",
+                                        event.target.value,
+                                    );
+                                }}
+                                placeholder={anura.settings.get("bare-url")}
+                                type="text"
+                            />
+                        </div>
+                    </div>
+                    <div id="v86" class="v86 settings-category">
+                        <h3 class="settings-category-name">Anura x86</h3>
+                        {this.state.show_x86_install ? (
+                            <div>
                                 <button
                                     on:click={async () => {
                                         this.state.x86_installing = true;
-                                        anura.settings.set(
-                                            "x86-image",
-                                            prompt(
-                                                'Please enter "arch" or "debian"',
-                                            ),
+                                        const chosenRootFS = prompt(
+                                            'Enter the name of the rootfs you want to install ("debian", "arch")',
                                         );
-                                        await installx86();
-                                        anura.settings.set(
-                                            "x86-disabled",
-                                            false,
-                                        );
-                                        anura.notifications.add({
-                                            title: "x86 Subsystem Installed",
-                                            description:
-                                                "x86 OS has sucessfully installed",
-                                            timeout: 5000,
-                                        });
-                                        // BUG! IT WON'T FIX THE X86HDD, WILL FAIL TO BOOT FIRST TIME
+                                        if (
+                                            chosenRootFS == "debian" ||
+                                            chosenRootFS == "arch"
+                                        ) {
+                                            anura.settings.set(
+                                                "x86-image",
+                                                chosenRootFS,
+                                            );
+                                            await installx86();
+                                            anura.settings.set(
+                                                "x86-disabled",
+                                                false,
+                                            );
+                                            anura.notifications.add({
+                                                title: "x86 Subsystem Installed",
+                                                description:
+                                                    "x86 OS has sucessfully installed. Reload the page to use it!",
+                                                timeout: 5000,
+                                            });
 
-                                        await bootx86();
-                                        anura.apps["anura.x86mgr"].open();
+                                            this.state.x86_installing = false;
+                                            this.state.show_x86_install = true;
 
-                                        this.state.x86_installing = false;
-                                        this.state.show_x86 = true;
+                                            if (
+                                                document.getElementById(
+                                                    "tracker",
+                                                )
+                                            ) {
+                                                document.getElementById(
+                                                    "tracker",
+                                                )!.innerText = "Installed!";
+                                            }
+                                        } else {
+                                            alert(
+                                                "Invalid rootfs name! Valid names are: debian, arch",
+                                            );
+                                        }
                                     }}
-                                    style="width: 100%"
-                                    class="pure-material-button-contained"
+                                    class="settings-button"
                                 >
-                                    Install x86 subsystem OS
-                                </button>,
-                            )}
-                        ></div>
-                    }
-                />
+                                    Install x86 Subsystem
+                                </button>
+                                <div id="tracker"></div>
+                            </div>
+                        ) : (
+                            <div className="x86-container">
+                                <div class="settings-item">
+                                    <h4 class="settings-item-name">
+                                        Custom Bare URL
+                                    </h4>
+                                    <input
+                                        class="settings-item-text-input"
+                                        on:change={(event: any) => {
+                                            anura.settings.set(
+                                                "relay-url",
+                                                event.target.value,
+                                            );
+                                        }}
+                                        placeholder={anura.settings.get(
+                                            "relay-url",
+                                        )}
+                                        type="text"
+                                    />
+                                </div>
+                                <div class="settings-item">
+                                    <div class="disk-info">
+                                        <h4 class="settings-item-name">
+                                            Disk Size (MB)
+                                        </h4>
+                                        <input
+                                            class="settings-item-text-input disk-size-bytes"
+                                            id="disk-size-bytes"
+                                            value={
+                                                Math.ceil(
+                                                    anura.x86hdd.size / 1000000,
+                                                ) || 0
+                                            }
+                                            type="text"
+                                        />
+                                    </div>
+                                    <button
+                                        on:click={async () => {
+                                            anura.x86?.emulator.stop();
+
+                                            this.state.resizing = true;
+                                            if (
+                                                document.getElementById(
+                                                    "resize-disk-btn",
+                                                )
+                                            ) {
+                                                document.getElementById(
+                                                    "resize-disk-btn",
+                                                )!.innerText = "Resizing...";
+                                            }
+                                            if (
+                                                document.getElementById(
+                                                    "disk-size-bytes",
+                                                )
+                                            ) {
+                                                await anura.x86hdd.resize(
+                                                    parseInt(
+                                                        (
+                                                            document.getElementById(
+                                                                "disk-size-bytes",
+                                                            ) as HTMLInputElement
+                                                        ).value,
+                                                    ) * 1000000,
+                                                );
+                                            }
+                                            if (
+                                                document.getElementById(
+                                                    "resize-disk-btn",
+                                                )
+                                            ) {
+                                                document.getElementById(
+                                                    "resize-disk-btn",
+                                                )!.innerText = "Resize Disk";
+                                            }
+                                            confirm(
+                                                "Resized disk! Would you like to reload the page?",
+                                            )
+                                                ? window.location.reload()
+                                                : null;
+                                        }}
+                                        class="settings-button"
+                                        id="resize-disk-btn"
+                                    >
+                                        Resize Disk
+                                    </button>
+                                </div>
+                                <div class="settings-button-group">
+                                    <button
+                                        on:click={() => {
+                                            this.state.show_x86_install = false;
+                                            anura.settings.set(
+                                                "x86-disabled",
+                                                true,
+                                            );
+                                            setTimeout(() => {
+                                                anura.x86hdd.delete();
+                                            }, 200);
+                                        }}
+                                        class="settings-button grouped-btn"
+                                    >
+                                        Disable x86 Subsystem
+                                    </button>
+                                    <button
+                                        on:click={() => {
+                                            if (
+                                                confirm(
+                                                    "Custom RootFSes are in beta and may not work properly. Continue?",
+                                                )
+                                            ) {
+                                                const inp =
+                                                    document.createElement(
+                                                        "input",
+                                                    );
+                                                inp.type = "file";
+                                                inp.addEventListener(
+                                                    "change",
+                                                    async () => {
+                                                        if (inp.files) {
+                                                            if (inp.files[0]) {
+                                                                try {
+                                                                    // @ts-ignore
+                                                                    await anura.x86hdd.loadfile(
+                                                                        inp
+                                                                            .files[0],
+                                                                    );
+                                                                    anura.notifications.add(
+                                                                        {
+                                                                            title: "Custom RootFS Loaded",
+                                                                            description:
+                                                                                "Custom RootFS has sucessfully loaded!",
+                                                                            timeout: 5000,
+                                                                        },
+                                                                    );
+                                                                } catch (e) {
+                                                                    alert(
+                                                                        "Error loading file: " +
+                                                                            e,
+                                                                    );
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                );
+                                                inp.click();
+                                            }
+                                        }}
+                                        class="settings-button grouped-btn"
+                                    >
+                                        Upload Custom RootFS
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );
 
-    toggle(name: string, setting: string) {
-        const val = anura.settings.get(setting);
-        const checkboxID = crypto.randomUUID();
-        const checkbox = (
-            <input
-                type="checkbox"
-                class="switch__input"
-                id={checkboxID}
-                on:click={() => {
-                    // if (checkbox.checked) {
-                    //     checkbox.checked = false;
-                    // } else {
-                    //     checkbox.checked = true;
-                    // }
-                    console.log("thing");
-                    anura.settings.set(setting, checkbox.checked);
-                }}
-            />
-        );
-        if (val) {
-            checkbox.checked = true;
-        }
-        const full: HTMLElement = (
-            <div>
-                {name}
-                <div class="switch" style="top: -6px; float: right">
-                    {checkbox}
-                    <label class="switch__label"></label>
-                </div>
-            </div>
-        );
-        full.getElementsByTagName("label")[0]?.setAttribute("for", checkboxID); // AliceJS bug workaround
-        return full;
-    }
-    row(item: HTMLElement) {
-        return (
-            <div class="rows">
-                <button class="rowsbtn">{item}</button>
-            </div>
-        );
-    }
-    textbox(name: string, setting: string, multiline: boolean) {
-        const textbox = (
-            <input
-                type="text"
-                class="form__field"
-                style="float: right"
-                on:change={() => {
-                    anura.settings.set(setting, textbox.value);
-                }}
-            />
-        );
-        textbox.value = anura.settings.get(setting);
-        return (
-            <div>
-                {name}
-                <></>
-                {textbox}
-            </div>
-        );
-    }
-
     constructor() {
         super();
     }
+
     async open(): Promise<WMWindow | undefined> {
         const win = anura.wm.create(this, {
             title: "",
-            width: "900px",
-            height: "600px",
+            width: "910px",
+            height: "720px",
         });
 
-        win.content.appendChild(this.page());
+        win.content.appendChild(await this.page());
+
+        if (document.getElementById("borderless-aboutbrowser")) {
+            if (anura.settings.get("borderless-aboutbrowser")) {
+                document
+                    .getElementById("borderless-aboutbrowser")!
+                    .setAttribute("checked", "");
+            }
+        }
 
         return win;
-    }
-    wsurl() {
-        let url = "";
-        if (location.protocol == "https:") {
-            url += "wss://";
-        } else {
-            url += "ws://";
-        }
-        url += window.location.origin.split("://")[1];
-        url += "/";
-        return url;
     }
 }
