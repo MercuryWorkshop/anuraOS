@@ -327,6 +327,19 @@ function newFolder(path) {
     reload();
 }
 
+function newFile(path) {
+    if (path === undefined) {
+        path =
+            document
+                .querySelector(".breadcrumbs")
+                .getAttribute("data-current-path") +
+            "/" +
+            prompt("File Name: ");
+    }
+    fs.writeFile(path, "");
+    reload();
+}
+
 function reload() {
     loadPath(
         document

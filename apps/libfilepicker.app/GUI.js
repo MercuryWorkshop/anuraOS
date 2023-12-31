@@ -27,6 +27,9 @@ newcontextmenu.addItem("Upload from PC", function () {
 newcontextmenu.addItem("New folder", function () {
     newFolder();
 });
+newcontextmenu.addItem("New file", function () {
+    newFile();
+});
 
 const min = 150;
 // The max (fr) values for grid-template-columns
