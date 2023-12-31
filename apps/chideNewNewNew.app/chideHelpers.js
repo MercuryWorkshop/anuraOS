@@ -28,8 +28,12 @@ require(["vs/editor/editor.main"], function () {
  */
 function getFileType(name) {
     let language = "plaintext";
-    switch (name.split(".").pop()) {
+    const extension = name.split(".").pop().toLowerCase();
+
+    switch (extension) {
         case "js":
+        case "mjs":
+        case "cjs":
         case "jsx":
             language = "javascript";
             break;
@@ -60,15 +64,49 @@ function getFileType(name) {
             language = "svg";
             break;
         case "img":
-            language = "img";
+        case "bzimage":
+            language = "image";
             break;
-        case 'bzimage':
-            language = "img"
+        case "ttf":
+        case "woff":
+        case "woff2":
+            language = "font";
             break;
-        case 'ttf':
-        case 'woff':
-        case 'woff2':
-            language = "font"
+        case "yaml":
+        case "yml":
+            language = "yaml";
+            break;
+        case "xml":
+            language = "xml";
+            break;
+        case "md":
+        case "markdown":
+            language = "markdown";
+            break;
+        case "php":
+            language = "php";
+            break;
+        case "java":
+            language = "java";
+            break;
+        case "py":
+            language = "python";
+            break;
+        case "rb":
+            language = "ruby";
+            break;
+        case "swift":
+            language = "swift";
+            break;
+        case "go":
+            language = "go";
+            break;
+        case "rust":
+            language = "rust";
+            break;
+        default:
+            language = "plaintext";
+            break;
     }
     return language;
 }
