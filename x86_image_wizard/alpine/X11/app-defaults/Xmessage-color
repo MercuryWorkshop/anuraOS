@@ -1,0 +1,44 @@
+! $XFree86$
+
+#include "Xmessage"
+
+*background:			gray85
+*foreground:			gray15
+
+*Scrollbar.thumb:		vlines2
+*Scrollbar.width:		14
+*Scrollbar.foreground:		rgb:a/5/5
+*Scrollbar.borderWidth:		0
+*Scrollbar.displayList:\
+foreground	gray90;\
+lines		1,-1,-1,-1,-1,1;\
+foreground	gray60;\
+lines		-1,0,0,0,0,-1
+
+*Text.?.cursorColor:		rgb:d/5/5
+*Text.borderColor:		gray80
+*Text*background:		gray96
+*Text*Scrollbar.background:	gray80
+*Text.displayList:\
+foreground	gray90;\
+lines		1,-1,-1,-1,-1,1;\
+foreground	gray60;\
+lines		-1,0,0,0,0,-1
+
+*Command.highlightThickness:	2
+*Command.internalWidth:		5
+*Command.internalHeight:	3
+*Command.borderColor:		gray40
+*Command.shapeStyle:		Rectangle
+*Command.background:		gray80
+*Command.displayList:\
+foreground	gray60;\
+lines		1,-1,-1,-1,-1,1;\
+foreground	gray90;\
+lines		-1,0,0,0,0,-1
+
+*Form.displayList:\
+foreground	gray60;\
+lines		1,-1,-1,-1,-1,1;\
+foreground	gray90;\
+lines		-1,0,0,0,0,-1

@@ -1,0 +1,195 @@
+! $XFree86: xc/programs/xedit/Xedit-color.ad,v 1.14 2002/11/10 23:21:56 paulo Exp $
+
+#include "Xedit"
+
+*background:			gray70
+*foreground:			gray15
+*borderColor:			gray40
+*Command.highlightThickness:	1
+*Command.backgroundPixmap:	gradient:vertical?dimension=18&start=gray90&end=gray65
+*Command.foreground:		gray20
+*Command.displayList:\
+foreground	gray92;\
+line		1,0,-2,0;\
+foreground	gray95;\
+line		2,1,-3,1;\
+foreground	gray74;\
+segments	3,-3,-4,-3, 2,-4,-3,-4, 1,-6,-2,-6;\
+point		-1,-1;\
+foreground	gray80;\
+line		0,0,0,-1;\
+point		-1,0
+
+*Command.translations:	#override \
+<Btn1Down>:	set-values(1, foreground, gray20, background, rgb:d/5/5) set()\n\
+Button1<Leave>: reset() set-values(1, foreground, gray20, background, gray70)\n\
+<Btn1Up>:	notify() unset()
+
+*Toggle.foreground:		gray30
+*Toggle.background:		gray82
+*Toggle.borderColor:		gray90
+*Toggle.displayList:\
+foreground	gray75;\
+segments	0,1,0,-2,-1,1,-1,-2;\
+foreground	gray80;\
+segments	0,0,-1,0,0,-1,-1,-1;\
+points		1,1,1,-2,-2,1, -2,-2
+
+*bc_label.backgroundPixmap:	gradient:vertical?dimension=18&start=gray90&end=gray65
+*bc_label.displayList:\
+foreground	gray92;\
+line		1,0,-2,0;\
+foreground	gray95;\
+line		2,1,-3,1;\
+foreground	gray74;\
+segments	3,-2,-4,-2, 2,-3,-3,-3, 1,-5,-2,-5
+*bc_label.foreground:		gray20
+
+*formWindow.backgroundPixmap:	gradient:vertical?dimension=18&start=gray90&end=gray65
+*formWindow.displayList:\
+foreground	gray92;\
+line		1,0,-2,0;\
+foreground	gray95;\
+line		2,1,-3,1;\
+foreground	gray74;\
+segments	3,-2,-4,-2, 2,-3,-3,-3, 1,-5,-2,-5
+*formWindow*backgroundPixmap:	ParentRelative
+*formWindow*foreground:		gray20
+*formWindow*background:		gray74
+*formWindow.labelWindow.background:	gray80
+*formWindow.labelWindow.displayList:\
+line-style	onoffdash;\
+foreground	gray30;\
+background	gray96;\
+draw-rect	3,2,15,14;\
+foreground	gray78;\
+fill-rect	4,3,15,14
+
+*dirlabel.foreground:		gray20
+*dirlabel.backgroundPixmap:	gradient:vertical?dimension=18&start=gray90&end=gray65
+*dirlabel.displayList:\
+foreground	gray92;\
+line		1,0,-2,0;\
+foreground	gray95;\
+line		2,1,-3,1;\
+foreground	gray74;\
+segments	3,-2,-4,-2, 2,-3,-3,-3, 1,-5,-2,-5
+*dirwindow.background:		gray96
+
+*internalBorderColor:		gray40
+
+*Text*Text.background:		gray96
+*Text.background:		gray96
+*Text.?.background:		gray96
+*Text*cursorColor:		rgb:d/5/5
+*Text.displayList:\
+foreground	white;\
+line		1,-1,-2,-1;\
+foreground	gray88;\
+line		1,0,-2,0
+
+*Scrollbar.foreground:		rgb:a/5/5
+*Scrollbar.background:		gray60
+*Text.Scrollbar.background:	gray60
+*Scrollbar.backgroundPixmap:	gradient:horizontal?dimension=14&start=gray70&end=gray85
+*hScrollbar.backgroundPixmap:	gradient:vertical?dimension=14&start=gray85&end=gray70
+*hScrollbar.displayList:\
+foreground	gray85;\
+segments	1,-1,-2,-1,1,0,-2,0
+*vScrollbar.displayList:\
+foreground	gray85;\
+segments	0,1,0,-2,-1,1,-1,-2
+*Scrollbar.thumb:		vlines2
+*hScrollbar.thumb:		hlines2
+
+*SimpleMenu*borderWidth:		0
+*SimpleMenu*backgroundPixmap:	xlogo11?foreground=gray90&background=gray88
+*SimpleMenu*background:		gray90
+*SimpleMenu*foreground:		gray20
+*SimpleMenu.VerticalMargins:	3
+*SimpleMenu.HorizontalMargins:	3
+*SimpleMenu.SimpleMenu.VerticalMargins:	3
+*SimpleMenu.SimpleMenu.HorizontalMargins:	3
+*SimpleMenu.menuLabel.foreground:	rgb:d/5/5
+*SimpleMenu*displayList:\
+foreground	gray70;\
+lines		+2,-2,-2,-2,-2,+2;\
+foreground	gray95;\
+lines		-2,+1,+1,+1,+1,-2;\
+foreground	gray30;\
+lines		+1,-1,-1,-1,-1,+1;\
+foreground	gray80;\
+lines		-1,+0,+0,+0,+0,-1
+
+*TransientShell.backgroundPixmap:	xlogo11?foreground=gray90&background=gray87
+*TransientShell.Form.backgroundPixmap:		ParentRelative
+*TransientShell.Form.Label.backgroundPixmap:	ParentRelative
+
+*ispell*Scrollbar.borderColor:	gray50
+*ispell*Scrollbar.displayList:
+*ispell*List.background:	gray96
+*ispell*word.background:	gray96
+*ispell*word.backgroundPixmap:	XtUnspecifiedPixmap
+*ispell*word.translations:\
+<Enter>:	highlight()\n\
+<Leave>:	reset()\n\
+<Btn1Down>:	set()\n\
+<Btn1Up>:	notify() unset()\n
+*ispell*word.displayList:
+*ispell.Form.Form.borderColor:	gray80
+*ispell.Form.Form.displayList: \
+foreground	gray90;\
+lines		+1,-1,-1,-1,-1,+1;\
+foreground	gray30;\
+lines		-1,+0,+0,+0,+0,-1;\
+foreground	gray60;\
+lines		+2,-2,-2,-2,-2,+2
+*ispell*status.backgroundPixmap:	XtUnspecifiedPixmap
+*ispell*status.background:	gray96
+*ispell*terse.justify:		right
+*ispell*terse.internalWidth:	10
+*ispell*terse.background:	gray75
+*ispell*terse.foreground:	gray20
+*ispell*terse.highlightThickness:	0
+*ispell*terse.displayList:\
+line-style	solid;\
+foreground	gray70;\
+fill-arc	6,4,14,12;\
+foreground	gray90;\
+draw-arc	6,4,14,12,45,180;\
+draw-lines	+0,-1,-1,-1,-1,+0;\
+foreground	gray50;\
+draw-arc	6,4,14,12,225,180;\
+draw-lines	-2,+0,+0,+0,+0,-2;\
+foreground	gray45;\
+dashes		2,1;\
+line-style	onoffdash;\
+draw-rect	+1,+1,-2,-2
+*ispell*options.MenuButton.borderColor:	gray70
+*ispell*options.MenuButton.background:	gray78
+*ispell*options.MenuButton.backgroundPixmap:	gradient:vertical?dimension=18&start=gray90&end=gray65
+*ispell*options.MenuButton.displayList:\
+foreground	gray60;\
+lines		+2,-2,-2,-2,-2,+2;\
+foreground	gray95;\
+lines		-3,+1,+1,+1,+1,-3;\
+foreground	gray78;\
+points		-2,+1,+1,-2
+
+*tip.foreground:	rgb:48/48/00
+*tip.backgroundPixmap:	None
+*tip.borderWidth:	0
+*tip.rightMargin:	7
+*tip.bottomMargin:	3
+*tip.displayList:\
+foreground	rgb:f/e/8;\
+fill-rect	1,1,-2,-2;\
+foreground	rgb:d/c/6;\
+draw-segments	0,1,0,-3,1,-2,-3,-2,-2,-3,-2,1,-3,0,1,0;\
+foreground	rgb:a/8/4;\
+draw-lines	2,-1, -2,-1, -1,-2, -1,2
+
+*grip.foreground:	gray10
+*grip.displayList:\
+foreground	gray80;\
+points		0,0,0,-1,-1,-1,-1,0

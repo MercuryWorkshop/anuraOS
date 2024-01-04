@@ -116,6 +116,53 @@
                 "images/arch-rootfs/bn",
                 "images/arch-rootfs/bo"
             ]
+        },
+        "alpine": {
+            "bzimage": "/images/alpine-boot/vmlinuz-lts",
+            "initrd": "/images/alpine-boot/initramfs-lts",
+            "rootfs": [
+                "images/alpine-rootfs/aa",
+                "images/alpine-rootfs/ab",
+                "images/alpine-rootfs/ac",
+                "images/alpine-rootfs/ad",
+                "images/alpine-rootfs/ae",
+                "images/alpine-rootfs/af",
+                "images/alpine-rootfs/ag",
+                "images/alpine-rootfs/ah",
+                "images/alpine-rootfs/ai",
+                "images/alpine-rootfs/aj",
+                "images/alpine-rootfs/ak",
+                "images/alpine-rootfs/al",
+                "images/alpine-rootfs/am",
+                "images/alpine-rootfs/an",
+                "images/alpine-rootfs/ao",
+                "images/alpine-rootfs/ap",
+                "images/alpine-rootfs/aq",
+                "images/alpine-rootfs/ar",
+                "images/alpine-rootfs/as",
+                "images/alpine-rootfs/at",
+                "images/alpine-rootfs/au",
+                "images/alpine-rootfs/av",
+                "images/alpine-rootfs/aw",
+                "images/alpine-rootfs/ax",
+                "images/alpine-rootfs/ay",
+                "images/alpine-rootfs/az",
+                "images/alpine-rootfs/ba",
+                "images/alpine-rootfs/bb",
+                "images/alpine-rootfs/bc",
+                "images/alpine-rootfs/bd",
+                "images/alpine-rootfs/be",
+                "images/alpine-rootfs/bf",
+                "images/alpine-rootfs/bg",
+                "images/alpine-rootfs/bh",
+                "images/alpine-rootfs/bi",
+                "images/alpine-rootfs/bj",
+                "images/alpine-rootfs/bk",
+                "images/alpine-rootfs/bl",
+                "images/alpine-rootfs/bm",
+                "images/alpine-rootfs/bn",
+                "images/alpine-rootfs/bo"
+            ]
         }
     }
 }

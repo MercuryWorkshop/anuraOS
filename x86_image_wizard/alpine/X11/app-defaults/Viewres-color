@@ -1,0 +1,24 @@
+#include "Viewres"
+
+*background:				gray95
+*foreground:				gray30
+*borderColor:				gray80
+*showGrip:				False
+*Font:					XtDefaultFont
+*buttonbox*ShapeStyle:			rectangle
+*internalBorderWidth:			0
+*buttonbox.backgroundPixmap:		gradient:vertical?dimension=4&start=gray95&end=gray90
+*buttonbox.displayList:			foreground gray70;line 0,-1,-1,-1;foreground gray95;line 0,0,-1,0
+*treeform.porthole.tree.backgroundPixmap:gradient:vertical?dimension=4&start=gray85&end=gray90
+*Tree*List.BorderWidth: 		0
+*Tree.foreground:			gray75
+*Tree.lineWidth:			7
+*List.backgroundPixmap:			gradient:vertical?dimension=4&start=gray95&end=gray90
+*List.displayList:			foreground gray50;line 0,-1,-1,-1;foreground white;line 0,0,-1,0
+*Porthole*Box.BorderWidth:		1
+*Panner.BorderWidth:			1
+*Panner.background:			gray70
+*Panner.foreground:			gray80
+*Panner.shadowColor:			gray50
+*Panner*backgroundStipple:		hlines2
+*SimpleMenu.backgroundPixmap:		gradient:vertical?dimension=4&start=gray92&end=gray98

@@ -7,7 +7,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 
 all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json
 
-full: all rootfs-debian rootfs-arch
+full: all rootfs-debian rootfs-arch rootfs-alpine
 
 hooks: FORCE
 	mkdir -p .git/hooks
@@ -34,6 +34,9 @@ rootfs-debian: FORCE
 
 rootfs-arch: FORCE
 	cd x86_image_wizard/arch; sh build-arch-bin.sh
+
+rootfs-alpine: FORCE
+	cd x86_image_wizard/alpine; sh build-alpine-bin.sh
 
 rootfs: FORCE
 	cd x86_image_wizard; sh x86_image_wizard.sh

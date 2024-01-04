@@ -1,0 +1,25 @@
+#!/sbin/openrc-run
+
+description="Anura PTY Daemon"
+command="/bin/anurad"
+command_args=""
+pidfile="/var/run/anurad.pid"
+command_background="yes"
+start_stop_daemon_args="--background --make-pidfile"
+
+depend() {
+    need localmount
+    after bootmisc
+}
+
+start() {
+    ebegin "Starting ${description}"
+    start-stop-daemon --start --pidfile "${pidfile}" --exec ${command} -- ${command_args}
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping ${description}"
+    start-stop-daemon --stop --pidfile "${pidfile}"
+    eend $?
+}

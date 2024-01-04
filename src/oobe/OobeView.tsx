@@ -141,6 +141,16 @@ class OobeView {
                     <button
                         on:click={() => {
                             anura.settings.set("x86-disabled", false);
+                            anura.settings.set("x86-image", "alpine");
+                            this.nextStep();
+                        }}
+                    >
+                        Alpine Linux - 544MB download
+                    </button>
+                    <br />
+                    <button
+                        on:click={() => {
+                            anura.settings.set("x86-disabled", false);
                             anura.settings.set("x86-image", "debian");
                             this.nextStep();
                         }}
