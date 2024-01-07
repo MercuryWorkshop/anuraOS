@@ -1,5 +1,5 @@
 {
-    "name": "Example Library",
+    "name": "File Viewer",
     "icon": "files.png",
     "package": "anura.fileviewer",
     "versions": {
