@@ -52,6 +52,7 @@ class Anura {
     wm = new WMAPI();
 
     apps: any = {};
+    libs: any = {};
     logger = {
         log: console.log.bind(console, "anuraOS:"),
         debug: console.debug.bind(console, "anuraOS:"),
@@ -82,6 +83,20 @@ class Anura {
         await anura.registerApp(app); // This will let us capture error messages
         return app;
     }
+    async registerLib(lib: Lib) {
+        if (lib.package in this.libs) {
+            throw "Library already installed";
+        }
+        this.libs[lib.package] = lib;
+        return lib;
+    }
+    async registerExternalLib(source: string): Promise<ExternalLib> {
+        const resp = await fetch(`${source}/manifest.json`);
+        const manifest = await resp.json();
+        const lib = new ExternalLib(manifest, source);
+        await anura.registerLib(lib); // This will let us capture error messages
+        return lib;
+    }
     ContextMenu = ContextMenuAPI;
     removeStaleApps() {
         for (const appName in anura.apps) {
@@ -94,6 +109,12 @@ class Anura {
         }
         taskbar.updateTaskbar();
         alttab.update();
+    }
+    import(packageName: string) {
+        const splitName = packageName.split("@");
+        const pkg: string = splitName[0]!;
+        const version = splitName[1] || null;
+        return this.libs[pkg].getImport(version);
     }
     files = new FilesAPI();
     async python(appname: string) {

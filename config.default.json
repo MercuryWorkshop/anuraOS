@@ -12,6 +12,7 @@
         "apps/workstore.app",
         "apps/taskbarMan.app"
     ],
+    "libs": ["/apps/libtest.lib"],
     "defaultsettings": {
         "use-sw-cache": true,
         "applist": [
