@@ -1,31 +1,22 @@
-FROM ljmf00/archlinux
+FROM ljmf00/archlinux:latest
 
-RUN mkdir drivers
-COPY xf86-input-keyboard.pkg.tar.xz /drivers
-COPY xf86-input-mouse.pkg.tar.xz /drivers
-COPY perl-term-readline-perl.pkg.tar.zst /drivers
+RUN pacman-key --init
 
-RUN pacman -Sy && \
+RUN pacman --noconfirm -Sy archlinux32-keyring archlinux-keyring && \
     pacman --noconfirm -S  \
         neofetch \
-        linux grub systemd \
+        linux systemd \
         gcc make glibc \
         unzip bzip2 xz tar \
-        xorg-server xorg-xinit xorg-apps xorg-xcalc dbus \
-        xf86-video-fbdev xf86-video-vesa xf86-input-evdev \
-        htop \
+        xorg-server xorg-xinit \
+        xf86-input-evdev \
+        xdotool xterm xorg-xhost xorg-xcalc \
         ttf-droid \
-        strace xterm vim perl nano  \
-        dhcpcd \
-        wget curl \
-        net-tools \
+        strace vim nano htop \
+        dhcpcd net-tools wget curl \
         mesa-utils mesa libva-mesa-driver llvm14-libs \
-        xdotool \
     && \
     touch /root/.Xdefaults && \
-    pacman --noconfirm -Rnsdd xf86-input-libinput && \
-    pacman --noconfirm --overwrite "*" -U /drivers/xf86-input-keyboard.pkg.tar.xz /drivers/xf86-input-mouse.pkg.tar.xz /drivers/perl-term-readline-perl.pkg.tar.zst && \
-    rm -rf /drivers && \
     yes | pacman -Scc && \
     echo 'LANG="en_US.UTF-8"' > /etc/default/locale && \
     passwd -d root && \
@@ -49,15 +40,13 @@ RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/ptynet
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil
 RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 
-RUN cp /usr/lib/systemd/systemd /usr/bin/systemd
 RUN rm /usr/lib/systemd/system/systemd-firstboot.service
 RUN rm -rf /usr/lib/systemd/system-preset/*
-RUN rm /usr/lib/dhcpcd/dhcpcd-hooks/20-resolv.conf
 
-COPY dhcpcd.exit-hook /etc/dhcpcd.exit-hook
 COPY 90-systemd.preset /usr/lib/systemd/system-preset
 COPY anurad.service /etc/systemd/system
 COPY mkinitcpio.conf /etc/
+RUN printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n" > /etc/resolv.conf.head
 
 RUN mkinitcpio -P   
 RUN systemctl enable anurad
