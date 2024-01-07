@@ -116,6 +116,33 @@
                 "images/arch-rootfs/bn",
                 "images/arch-rootfs/bo"
             ]
+        },
+        "alpine": {
+            "bzimage": "/images/alpine-boot/vmlinuz-lts",
+            "initrd": "/images/alpine-boot/initramfs-lts",
+            "rootfs": [
+                "images/alpine-rootfs/aa",
+                "images/alpine-rootfs/ab",
+                "images/alpine-rootfs/ac",
+                "images/alpine-rootfs/ad",
+                "images/alpine-rootfs/ae",
+                "images/alpine-rootfs/af",
+                "images/alpine-rootfs/ag",
+                "images/alpine-rootfs/ah",
+                "images/alpine-rootfs/ai",
+                "images/alpine-rootfs/aj",
+                "images/alpine-rootfs/ak",
+                "images/alpine-rootfs/al",
+                "images/alpine-rootfs/am",
+                "images/alpine-rootfs/an",
+                "images/alpine-rootfs/ao",
+                "images/alpine-rootfs/ap",
+                "images/alpine-rootfs/aq",
+                "images/alpine-rootfs/ar",
+                "images/alpine-rootfs/as",
+                "images/alpine-rootfs/at",
+                "images/alpine-rootfs/au"
+            ]
         }
     }
 }

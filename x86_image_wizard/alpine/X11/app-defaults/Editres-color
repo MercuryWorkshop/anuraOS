@@ -1,0 +1,89 @@
+! Here are some suggested resources if you are using a color workstation.
+! They look pretty good on my display, your mileage may vary.
+
+#include "Editres"
+
+*flashColor:			Yellow
+
+*Background:			RoyalBlue4
+!*Foreground:			Azure
+!*BorderColor:			LightCyan1
+*cursorColor:			Azure
+
+*Tree.Background: 		Grey
+*Tree.Foreground: 		White
+
+*Tree.Toggle.Foreground: 	Gold
+*Tree.Toggle.BorderWidth: 	0
+
+*MenuButton.Foreground:		Gold
+*MenuButton.BorderWidth: 	0
+
+*SmeBSB.Foreground: 		Gold
+
+*Porthole.Background:			Grey
+*porthole.panner*Foreground:		red
+*porthole.panner*Background:		Grey
+*porthole.panner*BorderColor:		Grey
+*porthole.panner*ShadowColor:		Black
+*porthole.panner*BackgroundStipple:	None
+
+*resourceBox*namesAndClasses.Background: Grey
+*resourceBox*namesAndClasses*Toggle.Background: RoyalBlue4
+*resourceBox*namesAndClasses*Toggle.Foreground: White
+*resourceBox*valueForm.Background: Grey
+*resourceBox*valueLabel.Background: Grey
+*resourceBox*valueLabel.Foreground: White
+*resourceBox*Command.Foreground: Gold
+
+
+
+*displayList:			foreground rgb:20/35/73;lines 1,-1,-1,-1,-1,1;foreground rgb:30/4e/ab;lines -1,0,0,0,0,-1
+*Foreground:			Azure3
+*borderColor:			rgb:1d/30/69
+*internalBorderColor:		rgb:1d/30/69
+
+*SmeLine.lineWidth:		1
+*SmeLine.foreground:		rgb:1d/30/69
+*SimpleMenu.VerticalMargins:	2
+*SimpleMenu.HorizontalMargins:	2
+*SimpleMenu.?.HorizontalMargins:8
+
+*MenuButton.displayList:
+*MenuButton.borderWidth:	1
+*MenuButton.borderColor:	RoyalBlue4
+*MenuButton.shapeStyle:		rectangle
+*MenuButton.leftBitmap:		None
+*MenuButton.translations:	\
+<Enter>:	set-values(1, background, "rgb:29/44/94", borderColor, "rgb:1d/30/69", displayList, "foreground rgb:20/35/73;lines 1,-1,-1,-1,-1,1;foreground rgb:30/4e/ab;lines -1,0,0,0,0,-1")\n\
+<Leave>:	set-values(1, background, RoyalBlue4, borderColor, RoyalBlue4, displayList, "")\n\
+Any<BtnDown>:	set-values(1, background, "rgb:23/3a/7d", displayList, "foreground rgb:30/4e/ab;lines 1,-1,-1,-1,-1,1;foreground rgb:20/35/73;lines -1,0,0,0,0,-1") PopupMenu()
+
+*List.displayList:
+*List.background:		rgb:23/3a/7d
+
+*Tree.displayList:
+
+*Label.displayList:
+*Paned.?.displayList:		foreground rgb:20/35/73;lines 1,-1,-1,-1,-1,1;foreground rgb:30/4e/ab;lines -1,0,0,0,0,-1
+
+*Grip.foreground:		rgb:30/4e/ab
+
+*Toggle.displayList:\
+foreground rgb:30/4e/ab;\
+lines 1,-1,-1,-1,-1,1;\
+lines -2,1,1,1,1,-2;\
+foreground rgb:20/35/73;\
+lines -1,0,0,0,0,-1;\
+lines 2,-2,-2,-2,-2,2
+
+*Text.background:		rgb:29/44/94
+*Text.?.background:		rgb:29/44/94
+*Text.displayList:		foreground rgb:30/4e/ab;lines 1,-1,-1,-1,-1,1;foreground rgb:20/35/73;lines -1,0,0,0,0,-1
+
+*Scrollbar.foreground:		rgb:2e/4c/a5
+*Scrollbar.background:		rgb:23/3a/7d
+*Scrollbar.thumb:		black
+
+*Command.shapeStyle:		rectangle
+*Command.background:		rgb:29/44/94

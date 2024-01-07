@@ -1,0 +1,21 @@
+#!/sbin/openrc-run
+
+description="Run Anura Boot Scripts"
+
+start() {
+  rc-service --ifstopped udev start
+  rc-service --ifstopped udev-trigger start
+  rc-service --ifstopped udev-settle start
+  rc-service --ifstopped udev-postmount start
+  ebegin "Running Anura Boot Scripts"
+  mount / -o remount,rw
+  mount -t 9p host9p /root &
+  modprobe ne2k-pci
+  dhcpcd &
+  eend $?
+}
+
+stop() {
+  ebegin "Stopping Anura Boot Scripts"
+  eend $?
+}

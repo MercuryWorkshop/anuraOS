@@ -1,0 +1,33 @@
+! XMore.ad
+
+! keyboard translations
+*text.Translations: #override\n\
+        Ctrl<Key>S:     no-op(RingBell)\n\
+        Ctrl<Key>R:     no-op(RingBell)\n\
+        <Key>space:     next-page()\n\
+        <Key>F:         next-page()\n\
+        Ctrl<Key>B:     previous-page()\n\
+        <Key>B:         previous-page()\n\
+        <Key>K:         scroll-one-line-down()\n\
+        <Key>Y:         scroll-one-line-down()\n\
+        <Key>Return:    scroll-one-line-up()\n\
+        <Key>J:         scroll-one-line-up()\n\
+        <Key>E:         scroll-one-line-up()\n\
+        <Key>q:         quit()\n
+*text.baseTranslations: #override\n\
+        <Key>space:     next-page()\n\
+        <Key>F:         next-page()\n\
+        Ctrl<Key>B:     previous-page()\n\
+        <Key>K:         scroll-one-line-down()\n\
+        <Key>Y:         scroll-one-line-down()\n\
+        <Key>Return:    scroll-one-line-up()\n\
+        <Key>J:         scroll-one-line-up()\n\
+        <Key>E:         scroll-one-line-up()\n\
+        <Key>q:         quit()\n
+
+! tip messages
+*quit.tip:  Quit application
+
+*international:		True
+
+! EOF.
