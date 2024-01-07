@@ -5,8 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt update && \
     apt --yes --no-install-recommends install \
-
-        linux-image-686 grub2 systemd \
+        linux-image-686 grub2 systemd systemd-sysv \
         libterm-readline-perl-perl \
         gcc make libc6-dev \
         unzip bzip2 xz-utils \
