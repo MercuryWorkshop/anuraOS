@@ -6,10 +6,19 @@ class FilesAPI {
         const extHandlers = anura.settings.get("FileExts") || {};
         if (extHandlers[ext!]) {
             const handler = extHandlers[ext!];
-            eval(
-                (await (await fetch(handler)).text()) +
-                    `openFile(${JSON.stringify(path)})`,
-            ); // here, JSON.stringify is used to properly escape the string
+            console.log(`Opening ${path} with ${handler}`);
+            const handlerModule = await anura.import(handler);
+            if (!handlerModule) {
+                console.log(`Failed to load handler ${handler}`);
+                return;
+            }
+            if (!handlerModule.openFile) {
+                console.log(
+                    `Handler ${handler} does not have an openFile function`,
+                );
+                return;
+            }
+            handlerModule.openFile(path);
         }
     };
 
