@@ -6,5 +6,6 @@
         "0.0.1": "deprecated/0.0.1/index.js",
         "1.0.0": "index.js"
     },
+    "installHook": "install.js",
     "currentVersion": "1.0.0"
 }

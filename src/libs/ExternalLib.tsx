@@ -5,6 +5,7 @@ interface LibManifest {
     versions: {
         [key: string]: string;
     };
+    installHook?: string;
     currentVersion: string;
 }
 
@@ -25,6 +26,12 @@ class ExternalLib extends Lib {
             this.versions[version] = source + "/" + manifest.versions[version];
             console.log(this.versions[version]);
         });
+
+        if (manifest.installHook) {
+            import(source + "/" + manifest.installHook).then((module) => {
+                module.default(anura);
+            });
+        }
     }
     async getImport(version?: string): Promise<any> {
         if (!version) {
