@@ -80,7 +80,7 @@ class AboutApp extends App {
         return aboutview;
     }
 
-    async getOSBuild(): Promise<string> {
-        return (await (await fetch("/MILESTONE")).text()).slice(0, 7);
+    getOSBuild(): string {
+        return anura.settings.get("milestone").slice(0, 7);
     }
 }
