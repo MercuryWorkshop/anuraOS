@@ -141,27 +141,7 @@
                 "images/alpine-rootfs/ar",
                 "images/alpine-rootfs/as",
                 "images/alpine-rootfs/at",
-                "images/alpine-rootfs/au",
-                "images/alpine-rootfs/av",
-                "images/alpine-rootfs/aw",
-                "images/alpine-rootfs/ax",
-                "images/alpine-rootfs/ay",
-                "images/alpine-rootfs/az",
-                "images/alpine-rootfs/ba",
-                "images/alpine-rootfs/bb",
-                "images/alpine-rootfs/bc",
-                "images/alpine-rootfs/bd",
-                "images/alpine-rootfs/be",
-                "images/alpine-rootfs/bf",
-                "images/alpine-rootfs/bg",
-                "images/alpine-rootfs/bh",
-                "images/alpine-rootfs/bi",
-                "images/alpine-rootfs/bj",
-                "images/alpine-rootfs/bk",
-                "images/alpine-rootfs/bl",
-                "images/alpine-rootfs/bm",
-                "images/alpine-rootfs/bn",
-                "images/alpine-rootfs/bo"
+                "images/alpine-rootfs/au"
             ]
         }
     }

@@ -145,7 +145,7 @@ class OobeView {
                             this.nextStep();
                         }}
                     >
-                        Alpine Linux - 544MB download
+                        Alpine Linux - 1GB download
                     </button>
                     <br />
                     <button

@@ -5,11 +5,14 @@ RUN  apk add --update \
         linux-lts linux-firmware-none linux-headers \
         gcc make gcompat musl-dev libx11-dev \
         dhcpcd \
+        htop vim \
     && \
-    setup-xorg-base || true && \
-    apk add xhost xterm xcalc xdotool xkill && \
+    setup-xorg-base xhost xterm xcalc xdotool xkill || true && \
+    setup-devd udev || true && \
     touch /root/.Xdefaults && \
     passwd -d root && \
+    chsh -s /bin/bash && \
+    mkdir -p /etc/openrc/conf.d && echo hostname="anuraos" > /etc/openrc/conf.d/hostname && \
     rm /etc/motd /etc/issue
 
 ARG CACHEBUST=1
@@ -36,10 +39,8 @@ RUN chmod +x /etc/init.d/anurad /etc/init.d/anura-boot
 RUN printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n" > /etc/resolv.conf.head
 
 # setup init system
-RUN ln -sf /sbin/init /bin/systemd
 RUN rc-update add devfs sysinit
 RUN rc-update add dmesg sysinit
-RUN rc-update add mdev sysinit
 RUN rc-update add anura-boot sysinit
 
 RUN rc-update add root boot
