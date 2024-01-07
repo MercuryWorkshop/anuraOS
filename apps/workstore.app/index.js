@@ -122,8 +122,90 @@ async function loadappListScreen(repo) {
                 if (postInstallScript) window.top.eval(postInstallScript)
                 anura.notifications.add(
                 {
-                    title: "Application Installed",
+                    title: "Workstore application",
                     description: `Application ${itemText.innerText} has been installed.`,
+                    timeout: 50000
+                })
+            } catch (e) {
+                anura.notifications.add({
+                    title: "Workstore application",
+                    description: `Workstore failed to install ${itemText.innerText}`,
+                    timeout: 5000
+                })
+                console.error(e)
+            }
+        }
+        appList.appendChild(app)
+    }
+    for (const item in repoItems['libs']) {
+        console.log(item)
+        const app = document.createElement('button')
+        const thumbnail = document.createElement('img')
+        const itemText = document.createElement('span')
+        
+        async function thumbLoad() {
+            try {
+                thumbnail.src = URL.createObjectURL(await (await fetch(repos[repo] + repoItems['libs'][item]['icon'])).blob())
+            } catch (e) {
+                // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
+                thumbnail.src = URL.createObjectURL(await (await client.fetch(repos[repo] + repoItems['libs'][item]['icon'])).blob())
+            }
+        }
+        thumbLoad();
+        
+        itemText.innerText = repoItems['libs'][item]['name']
+        app.title = repoItems['libs'][item]['desc'] // idk why the tooltip is called title but whatever
+        app.className = 'app'
+        
+        
+        app.appendChild(thumbnail);
+        app.appendChild(itemText);
+        const dataUrl = repos[repo] + repoItems['libs'][item]['data']
+        app.onclick = async function() {
+            anura.notifications.add({
+                title: "Workstore application",
+                description: `Workstore is downloading ${itemText.innerText}`,
+                timeout: 5000
+            })
+            let file;
+            try {
+                console.log(dataUrl)
+                file = await ((await client.fetch(dataUrl))).blob();
+            } catch (e) {
+                anura.notifications.add({
+                    title: "Workstore application",
+                    description: `Workstore failed to download ${itemText.innerText} with error ${e}`,
+                    timeout: 5000
+                })
+            }
+            const path = '/libs/' + itemText.innerText + '.lib';
+            await new Promise((resolve) => (new fs.Shell()).mkdirp(path, function () {
+                resolve()
+            }))
+            
+            anura.notifications.add({
+                title: "Workstore application",
+                description: `Workstore is installing ${itemText.innerText}`,
+                timeout: 5000
+            })
+            let zip = await JSZip.loadAsync(file);
+            console.log(path)
+            try {
+                for (const [relativePath, zipEntry] of Object.entries(zip.files)) {
+                    if (zipEntry.dir) {
+                        fs.mkdir(`${path}/${zipEntry.name}`)
+                    } else {
+                        console.log(zipEntry)
+                        console.log(await zipEntry.async("arraybuffer"))
+                        fs.writeFile(`${path}/${zipEntry.name}`, await Buffer.from(await zipEntry.async("arraybuffer")))
+                    }
+                }
+
+                await anura.registerExternalLib('/fs' + path)
+                anura.notifications.add(
+                {
+                    title: "Workstore Application",
+                    description: `Library ${itemText.innerText} has been installed.`,
                     timeout: 50000
                 })
             } catch (e) {
