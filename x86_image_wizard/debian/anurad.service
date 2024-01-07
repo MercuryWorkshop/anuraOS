@@ -1,6 +1,6 @@
 [Unit]
 Description=Anura PTY Daemon
-After=basic.target
+After=multi-user.target
 StartLimitIntervalSec=0
 [Service]
 Type=simple
