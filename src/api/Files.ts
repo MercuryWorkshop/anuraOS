@@ -22,9 +22,9 @@ class FilesAPI {
         }
     };
 
-    set(path: string, extension: string) {
+    set(pkg: string, extension: string) {
         const extHandlers = anura.settings.get("FileExts") || {};
-        extHandlers[extension] = path;
+        extHandlers[extension] = pkg;
         anura.settings.set("FileExts", extHandlers);
     }
 }
