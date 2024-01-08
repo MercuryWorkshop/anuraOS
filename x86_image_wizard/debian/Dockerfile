@@ -13,7 +13,7 @@ RUN apt update && \
         x11-xserver-utils x11-utils xterm xdotool x11-apps \
         mesa-utils libgl1-mesa-dri \
         libc-l10n locales \
-        wget curl dhcpcd5 net-tools openssl \
+        wget curl dhcpcd5 net-tools openssl ca-certificates \
         strace file vim apt-file \
         fonts-noto fonts-droid-fallback \
         procps \
