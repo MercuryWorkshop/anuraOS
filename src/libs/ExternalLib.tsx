@@ -6,12 +6,17 @@ interface LibManifest {
         [key: string]: string;
     };
     installHook?: string;
+    cache?: boolean;
     currentVersion: string;
 }
 
 class ExternalLib extends Lib {
     source: string;
     manifest: LibManifest;
+    // Import caching is optional
+    cache: {
+        [key: string]: any;
+    } = {};
 
     constructor(manifest: LibManifest, source: string) {
         super();
@@ -37,8 +42,15 @@ class ExternalLib extends Lib {
         if (!version) {
             version = this.latestVersion;
         }
+        if (this.manifest.cache && this.cache[version]) {
+            return this.cache[version];
+        }
         if (this.versions[version]) {
-            return await import(this.versions[version]);
+            const mod = await import(this.versions[version]);
+            if (this.manifest.cache) {
+                this.cache[version] = mod;
+            }
+            return mod;
         } else {
             throw new Error(
                 `Library ${this.name} does not supply version ${version}`,
