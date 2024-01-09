@@ -213,24 +213,21 @@ class OobeView {
                 if (anura.settings.get("use-sw-cache")) await preloadFiles();
                 console.log("Cached important files");
                 // Register default filehandlers
-                const handler = {
-                    id: "anura.fileviewer",
-                };
 
-                anura.files.set(handler, "txt");
-                anura.files.set(handler, "mp3");
-                anura.files.set(handler, "flac");
-                anura.files.set(handler, "wav");
-                anura.files.set(handler, "ogg");
-                anura.files.set(handler, "mp4");
-                anura.files.set(handler, "mov");
-                anura.files.set(handler, "webm");
-                anura.files.set(handler, "gif");
-                anura.files.set(handler, "png");
-                anura.files.set(handler, "jpg");
-                anura.files.set(handler, "jpeg");
-                anura.files.set(handler, "pdf");
-                anura.files.set(handler, "py");
+                anura.files.setModule("anura.fileviewer", "txt");
+                anura.files.setModule("anura.fileviewer", "mp3");
+                anura.files.setModule("anura.fileviewer", "flac");
+                anura.files.setModule("anura.fileviewer", "wav");
+                anura.files.setModule("anura.fileviewer", "ogg");
+                anura.files.setModule("anura.fileviewer", "mp4");
+                anura.files.setModule("anura.fileviewer", "mov");
+                anura.files.setModule("anura.fileviewer", "webm");
+                anura.files.setModule("anura.fileviewer", "gif");
+                anura.files.setModule("anura.fileviewer", "png");
+                anura.files.setModule("anura.fileviewer", "jpg");
+                anura.files.setModule("anura.fileviewer", "jpeg");
+                anura.files.setModule("anura.fileviewer", "pdf");
+                anura.files.setModule("anura.fileviewer", "py");
 
                 this.complete();
             },
