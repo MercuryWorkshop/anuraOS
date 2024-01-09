@@ -244,11 +244,12 @@ class SettingsApp extends App {
                                     on:click={async () => {
                                         this.state.x86_installing = true;
                                         const chosenRootFS = prompt(
-                                            'Enter the name of the rootfs you want to install ("debian", "arch")',
+                                            'Enter the name of the rootfs you want to install ("alpine", "debian", "arch")',
                                         );
                                         if (
                                             chosenRootFS == "debian" ||
-                                            chosenRootFS == "arch"
+                                            chosenRootFS == "arch" ||
+                                            chosenRootFS == "alpine"
                                         ) {
                                             anura.settings.set(
                                                 "x86-image",
@@ -280,7 +281,7 @@ class SettingsApp extends App {
                                             }
                                         } else {
                                             alert(
-                                                "Invalid rootfs name! Valid names are: debian, arch",
+                                                "Invalid rootfs name! Valid names are: alpine, debian, arch",
                                             );
                                         }
                                     }}
@@ -329,6 +330,9 @@ class SettingsApp extends App {
                                     <button
                                         on:click={async () => {
                                             anura.x86?.emulator.stop();
+                                            clearInterval(
+                                                anura.x86?.saveinterval,
+                                            );
 
                                             this.state.resizing = true;
                                             if (
@@ -354,21 +358,92 @@ class SettingsApp extends App {
                                                         ).value,
                                                     ) * 1000000,
                                                 );
+                                                const emulator = new V86Starter(
+                                                    {
+                                                        wasm_path:
+                                                            "/lib/v86.wasm",
+                                                        memory_size:
+                                                            512 * 1024 * 1024,
+                                                        vga_memory_size:
+                                                            8 * 1024 * 1024,
+                                                        screen_container:
+                                                            anura.x86!
+                                                                .screen_container,
+
+                                                        initrd: {
+                                                            url: "/images/resizefs.img",
+                                                        },
+
+                                                        bzimage: {
+                                                            url: "/images/bzResize",
+                                                            async: false,
+                                                        },
+                                                        hda: {
+                                                            buffer: anura.x86hdd,
+                                                            async: true,
+                                                        },
+
+                                                        cmdline:
+                                                            "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
+
+                                                        bios: {
+                                                            url: "/bios/seabios.bin",
+                                                        },
+                                                        vga_bios: {
+                                                            url: "/bios/vgabios.bin",
+                                                        },
+                                                        autostart: true,
+                                                        uart1: true,
+                                                        uart2: true,
+                                                    },
+                                                );
+                                                let s0data = "";
+                                                emulator.add_listener(
+                                                    "serial0-output-byte",
+                                                    async (byte: number) => {
+                                                        const char =
+                                                            String.fromCharCode(
+                                                                byte,
+                                                            );
+                                                        if (char === "\r") {
+                                                            anura.logger.debug(
+                                                                s0data,
+                                                            );
+
+                                                            if (
+                                                                s0data.includes(
+                                                                    "Finished Disk",
+                                                                )
+                                                            ) {
+                                                                await anura.x86hdd.save(
+                                                                    emulator,
+                                                                );
+                                                                this.state.resizing =
+                                                                    false;
+                                                                if (
+                                                                    document.getElementById(
+                                                                        "resize-disk-btn",
+                                                                    )
+                                                                ) {
+                                                                    document.getElementById(
+                                                                        "resize-disk-btn",
+                                                                    )!.innerText =
+                                                                        "Resize Disk";
+                                                                }
+                                                                confirm(
+                                                                    "Resized disk! Would you like to reload the page?",
+                                                                )
+                                                                    ? window.location.reload()
+                                                                    : null;
+                                                            }
+
+                                                            s0data = "";
+                                                            return;
+                                                        }
+                                                        s0data += char;
+                                                    },
+                                                );
                                             }
-                                            if (
-                                                document.getElementById(
-                                                    "resize-disk-btn",
-                                                )
-                                            ) {
-                                                document.getElementById(
-                                                    "resize-disk-btn",
-                                                )!.innerText = "Resize Disk";
-                                            }
-                                            confirm(
-                                                "Resized disk! Would you like to reload the page?",
-                                            )
-                                                ? window.location.reload()
-                                                : null;
                                         }}
                                         class="settings-button"
                                         id="resize-disk-btn"
