@@ -279,6 +279,7 @@ class V86Backend {
     runpty: number;
 
     emulator;
+    saveinterval;
     //
 
     constructor(virt_hda: FakeFile) {
@@ -325,7 +326,7 @@ class V86Backend {
         let s1data = "";
 
         // temporary, needs to be fixed later
-        setInterval(() => {
+        this.saveinterval = setInterval(() => {
             this.virt_hda.save();
         }, 1000 * 90);
 
