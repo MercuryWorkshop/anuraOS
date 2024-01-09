@@ -19,8 +19,6 @@ ARG CACHEBUST=1
 
 COPY xorg.conf /etc/X11/
 COPY X11/* /etc/X11/
-COPY kbd_drv.so /usr/lib/xorg/modules/input/
-COPY mouse_drv.so /usr/lib/xorg/modules/input/
 
 COPY xfrog.sh /bin/xfrog
 COPY xsetrandr.sh /bin/xsetrandr
