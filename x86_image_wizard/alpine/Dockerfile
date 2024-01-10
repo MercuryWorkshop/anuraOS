@@ -5,7 +5,7 @@ RUN  apk add --update \
         linux-lts linux-firmware-none linux-headers \
         gcc make gcompat musl-dev libx11-dev \
         dhcpcd \
-        htop vim \
+        htop vim nano \
     && \
     setup-xorg-base xhost xterm xcalc xdotool xkill || true && \
     setup-devd udev || true && \
