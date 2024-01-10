@@ -9,6 +9,8 @@ CONTAINER_NAME=arch-full
 IMAGE_NAME=i386/arch-full
 
 rm -rf "$IMAGES/arch-boot" || :
+rm -rf "$IMAGES/arch-rootfs" || :
+rm -rf $OUT_ROOTFS_BIN || :
 cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .

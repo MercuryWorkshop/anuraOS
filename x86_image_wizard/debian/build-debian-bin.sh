@@ -18,6 +18,8 @@ CONTAINER_NAME=debian-full
 IMAGE_NAME=i386/debian-full
 
 rm -rf "$IMAGES/debian-boot" || :
+rm -rf "$IMAGES/debian-rootfs" || :
+rm -rf $OUT_ROOTFS_BIN || :
 cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
