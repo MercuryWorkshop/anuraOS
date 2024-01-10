@@ -5,7 +5,7 @@ let repos = anura.settings.get("workstore-repos") || {
     "Anura App Repository":
         "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
     "Anura Games": "https://anura.games/",
-    "Kxtz's Emulators": "https://kxtz.femboy.vip/anura/apps/emulators/",
+    "Kxtz's Emulators": "https://anura.kxtz.dev/emulators/",
 };
 
 const repoList = document.getElementById("repoList");
