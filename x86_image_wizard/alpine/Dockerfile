@@ -5,7 +5,7 @@ RUN  apk add --update \
         linux-lts linux-firmware-none linux-headers \
         gcc make gcompat musl-dev libx11-dev \
         dhcpcd \
-        htop vim \
+        htop vim nano \
     && \
     setup-xorg-base xhost xterm xcalc xdotool xkill || true && \
     setup-devd udev || true && \
@@ -19,8 +19,6 @@ ARG CACHEBUST=1
 
 COPY xorg.conf /etc/X11/
 COPY X11/* /etc/X11/
-COPY kbd_drv.so /usr/lib/xorg/modules/input/
-COPY mouse_drv.so /usr/lib/xorg/modules/input/
 
 COPY xfrog.sh /bin/xfrog
 COPY xsetrandr.sh /bin/xsetrandr

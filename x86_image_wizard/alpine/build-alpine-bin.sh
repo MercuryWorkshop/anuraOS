@@ -18,6 +18,8 @@ CONTAINER_NAME=alpine-full
 IMAGE_NAME=i386/alpine-full
 
 rm -rf "$IMAGES/alpine-boot" || :
+rm -rf "$IMAGES/alpine-rootfs" || :
+rm -rf $OUT_ROOTFS_BIN || :
 cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
