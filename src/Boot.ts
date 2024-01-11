@@ -72,6 +72,42 @@ window.addEventListener("load", async () => {
         }
     }
 
+    if (!anura.settings.get("oobe-complete")) {
+        // This is a new install, so an old version containing the old extension
+        // handler system can't be installed. We can skip the migration.
+        anura.settings.set("handler-migration-complete", true);
+    }
+
+    if (!anura.settings.get("handler-migration-complete")) {
+        // Convert legacy file handlers
+        // This is a one-time migration
+        const extHandlers = anura.settings.get("FileExts") || {};
+
+        console.log("migrating file handlers");
+        console.log(extHandlers);
+
+        for (const ext in extHandlers) {
+            const handler = extHandlers[ext];
+            if (handler.handler_type === "module") continue;
+            if (handler.handler_type === "cjs") continue;
+            if (typeof handler === "string") {
+                if (handler === "/apps/libfileview.app/fileHandler.js") {
+                    extHandlers[ext] = {
+                        handler_type: "module",
+                        id: "anura.fileviewer",
+                    };
+                    continue;
+                }
+                extHandlers[ext] = {
+                    handler_type: "cjs",
+                    path: handler,
+                };
+            }
+        }
+        anura.settings.set("FileExts", extHandlers);
+        anura.settings.set("handler-migration-complete", true);
+    }
+
     (window as any).anura = anura;
 
     setTimeout(
