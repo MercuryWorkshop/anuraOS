@@ -13,9 +13,9 @@
         "apps/taskbarMan.app"
     ],
     "libs": [
-        "/apps/libtest.lib",
         "/apps/libfileview.lib",
-        "/apps/libfilepicker.lib"
+        "/apps/libfilepicker.lib",
+        "/apps/libworkstore.lib"
     ],
     "defaultsettings": {
         "use-sw-cache": true,
