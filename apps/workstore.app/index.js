@@ -109,7 +109,7 @@ async function loadappListScreen(repo) {
                 for (const dependency in dependencies) {
                     let hasDep =
                         Object.keys(anura.libs).filter(
-                            (x) => anura.libs[x].name == "Flash",
+                            (x) => anura.libs[x].name == dependencies[dependency],
                         ).length > 0;
 
                     if (hasDep) {

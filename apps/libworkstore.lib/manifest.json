@@ -1,0 +1,10 @@
+{
+    "name": "Workstore",
+    "icon": "google-play.svg",
+    "package": "anura.libstore",
+    "versions": {
+        "1.0.0": "index.js"
+    },
+    "cache": true,
+    "currentVersion": "1.0.0"
+}

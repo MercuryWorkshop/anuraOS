@@ -17,6 +17,11 @@ class ExternalLib extends Lib {
     cache: {
         [key: string]: any;
     } = {};
+    // The installed libs at the time of the last cache
+    // If more libs are installed, the cache is invalidated
+    // This is to prevent a race condition where a lib is installed
+    // before the dependency is installed
+    installedLibs: string[] = [];
 
     constructor(manifest: LibManifest, source: string) {
         super();
@@ -42,13 +47,18 @@ class ExternalLib extends Lib {
         if (!version) {
             version = this.latestVersion;
         }
-        if (this.manifest.cache && this.cache[version]) {
+        if (
+            this.manifest.cache &&
+            this.cache[version] &&
+            this.installedLibs == Object.keys(anura.libs)
+        ) {
             return this.cache[version];
         }
         if (this.versions[version]) {
             const mod = await import(this.versions[version]);
             if (this.manifest.cache) {
                 this.cache[version] = mod;
+                this.installedLibs = Object.keys(anura.libs);
             }
             return mod;
         } else {
