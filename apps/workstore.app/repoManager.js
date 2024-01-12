@@ -1,18 +1,60 @@
+let Workstore;
+let client;
+let workstore;
+
 async function loadMainScreen() {
+    Workstore = Workstore || (await anura.import("anura.libstore")).Workstore;
+
+    client = client ||
+        (await createBareClient(anura.settings.get("bare-url"))); // define the bare client if its not defined already
+    
+    console.log(client);
+
+    workstore = workstore || new Workstore((await createBareClient(anura.settings.get("bare-url"))), {
+        onError: (appName, error) => {
+            anura.notifications.add({
+                title: "Workstore Application",
+                description: `Workstore encountered an error while installing ${appName}: ${error}`,
+                timeout: 5000,
+            });
+        },
+        onDownloadStart: (appName) => {
+            anura.notifications.add({
+                title: "Workstore Application",
+                description: `Workstore started downloading ${appName}`,
+                timeout: 5000,
+            });
+        },
+        onDepInstallStart: (appName, libName) => {
+            anura.notifications.add({
+                title: "Workstore Application",
+                description: `Workstore started installing dependency ${libName} for ${appName}`,
+                timeout: 5000,
+            });
+        },
+        onComplete: (appName) => {
+            anura.notifications.add({
+                title: "Workstore Application",
+                description: `Workstore finished installing ${appName}`,
+                timeout: 5000,
+            });
+        },
+    });
+
     repoList.innerHTML = ''
     appListScreen.style.display = 'none'
     repoList.style.display = ''
     document.getElementById("head").innerHTML = "Workstore";
     
-    for (repo in repos) {
+    for (const repo in repos) {
         const repoItem = document.createElement('div')
         repoItem.innerText = repo
         repoItem.oncontextmenu = (e) => {
             const newcontextmenu = new anura.ContextMenu();
             newcontextmenu.addItem("Delete Repo", async function() {
-                delete repos[repoItem.innerText];
+                delete repos[repo];
                 await anura.settings.set('workstore-repos', repos)
-                location.reload()
+                loadMainScreen();
             });
             newcontextmenu.show(e.clientX, e.clientY)
             document.onclick = (e) => {
@@ -22,9 +64,23 @@ async function loadMainScreen() {
             }
             e.preventDefault()
         }
-        repoItem.onclick = function() {
-            loadappListScreen(repoItem.innerText) // Weird hack to work around the fact that repo doesn't work but the innertext of the repoitem does
+        try {
+            const workstoreRepo = await workstore.getRepo(repos[repo]);
+            repoItem.onclick = async function() {
+                loadappListScreen(workstoreRepo); 
+            }
+        } catch (e) {
+            repoItem.innerText += " (Error)";
+            repoItem.style.color = "red";
+            repoItem.onclick = async function() {
+                anura.notifications.add({
+                    title: "Workstore Application",
+                    description: "The repository " + repo + " encountered an error: " + e,
+                    timeout: 5000,
+                });
+            }
         }
+
         repoItem.className = "repoItem"
         repoList.appendChild(repoItem)
     }
@@ -63,7 +119,7 @@ async function loadMainScreen() {
             repoItem.className = "repoItem";
             repoList.appendChild(repoItem)
             anura.settings.set('workstore-repos', repos)
-            window.location.reload()
+            loadMainScreen();
         }
         newRepo.className = "repoItem"
         newRepo.appendChild(newRepoName)

@@ -3,6 +3,8 @@
 // significantly worse than the original
 import * as _ from "./jszip.js"
 let JSZip = window.JSZip;
+// Delete the global JSZip object to prevent pollution
+delete window.JSZip;
 
 const fs = Filer.fs;
 const Buffer = Filer.Buffer;
@@ -87,7 +89,13 @@ export class WorkstoreRepo {
         if (!app) {
             throw new Error("App not found");
         }
-        let thumb = await (await this.client.fetch(this.baseUrl + app.icon)).blob();
+        let thumb;
+        try {
+            thumb = URL.createObjectURL(await (await fetch(this.baseUrl + app.icon)).blob())
+        } catch (e) {
+            // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
+            thumb = URL.createObjectURL(await (await this.client.fetch(this.baseUrl + app.icon)).blob())
+        }
         this.thumbCache.apps[appName] = thumb;
         return thumb;
     }
@@ -100,7 +108,13 @@ export class WorkstoreRepo {
         if (!lib) {
             throw new Error("Lib not found");
         }
-        let thumb = await (await this.client.fetch(this.baseUrl + lib.icon)).blob();
+        let thumb;
+        try {
+            thumb = URL.createObjectURL(await (await fetch(this.baseUrl + lib.icon)).blob())
+        } catch (e) {
+            // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
+            thumb = URL.createObjectURL(await (await this.client.fetch(this.baseUrl + lib.icon)).blob())
+        }
         this.thumbCache.libs[libName] = thumb;
         return thumb;
     }
@@ -109,7 +123,7 @@ export class WorkstoreRepo {
         if (!this.repoCache) {
             await this.refreshRepoCache();
         }
-        return this.repoCache.apps;
+        return this.repoCache.apps || [];
     }
 
     async getApp(appName) {
@@ -123,7 +137,7 @@ export class WorkstoreRepo {
         if (!this.repoCache) {
             await this.refreshRepoCache();
         }
-        return this.repoCache.libs;
+        return this.repoCache.libs || [];
     }
 
     async getLib(libName) {
@@ -167,7 +181,7 @@ export class WorkstoreRepo {
         let postInstallScript;
 
         try {
-            for (const [relativePath, zipEntry] of Object.entries(
+            for (const [_, zipEntry] of Object.entries(
                 zip.files,
             )) {
                 if (zipEntry.dir) {
@@ -213,7 +227,7 @@ export class WorkstoreRepo {
         );
 
         try {
-            for (const [relativePath, zipEntry] of Object.entries(
+            for (const [_, zipEntry] of Object.entries(
                 zip.files,
             )) {
                 if (zipEntry.dir) {
