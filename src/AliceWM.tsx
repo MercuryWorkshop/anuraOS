@@ -448,6 +448,7 @@ const AliceWM = {
         const win = new WMWindow(wininfo);
         document.body.appendChild(win.element);
         win.focus();
+        center(win.element);
         return win;
     },
 };
