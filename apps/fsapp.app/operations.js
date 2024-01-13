@@ -218,6 +218,36 @@ async function fileAction(selected) {
                         timeout: 50000,
                     });
                 }
+            } else if (
+                fileSelected
+                    .getAttribute("data-path")
+                    .split(".")
+                    .slice("-1")[0] == "lib"
+            ) {
+                try {
+                    await anura.registerExternalLib(
+                        `/fs${fileSelected.getAttribute("data-path")}`.replace(
+                            "//",
+                            "/",
+                        ),
+                    );
+                    anura.notifications.add({
+                        title: "Library Installed for Session",
+                        description: `Library ${fileSelected
+                            .getAttribute("data-path")
+                            .replace(
+                                "//",
+                                "/",
+                            )} has been installed temporarily, it will go away on refresh`,
+                        timeout: 50000,
+                    });
+                } catch (e) {
+                    anura.notifications.add({
+                        title: "Library Install Error",
+                        description: `Library had an error installing: ${e}`,
+                        timeout: 50000,
+                    });
+                }
             } else {
                 console.debug(
                     "Changing folder to ",
