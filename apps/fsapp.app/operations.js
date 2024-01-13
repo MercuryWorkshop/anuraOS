@@ -80,9 +80,9 @@ function reloadListeners() {
                 e.currentTarget.classList.remove("hover");
             });
             row.addEventListener("contextmenu", (e) => {
-                currentlySelected.forEach((row) => {
-                    row.classList.remove("selected");
-                });
+                if (currentlySelected.length > 0) {
+                    return;
+                }
                 e.currentTarget.classList.add("selected");
                 currentlySelected = [e.currentTarget];
             });
