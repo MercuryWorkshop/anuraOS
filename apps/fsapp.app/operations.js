@@ -79,6 +79,13 @@ function reloadListeners() {
             row.addEventListener("mouseleave", (e) => {
                 e.currentTarget.classList.remove("hover");
             });
+            row.addEventListener("contextmenu", (e) => {
+                currentlySelected.forEach((row) => {
+                    row.classList.remove("selected");
+                });
+                e.currentTarget.classList.add("selected");
+                currentlySelected = [e.currentTarget];
+            });
             row.addEventListener("click", (e) => {
                 if (currentlySelected.includes(e.currentTarget)) {
                     fileAction(currentlySelected);
