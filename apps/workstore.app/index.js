@@ -1,7 +1,7 @@
 let anura = window.parent.anura;
 const fs = Filer.fs
 const Buffer = Filer.Buffer;
-let repos = anura.settings.get('workstore-repos') || {"Anura App Repository": "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/", "Anura Games": "https://anura.games/", "Kxtz's Emulators": "https://anura.kxtz.dev/emulators/"}
+let repos = anura.settings.get('workstore-repos') || {"Anura App Repository": "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/", "Anura Games": "https://anura.games/", "Kxtz's Emulators": "https://kxtzownsu.github.io/emulators/"}
 
 const repoList = document.getElementById('repoList');
 const repoScreen = document.getElementById('repoScreen');
