@@ -2,7 +2,11 @@
 
 Adding the library to your app:
 ```html
-<script src="/apps/libfilepicker.app/handler.js"></script>
+<script type="module">
+    let { selectFile, selectFolder } = await anura.import("anura.filepicker")
+    window.selectFile = selectFile
+    window.selectFolder = selectFolder
+</script>
 ```
 
 Picking a file:

@@ -12,6 +12,11 @@
         "apps/workstore.app",
         "apps/taskbarMan.app"
     ],
+    "libs": [
+        "/apps/libfileview.lib",
+        "/apps/libfilepicker.lib",
+        "/apps/libworkstore.lib"
+    ],
     "defaultsettings": {
         "use-sw-cache": true,
         "applist": [

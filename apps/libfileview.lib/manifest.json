@@ -1,0 +1,9 @@
+{
+    "name": "File Viewer",
+    "icon": "files.png",
+    "package": "anura.fileviewer",
+    "versions": {
+        "1.0.0": "fileHandler.js"
+    },
+    "currentVersion": "1.0.0"
+}

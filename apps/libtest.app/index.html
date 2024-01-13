@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Libtest</title>
+    </head>
+    <body>
+        <script type="module">
+            let libtest = await anura.import("anura.examplelib")
+            document.querySelector("button").addEventListener("click", () => {
+                alert(libtest.hello_world())
+            })
+        </script>
+        <button>test hello</button>
+    </body>
+</html>

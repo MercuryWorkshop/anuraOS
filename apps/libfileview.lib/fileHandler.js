@@ -1,4 +1,4 @@
-function openFile (path) {
+export function openFile (path) {
     const fs = anura.fs || Filer.fs;
     // let AliceWM = AliceWM || window.parent.AliceWM
     async function runPython(path) {

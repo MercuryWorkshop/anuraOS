@@ -68,6 +68,11 @@ class WallpaperSelector extends App {
     package = "anura.wallpaper";
     icon = "/assets/icons/wallpaper.png";
 
+    libfilepicker: {
+        selectFile: (regex?: string) => Promise<string | string[]>;
+        selectFolder: (regex?: string) => Promise<string | string[]>;
+    };
+
     wallpaperList = async () => {
         return await this.loadWallpaperManifest();
     };
@@ -108,18 +113,17 @@ class WallpaperSelector extends App {
                 </h5>
                 <button
                     on:click={() => {
-                        // @ts-ignore
-                        selectFile(
-                            "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
-                        ).then((filename: any) => {
-                            if (filename == undefined) return;
-                            const wallpaperName = filename.split("/").pop();
-                            const wallpaperURL = "/fs" + filename;
-                            this.setNewWallpaper({
-                                name: wallpaperName,
-                                url: wallpaperURL,
+                        this.libfilepicker
+                            .selectFile("(png|jpe?g|gif|bmp|webp|tiff|svg|ico)")
+                            .then((filename: any) => {
+                                if (filename == undefined) return;
+                                const wallpaperName = filename.split("/").pop();
+                                const wallpaperURL = "/fs" + filename;
+                                this.setNewWallpaper({
+                                    name: wallpaperName,
+                                    url: wallpaperURL,
+                                });
                             });
-                        });
                     }}
                     id="custom-wallpaper-btn"
                 >
@@ -161,7 +165,6 @@ class WallpaperSelector extends App {
                 );
                 return wallpaperList;
             })}
-            <script src="/apps/libfilepicker.app/handler.js"></script>
         </div>
     );
 
@@ -230,6 +233,11 @@ class WallpaperSelector extends App {
             width: "910px",
             height: "720px",
         });
+
+        if (this.libfilepicker == undefined) {
+            // Lazy load the filepicker library.
+            this.libfilepicker = await anura.import("anura.filepicker");
+        }
 
         win.content.appendChild(await this.page());
 

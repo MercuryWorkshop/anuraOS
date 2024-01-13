@@ -213,20 +213,21 @@ class OobeView {
                 if (anura.settings.get("use-sw-cache")) await preloadFiles();
                 console.log("Cached important files");
                 // Register default filehandlers
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "txt");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "mp3");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "flac");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "wav");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "ogg");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "mp4");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "mov");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "webm");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "gif");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "png");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "jpg");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "jpeg");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "pdf");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "py");
+
+                anura.files.setModule("anura.fileviewer", "txt");
+                anura.files.setModule("anura.fileviewer", "mp3");
+                anura.files.setModule("anura.fileviewer", "flac");
+                anura.files.setModule("anura.fileviewer", "wav");
+                anura.files.setModule("anura.fileviewer", "ogg");
+                anura.files.setModule("anura.fileviewer", "mp4");
+                anura.files.setModule("anura.fileviewer", "mov");
+                anura.files.setModule("anura.fileviewer", "webm");
+                anura.files.setModule("anura.fileviewer", "gif");
+                anura.files.setModule("anura.fileviewer", "png");
+                anura.files.setModule("anura.fileviewer", "jpg");
+                anura.files.setModule("anura.fileviewer", "jpeg");
+                anura.files.setModule("anura.fileviewer", "pdf");
+                anura.files.setModule("anura.fileviewer", "py");
 
                 this.complete();
             },

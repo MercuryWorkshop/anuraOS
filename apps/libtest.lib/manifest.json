@@ -1,0 +1,12 @@
+{
+    "name": "Example Library",
+    "icon": "libtest.png",
+    "package": "anura.examplelib",
+    "versions": {
+        "0.0.1": "deprecated/0.0.1/index.js",
+        "1.0.0": "index.js"
+    },
+    "cache": true,
+    "installHook": "install.js",
+    "currentVersion": "1.0.0"
+}

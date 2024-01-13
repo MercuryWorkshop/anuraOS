@@ -72,6 +72,42 @@ window.addEventListener("load", async () => {
         }
     }
 
+    if (!anura.settings.get("oobe-complete")) {
+        // This is a new install, so an old version containing the old extension
+        // handler system can't be installed. We can skip the migration.
+        anura.settings.set("handler-migration-complete", true);
+    }
+
+    if (!anura.settings.get("handler-migration-complete")) {
+        // Convert legacy file handlers
+        // This is a one-time migration
+        const extHandlers = anura.settings.get("FileExts") || {};
+
+        console.log("migrating file handlers");
+        console.log(extHandlers);
+
+        for (const ext in extHandlers) {
+            const handler = extHandlers[ext];
+            if (handler.handler_type === "module") continue;
+            if (handler.handler_type === "cjs") continue;
+            if (typeof handler === "string") {
+                if (handler === "/apps/libfileview.app/fileHandler.js") {
+                    extHandlers[ext] = {
+                        handler_type: "module",
+                        id: "anura.fileviewer",
+                    };
+                    continue;
+                }
+                extHandlers[ext] = {
+                    handler_type: "cjs",
+                    path: handler,
+                };
+            }
+        }
+        anura.settings.set("FileExts", extHandlers);
+        anura.settings.set("handler-migration-complete", true);
+    }
+
     (window as any).anura = anura;
 
     setTimeout(
@@ -113,6 +149,10 @@ document.addEventListener("anura-login-completed", async () => {
         anura.registerExternalApp(app);
     }
 
+    for (const lib of anura.config.libs) {
+        anura.registerExternalLib(lib);
+    }
+
     // Load all persistent sideloaded apps
     try {
         anura.fs.readdir("/userApps", (err: Error, files: string[]) => {
@@ -121,6 +161,22 @@ document.addEventListener("anura-login-completed", async () => {
             files.forEach((file) => {
                 try {
                     anura.registerExternalApp("/fs/userApps/" + file);
+                } catch (e) {
+                    anura.logger.error("Anura failed to load an app " + e);
+                }
+            });
+        });
+    } catch (e) {
+        anura.logger.error(e);
+    }
+
+    // Load all persistent sideloaded libs
+    try {
+        anura.fs.readdir("/libs", (err: Error, files: string[]) => {
+            if (files == undefined) return;
+            files.forEach((file) => {
+                try {
+                    anura.registerExternalLib("/fs/libs/" + file);
                 } catch (e) {
                     anura.logger.error("Anura failed to load an app " + e);
                 }
