@@ -50,6 +50,8 @@ class WMWindow {
     onfocus: () => void;
     onresize: (w: number, h: number) => void;
     onclose: () => void;
+    onmaximize: () => void;
+    onunmaximize: () => void;
 
     justresized = false;
 
@@ -388,6 +390,7 @@ class WMWindow {
             return;
         }
 
+        if (this.onmaximize) this.onmaximize();
         this.oldstyle = this.element.getAttribute("style");
         const width =
             window.innerWidth ||
@@ -410,6 +413,7 @@ class WMWindow {
         this.onresize(this.width, this.height);
     }
     async unmaximize() {
+        if (this.onunmaximize) this.onunmaximize();
         console.log("restoring");
         this.element.setAttribute("style", this.oldstyle!);
         this.maximizeImg.src = "/assets/window/maximize.svg";

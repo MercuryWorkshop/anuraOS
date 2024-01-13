@@ -52,7 +52,7 @@ class BrowserApp extends App {
                             },
                         );
 
-                        observer.observe(browserDocument?.body!, config);
+                        observer.observe(browserDocument!.body!, config);
                     });
                 });
 

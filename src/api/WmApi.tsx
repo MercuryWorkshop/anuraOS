@@ -1,5 +1,6 @@
 class WMAPI {
     windows: WeakRef<WMWindow>[] = [];
+    hasFullscreenWindow = false;
     create(
         ctx: App,
         info: object,

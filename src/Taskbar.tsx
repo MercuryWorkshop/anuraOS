@@ -3,21 +3,26 @@ class Taskbar {
         pinnedApps: App[];
         activeApps: App[];
         showBar: boolean;
+        radius: string;
         time: string;
         bat_icon: string;
     } = stateful({
         pinnedApps: [],
         activeApps: [],
         showBar: false,
+        radius: "25px",
         time: "",
         bat_icon: "battery_0_bar",
     });
 
+    maximizedWins: WMWindow[] = [];
     dragged = null;
     insidedrag = false;
 
     element = (
-        <footer>
+        <footer
+            class={this.roundCorners.bind(this)(React.use(this.state.radius))}
+        >
             <div id="launcher-button-container">
                 <div
                     id="launcher-button"
@@ -84,6 +89,15 @@ class Taskbar {
         </footer>
     );
 
+    roundCorners(radius: string) {
+        return styled.new`
+            self {
+                border-top-left-radius: ${radius};
+                border-top-right-radius: ${radius};
+            }
+        `;
+    }
+
     shortcut(app: App) {
         if (!app) return;
         return (
@@ -140,7 +154,20 @@ class Taskbar {
         if (app.windows.length > 0) {
             this.#contextMenu.removeAllItems();
             this.#contextMenu.addItem("New Window", () => {
-                app.open();
+                const potentialFuture = app.open();
+                console.log(potentialFuture);
+                if (
+                    typeof potentialFuture != "undefined" &&
+                    //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
+                    // Typescript doesn't like this, so we have to ignore it.
+                    typeof potentialFuture.then == "function"
+                ) {
+                    // @ts-ignore - Same as above
+                    potentialFuture.then((win) => {
+                        if (typeof win == "undefined") return;
+                        this.updateMaximized();
+                    });
+                }
             });
 
             let winEnumerator = 1;
@@ -178,7 +205,20 @@ class Taskbar {
 
             console.log(c);
         } else {
-            app.open();
+            const potentialFuture = app.open();
+            console.log(potentialFuture);
+            if (
+                typeof potentialFuture != "undefined" &&
+                //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
+                // Typescript doesn't like this, so we have to ignore it.
+                typeof potentialFuture.then == "function"
+            ) {
+                // @ts-ignore - Same as above
+                potentialFuture.then((win) => {
+                    if (typeof win == "undefined") return;
+                    this.updateMaximized();
+                });
+            }
         }
     }
 
@@ -252,6 +292,44 @@ class Taskbar {
             this.state.activeApps.length > 0;
 
         console.log(this.state.activeApps);
+    }
+
+    updateRadius() {
+        if (this.maximizedWins.length > 0) {
+            this.state.radius = "0px";
+        } else {
+            this.state.radius = "25px";
+        }
+        console.log("max:", this.maximizedWins.length);
+    }
+
+    updateMaximized() {
+        return new Promise((resolve) => {
+            anura.wm.windows.forEach((w: WeakRef<WMWindow>) => {
+                const win = w.deref();
+                if (typeof win == "undefined") return;
+                const oldMaxHandler = win.onmaximize;
+                const oldUnmaxHandler = win.onmaximize;
+                win.onmaximize = () => {
+                    if (oldMaxHandler) oldMaxHandler();
+                    this.maximizedWins.push(win!);
+                    console.log(this.maximizedWins);
+
+                    console.log("max:", this.maximizedWins.length);
+                    this.updateRadius();
+                };
+                win.onunmaximize = () => {
+                    if (oldUnmaxHandler) oldUnmaxHandler();
+                    this.maximizedWins = this.maximizedWins.filter(
+                        (w) => w != win,
+                    );
+                    console.log(this.maximizedWins);
+
+                    console.log("max:", this.maximizedWins.length);
+                    this.updateRadius();
+                };
+            });
+        });
     }
     // removeShortcuts() {
     //     for (const name in this.shortcuts) {
