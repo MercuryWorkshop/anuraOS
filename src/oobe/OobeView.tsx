@@ -213,6 +213,11 @@ class OobeView {
                 if (anura.settings.get("use-sw-cache")) await preloadFiles();
                 console.log("Cached important files");
                 // Register default filehandlers
+
+                anura.files.set(
+                    "/apps/libfileview.app/fileHandler.js",
+                    "default",
+                );
                 anura.files.set("/apps/libfileview.app/fileHandler.js", "txt");
                 anura.files.set("/apps/libfileview.app/fileHandler.js", "mp3");
                 anura.files.set("/apps/libfileview.app/fileHandler.js", "flac");

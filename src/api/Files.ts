@@ -10,6 +10,12 @@ class FilesAPI {
                 (await (await fetch(handler)).text()) +
                     `openFile(${JSON.stringify(path)})`,
             ); // here, JSON.stringify is used to properly escape the string
+        } else if (extHandlers["default"]) {
+            const handler = extHandlers["default"];
+            eval(
+                (await (await fetch(handler)).text()) +
+                    `openFile(${JSON.stringify(path)})`,
+            ); // here, JSON.stringify is used to properly escape the string
         }
     };
 

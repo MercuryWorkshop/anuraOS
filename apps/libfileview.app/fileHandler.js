@@ -124,6 +124,9 @@ function openFile (path) {
         case 'py':
             runPython(path)
             break;
+        default:
+            openText(path)
+            break;
 
     }
 }
