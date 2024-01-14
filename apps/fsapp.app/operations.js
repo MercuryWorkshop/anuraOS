@@ -363,8 +363,16 @@ document.addEventListener("contextmenu", (e) => {
 
     if (containsApps) {
         appcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
-    } else {
+        newcontextmenu.hide();
+        emptycontextmenu.hide();
+    } else if (currentlySelected.length != 0) {
         newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        appcontextmenu.hide();
+        emptycontextmenu.hide();
+    } else {
+        emptycontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        newcontextmenu.hide();
+        appcontextmenu.hide();
     }
 });
 
@@ -376,6 +384,7 @@ document.addEventListener("click", (e) => {
         // document.querySelector("#contextMenu").style.setProperty("display", "none");
         newcontextmenu.hide();
         appcontextmenu.hide();
+        emptycontextmenu.hide();
     }
 });
 

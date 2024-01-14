@@ -4,6 +4,8 @@
 const newcontextmenu = new anura.ContextMenu();
 // This context menu is for applications and libraries
 const appcontextmenu = new anura.ContextMenu();
+// This context menu is for when no files are selected
+const emptycontextmenu = new anura.ContextMenu();
 
 // Helper to add context menu items to both menus
 function addContextMenuItem(name, func) {
@@ -11,11 +13,8 @@ function addContextMenuItem(name, func) {
     appcontextmenu.addItem(name, func);
 }
 
-addContextMenuItem("Get Info", function () {});
-addContextMenuItem("Pin to Shelf", function () {});
-addContextMenuItem("Refresh", function () {
-    reload();
-});
+// addContextMenuItem("Get Info", function () {});
+// addContextMenuItem("Pin to Shelf", function () {});
 addContextMenuItem("Cut", function () {
     cut();
 });
@@ -30,15 +29,6 @@ addContextMenuItem("Delete", function () {
 });
 addContextMenuItem("Rename", function () {
     rename();
-});
-addContextMenuItem("Upload from PC", function () {
-    upload();
-});
-addContextMenuItem("New folder", function () {
-    newFolder();
-});
-addContextMenuItem("New file", function () {
-    newFile();
 });
 
 appcontextmenu.addItem("Install (Session)", function () {
@@ -55,6 +45,19 @@ appcontextmenu.addItem("Navigate", function () {
     // Normally, double clicking a folder will navigate into it, but for apps and libs, this is not the case
     navigate();
 });
+
+emptycontextmenu.addItem("Upload from PC", function () {
+    upload();
+});
+emptycontextmenu.addItem("New folder", function () {
+    newFolder();
+});
+emptycontextmenu.addItem("New file", function () {
+    newFile();
+})
+emptycontextmenu.addItem("Refresh", function () {
+    reload();
+});;
 
 const min = 150;
 // The max (fr) values for grid-template-columns
