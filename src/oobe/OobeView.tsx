@@ -228,6 +228,13 @@ class OobeView {
                 anura.files.setModule("anura.fileviewer", "jpeg");
                 anura.files.setModule("anura.fileviewer", "pdf");
                 anura.files.setModule("anura.fileviewer", "py");
+                anura.files.setModule("anura.fileviewer", "js");
+                anura.files.setModule("anura.fileviewer", "cjs");
+                anura.files.setModule("anura.fileviewer", "mjs");
+                anura.files.setModule("anura.fileviewer", "css");
+                anura.files.setModule("anura.fileviewer", "html");
+                anura.files.setModule("anura.fileviewer", "json");
+                anura.files.setModule("anura.fileviewer", "svg");
 
                 this.complete();
             },

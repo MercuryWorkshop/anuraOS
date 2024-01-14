@@ -218,7 +218,7 @@ export class WorkstoreRepo {
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
-        const path = `/lib/${libName}.lib`;
+        const path = `/userLibs/${libName}.lib`;
 
         await new Promise((resolve) =>
             new fs.Shell().mkdirp(path, function () {

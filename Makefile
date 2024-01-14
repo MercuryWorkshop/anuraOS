@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json
+all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -13,6 +13,9 @@ hooks: FORCE
 	mkdir -p .git/hooks
 	echo -e "#!/bin/sh\nmake lint\ngit add -A" > .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
+
+apps/libfileview.lib/icons:
+	cd apps/libfileview.lib; sh geticons.sh
 
 public/config.json:
 	cp config.default.json public/config.json

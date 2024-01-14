@@ -22,6 +22,13 @@ export function openFile (path) {
             let fileView = AliceWM.create("Image File")
             fileView.content.style.overflow = 'auto'
             let bloburl = URL.createObjectURL(new Blob([data]))
+            if (mimetype == 'image/svg+xml') {
+                let doc = new DOMParser().parseFromString(data, "image/svg+xml");
+                let elem = doc.documentElement;
+                elem.style = "width: 100%; height: 100%;"
+                fileView.content.appendChild(elem)
+                return;   
+            }
             let image = document.createElement('img')
             image.setAttribute("type", mimetype)
             image.src = bloburl
@@ -82,9 +89,27 @@ export function openFile (path) {
         })
     }
 
+    function openHTML(path) {
+        fs.readFile(path, function(err, data)  {
+            let fileView = AliceWM.create("HTML Viewer");
+            let iframe = document.createElement('iframe')
+            iframe.setAttribute(
+                "style",
+                "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border: none; margin: 0; padding: 0; background-color: #202124;",
+            );
+            iframe.srcdoc = data
+            fileView.content.appendChild(iframe)
+        })   
+    }
+
     let ext = path.split('.').slice('-1')[0] 
     switch (ext) {
         case 'txt':
+        case 'js':
+        case 'mjs':
+        case 'cjs':
+        case 'json':
+        case 'css':
             openText(path)
             break;
         case 'mp3':
@@ -114,6 +139,9 @@ export function openFile (path) {
         case 'png':
             openImage(path, 'image/png')
             break;
+        case 'svg':
+            openImage(path, 'image/svg+xml')
+            break;
         case 'jpg':
         case 'jpeg':
             openImage(path, 'image/jpeg')
@@ -124,8 +152,60 @@ export function openFile (path) {
         case 'py':
             runPython(path)
             break;
+        case 'html':
+            openHTML(path)
+            break;
 
     }
 }
 
+export function getIcon(path) {
+    let ext = path.split('.').slice('-1')[0] 
+    switch (ext) {
+        case 'txt':
+            return localPathToURL("icons/text-plain.svg");
+        case 'mp3':
+            return localPathToURL("icons/audio-mpeg.svg");
+        case 'flac':
+            return localPathToURL("icons/audio-flac.svg");
+        case 'wav':
+            return localPathToURL("icons/audio-x-wav.svg");
+        case 'ogg':
+            return localPathToURL("icons/audio-ogg.svg");
+        case 'mp4':
+            return localPathToURL("icons/video-mp4.svg");
+        case 'mov':
+            return localPathToURL("icons/video.svg");
+        case 'webm':
+            return localPathToURL("icons/video-webm.svg");
+        case 'gif':
+            return localPathToURL("icons/image-gif.svg");
+        case 'png':
+            return localPathToURL("icons/image-png.svg");
+        case 'jpg':
+        case 'jpeg':
+            return localPathToURL("icons/image-jpeg.svg");
+        case 'svg':
+            return localPathToURL("icons/image-svg+xml.svg");
+        case 'pdf':
+            return localPathToURL("icons/application-pdf.svg");
+        case 'py':
+            return localPathToURL("icons/application-x-python-bytecode.svg");
+        case 'js':
+        case 'mjs':
+        case 'cjs':
+            return localPathToURL("icons/application-javascript.svg");
+        case 'json':
+            return localPathToURL("icons/application-json.svg");
+        case 'html':
+            return localPathToURL("icons/text-html.svg");
+        case 'css':
+            return localPathToURL("icons/text-css.svg");
+        default:
+            return localPathToURL("files.png")
+    }
+}
 
+function localPathToURL(path) {
+    return import.meta.url.substring(0, import.meta.url.lastIndexOf("/")) + "/" + path;
+}

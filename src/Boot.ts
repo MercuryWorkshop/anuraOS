@@ -172,13 +172,13 @@ document.addEventListener("anura-login-completed", async () => {
 
     // Load all persistent sideloaded libs
     try {
-        anura.fs.readdir("/libs", (err: Error, files: string[]) => {
+        anura.fs.readdir("/userLibs", (err: Error, files: string[]) => {
             if (files == undefined) return;
             files.forEach((file) => {
                 try {
-                    anura.registerExternalLib("/fs/libs/" + file);
+                    anura.registerExternalLib("/fs/userLibs/" + file);
                 } catch (e) {
-                    anura.logger.error("Anura failed to load an app " + e);
+                    anura.logger.error("Anura failed to load a lib " + e);
                 }
             });
         });

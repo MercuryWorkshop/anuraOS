@@ -51,6 +51,11 @@ appcontextmenu.addItem("Install (Permanent)", function () {
     installPermanent();
 });
 
+appcontextmenu.addItem("Navigate", function () {
+    // Normally, double clicking a folder will navigate into it, but for apps and libs, this is not the case
+    navigate();
+});
+
 const min = 150;
 // The max (fr) values for grid-template-columns
 const columnTypeToRatioMap = {
