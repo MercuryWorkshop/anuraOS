@@ -109,20 +109,24 @@ tr > * {
     padding-bottom: 0.5em;
 }
 
+.iconContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    height: 1em;
+    width: 1em;
+}
+
 .selected > * {
     background-color: color-mix(in srgb, #8aadf4, #303446) !important;
 }
 
 .hover > * {
     background-color: #414559;
-}
-
-tr > td > i {
-    width: 1em;
-    height: 1em;
-    margin-right: 1em;
-    margin-top: 0.1em;
-    margin-left: 1em;
 }
 
 .topbar {

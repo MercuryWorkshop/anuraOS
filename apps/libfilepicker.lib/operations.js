@@ -5,6 +5,7 @@ var clipboard = [];
 var removeAfterPaste = false;
 
 window.fs = parent.anura.fs;
+window.anura = parent.anura;
 window.Buffer = Filer.Buffer;
 let sh = new fs.Shell();
 
@@ -18,20 +19,36 @@ function loadPath(path) {
         files.forEach((file) => {
             let row = document.createElement("tr");
             let iconContainer = document.createElement("td");
-            let icon = document.createElement("i");
+            let icon = document.createElement("img");
             let name = document.createElement("td");
             let size = document.createElement("td");
             let description = document.createElement("td");
             let date = document.createElement("td");
             let type = document.createElement("td");
+            
+            iconContainer.className = "iconContainer";
+            icon.className = "icon";
             fs.stat(`${path}/${file}`, function (err, stats) {
                 if (err) throw err;
                 if (stats.isDirectory()) {
                     name.innerText = `${file}/`;
                     description.innerText = "Folder";
                     date.innerText = new Date(stats.mtime).toLocaleString();
-                    icon.class = "";
+
+                    icon.src = "/apps/fsapp.app/folder.png";
                     size.innerText = stats.size;
+
+                    let folderExt = file.split(".").slice("-1")[0]
+
+                    if (folderExt == "app" | folderExt == "lib" && file !== "lib") {
+                        let manifestPath = `${path}/${file}/manifest.json`;
+                        fs.readFile(manifestPath, function (err, data) {
+                            if (err) throw err;
+                            let manifest = JSON.parse(data);
+                            icon.src = `/fs${path}/${file}/${manifest.icon}`;
+                            description.innerText = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
+                        });
+                    }
 
                     iconContainer.appendChild(icon);
                     row.appendChild(iconContainer);
@@ -49,9 +66,16 @@ function loadPath(path) {
                         if (fileRegex.test(ext)) {
                             name.innerText = `${file}`;
                             description.innerText = "Anura File";
-                            icon.class = "";
+                            icon.src = "/apps/fsapp.app/file.png";
                             date.innerText = new Date(stats.mtime).toLocaleString();
                             size.innerText = stats.size;
+
+                            anura.files.getIcon(`${path}/${file}`).then((iconURL) => {
+                                console.log(`${path}/${file}`, iconURL)
+                                icon.src = iconURL;
+                            }).catch((e) => {
+                                console.error(e);
+                            });
 
                             iconContainer.appendChild(icon);
                             row.appendChild(iconContainer);
@@ -86,6 +110,13 @@ function reloadListeners() {
             });
             row.addEventListener("mouseleave", (e) => {
                 e.currentTarget.classList.remove("hover");
+            });
+            row.addEventListener("contextmenu", (e) => {
+                currentlySelected.forEach((row) => {
+                    row.classList.remove("selected");
+                });
+                e.currentTarget.classList.add("selected");
+                currentlySelected = [e.currentTarget];
             });
             row.addEventListener("click", (e) => {
                 if (currentlySelected.includes(e.currentTarget)) {
@@ -542,4 +573,15 @@ function rename() {
         },
     );
 }
+
+// Context menu version of the loadPath function
+// Used to enter app and lib folders, as double
+// clicking on them will install them.
+function navigate() {
+    if (currentlySelected.length == 1) {
+        loadPath(currentlySelected[0].getAttribute("data-path"));
+    }
+    // Can't navigate to multiple folders
+}
+
 loadPath("/");
