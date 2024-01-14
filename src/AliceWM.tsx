@@ -371,11 +371,14 @@ class WMWindow {
         if (this.onfocus) this.onfocus();
     }
     close() {
-        this.element.remove();
-        // TODO, Remove this and make it an event
-        anura.removeStaleApps();
+        this.element.classList.add("opacity0");
+        setTimeout(() => {
+            this.element.remove();
+            // TODO, Remove this and make it an event
+            anura.removeStaleApps();
 
-        if (this.onclose) this.onclose();
+            if (this.onclose) this.onclose();
+        }, 200);
     }
     togglemaximize() {
         if (!this.maximized) {
@@ -401,10 +404,14 @@ class WMWindow {
             document.documentElement.clientHeight ||
             document.body.clientHeight;
 
+        this.element.classList.add("maxtransition");
         this.element.style.top = "0";
         this.element.style.left = "0";
         this.element.style.width = `${width}px`;
         this.element.style.height = `${height - 61}px`;
+        setTimeout(() => {
+            this.element.classList.remove("maxtransition");
+        }, 200);
 
         this.maximizeImg.src = "/assets/window/restore.svg";
 
@@ -415,7 +422,11 @@ class WMWindow {
     async unmaximize() {
         if (this.onunmaximize) this.onunmaximize();
         console.log("restoring");
+        this.element.classList.add("maxtransition");
         this.element.setAttribute("style", this.oldstyle!);
+        setTimeout(() => {
+            this.element.classList.remove("maxtransition");
+        }, 200);
         this.maximizeImg.src = "/assets/window/maximize.svg";
 
         await sleep(10); // Race condition as a feature
@@ -424,10 +435,17 @@ class WMWindow {
         this.onresize(this.width, this.height);
     }
     minimize() {
-        this.element.style.display = "none";
+        this.element.classList.add("opacity0");
+        // This is to make sure that you cannot interact with the window while it is minimized
+        setTimeout(() => {
+            this.element.style.display = "none";
+        }, 200);
     }
     unminimize() {
         this.element.style.display = "";
+        setTimeout(() => {
+            this.element.classList.remove("opacity0");
+        }, 10);
     }
 }
 
