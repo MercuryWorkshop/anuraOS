@@ -7,6 +7,8 @@ class WMAPI {
         onfocus: (() => void) | null = null,
         onresize: ((w: number, h: number) => void) | null = null,
         onclose: (() => void) | null = null,
+        onmaximize: (() => void) | null = null,
+        onunmaximize: (() => void) | null = null,
     ): WMWindow {
         const win = AliceWM.create(info as unknown as any);
 
@@ -25,6 +27,12 @@ class WMAPI {
         };
         win.onclose = () => {
             if (onclose) onclose();
+        };
+        win.onmaximize = () => {
+            if (onmaximize) onmaximize();
+        };
+        win.onunmaximize = () => {
+            if (onunmaximize) onunmaximize();
         };
         ctx.windows.push(win);
         this.windows.push(new WeakRef(win));
