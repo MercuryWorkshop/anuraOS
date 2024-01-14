@@ -235,6 +235,13 @@ document.addEventListener("anura-login-completed", async () => {
 
     (window as any).taskbar = taskbar;
 
+    if (anura.settings.get("kiosk-mode")) {
+        taskbar.element.remove();
+        anura.settings.get("kiosk-apps").forEach((app: string) => {
+            anura.apps[app].open();
+        });
+    }
+
     document.addEventListener("contextmenu", function (e) {
         if (e.shiftKey) return;
         e.preventDefault();
