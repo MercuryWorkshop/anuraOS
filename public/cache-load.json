@@ -493,7 +493,6 @@
     "lib/Launcher.js.map",
     "./manifest.json",
     "./config.json",
-    "./lib/html-to-image.min.js",
     "./assets/xorg.svg",
     "./assets/window/maximize.svg",
     "./assets/window/minimize.svg",
