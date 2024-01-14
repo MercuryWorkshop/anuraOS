@@ -185,40 +185,42 @@ document.addEventListener("anura-login-completed", async () => {
     } catch (e) {
         anura.logger.error(e);
     }
-    // Load all user provided init scripts
-    try {
-        anura.fs.readdir("/userInit", (err: Error, files: string[]) => {
-            // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
-            if (files == undefined) return;
-            files.forEach((file) => {
-                try {
-                    anura.fs.readFile(
-                        "/userInit/" + file,
-                        function (err: Error, data: Uint8Array) {
-                            if (err) throw "Failed to read file";
-                            try {
-                                eval(new TextDecoder("utf-8").decode(data));
-                            } catch (e) {
-                                console.error(e);
-                            }
-                        },
-                    );
-                } catch (e) {
-                    anura.logger.error("Anura failed to load an app " + e);
-                }
-            });
-        });
-    } catch (e) {
-        anura.logger.error(e);
-    }
-    if ((await await fetch("/fs/")).status === 404) {
+    if ((await fetch("/fs/")).status === 404) {
         const notif = anura.notifications.add({
             title: "Anura Error",
             description:
-                "Anura has encountered an error with the Filesystem HTTP bridge, click this notification to restart",
-            timeout: 50000,
+                "Anura has detected a system fault and loaded in safe mode. Click this notification to return to normal mode.",
+            timeout: 500000,
             callback: () => window.location.reload(),
         });
+    } else {
+        // Not in safe mode
+        // Load all user provided init scripts
+        try {
+            anura.fs.readdir("/userInit", (err: Error, files: string[]) => {
+                // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
+                if (files == undefined) return;
+                files.forEach((file) => {
+                    try {
+                        anura.fs.readFile(
+                            "/userInit/" + file,
+                            function (err: Error, data: Uint8Array) {
+                                if (err) throw "Failed to read file";
+                                try {
+                                    eval(new TextDecoder("utf-8").decode(data));
+                                } catch (e) {
+                                    console.error(e);
+                                }
+                            },
+                        );
+                    } catch (e) {
+                        anura.logger.error("Anura failed to load an app " + e);
+                    }
+                });
+            });
+        } catch (e) {
+            anura.logger.error(e);
+        }
     }
 
     if (!anura.settings.get("x86-disabled")) {
