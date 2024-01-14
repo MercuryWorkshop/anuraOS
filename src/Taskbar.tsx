@@ -20,9 +20,7 @@ class Taskbar {
     insidedrag = false;
 
     element = (
-        <footer
-            class={this.roundCorners.bind(this)(React.use(this.state.radius))}
-        >
+        <footer class={this.footerStyle(React.use(this.state.radius))}>
             <div id="launcher-button-container">
                 <div
                     id="launcher-button"
@@ -89,7 +87,7 @@ class Taskbar {
         </footer>
     );
 
-    roundCorners(radius: string) {
+    footerStyle(radius: string) {
         return styled.new`
             self {
                 border-top-left-radius: ${radius};
@@ -165,7 +163,7 @@ class Taskbar {
                     // @ts-ignore - Same as above
                     potentialFuture.then((win) => {
                         if (typeof win == "undefined") return;
-                        this.updateMaximized();
+                        this.updateRadius();
                     });
                 }
             });
@@ -216,7 +214,7 @@ class Taskbar {
                 // @ts-ignore - Same as above
                 potentialFuture.then((win) => {
                     if (typeof win == "undefined") return;
-                    this.updateMaximized();
+                    this.updateRadius();
                 });
             }
         }
@@ -301,35 +299,6 @@ class Taskbar {
             this.state.radius = "25px";
         }
         console.log("max:", this.maximizedWins.length);
-    }
-
-    updateMaximized() {
-        return new Promise((resolve) => {
-            anura.wm.windows.forEach((w: WeakRef<WMWindow>) => {
-                const win = w.deref();
-                if (typeof win == "undefined") return;
-                const oldMaxHandler = win.onmaximize;
-                const oldUnmaxHandler = win.onmaximize;
-                win.onmaximize = () => {
-                    if (oldMaxHandler) oldMaxHandler();
-                    this.maximizedWins.push(win!);
-                    console.log(this.maximizedWins);
-
-                    console.log("max:", this.maximizedWins.length);
-                    this.updateRadius();
-                };
-                win.onunmaximize = () => {
-                    if (oldUnmaxHandler) oldUnmaxHandler();
-                    this.maximizedWins = this.maximizedWins.filter(
-                        (w) => w != win,
-                    );
-                    console.log(this.maximizedWins);
-
-                    console.log("max:", this.maximizedWins.length);
-                    this.updateRadius();
-                };
-            });
-        });
     }
     // removeShortcuts() {
     //     for (const name in this.shortcuts) {

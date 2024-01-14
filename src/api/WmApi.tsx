@@ -30,9 +30,15 @@ class WMAPI {
         };
         win.onmaximize = () => {
             if (onmaximize) onmaximize();
+            taskbar.maximizedWins.push(win);
+            taskbar.updateRadius();
         };
         win.onunmaximize = () => {
             if (onunmaximize) onunmaximize();
+            taskbar.maximizedWins = taskbar.maximizedWins.filter(
+                (w) => w !== win,
+            );
+            taskbar.updateRadius();
         };
         ctx.windows.push(win);
         this.windows.push(new WeakRef(win));
