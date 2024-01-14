@@ -72,13 +72,9 @@ npm start -- --auth
 
 ## After Installation
 
-**NOTE**: The login for rootfs images is `root:root`.
-
 **NOTE**: Anura uses recent web technologies, and is unstable in Gecko. Chromium is **strongly recommended** as it has seen the best results.
 
 -   If you started the server, Anura should be running at `localhost:8000`.
--   Select the Debian rootfs. If you built it from this repository, its location is `./build/images/debian-rootfs.bin`.
--   Set up rootfs by entering `await loadfile(document.all.input.files[0])` in your console.
 
 ## Documentation
 
