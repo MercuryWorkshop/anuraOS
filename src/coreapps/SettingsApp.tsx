@@ -235,6 +235,22 @@ class SettingsApp extends App {
                                 type="text"
                             />
                         </div>
+                        <button
+                            on:click={async () => {
+                                const confirmation = await confirm(
+                                    "Are you sure you want to factory reset Anura? All of your data will be lost.",
+                                );
+                                if (confirmation) {
+                                    const sh = new anura.fs.Shell();
+                                    sh.rm("/", { recursive: true });
+                                    await sleep(2);
+                                    window.location.reload();
+                                }
+                            }}
+                            class="settings-button"
+                        >
+                            Factory Reset
+                        </button>
                     </div>
                     <div id="v86" class="v86 settings-category">
                         <h3 class="settings-category-name">Anura x86</h3>
