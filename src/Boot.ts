@@ -237,6 +237,9 @@ document.addEventListener("anura-login-completed", async () => {
 
     if (anura.settings.get("kiosk-mode")) {
         taskbar.element.remove();
+        // Why not a race condition?
+        // i love this codebase
+        await sleep(1000);
         anura.settings.get("kiosk-apps").forEach((app: string) => {
             anura.apps[app].open();
         });
