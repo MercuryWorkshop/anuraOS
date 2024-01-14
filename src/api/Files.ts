@@ -31,6 +31,32 @@ class FilesAPI {
                 ); // here, JSON.stringify is used to properly escape the string
                 return;
             }
+        } else if (extHandlers["default"]) {
+            const handler = extHandlers["default"];
+            console.log(`Opening ${path} with ${handler}`);
+            if (handler.handler_type === "module") {
+                const handlerModule = await anura.import(handler.id);
+                if (!handlerModule) {
+                    console.log(`Failed to load handler ${handler}`);
+                    return;
+                }
+                if (!handlerModule.openFile) {
+                    console.log(
+                        `Handler ${handler} does not have an openFile function`,
+                    );
+                    return;
+                }
+                handlerModule.openFile(path);
+                return;
+            }
+            if (handler.handler_type === "cjs") {
+                // Legacy handler, eval it
+                eval(
+                    (await (await fetch(handler.path)).text()) +
+                        `openFile(${JSON.stringify(path)})`,
+                ); // here, JSON.stringify is used to properly escape the string
+                return;
+            }
         }
     };
     getIcon = async function (path: string) {

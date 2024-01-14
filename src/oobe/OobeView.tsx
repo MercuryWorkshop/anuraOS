@@ -214,6 +214,7 @@ class OobeView {
                 console.log("Cached important files");
                 // Register default filehandlers
 
+                anura.files.setModule("anura.fileviewer", "default");
                 anura.files.setModule("anura.fileviewer", "txt");
                 anura.files.setModule("anura.fileviewer", "mp3");
                 anura.files.setModule("anura.fileviewer", "flac");

@@ -155,7 +155,9 @@ export function openFile (path) {
         case 'html':
             openHTML(path)
             break;
-
+        default:
+            openText(path)
+            break;
     }
 }
 
