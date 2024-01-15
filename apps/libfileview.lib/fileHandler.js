@@ -1,3 +1,5 @@
+const icons = await (await fetch(localPathToURL('icons.json'))).json();
+
 export function openFile (path) {
     const fs = anura.fs || Filer.fs;
     // let AliceWM = AliceWM || window.parent.AliceWM
@@ -163,49 +165,11 @@ export function openFile (path) {
 
 export function getIcon(path) {
     let ext = path.split('.').slice('-1')[0] 
-    switch (ext) {
-        case 'txt':
-            return localPathToURL("icons/text-plain.svg");
-        case 'mp3':
-            return localPathToURL("icons/audio-mpeg.svg");
-        case 'flac':
-            return localPathToURL("icons/audio-flac.svg");
-        case 'wav':
-            return localPathToURL("icons/audio-x-wav.svg");
-        case 'ogg':
-            return localPathToURL("icons/audio-ogg.svg");
-        case 'mp4':
-            return localPathToURL("icons/video-mp4.svg");
-        case 'mov':
-            return localPathToURL("icons/video.svg");
-        case 'webm':
-            return localPathToURL("icons/video-webm.svg");
-        case 'gif':
-            return localPathToURL("icons/image-gif.svg");
-        case 'png':
-            return localPathToURL("icons/image-png.svg");
-        case 'jpg':
-        case 'jpeg':
-            return localPathToURL("icons/image-jpeg.svg");
-        case 'svg':
-            return localPathToURL("icons/image-svg+xml.svg");
-        case 'pdf':
-            return localPathToURL("icons/application-pdf.svg");
-        case 'py':
-            return localPathToURL("icons/application-x-python-bytecode.svg");
-        case 'js':
-        case 'mjs':
-        case 'cjs':
-            return localPathToURL("icons/application-javascript.svg");
-        case 'json':
-            return localPathToURL("icons/application-json.svg");
-        case 'html':
-            return localPathToURL("icons/text-html.svg");
-        case 'css':
-            return localPathToURL("icons/text-css.svg");
-        default:
-            return localPathToURL("files.png")
+    let iconObject = icons.files.find((icon) => icon.ext == ext);
+    if (iconObject) {
+        return localPathToURL(iconObject.icon);
     }
+    return localPathToURL(icons.default);
 }
 
 function localPathToURL(path) {

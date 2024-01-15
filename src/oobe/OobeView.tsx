@@ -212,30 +212,6 @@ class OobeView {
                 }
                 if (anura.settings.get("use-sw-cache")) await preloadFiles();
                 console.log("Cached important files");
-                // Register default filehandlers
-
-                anura.files.setModule("anura.fileviewer", "default");
-                anura.files.setModule("anura.fileviewer", "txt");
-                anura.files.setModule("anura.fileviewer", "mp3");
-                anura.files.setModule("anura.fileviewer", "flac");
-                anura.files.setModule("anura.fileviewer", "wav");
-                anura.files.setModule("anura.fileviewer", "ogg");
-                anura.files.setModule("anura.fileviewer", "mp4");
-                anura.files.setModule("anura.fileviewer", "mov");
-                anura.files.setModule("anura.fileviewer", "webm");
-                anura.files.setModule("anura.fileviewer", "gif");
-                anura.files.setModule("anura.fileviewer", "png");
-                anura.files.setModule("anura.fileviewer", "jpg");
-                anura.files.setModule("anura.fileviewer", "jpeg");
-                anura.files.setModule("anura.fileviewer", "pdf");
-                anura.files.setModule("anura.fileviewer", "py");
-                anura.files.setModule("anura.fileviewer", "js");
-                anura.files.setModule("anura.fileviewer", "cjs");
-                anura.files.setModule("anura.fileviewer", "mjs");
-                anura.files.setModule("anura.fileviewer", "css");
-                anura.files.setModule("anura.fileviewer", "html");
-                anura.files.setModule("anura.fileviewer", "json");
-                anura.files.setModule("anura.fileviewer", "svg");
 
                 this.complete();
             },

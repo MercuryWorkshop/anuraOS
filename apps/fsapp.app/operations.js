@@ -30,19 +30,27 @@ function loadPath(path) {
                     name.innerText = `${file}/`;
                     description.innerText = "Folder";
                     date.innerText = new Date(stats.mtime).toLocaleString();
-                    icon.src = "/apps/fsapp.app/folder.png";
                     size.innerText = stats.size;
-
+                    
                     let folderExt = file.split(".").slice("-1")[0]
-
+                    
                     if (folderExt == "app" | folderExt == "lib" && file !== "lib") {
                         let manifestPath = `${path}/${file}/manifest.json`;
                         fs.readFile(manifestPath, function (err, data) {
-                            if (err) throw err;
-                            let manifest = JSON.parse(data);
-                            icon.src = `/fs${path}/${file}/${manifest.icon}`;
-                            description.innerText = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
+                            try {
+                                if (err) throw err;
+                                let manifest = JSON.parse(data);
+                                icon.src = `${path}/${file}/${manifest.icon}`;
+                                icon.onerror = (e) => {
+                                    throw e;
+                                };
+                                description.innerText = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
+                            } catch (e) {
+                                icon.src = anura.files.folderIcon;
+                            }
                         });
+                    } else {
+                        icon.src = anura.files.folderIcon;
                     }
 
                     iconContainer.appendChild(icon);
@@ -57,7 +65,6 @@ function loadPath(path) {
                 } else {
                     name.innerText = `${file}`;
                     description.innerText = "Anura File";
-                    icon.src = "/apps/fsapp.app/file.png";
                     date.innerText = new Date(stats.mtime).toLocaleString();
                     size.innerText = stats.size;
 
@@ -65,6 +72,7 @@ function loadPath(path) {
                         console.log(`${path}/${file}`, iconURL)
                         icon.src = iconURL;
                     }).catch((e) => {
+                        icon.src = anura.files.fallbackIcon;
                         console.error(e);
                     });
 

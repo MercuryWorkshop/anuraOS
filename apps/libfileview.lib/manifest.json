@@ -2,6 +2,7 @@
     "name": "File Viewer",
     "icon": "files.png",
     "package": "anura.fileviewer",
+    "installHook": "install.js",
     "versions": {
         "1.0.0": "fileHandler.js"
     },
