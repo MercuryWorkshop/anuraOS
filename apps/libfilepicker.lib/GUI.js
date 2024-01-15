@@ -1,9 +1,9 @@
-// implementing it myself was too hard so i just stole it from https://codepen.io/adam-lynch/pen/GaqgXP
-
 // This context menu is for files and folders
 const newcontextmenu = new parent.anura.ContextMenu();
 // This context menu is for applications and libraries
 const appcontextmenu = new parent.anura.ContextMenu();
+// This context menu is for when no files are selected
+const emptycontextmenu = new parent.anura.ContextMenu();
 
 // Helper to add context menu items to both menus
 function addContextMenuItem(name, func) {
@@ -11,11 +11,8 @@ function addContextMenuItem(name, func) {
     appcontextmenu.addItem(name, func);
 }
 
-addContextMenuItem("Get Info", function () {});
-addContextMenuItem("Pin to Shelf", function () {});
-addContextMenuItem("Refresh", function () {
-    reload();
-});
+// addContextMenuItem("Get Info", function () {});
+// addContextMenuItem("Pin to Shelf", function () {});
 addContextMenuItem("Cut", function () {
     cut();
 });
@@ -31,15 +28,6 @@ addContextMenuItem("Delete", function () {
 addContextMenuItem("Rename", function () {
     rename();
 });
-addContextMenuItem("Upload from PC", function () {
-    upload();
-});
-addContextMenuItem("New folder", function () {
-    newFolder();
-});
-addContextMenuItem("New file", function () {
-    newFile();
-});
 
 appcontextmenu.addItem("Install (Session)", function () {
     // While this is the same as double clicking, it's still useful to have the verbosely named option
@@ -54,6 +42,19 @@ appcontextmenu.addItem("Install (Permanent)", function () {
 appcontextmenu.addItem("Navigate", function () {
     // Normally, double clicking a folder will navigate into it, but for apps and libs, this is not the case
     navigate();
+});
+
+emptycontextmenu.addItem("Upload from PC", function () {
+    upload();
+});
+emptycontextmenu.addItem("New folder", function () {
+    newFolder();
+});
+emptycontextmenu.addItem("New file", function () {
+    newFile();
+})
+emptycontextmenu.addItem("Refresh", function () {
+    reload();
 });
 
 const min = 150;

@@ -1,5 +1,3 @@
-
-
 var currentlySelected = [];
 var clipboard = [];
 var removeAfterPaste = false;
@@ -35,21 +33,26 @@ function loadPath(path) {
                     description.innerText = "Folder";
                     date.innerText = new Date(stats.mtime).toLocaleString();
 
-                    icon.src = "/apps/fsapp.app/folder.png";
                     size.innerText = stats.size;
 
                     let folderExt = file.split(".").slice("-1")[0]
-
+                    
                     if (folderExt == "app" | folderExt == "lib" && file !== "lib") {
                         let manifestPath = `${path}/${file}/manifest.json`;
                         fs.readFile(manifestPath, function (err, data) {
-                            if (err) throw err;
+                            if (err) {
+                                icon.src = anura.files.folderIcon;
+                            }
                             let manifest = JSON.parse(data);
                             icon.src = `/fs${path}/${file}/${manifest.icon}`;
+                            icon.onerror = () => {
+                                icon.src = anura.files.folderIcon;
+                            };
                             description.innerText = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
                         });
+                    } else {
+                        icon.src = anura.files.folderIcon;
                     }
-
                     iconContainer.appendChild(icon);
                     row.appendChild(iconContainer);
                     row.appendChild(name);
@@ -66,14 +69,16 @@ function loadPath(path) {
                         if (fileRegex.test(ext)) {
                             name.innerText = `${file}`;
                             description.innerText = "Anura File";
-                            icon.src = "/apps/fsapp.app/file.png";
+                            anura.files.getFileType(`${path}/${file}`).then((type) => {
+                                description.innerText = type;
+                            });
                             date.innerText = new Date(stats.mtime).toLocaleString();
                             size.innerText = stats.size;
-
+        
                             anura.files.getIcon(`${path}/${file}`).then((iconURL) => {
-                                console.log(`${path}/${file}`, iconURL)
                                 icon.src = iconURL;
                             }).catch((e) => {
+                                icon.src = anura.files.fallbackIcon;
                                 console.error(e);
                             });
 
@@ -319,7 +324,21 @@ document.addEventListener("contextmenu", (e) => {
     //     elt.onclick = hasSelection ? elt.onclick : null;
     // }
     // contextmenu.style.removeProperty("display");
-    newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+    const containsApps = currentlySelected.map((item) => item.getAttribute("data-path").split(".").slice("-1")[0]).filter((item) => item == "app" || item == "lib").length > 0;
+
+    if (containsApps) {
+        appcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        newcontextmenu.hide();
+        emptycontextmenu.hide();
+    } else if (currentlySelected.length != 0) {
+        newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        appcontextmenu.hide();
+        emptycontextmenu.hide();
+    } else {
+        emptycontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        newcontextmenu.hide();
+        appcontextmenu.hide();
+    }
 });
 
 document.addEventListener("click", (e) => {
@@ -329,6 +348,8 @@ document.addEventListener("click", (e) => {
     ) {
         // document.querySelector("#contextMenu").style.setProperty("display", "none");
         newcontextmenu.hide();
+        appcontextmenu.hide();
+        emptycontextmenu.hide();
     }
 });
 
