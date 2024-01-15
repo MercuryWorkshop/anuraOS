@@ -37,17 +37,15 @@ function loadPath(path) {
                     if (folderExt == "app" | folderExt == "lib" && file !== "lib") {
                         let manifestPath = `${path}/${file}/manifest.json`;
                         fs.readFile(manifestPath, function (err, data) {
-                            try {
-                                if (err) throw err;
-                                let manifest = JSON.parse(data);
-                                icon.src = `${path}/${file}/${manifest.icon}`;
-                                icon.onerror = (e) => {
-                                    throw e;
-                                };
-                                description.innerText = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
-                            } catch (e) {
+                            if (err) {
                                 icon.src = anura.files.folderIcon;
                             }
+                            let manifest = JSON.parse(data);
+                            icon.src = `/fs${path}/${file}/${manifest.icon}`;
+                            icon.onerror = () => {
+                                icon.src = anura.files.folderIcon;
+                            };
+                            description.innerText = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
                         });
                     } else {
                         icon.src = anura.files.folderIcon;
@@ -65,11 +63,13 @@ function loadPath(path) {
                 } else {
                     name.innerText = `${file}`;
                     description.innerText = "Anura File";
+                    anura.files.getFileType(`${path}/${file}`).then((type) => {
+                        description.innerText = type;
+                    });
                     date.innerText = new Date(stats.mtime).toLocaleString();
                     size.innerText = stats.size;
 
                     anura.files.getIcon(`${path}/${file}`).then((iconURL) => {
-                        console.log(`${path}/${file}`, iconURL)
                         icon.src = iconURL;
                     }).catch((e) => {
                         icon.src = anura.files.fallbackIcon;

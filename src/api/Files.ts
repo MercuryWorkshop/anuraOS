@@ -143,6 +143,41 @@ class FilesAPI {
         return this.fallbackIcon;
     }
 
+    async getFileType(path: string) {
+        const ext = path.split("/").pop()!.split(".").pop();
+        const extHandlers = anura.settings.get("FileExts") || {};
+        if (extHandlers[ext!]) {
+            const handler = extHandlers[ext!];
+            if (handler.handler_type === "module") {
+                const handlerModule = await anura.import(handler.id);
+                if (!handlerModule) {
+                    console.log(`Failed to load handler ${handler}`);
+                    return "Anura File";
+                }
+                if (!handlerModule.getFileType) {
+                    console.log(
+                        `Handler ${handler} does not have an getFileType function`,
+                    );
+                    return "Anura File";
+                }
+                return handlerModule.getFileType(path);
+            }
+            if (handler.handler_type === "cjs") {
+                // Legacy handler, eval it
+                return eval(
+                    (await (await fetch(handler.path)).text()) +
+                        `if (getFileType) {
+                            getFileType(${JSON.stringify(path)})
+                        } else {
+                            "Anura File"
+                        }`,
+                ); // here, JSON.stringify is used to properly escape the string
+            }
+        }
+        // If no handler is found, return "Anura File"
+        return "Anura File";
+    }
+
     setFolderIcon(path: string) {
         this.folderIcon = path;
     }

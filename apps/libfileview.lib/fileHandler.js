@@ -172,6 +172,15 @@ export function getIcon(path) {
     return localPathToURL(icons.default);
 }
 
+export function getFileType(path) {
+    let ext = path.split('.').slice('-1')[0] 
+    let iconObject = icons.files.find((icon) => icon.ext == ext);
+    if (iconObject) {
+        return iconObject.type;
+    }
+    return "Anura File";
+}
+
 function localPathToURL(path) {
     return import.meta.url.substring(0, import.meta.url.lastIndexOf("/")) + "/" + path;
 }
