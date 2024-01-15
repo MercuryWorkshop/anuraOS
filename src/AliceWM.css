@@ -26,6 +26,18 @@
         top 0.2s,
         left 0.2s;
 }
+.remaxtransitionx {
+    transition:
+        width 0.2s,
+        left 0.2s;
+}
+
+.remaxtransitiony {
+    transition:
+        height 0.2s,
+        top 0.2s;
+}
+
 .opacity0 {
     opacity: 0;
 }

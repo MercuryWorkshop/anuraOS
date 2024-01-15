@@ -186,6 +186,12 @@ class WMWindow {
             }
         });
 
+        window.addEventListener("resize", async () => {
+            if (this.maximized) {
+                this.remaximize();
+            }
+        });
+
         // finish the dragging when release the mouse button
         document.addEventListener("mouseup", (evt) => {
             reactivateFrames();
@@ -433,6 +439,41 @@ class WMWindow {
         this.justresized = true;
         this.maximized = false;
         this.onresize(this.width, this.height);
+    }
+    async remaximize() {
+        // Do not call the maximize event here, as we are just fixing the window size
+        const width =
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
+        const height =
+            window.innerHeight ||
+            document.documentElement.clientHeight ||
+            document.body.clientHeight;
+        const oldwidth = parseFloat(this.element.style.width);
+        const oldheight = parseFloat(this.element.style.height);
+        // Determine if the change in size is higher than some threshold to prevent sluggish animations
+
+        const animx =
+            Math.abs(oldwidth - width) > 0.1 * Math.max(oldwidth, width);
+
+        const animy =
+            Math.abs(oldheight - height) > 0.1 * Math.max(oldheight, height);
+
+        animx && this.element.classList.add("remaxtransitionx");
+        animy && this.element.classList.add("remaxtransitiony");
+        this.element.style.top = "0";
+        this.element.style.left = "0";
+        this.element.style.width = `${width}px`;
+        this.element.style.height = `${height - 61}px`;
+        animx &&
+            setTimeout(() => {
+                this.element.classList.remove("remaxtransitionx");
+            }, 200);
+        animy &&
+            setTimeout(() => {
+                this.element.classList.remove("remaxtransitiony");
+            }, 200);
     }
     minimize() {
         this.element.classList.add("opacity0");
