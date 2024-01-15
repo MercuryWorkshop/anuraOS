@@ -53,6 +53,8 @@ class WMWindow {
     onmaximize: () => void;
     onunmaximize: () => void;
 
+    clampWindows: boolean;
+
     justresized = false;
 
     mouseover = false;
@@ -63,6 +65,7 @@ class WMWindow {
         this.state = stateful({
             title: wininfo.title,
         });
+        this.clampWindows = !!anura.settings.get("clampWindows");
         this.element = (
             <div
                 class="aliceWMwin opacity0"
@@ -347,16 +350,29 @@ class WMWindow {
     }
 
     handleDrag(evt: MouseEvent) {
-        this.element.style.left =
-            Math.min(
-                window.innerWidth,
-                Math.max(0, this.originalLeft + evt.clientX! - this.mouseLeft),
-            ) + "px";
-        this.element.style.top =
-            Math.min(
-                window.innerHeight,
-                Math.max(0, this.originalTop + evt.clientY! - this.mouseTop),
-            ) + "px";
+        if (this.clampWindows) {
+            this.element.style.left =
+                Math.min(
+                    window.innerWidth - parseFloat(this.element.style.width),
+                    Math.max(
+                        0,
+                        this.originalLeft + evt.clientX! - this.mouseLeft,
+                    ),
+                ) + "px";
+            this.element.style.top =
+                Math.min(
+                    window.innerHeight - parseFloat(this.element.style.height),
+                    Math.max(
+                        0,
+                        this.originalTop + evt.clientY! - this.mouseTop,
+                    ),
+                ) + "px";
+        } else {
+            this.element.style.left =
+                this.originalLeft + evt.clientX! - this.mouseLeft + "px";
+            this.element.style.top =
+                this.originalTop + evt.clientY! - this.mouseTop + "px";
+        }
 
         if (this.maximized) {
             this.unmaximize();

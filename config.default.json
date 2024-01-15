@@ -25,6 +25,7 @@
             "anura.fsapp",
             "anura.term"
         ],
+        "clampWindows": true,
         "relay-url": "wss://relay.widgetry.org/"
     },
     "x86": {

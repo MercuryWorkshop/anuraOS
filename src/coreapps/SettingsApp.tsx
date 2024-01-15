@@ -208,6 +208,31 @@ class SettingsApp extends App {
                             </label>
                         </div>
                         <div class="settings-item">
+                            <h4 class="settings-item-name">
+                                Window Edge Clamping
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "clampWindows",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "clampWindows",
+                                                false,
+                                            );
+                                        }
+                                    }}
+                                    id="clampWindows"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
                             <h4 class="settings-item-name">Custom WS Proxy</h4>
                             <input
                                 class="settings-item-text-input"
@@ -541,6 +566,13 @@ class SettingsApp extends App {
             if (anura.settings.get("borderless-aboutbrowser")) {
                 document
                     .getElementById("borderless-aboutbrowser")!
+                    .setAttribute("checked", "");
+            }
+        }
+        if (document.getElementById("clampWindows")) {
+            if (anura.settings.get("clampWindows")) {
+                document
+                    .getElementById("clampWindows")!
                     .setAttribute("checked", "");
             }
         }
