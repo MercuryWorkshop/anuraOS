@@ -35,6 +35,9 @@ class WMWindow {
 
     dragging = false;
 
+    dragForceX: number;
+    dragForceY: number;
+
     originalLeft: number;
     originalTop: number;
 
@@ -52,6 +55,8 @@ class WMWindow {
     onclose: () => void;
     onmaximize: () => void;
     onunmaximize: () => void;
+
+    snapped = false;
 
     clampWindows: boolean;
 
@@ -199,10 +204,30 @@ class WMWindow {
         document.addEventListener("mouseup", (evt) => {
             reactivateFrames();
 
+            const snapPreview = document.getElementById("snapPreview");
+
+            if (snapPreview) {
+                snapPreview.style.opacity = "0";
+                setTimeout(() => {
+                    snapPreview.remove();
+                }, 200);
+            }
+
             evt = evt || window.event;
 
             if (this.dragging) {
                 this.handleDrag(evt);
+
+                if (this.clampWindows) {
+                    const forceX = this.dragForceX;
+                    const forceY = this.dragForceY;
+                    this.dragForceX = 0;
+                    this.dragForceY = 0;
+                    const snapDirection = this.getSnapDirection(forceX, forceY);
+                    if (snapDirection) {
+                        this.snap(snapDirection);
+                    }
+                }
 
                 this.dragging = false;
             }
@@ -254,6 +279,9 @@ class WMWindow {
             });
 
             const resize = (e: MouseEvent) => {
+                this.dragForceX = 0;
+                this.dragForceY = 0;
+
                 sentResize = false;
                 if (this.maximized) {
                     this.unmaximize();
@@ -350,31 +378,63 @@ class WMWindow {
     }
 
     handleDrag(evt: MouseEvent) {
+        const offsetX = this.originalLeft + evt.clientX! - this.mouseLeft;
+        const offsetY = this.originalTop + evt.clientY! - this.mouseTop;
+
         if (this.clampWindows) {
-            this.element.style.left =
-                Math.min(
-                    window.innerWidth - parseFloat(this.element.style.width),
-                    Math.max(
-                        0,
-                        this.originalLeft + evt.clientX! - this.mouseLeft,
-                    ),
-                ) + "px";
-            this.element.style.top =
-                Math.min(
-                    window.innerHeight - parseFloat(this.element.style.height),
-                    Math.max(
-                        0,
-                        this.originalTop + evt.clientY! - this.mouseTop,
-                    ),
-                ) + "px";
+            const newOffsetX = Math.min(
+                window.innerWidth - this.element.clientWidth,
+                Math.max(0, offsetX),
+            );
+
+            const newOffsetY = Math.min(
+                window.innerHeight - 61 - this.element.clientHeight,
+                Math.max(0, offsetY),
+            );
+
+            this.element.style.left = newOffsetX + "px";
+            this.element.style.top = newOffsetY + "px";
+
+            if (offsetX != newOffsetX || offsetY != newOffsetY) {
+                this.dragForceX = Math.abs(offsetX - newOffsetX);
+                this.dragForceY = Math.abs(offsetY - newOffsetY);
+                const snapDirection = this.getSnapDirection(
+                    this.dragForceX,
+                    this.dragForceY,
+                );
+                if (snapDirection) {
+                    const preview = document.getElementById("snapPreview");
+                    if (!preview) {
+                        document.body.appendChild(
+                            this.snapPreview(snapDirection),
+                        );
+                    } else {
+                        const direction = preview.classList[0]?.split("-")[1];
+                        if (direction != snapDirection) {
+                            preview.remove();
+                            document.body.appendChild(
+                                this.snapPreview(snapDirection),
+                            );
+                        }
+                    }
+                }
+            } else {
+                this.dragForceX = 0;
+                this.dragForceY = 0;
+                const preview = document.getElementById("snapPreview");
+                if (preview) {
+                    preview.style.opacity = "0";
+                    setTimeout(() => {
+                        preview.remove();
+                    }, 200);
+                }
+            }
         } else {
-            this.element.style.left =
-                this.originalLeft + evt.clientX! - this.mouseLeft + "px";
-            this.element.style.top =
-                this.originalTop + evt.clientY! - this.mouseTop + "px";
+            this.element.style.left = offsetX + "px";
+            this.element.style.top = offsetY + "px";
         }
 
-        if (this.maximized) {
+        if (this.maximized || this.snapped) {
             this.unmaximize();
             this.originalLeft = this.element.offsetLeft;
             this.originalTop = this.element.offsetTop;
@@ -410,13 +470,14 @@ class WMWindow {
         }
     }
     maximize() {
-        if (this.maximized) {
+        if (this.maximized || this.snapped) {
             // Unmaximize if already maximized (this will be done anyways) because titlebar click
             return;
         }
 
         if (this.onmaximize) this.onmaximize();
         this.oldstyle = this.element.getAttribute("style");
+        console.log(this.oldstyle);
         const width =
             window.innerWidth ||
             document.documentElement.clientWidth ||
@@ -442,13 +503,20 @@ class WMWindow {
         this.onresize(this.width, this.height);
     }
     async unmaximize() {
+        if (this.snapped) {
+            this.maximizeImg.src = "/assets/window/maximize.svg";
+
+            await sleep(10); // Race condition as a feature
+            this.element.setAttribute("style", this.oldstyle!);
+            this.justresized = true;
+            this.snapped = false;
+            this.onresize(this.width, this.height);
+            return;
+        }
+
         if (this.onunmaximize) this.onunmaximize();
         console.log("restoring");
-        this.element.classList.add("maxtransition");
         this.element.setAttribute("style", this.oldstyle!);
-        setTimeout(() => {
-            this.element.classList.remove("maxtransition");
-        }, 200);
         this.maximizeImg.src = "/assets/window/maximize.svg";
 
         await sleep(10); // Race condition as a feature
@@ -503,6 +571,103 @@ class WMWindow {
         setTimeout(() => {
             this.element.classList.remove("opacity0");
         }, 10);
+    }
+
+    snap(snapDirection: "left" | "right" | "top") {
+        this.oldstyle = this.element.getAttribute("style");
+
+        const width =
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
+        const height =
+            window.innerHeight ||
+            document.documentElement.clientHeight ||
+            document.body.clientHeight;
+
+        let scaledWidth = width;
+        let scaledHeight = height;
+
+        if (snapDirection == "top") {
+            scaledHeight = height / 2;
+        } else {
+            scaledWidth = width / 2;
+        }
+
+        switch (snapDirection) {
+            case "left":
+                this.element.style.top = "0px";
+                this.element.style.left = "0px";
+                break;
+            case "right":
+                this.element.style.top = "0px";
+                this.element.style.left = scaledWidth + "px";
+                break;
+            case "top":
+                this.maximize();
+                this.dragging = false;
+                return;
+        }
+
+        this.element.style.width = scaledWidth - 4 + "px";
+        this.element.style.height = scaledHeight - 61 + "px";
+        this.onresize(this.width, this.height);
+        this.dragging = false;
+
+        this.maximizeImg.src = "/assets/window/restore.svg";
+        this.snapped = true;
+    }
+
+    getSnapDirection(
+        forceX: number,
+        forceY: number,
+    ): "left" | "right" | "top" | null {
+        if (forceX > 20) {
+            if (this.element.offsetLeft == 0) {
+                // Snap to left
+                return "left";
+            }
+            // Snap to right
+            return "right";
+        }
+        if (forceY > 20 && this.element.offsetTop == 0) {
+            // Snap to top
+            return "top";
+        }
+        return null;
+    }
+
+    snapPreview(side: "left" | "right" | "top") {
+        const width =
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
+        const height =
+            window.innerHeight ||
+            document.documentElement.clientHeight ||
+            document.body.clientHeight;
+
+        let scaledWidth = width;
+        let scaledHeight = height;
+
+        if (side != "top") {
+            scaledWidth = width / 2 + 4;
+        }
+        scaledHeight = height - 61;
+
+        const elem = (
+            <div
+                class={`snapPreview-${side}`}
+                id="snapPreview"
+                style={`${side}: 0px; width: ${scaledWidth}px; height: ${scaledHeight}px; opacity: 0;`}
+            ></div>
+        );
+
+        setTimeout(() => {
+            elem.style.opacity = null;
+        }, 10);
+
+        return elem;
     }
 }
 

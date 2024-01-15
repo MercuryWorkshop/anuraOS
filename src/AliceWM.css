@@ -38,6 +38,15 @@
         top 0.2s;
 }
 
+#snapPreview {
+    background-color: gray;
+    opacity: 50%;
+    position: fixed;
+    user-select: none;
+    transition: opacity 0.2s;
+    z-index: 9999;
+}
+
 .opacity0 {
     opacity: 0;
 }
