@@ -1,5 +1,6 @@
 #!/bin/bash
 git clone https://github.com/PapirusDevelopmentTeam/papirus-icon-theme.git papirus
+mkdir icons
 icon_paths=$(jq -r '.files[] | "\(.source) \(.icon)"' icons.json)
 while read -r source icon_path
 do
