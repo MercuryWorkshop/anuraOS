@@ -10,6 +10,17 @@
 // no i will not use data properties in the dom element fuck off
 // ok fine i will fine i just realized how much harder it would be
 
+type SnappedWindow = {
+    window: WMWindow;
+    direction: "left" | "right";
+};
+
+let splitBar: WMSplitBar | null = null;
+
+const minimizedSnappedWindows: SnappedWindow[] = [];
+
+const snappedWindows: SnappedWindow[] = [];
+
 /**
  * to show a floating dialog displaying the given dom element
  * @param {Object} title "title of the dialog"
@@ -61,6 +72,8 @@ class WMWindow {
     clampWindows: boolean;
 
     justresized = false;
+
+    minimizing = false;
 
     mouseover = false;
 
@@ -131,6 +144,7 @@ class WMWindow {
                     <button
                         class="windowButton"
                         on:click={() => {
+                            this.minimizing = true;
                             this.minimize();
                         }}
                     >
@@ -195,7 +209,7 @@ class WMWindow {
         });
 
         window.addEventListener("resize", async () => {
-            if (this.maximized) {
+            if (this.maximized || this.snapped) {
                 this.remaximize();
             }
         });
@@ -285,6 +299,23 @@ class WMWindow {
                 sentResize = false;
                 if (this.maximized) {
                     this.unmaximize();
+                }
+                if (this.snapped) {
+                    if (splitBar) {
+                        return;
+                    }
+                    const direction = this.getSnapDirectionFromPosition(
+                        original_x,
+                        original_width,
+                    );
+                    if (
+                        (direction == "left" &&
+                            !currentResizer.classList.contains("right")) ||
+                        (direction == "right" &&
+                            !currentResizer.classList.contains("left"))
+                    ) {
+                        return;
+                    }
                 }
                 if (currentResizer.classList.contains("bottom-right")) {
                     const width = original_width + (e.pageX - original_mouse_x);
@@ -503,13 +534,30 @@ class WMWindow {
         this.onresize(this.width, this.height);
     }
     async unmaximize() {
+        await sleep(10);
         if (this.snapped) {
+            if (this.minimizing) {
+                this.minimizing = false;
+                return;
+            }
+
+            this.snapped = false;
+
+            const thisSnappedWindow = snappedWindows.find(
+                (x) => x.window == this,
+            );
+
+            snappedWindows.splice(
+                snappedWindows.indexOf(thisSnappedWindow!),
+                1,
+            );
+
+            WMSplitBar.prototype.cleanup();
+
             this.maximizeImg.src = "/assets/window/maximize.svg";
 
-            await sleep(10); // Race condition as a feature
             this.element.setAttribute("style", this.oldstyle!);
             this.justresized = true;
-            this.snapped = false;
             this.onresize(this.width, this.height);
             return;
         }
@@ -526,6 +574,9 @@ class WMWindow {
     }
     async remaximize() {
         // Do not call the maximize event here, as we are just fixing the window size
+        if (!(this.maximized || this.snapped)) {
+            return;
+        }
         const width =
             window.innerWidth ||
             document.documentElement.clientWidth ||
@@ -534,6 +585,11 @@ class WMWindow {
             window.innerHeight ||
             document.documentElement.clientHeight ||
             document.body.clientHeight;
+        if (this.snapped) {
+            splitBar?.splitWindowsAround(width / 2);
+            this.element.style.height = `${height - 61}px`;
+            return;
+        }
         const oldwidth = parseFloat(this.element.style.width);
         const oldheight = parseFloat(this.element.style.height);
         // Determine if the change in size is higher than some threshold to prevent sluggish animations
@@ -560,6 +616,21 @@ class WMWindow {
             }, 200);
     }
     minimize() {
+        console.log(this.snapped);
+        if (this.snapped) {
+            const thisSnappedWindow = snappedWindows.find(
+                (x) => x.window == this,
+            );
+            console.log(thisSnappedWindow);
+
+            minimizedSnappedWindows.push(thisSnappedWindow!);
+            snappedWindows.splice(
+                snappedWindows.indexOf(thisSnappedWindow!),
+                1,
+            );
+            WMSplitBar.prototype.cleanup();
+        }
+
         this.element.classList.add("opacity0");
         // This is to make sure that you cannot interact with the window while it is minimized
         setTimeout(() => {
@@ -567,6 +638,101 @@ class WMWindow {
         }, 200);
     }
     unminimize() {
+        if (
+            this.element.style.display != "none" ||
+            !this.element.classList.contains("opacity0")
+        ) {
+            return;
+        }
+        if (this.snapped) {
+            const thisSnappedWindow = minimizedSnappedWindows.find(
+                (x) => x.window == this,
+            );
+
+            if (!thisSnappedWindow) {
+                return;
+            }
+
+            snappedWindows.push(thisSnappedWindow);
+            minimizedSnappedWindows.splice(
+                minimizedSnappedWindows.indexOf(thisSnappedWindow),
+                1,
+            );
+
+            const leftSnappedWindows = snappedWindows.filter(
+                (x) => x.direction == "left",
+            );
+
+            const rightSnappedWindows = snappedWindows.filter(
+                (x) => x.direction == "right",
+            );
+
+            if (thisSnappedWindow.direction == "left") {
+                const otherLeftSnappedWindows = leftSnappedWindows.filter(
+                    (x) => x.window != this,
+                );
+
+                otherLeftSnappedWindows.forEach((x) => {
+                    x.window.minimize();
+                });
+
+                if (rightSnappedWindows.length == 1) {
+                    WMSplitBar.prototype.cleanup(); // Just in case
+
+                    const bar = new WMSplitBar(
+                        this,
+                        rightSnappedWindows[0]!.window,
+                    );
+
+                    const width =
+                        window.innerWidth ||
+                        document.documentElement.clientWidth ||
+                        document.body.clientWidth;
+
+                    bar.leftWindow.element.classList.add("remaxtransitionx");
+                    bar.splitWindowsAround(width / 2 - 4);
+
+                    setTimeout(() => {
+                        bar.leftWindow.element.classList.remove(
+                            "remaxtransitionx",
+                        );
+                    }, 200);
+                }
+            }
+
+            if (thisSnappedWindow.direction == "right") {
+                const otherRightSnappedWindows = rightSnappedWindows.filter(
+                    (x) => x.window != this,
+                );
+
+                otherRightSnappedWindows.forEach((x) => {
+                    x.window.minimize();
+                });
+
+                if (leftSnappedWindows.length == 1) {
+                    WMSplitBar.prototype.cleanup(); // Just in case
+
+                    const bar = new WMSplitBar(
+                        leftSnappedWindows[0]!.window,
+                        this,
+                    );
+
+                    const width =
+                        window.innerWidth ||
+                        document.documentElement.clientWidth ||
+                        document.body.clientWidth;
+
+                    bar.leftWindow.element.classList.add("remaxtransitionx");
+                    bar.splitWindowsAround(width / 2 - 4);
+
+                    setTimeout(() => {
+                        bar.leftWindow.element.classList.remove(
+                            "remaxtransitionx",
+                        );
+                    });
+                }
+            }
+        }
         this.element.style.display = "";
         setTimeout(() => {
             this.element.classList.remove("opacity0");
@@ -586,12 +752,36 @@ class WMWindow {
             document.body.clientHeight;
 
         let scaledWidth = width;
-        let scaledHeight = height;
 
-        if (snapDirection == "top") {
-            scaledHeight = height / 2;
-        } else {
+        if (snapDirection != "top") {
             scaledWidth = width / 2;
+            snappedWindows.forEach((x) => {
+                if (x.direction == snapDirection) {
+                    x.window.minimize();
+                }
+            });
+            snappedWindows.push({
+                window: this,
+                direction: snapDirection,
+            });
+        }
+
+        if (
+            snappedWindows.length == 2 &&
+            !splitBar &&
+            snapDirection != "top" &&
+            snappedWindows[0]?.direction != snappedWindows[1]?.direction
+        ) {
+            const bar = new WMSplitBar(
+                snappedWindows.find((x) => x.direction == "left")!.window,
+                snappedWindows.find((x) => x.direction == "right")!.window,
+            );
+
+            bar.splitWindowsAround(width / 2 - 4);
+
+            setTimeout(() => {
+                bar.leftWindow.element.classList.remove("remaxtransitionx");
+            }, 200);
         }
 
         switch (snapDirection) {
@@ -610,7 +800,7 @@ class WMWindow {
         }
 
         this.element.style.width = scaledWidth - 4 + "px";
-        this.element.style.height = scaledHeight - 61 + "px";
+        this.element.style.height = height - 61 + "px";
         this.onresize(this.width, this.height);
         this.dragging = false;
 
@@ -634,6 +824,24 @@ class WMWindow {
             // Snap to top
             return "top";
         }
+        return null;
+    }
+
+    getSnapDirectionFromPosition(
+        left: number,
+        width: number,
+    ): "left" | "right" | null {
+        if (left == 0) {
+            return "left";
+        }
+        const windowWidth =
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
+        if (left + width == windowWidth) {
+            return "right";
+        }
+        console.log(left, width, windowWidth);
         return null;
     }
 
@@ -668,6 +876,111 @@ class WMWindow {
         }, 10);
 
         return elem;
+    }
+}
+
+class WMSplitBar {
+    dragging = false;
+    mouseLeft: number;
+    originalLeft: number;
+    leftWindow: WMWindow;
+    rightWindow: WMWindow;
+
+    element = (
+        <div
+            id="snapSplitBar"
+            style={`background-color: rgba(0, 0, 0, 0)`}
+            on:mouseover={() => {
+                this.fadeIn();
+            }}
+            on:mouseout={() => {
+                this.fadeOut();
+            }}
+            on:mousedown={(evt: MouseEvent) => {
+                deactivateFrames();
+
+                this.dragging = true;
+                this.mouseLeft = evt.clientX;
+                this.originalLeft = this.element.offsetLeft;
+            }}
+            on:mouseup={(evt: MouseEvent) => {
+                reactivateFrames();
+
+                if (this.dragging) {
+                    this.handleDrag(evt);
+                    this.dragging = false;
+                }
+            }}
+        >
+            <div></div>
+        </div>
+    );
+
+    cleanup() {
+        if (splitBar) {
+            splitBar.instantRemove();
+            splitBar = null;
+        }
+    }
+
+    constructor(leftWindow: WMWindow, rightWindow: WMWindow) {
+        this.cleanup();
+        splitBar = this;
+        this.leftWindow = leftWindow;
+        this.rightWindow = rightWindow;
+        const width =
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
+        this.element.style.left = width / 2 - 4 + "px";
+        document.body.appendChild(this.element);
+        setTimeout(() => {
+            this.element.style.backgroundColor = null;
+        }, 10);
+        document.addEventListener("mousemove", (evt) => {
+            if (this.dragging) {
+                this.handleDrag(evt);
+            }
+        });
+    }
+
+    handleDrag(evt: MouseEvent) {
+        this.splitWindowsAround(
+            this.originalLeft + evt.clientX - this.mouseLeft,
+        );
+    }
+
+    splitWindowsAround(x: number) {
+        const width =
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
+        this.element.style.left = x + "px";
+        this.leftWindow.element.style.width = x + "px";
+        this.leftWindow.element.style.left = "0px";
+        this.rightWindow.element.style.width = width - x - 4 + "px";
+        this.rightWindow.element.style.left = x + 4 + "px";
+    }
+
+    fadeIn() {
+        this.element.style.backgroundColor = "rgba(0, 0, 0, 1)";
+    }
+
+    fadeOut() {
+        this.element.style.backgroundColor = null;
+    }
+
+    remove() {
+        this.dragging = false;
+        this.element.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        setTimeout(() => {
+            this.element.remove();
+        }, 200);
+    }
+
+    instantRemove() {
+        this.dragging = false;
+        this.element.remove();
     }
 }
 

@@ -47,6 +47,28 @@
     z-index: 9999;
 }
 
+#snapSplitBar {
+    background-color: rgba(0, 0, 0, 0.1);
+    top: 0;
+    height: calc(100% - 61px);
+    width: 8px;
+    position: fixed;
+    transition: background 0.2s;
+    z-index: 9999;
+    cursor: ew-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#snapSplitBar > div {
+    opacity: 1;
+    width: 2px;
+    height: 16px;
+    border-radius: 2px;
+    background-color: white;
+}
+
 .opacity0 {
     opacity: 0;
 }
