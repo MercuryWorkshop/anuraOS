@@ -9,6 +9,9 @@ class WMAPI {
         onclose: (() => void) | null = null,
         onmaximize: (() => void) | null = null,
         onunmaximize: (() => void) | null = null,
+        onsnap:
+            | ((snapDirection: "left" | "right" | "top") => void)
+            | null = null,
     ): WMWindow {
         const win = AliceWM.create(info as unknown as any);
 
@@ -38,6 +41,11 @@ class WMAPI {
             taskbar.maximizedWins = taskbar.maximizedWins.filter(
                 (w) => w !== win,
             );
+            taskbar.updateRadius();
+        };
+        win.onsnap = (snapDirection: "left" | "right" | "top") => {
+            if (onsnap) onsnap(snapDirection);
+            console.log(snappedWindows);
             taskbar.updateRadius();
         };
         ctx.windows.push(win);

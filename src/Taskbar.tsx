@@ -293,7 +293,8 @@ class Taskbar {
     }
 
     updateRadius() {
-        if (this.maximizedWins.length > 0) {
+        console.log(snappedWindows);
+        if (this.maximizedWins.length > 0 || snappedWindows.length > 0) {
             this.state.radius = "0px";
         } else {
             this.state.radius = "25px";

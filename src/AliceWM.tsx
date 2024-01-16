@@ -65,6 +65,7 @@ class WMWindow {
     onresize: (w: number, h: number) => void;
     onclose: () => void;
     onmaximize: () => void;
+    onsnap: (snapDirection: "left" | "right" | "top") => void;
     onunmaximize: () => void;
 
     snapped = false;
@@ -784,6 +785,9 @@ class WMWindow {
             }, 200);
         }
 
+        console.log("calling onSnap", this.onsnap);
+        if (this.onsnap) this.onsnap(snapDirection);
+
         switch (snapDirection) {
             case "left":
                 this.element.style.top = "0px";
@@ -925,6 +929,7 @@ class WMSplitBar {
 
     constructor(leftWindow: WMWindow, rightWindow: WMWindow) {
         this.cleanup();
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         splitBar = this;
         this.leftWindow = leftWindow;
         this.rightWindow = rightWindow;
