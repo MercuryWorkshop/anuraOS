@@ -574,6 +574,7 @@ class SettingsApp extends App {
             title: "",
             width: "910px",
             height: "720px",
+            resizable: false,
         });
 
         win.content.appendChild(await this.page());

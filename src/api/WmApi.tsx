@@ -14,7 +14,6 @@ class WMAPI {
             | null = null,
     ): WMWindow {
         const win = AliceWM.create(info as unknown as any);
-
         win.focus();
 
         win.onfocus = () => {

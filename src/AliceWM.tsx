@@ -36,6 +36,7 @@ class WindowInformation {
     height: string;
     minheight: number;
     allowMultipleInstance = false;
+    resizable: boolean;
 }
 
 class WMWindow {
@@ -43,15 +44,13 @@ class WMWindow {
     content: HTMLElement;
     maximized: boolean;
     oldstyle: string | null;
-
     dragging = false;
-
     dragForceX: number;
     dragForceY: number;
 
     originalLeft: number;
     originalTop: number;
-
+    resizable: boolean;
     width: number;
     height: number;
 
@@ -84,6 +83,11 @@ class WMWindow {
         this.state = stateful({
             title: wininfo.title,
         });
+        this.resizable = wininfo.resizable;
+        if (this.resizable == undefined) {
+            // This happens when resizable isn't passed in.
+            this.resizable = true;
+        }
         this.clampWindows = !!anura.settings.get("clampWindows");
         this.element = (
             <div
@@ -100,17 +104,20 @@ class WMWindow {
                 }}
                 on:mousedown={this.focus.bind(this)}
             >
-                <div class="resizers">
-                    <div class="resize-edge left"></div>
-                    <div class="resize-edge right"></div>
-                    <div class="resize-edge top"></div>
-                    <div class="resize-edge bottom"></div>
+                {(this.resizable && (
+                    <div class="resizers">
+                        <div class="resize-edge left"></div>
+                        <div class="resize-edge right"></div>
+                        <div class="resize-edge top"></div>
+                        <div class="resize-edge bottom"></div>
 
-                    <div class="resize-corner top-left"></div>
-                    <div class="resize-corner top-right"></div>
-                    <div class="resize-corner bottom-left"></div>
-                    <div class="resize-corner bottom-right"></div>
-                </div>
+                        <div class="resize-corner top-left"></div>
+                        <div class="resize-corner top-right"></div>
+                        <div class="resize-corner bottom-left"></div>
+                        <div class="resize-corner bottom-right"></div>
+                    </div>
+                )) ||
+                    ""}
                 <div
                     class="title"
                     on:mousedown={(evt: MouseEvent) => {
@@ -999,6 +1006,7 @@ const AliceWM = {
             width: "1000px",
             height: "500px",
             allowMultipleInstance: false,
+            resizable: true,
         };
         // Param given in argument
         if (typeof givenWinInfo == "object") wininfo = givenWinInfo;
