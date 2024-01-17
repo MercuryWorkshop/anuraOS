@@ -103,9 +103,9 @@ nav li {
     position: absolute;
     border: 1px solid #000000;
     background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 20px;
-    padding: 10px 0;
-    width: 300px;
+    border-radius: 5px;
+    padding: 5px 0;
+    width: 150px;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
 
     z-index: 10000;
@@ -116,6 +116,7 @@ nav li {
     color: #ffffff;
     cursor: pointer;
     user-select: none;
+    font-size: 14px;
 }
 .custom-menu-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -127,7 +128,7 @@ nav li {
 .custom-menu-item {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
+    padding: 4px 12px;
     color: #ffffff;
     cursor: pointer;
     user-select: none;
