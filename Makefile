@@ -15,7 +15,7 @@ hooks: FORCE
 	chmod +x .git/hooks/pre-commit
 
 apps/libfileview.lib/icons:
-	cd apps/libfileview.lib; sh geticons.sh
+	cd apps/libfileview.lib; bash geticons.sh
 
 apps/chideNewNewNew/node_modules:
 	cd apps/chideNewNewNew; npm i
