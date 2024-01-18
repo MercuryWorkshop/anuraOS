@@ -85,9 +85,7 @@ nav li {
 
 .custom-menu {
     position: absolute;
-    border: 1px solid #000000;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 5px;
+    background-color: rgba(20, 20, 20);
     padding: 5px 0;
     width: 150px;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
@@ -96,11 +94,11 @@ nav li {
     overflow: hidden;
 }
 .custom-menu-item {
-    padding: 8px 12px;
+    padding: 10px 14px;
     color: #ffffff;
     cursor: pointer;
     user-select: none;
-    font-size: 14px;
+    font-size: 13px;
 }
 .custom-menu-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -112,15 +110,15 @@ nav li {
 .custom-menu-item {
     display: flex;
     align-items: center;
-    padding: 4px 12px;
+    padding: 6px 12px;
     color: #ffffff;
     cursor: pointer;
     user-select: none;
 }
 
 .custom-menu-item .material-symbols-outlined {
-    margin-top: 0.05px;
-    margin-right: 5px;
+    margin-top: 0.2px;
+    margin-right: 30px;
     padding-left: 1px;
 }
 
