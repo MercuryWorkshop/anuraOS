@@ -44,7 +44,7 @@ async function loadMainScreen() {
     repoList.innerHTML = ''
     appListScreen.style.display = 'none'
     repoList.style.display = ''
-    document.getElementById("head").innerHTML = "Workstore";
+    document.getElementById("head").innerHTML = "Select a Repository";
     
     for (const repo in repos) {
         const repoItem = document.createElement('div')
@@ -121,7 +121,7 @@ async function loadMainScreen() {
             anura.settings.set('workstore-repos', repos)
             loadMainScreen();
         }
-        newRepo.className = "repoItem"
+        newRepo.className = "repoAdd"
         newRepo.appendChild(newRepoName)
         newRepo.appendChild(newRepoURL)
         newRepo.appendChild(newRepoButton)

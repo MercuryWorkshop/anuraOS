@@ -1,7 +1,12 @@
 {
   "name": "Work Store",
-  "type": "auto",
+  "type": "auto", 
   "package": "anura.store",
   "index": "index.html",
-  "icon": "google-play.svg"
+  "icon": "google-play.svg",
+  "wininfo":{
+    "title":"",
+    "width":"1000px",
+    "height":"700px"
+  }
 }

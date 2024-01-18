@@ -1,102 +1,171 @@
 body {
-    color: #fff;
+    color: #eeeeee;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     padding-top: 70px;
-    background: #222;
-    background-image: radial-gradient(#666 1px, transparent 0);
-    background-size: 20px 20px;
-   background-position: -19px -19px;
+    background: rgb(20,20,20);
 }
 .app {
-    height: 175px;
-    width: 125px;
-    border-color: #222222;
+    height: 100px;
+    width: 75vw;
+    border-color: #424242;
     border-style: solid;
     border-width: 1px;
-    border-radius: 17px;
-    margin-right: 10px;
-    margin-left: 10px;
+    margin-right: auto;
+    margin-left: auto;
     transition: 0.3s;
-    background: none;
+    background: #212121;
+    margin-top: -2px;
 }
 
-.app > img:hover {
+.app > input:hover {
     cursor: pointer;
-    background: #444;
     transition: 0.3s;
 }
 .app > img {
     display: block;
     position: relative;
-    height: 125px;
-    width: 125px;
-    bottom: -5px;
-    background-color: #333;
-    border-radius: 35px;
+    height: 80px;
+    width: 80px;
+    margin-top: 10px;
     transition: .3s;
+    float: left;
+    margin-left: 15px;
+    margin-right: 20px;
 }
 .app > span {
-    position: block;
     display: block;
-    font-size: 15px;
-    top: 2px;
+    position: relative;
+    font-size: 16px;
     text-align: left;
-    padding-top: 15px;
-    color: #ddd;
-    padding-left: 10px;
+    color: #fafafa;
+    margin-top: 30px;
+}
+
+.app > p {
+    display: block;
+    position: relative;
+    font-size: 14px;
+    text-align: left;
+    color: #757575;
+    margin: 0;
+    padding: 0;
 }
 nav {
     position: fixed;
     display: block;
-    width: 100%;
+    width: 100vw;
     height: 70px;
     font-size: large;
     
-    border-bottom: gray;
+    border-bottom: #bdbdbd;
     top: 0;
-    left: 0;
 }
-nav > h1 {
+nav > div > h1 {
     /* position: fixed; */
-    margin-top: 18px;
-    text-align: center;
-    top: 2px;
+    font-size: 12px;
+    float: left;
+    margin-left: 2vw;
+    margin-top: 20px;
 }
 
-nav > h1:hover {
+nav > div > input {
+    border: none;
+    width: 70px;
+    height: 30px;
+    border-radius: 7px;
+    background-color: #212121;
+    float: right;
+    margin-right: 2.5vw;
+    margin-top: 20px;
+    color: #eeeeee;
+}
+
+nav > div {
+    width: 100vw;
+    display: table;
+}
+
+nav > div > input:hover {
     cursor: pointer;
 }
 
 .repoItem {
-    background-color: #292a2d;
+    background-color: #212121;
     margin-right: auto;
     margin-left: auto;
-    height: 40px;
-    width: 500px;
-    border-radius: 50px;
+    height: 50px;
+    width: 75vw;
     text-align: center;
-    margin-bottom: 10px;
-    padding-top: 20px;
+    padding-top: 16px;
+    margin-top: -1px;
     transition: 0.3s;
-    color: #ddd;
+    color: #eeeeee;
+    border-color: #424242;
+    border-style: solid;
+    border-width: 0.5px;
+    border-bottom-width: 0.5px;
 }
 
 .repoItem:hover {
     cursor: pointer;
-    width: 550px;
     transition: 0.3s;
-    background-color: #48c76a;
-    color: #222;
+    background-color: #4caf50;
+    color: #212121;
 }
 
-.repoItem > input {
-    border: none;
-    background-color: #444;
-    color: #ddd;
+.repoAdd {
+    margin-left: auto;
+    margin-right: auto;
+    display: table;
+    position: relative;
+    margin-top: 20px;
+}
+
+.repoAdd > input {
+    border-width: 1px;
+    border-color: #424242;
+    background-color: #212121;
+    box-shadow: none !important;
+    border-style: solid !important;
     margin-right: 5px;
     margin-left: 5px;
-    border-radius: 25px;
     box-shadow: none;
     outline: none;
+    color: #bdbdbd;
 }
 
+.repoItem > p {
+    margin: 0;
+    font-size: 10px;
+    color: #bdbdbd;
+}
+
+.app > input {
+    float: right;
+    margin-right: 15px;
+    margin-top: 35px;
+    border: none;
+    width: 70px;
+    height: 30px;
+    border-radius: 7px;
+    background-color: #388e3c;
+    color: #fafafa;
+}
+
+.search {
+    border-width: 1px;
+    background-color: #212121;
+    border-color: #424242;
+    box-shadow: none !important;
+    border-style: solid !important;
+    margin-right: auto;
+    margin-bottom: 50px;
+    margin-left: auto;
+    display: flex;
+    width: 40vw;
+    height: 3vh;
+}
+
+.search:focus {
+    outline: none;
+}
