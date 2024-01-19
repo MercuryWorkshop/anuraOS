@@ -70,11 +70,11 @@ async function loadappListScreen(repo) {
             repo.installApp(app.name);
         };
 
-        appElem.appendChild(install);
         appElem.appendChild(thumbnail);
         appElem.appendChild(itemText);
         appElem.appendChild(itemDesc);
-        appListScreen.appendChild(appElem)
+        appElem.appendChild(install);
+        appList.appendChild(appElem);
     });
     
     libs.forEach(async (lib) => {
@@ -96,10 +96,11 @@ async function loadappListScreen(repo) {
             repo.installLib(lib.name);
         };
 
-        libElem.appendChild(install);
         libElem.appendChild(thumbnail);
         libElem.appendChild(itemText);
         libElem.appendChild(itemDesc);
-        appListScreen.appendChild(libElem)
+        libElem.appendChild(install);
+        appList.appendChild(libElem);
     });
+    appListScreen.appendChild(appList);
 }
