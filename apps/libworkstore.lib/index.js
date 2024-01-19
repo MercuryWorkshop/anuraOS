@@ -43,11 +43,12 @@ export class Workstore {
         });
     }
 
-    async getRepo(url) {
+    async getRepo(url, name) {
         if (this.cache[url]) {
             return this.cache[url];
         }
-        const repo = new WorkstoreRepo(this.client, this.hooks, url);
+
+        const repo = new WorkstoreRepo(this.client, this.hooks, url, name);
         await repo.refreshRepoCache();
         this.cache[url] = repo;
         return repo;
@@ -56,15 +57,17 @@ export class Workstore {
 
 export class WorkstoreRepo {
     baseUrl;
+    name;
     client;
     hooks;
     repoCache;
     thumbCache = { apps: {}, libs: {} };
 
-    constructor(client, hooks, baseUrl) {
+    constructor(client, hooks, baseUrl, name) {
         this.client = client;
         this.hooks = hooks;
         this.baseUrl = baseUrl;
+        this.name = name;
     }
     
     setHook(name, fn) {

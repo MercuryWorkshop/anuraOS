@@ -65,7 +65,7 @@ async function loadMainScreen() {
             e.preventDefault()
         }
         try {
-            const workstoreRepo = await workstore.getRepo(repos[repo]);
+            const workstoreRepo = await workstore.getRepo(repos[repo], repo);
             repoItem.onclick = async function() {
                 loadappListScreen(workstoreRepo); 
             }
