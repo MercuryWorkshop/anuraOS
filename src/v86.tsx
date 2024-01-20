@@ -247,7 +247,7 @@ class V86Backend {
     private s_cols_phys_addr: number;
     private resize_intent_phys_addr: number;
 
-    vgacanvas: HTMLCanvasElement;
+    vgacanvas: HTMLCanvasElement = null!;
 
     screen_container = (
         <div
@@ -262,7 +262,7 @@ class V86Backend {
             `}
         >
             <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-            <canvas bind:vgacanvas={this}></canvas>
+            {(this.vgacanvas = <canvas></canvas>)}
         </div>
     );
 

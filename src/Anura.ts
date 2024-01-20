@@ -1,3 +1,5 @@
+const YOU_CANT_USE_FRAGMENTS = "undefined";
+
 class Anura {
     version = {
         semantic: {

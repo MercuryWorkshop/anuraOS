@@ -114,9 +114,7 @@ class WMWindow {
                         }
                     }}
                 >
-                    <div class="titleContent">
-                        {React.use(this.state.title)}
-                    </div>
+                    <div class="titleContent">{use(this.state.title)}</div>
 
                     <button
                         class="windowButton"
@@ -135,12 +133,15 @@ class WMWindow {
                         class="windowButton"
                         on:click={this.maximize.bind(this)}
                     >
-                        <img
-                            src="/assets/window/maximize.svg"
-                            bind:maximizeImg={this}
-                            height="12px"
-                            class="windowButtonIcon"
-                        />
+                        {
+                            (this.maximizeImg = (
+                                <img
+                                    src="/assets/window/maximize.svg"
+                                    height="12px"
+                                    class="windowButtonIcon"
+                                />
+                            ))
+                        }
                     </button>
                     <button
                         class="windowButton"
@@ -153,11 +154,14 @@ class WMWindow {
                         />
                     </button>
                 </div>
-                <div
-                    class="content"
-                    bind:content={this}
-                    style="width: 100%; padding:0; margin:0;"
-                ></div>
+                {
+                    (this.content = (
+                        <div
+                            class="content"
+                            style="width: 100%; padding:0; margin:0;"
+                        ></div>
+                    ))
+                }
             </div>
         );
         this.width = parseFloat(

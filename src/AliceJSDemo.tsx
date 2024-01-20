@@ -7,7 +7,7 @@
 //
 //   document.body.appendChild(<div>
 //     <p>reactivity demo</p>
-//     <p>the value of a is {React.use(b.counter.b)}</p>
+//     <p>the value of a is {use(b.counter.b)}</p>
 //     <button on:click={() => {
 //       b.counter.b += 1;
 //     }}>click me!</button>

@@ -324,7 +324,7 @@ class SettingsAppOld extends App {
                 <h4>Anura x86 Subsystem</h4>
                 <div
                     class="settings-section"
-                    if={React.use(this.state.show_x86)}
+                    if={use(this.state.show_x86)}
                     then={(() => {
                         const disksize = (
                             <input
@@ -513,7 +513,7 @@ class SettingsAppOld extends App {
                                             Upload custom x86 rootfs
                                         </button>
                                         <div
-                                            if={React.use(this.state.resizing)}
+                                            if={use(this.state.resizing)}
                                             then={screencontainer}
                                         />
                                     </>,
@@ -523,7 +523,7 @@ class SettingsAppOld extends App {
                     })()}
                     else={
                         <div
-                            if={React.use(this.state.x86_installing)}
+                            if={use(this.state.x86_installing)}
                             then={
                                 <>
                                     <h3>

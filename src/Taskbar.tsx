@@ -42,11 +42,11 @@ class Taskbar {
                 }}
             >
                 <ul
-                    for={React.use(this.state.pinnedApps)}
+                    for={use(this.state.pinnedApps)}
                     do={this.shortcut.bind(this)}
                 ></ul>
                 <div
-                    if={React.use(this.state.showBar)}
+                    if={use(this.state.showBar)}
                     class={styled.new`
                         self {
                             border: 2px solid white;
@@ -58,7 +58,7 @@ class Taskbar {
                 ></div>
 
                 <ul
-                    for={React.use(this.state.activeApps)}
+                    for={use(this.state.activeApps)}
                     do={this.shortcut.bind(this)}
                 ></ul>
             </nav>
@@ -75,10 +75,10 @@ class Taskbar {
                     </span>
 
                     <span class="material-symbols-outlined">
-                        {React.use(this.state.bat_icon)}
+                        {use(this.state.bat_icon)}
                     </span>
 
-                    <p>{React.use(this.state.time)}</p>
+                    <p>{use(this.state.time)}</p>
                 </div>
             </div>
         </footer>
@@ -86,8 +86,8 @@ class Taskbar {
 
     shortcut(app: App) {
         if (!app) return;
-        return (
-            <li class="taskbar-button" bind:tmp={this}>
+        return ((this as any).tmp = (
+            <li class="taskbar-button">
                 <input
                     type="image"
                     draggable="true"
@@ -124,16 +124,21 @@ class Taskbar {
                         this.showcontext(app, e);
                     }}
                 />
-                <div
-                    class="lightbar"
-                    style={
-                        "position: relative; bottom: 0px; background-color:#FFF; width:30%; left:50%; transform:translateX(-50%)" +
-                        (app.windows?.length == 0 ? ";visibility:hidden" : "")
-                    }
-                    bind:lightbar={this}
-                ></div>
+                {
+                    ((this as any).lightbar = (
+                        <div
+                            class="lightbar"
+                            style={
+                                "position: relative; bottom: 0px; background-color:#FFF; width:30%; left:50%; transform:translateX(-50%)" +
+                                (app.windows?.length == 0
+                                    ? ";visibility:hidden"
+                                    : "")
+                            }
+                        ></div>
+                    ))
+                }
             </li>
-        );
+        ));
     }
     #contextMenu = new ContextMenuAPI(); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
     showcontext(app: App, e: MouseEvent) {
