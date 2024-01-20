@@ -6,12 +6,12 @@ class OobeView {
     });
     css = styled.new`
         * {
-            color: ${React.use(this.state.text)};
+            color: ${use(this.state.text)};
             transition: all 1s;
         }
 
         self {
-            background-color: ${React.use(this.state.color)};
+            background-color: ${use(this.state.color)};
             z-index: 9996;
             position: absolute;
             width: 100%;
@@ -91,9 +91,7 @@ class OobeView {
         }
     `;
     element = (
-        <div class={this.css}>
-            <div bind:content={this} id="content"></div>
-        </div>
+        <div class={this.css}>{(this.content = <div id="content"></div>)}</div>
     );
 
     nextButton: HTMLElement;
