@@ -178,6 +178,11 @@ class SettingsApp extends App {
                             <a href="#v86">v86</a>
                         </h4>
                     </div>
+                    <div class="sidebar-settings-item">
+                        <h4 class="sidebar-settings-item-name">
+                            <a href="#reset">Reset</a>
+                        </h4>
+                    </div>
                 </div>
                 <div class="settings-body">
                     <div id="general" class="general settings-category">
@@ -235,22 +240,6 @@ class SettingsApp extends App {
                                 type="text"
                             />
                         </div>
-                        <button
-                            on:click={async () => {
-                                const confirmation = await confirm(
-                                    "Are you sure you want to factory reset Anura? All of your data will be lost.",
-                                );
-                                if (confirmation) {
-                                    const sh = new anura.fs.Shell();
-                                    sh.rm("/", { recursive: true });
-                                    await sleep(2);
-                                    window.location.reload();
-                                }
-                            }}
-                            class="settings-button"
-                        >
-                            Factory Reset
-                        </button>
                     </div>
                     <div id="v86" class="v86 settings-category">
                         <h3 class="settings-category-name">Anura x86</h3>
@@ -534,6 +523,36 @@ class SettingsApp extends App {
                                 </div>
                             </div>
                         )}
+                    </div>
+                    <div id="reset" class="settings-category">
+                        <h3 class="settings-category-name">Reset Anura</h3>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">
+                                Reset your Anura install.
+                            </h4>
+                            <button
+                                class="settings-button"
+                                on:click={async () => {
+                                    const confirmation = await confirm(
+                                        "Are you sure you want to powerwash Anura? All of your data will be lost.",
+                                    );
+                                    if (confirmation) {
+                                        const sh = new anura.fs.Shell();
+                                        try {
+                                            await sleep(2);
+                                            await sh.promises.rm("/", {
+                                                recursive: true,
+                                            });
+                                            window.location.reload();
+                                        } catch (error) {
+                                            window.location.reload();
+                                        }
+                                    }
+                                }}
+                            >
+                                Powerwash
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
