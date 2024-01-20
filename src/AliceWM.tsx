@@ -572,7 +572,11 @@ class WMWindow {
 
         if (this.onunmaximize) this.onunmaximize();
         console.log("restoring");
+        this.element.classList.add("maxtransition");
         this.element.setAttribute("style", this.oldstyle!);
+        setTimeout(() => {
+            this.element.classList.remove("maxtransition");
+        }, 200);
         this.maximizeImg.src = "/assets/window/maximize.svg";
 
         await sleep(10); // Race condition as a feature
