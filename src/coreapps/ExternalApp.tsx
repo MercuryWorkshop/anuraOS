@@ -9,6 +9,7 @@ class ExternalApp extends App {
         this.icon = source + "/" + manifest.icon;
         this.source = source;
         this.package = manifest.package;
+        this.hidden = manifest.hidden || false;
     }
     async open(): Promise<WMWindow | undefined> {
         //  TODO: have a "allowmultiinstance" option in manifest? it might confuse users, some windows open a second, some focus

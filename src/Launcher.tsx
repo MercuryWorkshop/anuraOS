@@ -213,7 +213,7 @@ class Launcher {
     }
 
     addShortcut(app: App) {
-        if (app.package == "anura.xfrog") return;
+        if (app.hidden) return;
         const shortcut = this.shortcutElement(app);
         shortcut.addEventListener("click", (...args) => {
             this.hide();

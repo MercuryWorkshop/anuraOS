@@ -140,6 +140,7 @@ interface AppManifest {
     index?: string;
     icon: string;
     handler?: string;
+    hidden?: boolean;
     background?: string;
     wininfo: string | WindowInformation;
 }
