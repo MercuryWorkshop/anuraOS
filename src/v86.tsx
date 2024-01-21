@@ -464,7 +464,7 @@ class V86Backend {
     ): Promise<number> {
         if (!anura.x86!.termready) {
             onData(
-                "the x86 subsystem hasn't booted yet, please try again later",
+                "\u001b[33mThe anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m",
             );
             return new Promise((resolve) => {
                 resolve(-1);
