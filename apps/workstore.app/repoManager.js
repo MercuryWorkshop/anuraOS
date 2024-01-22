@@ -5,7 +5,7 @@ let workstore;
 async function loadMainScreen() {
     document.getElementById("repoListButton").style.display = "none";
 
-    Workstore = Workstore || (await anura.import("anura.libstore")).Workstore;
+    Workstore = Workstore || (await anura.import("anura.libstore@1.0.0")).Workstore;
 
     client = client ||
         (await createBareClient(anura.settings.get("bare-url"))); // define the bare client if its not defined already
