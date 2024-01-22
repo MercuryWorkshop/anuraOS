@@ -2,46 +2,54 @@ body {
     color: #eeeeee;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     padding-top: 70px;
-    background: rgb(20,20,20);
 }
 .app {
     height: 100px;
-    width: 75vw;
-    border-color: #424242;
+    width: 75%;
+    border-color: #444;
     border-style: solid;
     border-width: 1px;
     margin-right: auto;
     margin-left: auto;
-    transition: 0.3s;
-    background: #212121;
-    margin-top: -2px;
+    background: rgb(20,20,20);
+    display: flex;
+    align-items: center;
+    border-bottom: none;
+}
+
+.app:last-of-type {
+    border-bottom: #444 solid 1px;
 }
 
 .app > input:hover {
     cursor: pointer;
     transition: 0.3s;
 }
-.app > img {
+.thumbnailContainer > img {
     display: block;
     position: relative;
     height: 80px;
     width: 80px;
-    margin-top: 10px;
-    transition: .3s;
     float: left;
     margin-left: 15px;
-    margin-right: 20px;
+    margin-right: 15px;
 }
-.app > span {
+
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.infoContainer > span {
     display: block;
     position: relative;
     font-size: 16px;
     text-align: left;
     color: #fafafa;
-    margin-top: 30px;
 }
 
-.app > p {
+.infoContainer > p {
     display: block;
     position: relative;
     font-size: 14px;
@@ -50,6 +58,19 @@ body {
     margin: 0;
     padding: 0;
 }
+
+.app > input {
+    float: right;
+    margin-right: 15px;
+    margin-left: auto;
+    border: none;
+    width: 70px;
+    height: 30px;
+    border-radius: 7px;
+    background-color: #388e3c;
+    color: #fafafa;
+}
+
 nav {
     position: fixed;
     display: block;
@@ -73,7 +94,7 @@ nav > div > input {
     width: 70px;
     height: 30px;
     border-radius: 7px;
-    background-color: #212121;
+    background-color: rgb(20,20,20);
     float: right;
     margin-right: 2.5vw;
     margin-top: 20px;
@@ -90,19 +111,22 @@ nav > div > input:hover {
 }
 
 .repoItem {
-    background-color: #212121;
+    background: rgb(20,20,20);
     margin-right: auto;
     margin-left: auto;
-    height: 50px;
+    height: 65px;
+    line-height: 65px;
     width: 75vw;
     text-align: center;
-    padding-top: 16px;
-    margin-top: -1px;
     color: #eeeeee;
-    border-color: #424242;
+    border-color: #444;
     border-style: solid;
     border-width: 0.5px;
-    border-bottom-width: 0.5px;
+    border-bottom: none;
+}
+
+.repoItem:nth-last-child(2) {
+    border-bottom: #444 solid 0.5px;
 }
 
 .repoItem:hover {
@@ -122,8 +146,8 @@ nav > div > input:hover {
 
 .repoAdd > input {
     border-width: 1px;
-    border-color: #424242;
-    background-color: #212121;
+    border-color: #444;
+    background-color: rgb(20,20,20);
     box-shadow: none !important;
     border-style: solid !important;
     margin-right: 5px;
@@ -139,22 +163,10 @@ nav > div > input:hover {
     color: #bdbdbd;
 }
 
-.app > input {
-    float: right;
-    margin-right: 15px;
-    margin-top: -35px;
-    border: none;
-    width: 70px;
-    height: 30px;
-    border-radius: 7px;
-    background-color: #388e3c;
-    color: #fafafa;
-}
-
 .search {
     border-width: 1px;
-    background-color: #212121;
-    border-color: #424242;
+    background-color: rgb(20,20,20);
+    border-color: #444;
     box-shadow: none !important;
     border-style: solid !important;
     margin-right: auto;

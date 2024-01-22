@@ -13,11 +13,13 @@ const repoList = document.getElementById("repoList");
 const repoScreen = document.getElementById("repoScreen");
 const appListScreen = document.getElementById("appListScreen");
 const appInstallerScreen = document.getElementById("appInstallerScreen");
+const repoListButton = document.getElementById("repoListButton");
 
 async function loadappListScreen(repo) {
     appListScreen.style.display = ''
     appListScreen.innerHTML = ''
     repoList.style.display = 'none'
+    repoListButton.style.display = '';
     document.getElementById("head").innerHTML = repo.name;
 
     const search = document.createElement("input");
@@ -53,16 +55,20 @@ async function loadappListScreen(repo) {
 
     apps.forEach(async (app) => {
         const appElem = document.createElement('div')
-        const install = document.createElement('input')
+        const thumbnailContainer = document.createElement('div');
         const thumbnail = document.createElement('img')
+        const infoContainer = document.createElement('div');
         const itemText = document.createElement('span')
         const itemDesc = document.createElement('p')
+        const install = document.createElement('input')
 
         itemText.innerText = app.name;
         itemDesc.innerText = app.desc;
         thumbnail.src = await repo.getAppThumb(app.name);
 
         appElem.className = 'app'
+        thumbnailContainer.className = 'thumbnailContainer'
+        infoContainer.className = 'infoContainer'
         install.type = 'button'
         install.value = 'Install'
         
@@ -70,25 +76,31 @@ async function loadappListScreen(repo) {
             repo.installApp(app.name);
         };
 
-        appElem.appendChild(thumbnail);
-        appElem.appendChild(itemText);
-        appElem.appendChild(itemDesc);
+        thumbnailContainer.appendChild(thumbnail);
+        appElem.appendChild(thumbnailContainer);
+        infoContainer.appendChild(itemText);
+        infoContainer.appendChild(itemDesc);
+        appElem.appendChild(infoContainer);
         appElem.appendChild(install);
         appList.appendChild(appElem);
     });
     
     libs.forEach(async (lib) => {
         const libElem = document.createElement('div')
-        const install = document.createElement('input')
+        const thumbnailContainer = document.createElement('div');
         const thumbnail = document.createElement('img')
+        const infoContainer = document.createElement('div');
         const itemText = document.createElement('span')
         const itemDesc = document.createElement('p')
+        const install = document.createElement('input')
 
         itemText.innerText = lib.name;
         itemDesc.innerText = lib.desc;
         thumbnail.src = await repo.getLibThumb(lib.name);
 
         libElem.className = 'app'
+        thumbnailContainer.className = 'thumbnailContainer'
+        infoContainer.className = 'infoContainer'
         install.type = 'button'
         install.value = 'Install'
         
@@ -96,9 +108,11 @@ async function loadappListScreen(repo) {
             repo.installLib(lib.name);
         };
 
-        libElem.appendChild(thumbnail);
-        libElem.appendChild(itemText);
-        libElem.appendChild(itemDesc);
+        thumbnailContainer.appendChild(thumbnail);
+        libElem.appendChild(thumbnailContainer);
+        infoContainer.appendChild(itemText);
+        infoContainer.appendChild(itemDesc);
+        libElem.appendChild(infoContainer);
         libElem.appendChild(install);
         appList.appendChild(libElem);
     });

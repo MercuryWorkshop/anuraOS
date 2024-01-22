@@ -3,6 +3,8 @@ let client;
 let workstore;
 
 async function loadMainScreen() {
+    document.getElementById("repoListButton").style.display = "none";
+
     Workstore = Workstore || (await anura.import("anura.libstore")).Workstore;
 
     client = client ||
