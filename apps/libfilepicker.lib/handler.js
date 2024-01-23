@@ -1,6 +1,10 @@
-export function selectFile(regex = ".*") {
+export function selectFile(regex = ".*", app = anura.apps["anura.fsapp"]) {
     return new Promise((resolve, reject) => {
-        let picker = AliceWM.create("Select a File...");
+        let picker = anura.wm.create(app, "Select a File...");
+
+        picker.onclose = () => {
+            reject("User cancelled");
+        }
 
         let iframe = document.createElement("iframe");
         iframe.style =
@@ -22,9 +26,13 @@ export function selectFile(regex = ".*") {
     });
 }
 
-export function selectFolder(regex = "") {
+export function selectFolder(regex = "", app = anura.apps["anura.fsapp"]) {
     return new Promise((resolve, reject) => {
-        let picker = AliceWM.create("Select a Folder...");
+        let picker = anura.wm.create(app, "Select a Folder...");
+
+        picker.onclose = () => {
+            reject("User cancelled");
+        }
 
         let iframe = document.createElement("iframe");
         iframe.style =

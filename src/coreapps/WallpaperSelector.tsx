@@ -69,8 +69,8 @@ class WallpaperSelector extends App {
     icon = "/assets/icons/wallpaper.png";
 
     libfilepicker: {
-        selectFile: (regex?: string) => Promise<string | string[]>;
-        selectFolder: (regex?: string) => Promise<string | string[]>;
+        selectFile: (regex?: string, app?: App) => Promise<string | string[]>;
+        selectFolder: (regex?: string, app?: App) => Promise<string | string[]>;
     };
 
     wallpaperList = async () => {
@@ -114,7 +114,10 @@ class WallpaperSelector extends App {
                 <button
                     on:click={() => {
                         this.libfilepicker
-                            .selectFile("(png|jpe?g|gif|bmp|webp|tiff|svg|ico)")
+                            .selectFile(
+                                "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
+                                this,
+                            )
                             .then((filename: any) => {
                                 if (filename == undefined) return;
                                 const wallpaperName = filename.split("/").pop();
