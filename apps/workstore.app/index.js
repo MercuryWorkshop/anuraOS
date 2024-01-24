@@ -11,16 +11,31 @@ let repos = anura.settings.get("workstore-repos") || {
 
 const repoList = document.getElementById("repoList");
 const repoScreen = document.getElementById("repoScreen");
+const overviewScreen = document.getElementById("overviewScreen");
 const appListScreen = document.getElementById("appListScreen");
 const appInstallerScreen = document.getElementById("appInstallerScreen");
 const repoListButton = document.getElementById("repoListButton");
+
+repoListButton.addEventListener("click", async function (evt) {
+    if (evt.target.dataset.repo) {
+        // We were on the overview screen, so load the app list
+        const workstoreRepo = await workstore.getRepo(repos[evt.target.dataset.repo], evt.target.dataset.repo);
+        loadappListScreen(workstoreRepo);
+        return;
+    }
+    loadMainScreen();
+});
 
 async function loadappListScreen(repo) {
     appListScreen.style.display = ''
     appListScreen.innerHTML = ''
     repoList.style.display = 'none'
+    overviewScreen.style.display = 'none'
     repoListButton.style.display = '';
     document.getElementById("head").innerHTML = repo.name;
+
+    delete repoListButton.dataset.repo;
+    repoListButton.value = "Repo List";
 
     const search = document.createElement("input");
 
@@ -60,7 +75,7 @@ async function loadappListScreen(repo) {
         const infoContainer = document.createElement('div');
         const itemText = document.createElement('span')
         const itemDesc = document.createElement('p')
-        const install = document.createElement('input')
+        const view = document.createElement('input')
 
         itemText.innerText = app.name;
         itemDesc.innerText = app.desc;
@@ -69,11 +84,13 @@ async function loadappListScreen(repo) {
         appElem.className = 'app'
         thumbnailContainer.className = 'thumbnailContainer'
         infoContainer.className = 'infoContainer'
-        install.type = 'button'
-        install.value = 'Install'
+        view.type = 'button'
+        view.value = 'View'
         
-        install.onclick = () => {
-            repo.installApp(app.name);
+        view.onclick = () => {
+            // repo.installApp(app.name);
+            // nuh uh
+            loadOverviewScreen(repo, app);
         };
 
         thumbnailContainer.appendChild(thumbnail);
@@ -81,7 +98,7 @@ async function loadappListScreen(repo) {
         infoContainer.appendChild(itemText);
         infoContainer.appendChild(itemDesc);
         appElem.appendChild(infoContainer);
-        appElem.appendChild(install);
+        appElem.appendChild(view);
         appList.appendChild(appElem);
     });
     
@@ -92,7 +109,7 @@ async function loadappListScreen(repo) {
         const infoContainer = document.createElement('div');
         const itemText = document.createElement('span')
         const itemDesc = document.createElement('p')
-        const install = document.createElement('input')
+        const view = document.createElement('input')
 
         itemText.innerText = lib.name;
         itemDesc.innerText = lib.desc;
@@ -101,11 +118,13 @@ async function loadappListScreen(repo) {
         libElem.className = 'app'
         thumbnailContainer.className = 'thumbnailContainer'
         infoContainer.className = 'infoContainer'
-        install.type = 'button'
-        install.value = 'Install'
+        view.type = 'button'
+        view.value = 'View'
         
-        install.onclick = () => {
-            repo.installLib(lib.name);
+        view.onclick = () => {
+            // repo.installLib(lib.name);
+            // nuh uh
+            loadOverviewScreen(repo, lib);
         };
 
         thumbnailContainer.appendChild(thumbnail);
@@ -113,7 +132,7 @@ async function loadappListScreen(repo) {
         infoContainer.appendChild(itemText);
         infoContainer.appendChild(itemDesc);
         libElem.appendChild(infoContainer);
-        libElem.appendChild(install);
+        libElem.appendChild(view);
         appList.appendChild(libElem);
     });
     appListScreen.appendChild(appList);

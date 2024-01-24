@@ -45,6 +45,7 @@ async function loadMainScreen() {
 
     repoList.innerHTML = ''
     appListScreen.style.display = 'none'
+    overviewScreen.style.display = 'none'
     repoList.style.display = ''
     document.getElementById("head").innerHTML = "Select a Repository";
     
