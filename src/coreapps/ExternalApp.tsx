@@ -30,6 +30,7 @@ class ExternalApp extends App {
 
             (iframe.contentWindow as any).anura = anura;
             (iframe.contentWindow as any).AliceWM = AliceWM;
+            (iframe.contentWindow as any).instance = this;
 
             return win;
         } else {
