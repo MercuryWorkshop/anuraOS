@@ -95,6 +95,9 @@ async function loadOverviewScreen(repo, app, repoVersion) {
         aboutTitle.innerText = app.summary;
         aboutDesc.innerText = app.desc;
     }
+    // Screenshots not yet implemented
+    screenshotSection.style.display = 'none';
+
     overviewScreen.appendChild(infoSection);
     overviewScreen.appendChild(screenshotSection);
     overviewScreen.appendChild(aboutSection);

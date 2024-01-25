@@ -27,9 +27,9 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: #1a1a1c;
     width: 100%;
-    height: 100px;
-    padding: 20px;
+    height: 150px;
 }
 
 .overview-infoContainer {
@@ -37,9 +37,7 @@ body {
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
-    width: 90%;
-    height: 100px;
-    text-align: left !important;
+    width: 70%;
 }
 
 .overview-appInfoContainer {
@@ -47,8 +45,9 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-left: 20px;
+    margin-right: auto;
     height: 100px;
-    text-align: left !important;
 }
 
 .overview-appTitle {
@@ -66,22 +65,21 @@ body {
     font-size: 16px;
     text-align: left;
     color: #aaaaaa;
-    justify-content: left;
-    align-items: left;
+    width: 100%;
 } 
 
 .overview-thumbnailContainer {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    height: 100px;
-    width: 100px;
+    height: 80px;
+    width: 80px;
 }
 
 .overview-installButton {
     /* margin-left: auto; */
     border: none;
-    width: 70px;
+    width: 10%;
     height: 30px;
     border-radius: 7px;
     background-image: linear-gradient(#388e3c, #5aaf5e);
@@ -97,35 +95,34 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: #1a1a1c;
+    width: 100%;
 }
 
 .overview-screenshotContainer {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    width: 75%;
+    width: 70%;
     max-height: 250px;
     min-height: 50px;
-    background-color: #1a1a1c;
 }
 
 .overview-aboutSection {
     display: flex;
+    justify-content: center;
     width: 100%;
-    background-color: #1a1a1c;
-    padding-bottom: 100%;
 }
 
 .overview-aboutContainer {
     display: flex;
     flex-direction: column;
     text-align: left;
-    background-color: #1a1a1c;
-    width: 75%;
-    margin-left: 20px;
-    line-height: 3px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    width: 70%;
+}
+
+.overview-aboutDesc {
+    color: #aaaaaa;
 }
 
 .app {

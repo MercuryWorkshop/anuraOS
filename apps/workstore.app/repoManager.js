@@ -2,15 +2,17 @@ let Workstore;
 let client;
 let workstore;
 
+const libstoreCache = {};
+
 async function loadMainScreen() {
     document.getElementById("repoListButton").style.display = "none";
 
-    Workstore = Workstore || (await anura.import("anura.libstore@2.0.0")).Workstore;
+    libstoreCache["2.0.0"] ??= (await anura.import("anura.libstore@2.0.0"));
 
-    client = client ||
+    client ??=
         (await createBareClient(anura.settings.get("bare-url"))); // define the bare client if its not defined already
 
-    workstore = workstore || new Workstore((await createBareClient(anura.settings.get("bare-url"))), {
+    workstore = workstore ??= new libstoreCache["2.0.0"].Workstore((await createBareClient(anura.settings.get("bare-url"))), {
         onError: (appName, error) => {
             anura.notifications.add({
                 title: "Workstore Application",
