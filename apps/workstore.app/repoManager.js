@@ -5,12 +5,10 @@ let workstore;
 async function loadMainScreen() {
     document.getElementById("repoListButton").style.display = "none";
 
-    Workstore = Workstore || (await anura.import("anura.libstore@1.0.0")).Workstore;
+    Workstore = Workstore || (await anura.import("anura.libstore@2.0.0")).Workstore;
 
     client = client ||
         (await createBareClient(anura.settings.get("bare-url"))); // define the bare client if its not defined already
-    
-    console.log(client);
 
     workstore = workstore || new Workstore((await createBareClient(anura.settings.get("bare-url"))), {
         onError: (appName, error) => {
@@ -70,7 +68,8 @@ async function loadMainScreen() {
         try {
             const workstoreRepo = await workstore.getRepo(repos[repo], repo);
             repoItem.onclick = async function() {
-                loadappListScreen(workstoreRepo); 
+                const repoVersion = await workstoreRepo.getRepoManifest();
+                await loadappListScreen(workstoreRepo, repoVersion); 
             }
         } catch (e) {
             repoItem.innerText += " (Error)";

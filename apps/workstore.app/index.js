@@ -26,7 +26,7 @@ repoListButton.addEventListener("click", async function (evt) {
     loadMainScreen();
 });
 
-async function loadappListScreen(repo) {
+async function loadappListScreen(repo, repoVersion) {
     appListScreen.style.display = ''
     appListScreen.innerHTML = ''
     repoList.style.display = 'none'
@@ -78,8 +78,13 @@ async function loadappListScreen(repo) {
         const view = document.createElement('input')
 
         itemText.innerText = app.name;
-        itemDesc.innerText = app.desc;
-        thumbnail.src = await repo.getAppThumb(app.name);
+        if (repoVersion == "legacy") {
+            itemDesc.innerText = app.desc;
+            thumbnail.src = await repo.getAppThumb(app.name);
+        } else {
+            itemDesc.innerText = app.summary;
+            thumbnail.src = await repo.getAppThumb(app.package);
+        }
 
         appElem.className = 'app'
         thumbnailContainer.className = 'thumbnailContainer'
@@ -90,7 +95,7 @@ async function loadappListScreen(repo) {
         view.onclick = () => {
             // repo.installApp(app.name);
             // nuh uh
-            loadOverviewScreen(repo, app);
+            loadOverviewScreen(repo, app, repoVersion);
         };
 
         thumbnailContainer.appendChild(thumbnail);
@@ -112,8 +117,13 @@ async function loadappListScreen(repo) {
         const view = document.createElement('input')
 
         itemText.innerText = lib.name;
-        itemDesc.innerText = lib.desc;
-        thumbnail.src = await repo.getLibThumb(lib.name);
+        if (repoVersion == "legacy") {
+            itemDesc.innerText = lib.desc;
+            thumbnail.src = await lib.getLibThumb(lib.name);
+        } else {
+            itemDesc.innerText = lib.summary;
+            thumbnail.src = await repo.getLibThumb(lib.package);
+        }
 
         libElem.className = 'app'
         thumbnailContainer.className = 'thumbnailContainer'
@@ -124,7 +134,7 @@ async function loadappListScreen(repo) {
         view.onclick = () => {
             // repo.installLib(lib.name);
             // nuh uh
-            loadOverviewScreen(repo, lib);
+            loadOverviewScreen(repo, lib, repoVersion);
         };
 
         thumbnailContainer.appendChild(thumbnail);
