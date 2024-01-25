@@ -1,5 +1,5 @@
 // app arg is either app or lib
-async function loadOverviewScreen(repo, app) {
+async function loadOverviewScreen(repo, app, repoVersion) {
     overviewScreen.style.display = ''
     overviewScreen.innerHTML = ''
 
@@ -8,6 +8,12 @@ async function loadOverviewScreen(repo, app) {
 
     repoListButton.dataset.repo = repo.name
     repoListButton.value = repo.name
+    let query;
+    if (repoVersion == "legacy") {
+        query = app.name
+    } else {
+        query = app.package
+    }
 
     document.getElementById("head").innerHTML = app.name;
 
@@ -67,15 +73,15 @@ async function loadOverviewScreen(repo, app) {
     aboutContainer.appendChild(aboutDesc);
     aboutSection.appendChild(aboutContainer);
 
-    if (repo.getApp(app.name)) {
-        thumbnail.src = await repo.getAppThumb(app.name);
+    if (await repo.getApp(query)) {
+        thumbnail.src = await repo.getAppThumb(query);
         installButton.onclick = async () => {
-            await repo.installApp(app.name);
+            await repo.installApp(query);
         };
-    } else if (repo.getLib(app.name)) {
-        thumbnail.src = await repo.getLibThumb(app.name);
+    } else if (await repo.getLib(query)) {
+        thumbnail.src = await repo.getLibThumb(query);
         installButton.onclick = async () => {
-            await repo.installLib(app.name);
+            await repo.installLib(query);
         };
     } else {
         loadappListScreen(repo);
@@ -83,10 +89,12 @@ async function loadOverviewScreen(repo, app) {
     }
     appTitle.innerText = app.name;
     appCategory.innerText = app.category;
-    aboutTitle.innerText = app.desc;
-    // Long description is not available yet
-    aboutDesc.innerText = app.desc;
-
+    if (repoVersion == "legacy") {
+        aboutDesc.innerText = app.desc;
+    } else {
+        aboutTitle.innerText = app.summary;
+        aboutDesc.innerText = app.desc;
+    }
     overviewScreen.appendChild(infoSection);
     overviewScreen.appendChild(screenshotSection);
     overviewScreen.appendChild(aboutSection);

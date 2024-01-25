@@ -61,7 +61,6 @@ export class WorkstoreRepo {
     client;
     hooks;
     repoCache;
-    manifest;
     thumbCache = { apps: {}, libs: {} };
 
     constructor(client, hooks, baseUrl, name) {
@@ -76,37 +75,9 @@ export class WorkstoreRepo {
     }
     
     async refreshRepoCache() {
-        try {
-            let list = await (await this.client.fetch(this.baseUrl + "list.json")).json();
-            let repoCache = {};
-            repoCache['apps'] = [];
-            repoCache['libs'] = [];
-            for (const category in list) {
-                await Promise.all(list[category].map(async (app) => {
-                    const manifestContent = await (await this.client.fetch(this.baseUrl + category + '/' + app + "/manifest.json")).json()
-                    manifestContent.baseUrl = this.baseUrl + category + '/' + app + '/'
-                    manifestContent.repo = this.baseUrl
-                    repoCache[`${category}`].push(manifestContent);
-                }));
-            }
-    
-            this.repoCache = repoCache;
-        } catch (error) {
-            console.log(error)
-            throw error;
-        }
-    }
-
-    async getRepoManifest() {
-        let manifest = await (
-            await this.client.fetch(this.baseUrl + "manifest.json")
-        )
-        if (manifest.ok) {
-            this.manifest = manifest.json()
-            return manifest.version;
-        } else {
-            return "legacy";
-        }
+        this.repoCache = await (
+            await this.client.fetch(this.baseUrl + "list.json")
+        ).json();
     }
 
     refreshThumbCache() {
@@ -123,10 +94,10 @@ export class WorkstoreRepo {
         }
         let thumb;
         try {
-            thumb = URL.createObjectURL(await (await fetch(app.baseUrl + app.icon)).blob())
+            thumb = URL.createObjectURL(await (await fetch(this.baseUrl + app.icon)).blob())
         } catch (e) {
             // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
-            thumb = URL.createObjectURL(await (await this.client.fetch(app.baseUrl + app.icon)).blob())
+            thumb = URL.createObjectURL(await (await this.client.fetch(this.baseUrl + app.icon)).blob())
         }
         this.thumbCache.apps[appName] = thumb;
         return thumb;
@@ -142,10 +113,10 @@ export class WorkstoreRepo {
         }
         let thumb;
         try {
-            thumb = URL.createObjectURL(await (await fetch(lib.baseUrl + lib.icon)).blob())
+            thumb = URL.createObjectURL(await (await fetch(this.baseUrl + lib.icon)).blob())
         } catch (e) {
             // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
-            thumb = URL.createObjectURL(await (await this.client.fetch(lib.baseUrl + lib.icon)).blob())
+            thumb = URL.createObjectURL(await (await this.client.fetch(this.baseUrl + lib.icon)).blob())
         }
         this.thumbCache.libs[libName] = thumb;
         return thumb;
@@ -162,7 +133,7 @@ export class WorkstoreRepo {
         if (!this.repoCache) {
             await this.refreshRepoCache();
         }
-        return this.repoCache.apps.find((app) => app.package === appName);
+        return this.repoCache.apps.find((app) => app.name === appName);
     }
 
     async getLibs() {
@@ -176,7 +147,7 @@ export class WorkstoreRepo {
         if (!this.repoCache) {
             await this.refreshRepoCache();
         }
-        return this.repoCache.libs.find((lib) => lib.package === libName);
+        return this.repoCache.libs.find((lib) => lib.name === libName);
     }
 
     async installApp(appName) {
@@ -198,7 +169,7 @@ export class WorkstoreRepo {
             }
         }
 
-        const zipFile = await (await this.client.fetch(app.baseUrl + app.data)).blob();
+        const zipFile = await (await this.client.fetch(this.baseUrl + app.data)).blob();
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
@@ -219,21 +190,17 @@ export class WorkstoreRepo {
                 if (zipEntry.dir) {
                     fs.mkdir(`${path}/${zipEntry.name}`);
                 } else {
-                    if (zipEntry.name == "manifest.json") {
-                        let manifest = await zipEntry.async("string");
-                        manifest = JSON.parse(manifest);
-                        manifest.workstore = {};
-                        manifest.workstore.version - app.version
-                        manifest.workstore.repo = app.repo
-                        if (app.dependencies) {
-                            manifest.workstore.dependencies = app.dependencies
-                        }
-                        fs.writeFile(
-                            `${path}/${zipEntry.name}`,
-                            JSON.stringify(manifest),
-                        );
+                    if (zipEntry.name == "post_install.js") {
+                        let script = await zipEntry.async("string");
+                        postInstallScript = script;
                         continue;
                     }
+                    fs.writeFile(
+                        `${path}/${zipEntry.name}`,
+                        await Buffer.from(
+                            await zipEntry.async("arraybuffer"),
+                        ),
+                    );
                 }
             }
             await anura.registerExternalApp("/fs" + path);
@@ -250,7 +217,7 @@ export class WorkstoreRepo {
             throw new Error("Lib not found");
         }
         this.hooks.onDownloadStart(libName);
-        const zipFile = await (await this.client.fetch(lib.baseUrl + lib.data)).blob();
+        const zipFile = await (await this.client.fetch(this.baseUrl + lib.data)).blob();
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
@@ -269,21 +236,6 @@ export class WorkstoreRepo {
                 if (zipEntry.dir) {
                     fs.mkdir(`${path}/${zipEntry.name}`);
                 } else {
-                    if (zipEntry.name == "manifest.json") {
-                        let manifest = await zipEntry.async("string");
-                        manifest = JSON.parse(manifest);
-                        manifest.workstore = {};
-                        manifest.workstore.version - lib.version
-                        manifest.workstore.repo = lib.repo
-                        if (lib.dependencies) {
-                            manifest.workstore.dependencies = lib.dependencies
-                        }
-                        fs.writeFile(
-                            `${path}/${zipEntry.name}`,
-                            JSON.stringify(manifest),
-                        );
-                        continue;
-                    }
                     fs.writeFile(
                         `${path}/${zipEntry.name}`,
                         await Buffer.from(

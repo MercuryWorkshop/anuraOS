@@ -3,8 +3,9 @@
     "icon": "google-play.svg",
     "package": "anura.libstore",
     "versions": {
-        "1.0.0": "index.js"
+        "1.0.0": "legacy.js",
+        "2.0.0": "index.js"
     },
     "cache": true,
-    "currentVersion": "1.0.0"
+    "currentVersion": "2.0.0"
 }
