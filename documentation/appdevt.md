@@ -2,54 +2,35 @@
 
 See [This Document](./templates/template.app/README.md) for instructions on how to set up a basic iFrame app.
 
-Every application is a .app folder with a manifest file called manifest.json. In this file, the basic properties of the app are defined.
+# AnuraOS Apps
 
-## `name`
+AnuraOS apps are simple creatures. They live inside folders with the suffix `.app` and the resources specific to each app are contained within that folder.
 
--   **Type:** String
--   **Description:** Defines the name of the application.
+### TODO
 
-## `type`
+Hi developers. The structure here is a little wonky and kinda outgrew itself.
 
--   **Types:** auto, manual
--   **Description:** Specifies if Anura should handle functions of this application or whether it will be done manually.
+You might notice a lot of the values in manifest are conditionally required. This is probably due to growth rot.
 
-## `package`
+I propose that in the future, the manifest should be structured where `type` is an Object which contains the required values depending on which type.
 
--   **Type:** String
--   **Description:** Represents the package name for the application.
+## Manifest
 
-## `index`
+Each app contains a `manifest.json`, which defines the functionality of the app. See [`manifest.json.example`](./manifest.json.example).
 
--   **Type:** String
--   **Description:** Specifies the main entry point or the primary HTML file for the application.
+-   `name`: `String` - Program name. Required.
+-   `type`: `String` - Program type. "auto" or "manual". Required.
 
-## `icon`
+*   "manual": Evaluates at top-window level. Highly discouraged.
+*   "auto": Evaluates within a contained iframe.
 
--   **Type:** String
--   **Description:** Indicates the icon file used to represent the application.
+-   `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
+-   `index`: `String` - Path (from app directory) to the index HTML file. Required if `type` is `"auto"` - the iframe source will be set to this.
+-   `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Anura will display this icon throughout the DE.
+-   `background`: Background color of iframe while it is loading. Optional.
+-   `handler`: `String` - Path (from app directory) to a file containing JavaScript to execute at the top-level document. Required if `type` is `"manual"`, ignored otherwise - the top-level document will execute this file as JavaScript.
+-   `wininfo`: `Object {title, width, height}` - Required if `type` is `"auto"`.
 
-## `handler`
-
--   **Type:** String
--   **Description:** Points to a javascript file contained in the app that handles the apps launch.
-
-## `wininfo`
-
--   **Type:** Object
--   **Description:** Contains information specific to the application's window settings.
-
-    ### `title`
-
-    -   **Type:** String
-    -   **Description:** Specifies the title or name of the application's window.
-
-    ### `width`
-
-    -   **Type:** String
-    -   **Description:** Determines the width of the application's window.
-
-    ### `height`
-
-    -   **Type:** String
-    -   **Description:** Determines the height of the application's window.
+*   `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
+*   `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
+*   `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
