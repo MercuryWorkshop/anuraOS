@@ -7,6 +7,7 @@ async function loadOverviewScreen(repo, app, repoVersion) {
     appListScreen.style.display = 'none'
 
     repoListButton.dataset.repo = repo.name
+    repoListButton.dataset.repo_version = repo.version
     repoListButton.value = repo.name
     let query;
     if (repoVersion == "legacy") {
