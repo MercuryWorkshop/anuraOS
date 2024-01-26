@@ -38,6 +38,7 @@ window.addEventListener("load", async () => {
 			return;
 		}
 
+		io.print("Welcome to the Anura x86 subsystem.\nTo access your filesystem within linux use the /root directory.")
 		const pty = await anura.x86.openpty("TERM=xterm DISPLAY=:0 bash", t.screenSize.width, t.screenSize.height, (data) => {
 			io.print(data);
 		});
