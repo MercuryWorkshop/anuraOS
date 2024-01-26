@@ -69,9 +69,9 @@ async function loadMainScreen() {
         }
         try {
             const workstoreRepo = await workstore.getRepo(repos[repo], repo);
+            console.log(workstoreRepo)
             repoItem.onclick = async function() {
-                const repoVersion = await workstoreRepo.getRepoManifest();
-                await loadappListScreen(workstoreRepo, repoVersion); 
+                await loadappListScreen(workstoreRepo, workstoreRepo.version); 
             }
         } catch (e) {
             repoItem.innerText += " (Error)";
