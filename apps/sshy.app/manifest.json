@@ -3,7 +3,7 @@
   "type": "auto",
   "package": "anura.SSH",
   "index": "index.html",
-  "icon": "terminal.svg",
+  "icon": "ssh.png",
   "wininfo":{
     "title":"SSH",
     "width":"700px",

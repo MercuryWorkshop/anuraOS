@@ -1,7 +1,7 @@
 class AboutApp extends App {
     name = "About Anura";
     package = "anura.about";
-    icon = "/icon.png";
+    icon = "/assets/icons/aboutapp.png";
 
     page = async () => (
         <div class="aboutapp-container">

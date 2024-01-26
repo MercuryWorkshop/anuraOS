@@ -31,12 +31,12 @@
         "declaration": true,
         "checkJs": false,
         "skipLibCheck": true,
-        "jsx": "react"
+        "jsx": "react",
 
         // "reso"
     },
     "include": ["./src/**/*.ts", "./src/**/*.tsx", "./src/**/*.css"],
     // "types":"./src/libv86.js",
     // "typeAcquisition": {"enable": true},
-    "exclude": ["/**/node_modules/**/*"]
+    "exclude": ["/**/node_modules/**/*"],
 }

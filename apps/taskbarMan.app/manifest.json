@@ -3,7 +3,7 @@
     "type": "auto",
     "package": "anura.taskbarMan",
     "index": "index.html",
-    "icon": "taskbar.svg",
+    "icon": "tskbrman.png",
     "wininfo":{
       "title":"",
       "width": "500px",
