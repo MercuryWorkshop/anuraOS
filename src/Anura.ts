@@ -78,10 +78,47 @@ class Anura {
     }
     async registerExternalApp(source: string): Promise<ExternalApp> {
         const resp = await fetch(`${source}/manifest.json`);
-        const manifest = await resp.json();
-        const app = new ExternalApp(manifest, source);
+        const manifest = (await resp.json()) as AppManifest;
+        if (manifest.type === "auto" || manifest.type === "manual") {
+            const app = new ExternalApp(manifest, source);
+            await anura.registerApp(app); // This will let us capture error messages
+            return app;
+        }
+        const handlers = anura.settings.get("ExternalAppHandlers");
+        if (!handlers || !handlers[manifest.type]) {
+            const error = `Could not register external app from source: "${source}" because no external handlers are registered for type "${manifest.type}"`;
+            anura.notifications.add({
+                title: "AnuraOS",
+                description: error,
+            });
+            throw error;
+        }
+        const handler = handlers[manifest.type];
+        const handlerModule = await anura.import(handler);
+        if (!handlerModule) {
+            const error = `Failed to load external app handler ${handler}`;
+            anura.notifications.add({
+                title: "AnuraOS",
+                description: error,
+            });
+            throw error;
+        }
+        if (!handlerModule.createApp) {
+            const error = `Handler ${handler} does not have a createApp function`;
+            anura.notifications.add({
+                title: "AnuraOS",
+                description: error,
+            });
+            throw error;
+        }
+        const app = handlerModule.createApp(manifest, source);
         await anura.registerApp(app); // This will let us capture error messages
         return app;
+    }
+    registerExternalAppHandler(id: string, handler: string) {
+        const handlers = anura.settings.get("ExternalAppHandlers") || {};
+        handlers[handler] = id;
+        anura.settings.set("ExternalAppHandlers", handlers);
     }
     async registerLib(lib: Lib) {
         if (lib.package in this.libs) {
@@ -156,7 +193,7 @@ class Anura {
 
 interface AppManifest {
     name: string;
-    type: "manual" | "auto";
+    type: "manual" | "auto" | string;
     package: string;
     index?: string;
     icon: string;

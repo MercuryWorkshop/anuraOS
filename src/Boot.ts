@@ -145,29 +145,12 @@ document.addEventListener("anura-login-completed", async () => {
             "/assets/wallpaper/bundled_wallpapers/Default.jpg",
     );
 
-    for (const app of anura.config.apps) {
-        anura.registerExternalApp(app);
-    }
-
     for (const lib of anura.config.libs) {
         anura.registerExternalLib(lib);
     }
 
-    // Load all persistent sideloaded apps
-    try {
-        anura.fs.readdir("/userApps", (err: Error, files: string[]) => {
-            // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
-            if (files == undefined) return;
-            files.forEach((file) => {
-                try {
-                    anura.registerExternalApp("/fs/userApps/" + file);
-                } catch (e) {
-                    anura.logger.error("Anura failed to load an app " + e);
-                }
-            });
-        });
-    } catch (e) {
-        anura.logger.error(e);
+    for (const app of anura.config.apps) {
+        anura.registerExternalApp(app);
     }
 
     // Load all persistent sideloaded libs
@@ -221,6 +204,23 @@ document.addEventListener("anura-login-completed", async () => {
         } catch (e) {
             anura.logger.error(e);
         }
+    }
+
+    // Load all persistent sideloaded apps
+    try {
+        anura.fs.readdir("/userApps", (err: Error, files: string[]) => {
+            // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
+            if (files == undefined) return;
+            files.forEach((file) => {
+                try {
+                    anura.registerExternalApp("/fs/userApps/" + file);
+                } catch (e) {
+                    anura.logger.error("Anura failed to load an app " + e);
+                }
+            });
+        });
+    } catch (e) {
+        anura.logger.error(e);
     }
 
     if (!anura.settings.get("x86-disabled")) {
