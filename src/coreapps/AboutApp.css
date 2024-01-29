@@ -5,15 +5,15 @@
     position: absolute;
     display: flex;
     padding: 0;
-    flex-direction: column;
-    flex-grow: 1;
-    align-items: center;
-    justify-content: center;
     height: 100%;
 }
 
 .aboutapp-logo {
     height: 128px;
+    float: left;
+    margin-right: 2vw;
+    margin-left: 2vw;
+    margin-top: 6vw;
 }
 
 .aboutapp-logo-img {
@@ -43,6 +43,8 @@
 
 .aboutapp-content {
     color: white;
+    float: right;
+    margin-top: 4vw;
 }
 
 .aboutapp-content p {
@@ -62,4 +64,9 @@
     cursor: pointer;
     font-family: Roboto, sans-serif;
     font-size: 16px;
+}
+
+.anuralogo {
+    height: 35px;
+    margin-bottom: 10px;
 }

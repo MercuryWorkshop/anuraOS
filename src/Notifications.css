@@ -9,7 +9,7 @@
 .notif {
     position: relative;
     font-family: "Roboto";
-    background-color: rgba(22, 22, 22, 0.9s);
+    background-color: rgba(22, 22, 22, 0.9);
     border-radius: 7px;
     color: white;
     min-height: 115px;

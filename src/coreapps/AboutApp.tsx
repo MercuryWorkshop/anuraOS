@@ -11,9 +11,11 @@ class AboutApp extends App {
                     title="離れ離れ街を繋ぐ列車は行ってしまったね.."
                 ></div>
             </div>
-            <div class="aboutapp-logo-divider"></div>
             <div class="aboutapp-content">
-                <p>AnuraOS</p>
+                <img
+                    src="/assets/images/bootsplash.png"
+                    class="anuralogo"
+                ></img>
                 <p>
                     Version {anura.version.codename} ({anura.version.pretty})
                     (OS build {await this.getOSBuild()})
@@ -41,7 +43,7 @@ class AboutApp extends App {
                 <br />
                 <br />
 
-                <p>
+                <p style="color:#555;font-size:12px;">
                     This product is licensed under the{" "}
                     <a
                         target="_blank"
@@ -61,8 +63,8 @@ class AboutApp extends App {
     async open(): Promise<WMWindow | undefined> {
         const aboutview = anura.wm.create(this, {
             title: "",
-            width: "400px",
-            height: "450px",
+            width: "600px",
+            height: "350px",
         });
 
         aboutview.content.appendChild(await this.page());
