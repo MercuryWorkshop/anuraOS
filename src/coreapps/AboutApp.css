@@ -28,6 +28,8 @@
 }
 .aboutapp-logo-img:hover {
     background: url(/assets/images/lagtrain.gif);
+    background-size: contain;
+    background-repeat: no-repeat;
     height: 128px;
     width: 128px;
 }
