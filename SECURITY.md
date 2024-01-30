@@ -3,17 +3,13 @@
 
 # Security Policy
 
-## Supported Versions(Will be added in prod)
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+## Supported Versions
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.0.0   | :white_check_mark: |
-| 0.0.0   | :x:                |
-| 0.0.0   | :white_check_mark: |
-| < 0.0   | :x:                |
+| 1.1.1   | :white_check_mark: |
+| 1.0.0   | :x:                |
+
 
 ## Reporting a Vulnerability
 
@@ -26,9 +22,9 @@ REMEMBER: Please DO NOT report vulnerabilities in the repository Issues tab.
 If you are wondering what counts as a vulnerability, heres a good list:
 
 -   XSS in the Anura URL
--   The ability to execute arbitrary code on the server hosting Anura(not in Anura itself, as this is an intended feature)
--   The ability to crash Anura(As in for everyone, not just your browser session)
+-   The ability to execute arbitrary code on the server hosting Anura (not in Anura itself, as this is an intended feature)
+-   The ability to crash Anura (As in for everyone, not just your browser session)
 
-## Implementing Security(For Project Members and Contributors)
+## Implementing Security (For Project Members and Contributors)
 
 See [SECURITY-BP.md](./documentation/SECURITY-BP.md) for instructions on implementing security in your code.
