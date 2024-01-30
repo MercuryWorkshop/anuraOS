@@ -168,7 +168,9 @@ export class WorkstoreRepo {
         if (!this.repoCache) {
             await this.refreshRepoCache();
         }
-        return this.repoCache.apps.find((app) => app.package === appName);
+        let app = this.repoCache.apps.find((app) => app.package === appName);
+        console.log(app)
+        return app
     }
 
     async getLibs() {
@@ -182,7 +184,9 @@ export class WorkstoreRepo {
         if (!this.repoCache) {
             await this.refreshRepoCache();
         }
-        return this.repoCache.libs.find((lib) => lib.package === libName);
+        let lib = this.repoCache.libs.find((lib) => lib.package === libName);
+        console.log(lib)
+        return lib
     }
 
     async installApp(appName) {
@@ -216,7 +220,11 @@ export class WorkstoreRepo {
             }),
         );
 
-        let postInstallScript;
+        let installHook;
+        if (app.InstallHook) {
+          const installHookText = await (await this.client.fetch(app.baseUrl + app.installHook)).text()
+          installHookText = installHook
+        }
 
         try {
             for (const [_, zipEntry] of Object.entries(
@@ -229,7 +237,7 @@ export class WorkstoreRepo {
                         let manifest = await zipEntry.async("string");
                         manifest = JSON.parse(manifest);
                         manifest.workstore = {};
-                        manifest.workstore.version - app.version
+                        manifest.workstore.version = app.version
                         manifest.workstore.repo = app.repo
                         if (app.dependencies) {
                             manifest.workstore.dependencies = app.dependencies
@@ -240,10 +248,17 @@ export class WorkstoreRepo {
                         );
                         continue;
                     }
+                    fs.writeFile(
+                        `${path}/${zipEntry.name}`,
+                        await Buffer.from(
+                            await zipEntry.async("arraybuffer"),
+                        ),
+                    );
                 }
             }
+            await sleep(2000) // race condition because of manifest.json
             await anura.registerExternalApp("/fs" + path);
-            if (postInstallScript) window.top.eval(postInstallScript);
+            if (installHook) window.top.eval(installHook);
             this.hooks.onComplete(appName);
         } catch (error) {
             this.hooks.onError(appName, error);
@@ -279,7 +294,7 @@ export class WorkstoreRepo {
                         let manifest = await zipEntry.async("string");
                         manifest = JSON.parse(manifest);
                         manifest.workstore = {};
-                        manifest.workstore.version - lib.version
+                        manifest.workstore.version = lib.version
                         manifest.workstore.repo = lib.repo
                         if (lib.dependencies) {
                             manifest.workstore.dependencies = lib.dependencies
@@ -298,6 +313,7 @@ export class WorkstoreRepo {
                     );
                 }
             }
+            await sleep(2000) // race condition because of manifest.json
             await anura.registerExternalLib("/fs" + path);
             this.hooks.onComplete(libName);
         } catch (error) {
@@ -457,6 +473,7 @@ export class WorkstoreLegacyRepo {
                     );
                 }
             }
+            await sleep(2000) // race condition because of manifest.json
             await anura.registerExternalApp("/fs" + path);
             if (postInstallScript) window.top.eval(postInstallScript);
             this.hooks.onComplete(appName);
@@ -498,6 +515,7 @@ export class WorkstoreLegacyRepo {
                     );
                 }
             }
+            await sleep(2000) // race condition because of manifest.json
             await anura.registerExternalLib("/fs" + path);
             this.hooks.onComplete(libName);
         } catch (error) {
