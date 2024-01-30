@@ -67,8 +67,8 @@ class XFrogApp extends App {
             if (this.activeWin && this.activeWin != win) {
                 const newImg = document.createElement("img");
 
-                const blob: any = await new Promise((resolve) =>
-                    anura.x86?.vgacanvas.toBlob(resolve),
+                const blob: any = await new Promise(
+                    (resolve) => anura.x86?.vgacanvas.toBlob(resolve),
                 )!;
                 const url = URL.createObjectURL(blob);
                 newImg.src = url;
