@@ -3,6 +3,8 @@ class XFrogApp extends App {
 
     activeWin: WMWindow;
 
+    hidden = true;
+
     xwindows: { [wid: string]: WMWindow } = {};
 
     constructor() {
