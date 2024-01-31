@@ -2,10 +2,10 @@ class Anura {
     version = {
         semantic: {
             major: "1",
-            minor: "1",
-            patch: "1",
+            minor: "2",
+            patch: "0",
         },
-        buildstate: "stable",
+        buildstate: "alpha",
         codename: "Lag Train",
         get pretty() {
             const semantic = anura.version.semantic;
