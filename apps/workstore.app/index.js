@@ -119,7 +119,7 @@ async function loadappListScreen(repo, repoVersion) {
         itemText.innerText = lib.name;
         if (repoVersion == "legacy") {
             itemDesc.innerText = lib.desc;
-            thumbnail.src = await lib.getLibThumb(lib.name);
+            thumbnail.src = await repo.getLibThumb(lib.name);
         } else {
             itemDesc.innerText = lib.summary;
             thumbnail.src = await repo.getLibThumb(lib.package);
