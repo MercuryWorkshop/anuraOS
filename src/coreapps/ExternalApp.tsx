@@ -11,7 +11,17 @@ class ExternalApp extends App {
         this.package = manifest.package;
         this.hidden = manifest.hidden || false;
     }
-    async open(): Promise<WMWindow | undefined> {
+
+    static serializeArgs(args: string[]): string {
+        const encodedValues = args.map((value) => encodeURIComponent(value));
+        return encodedValues.join(",");
+    }
+
+    static deserializeArgs(args: string): string[] {
+        return args.split(",").map((value) => decodeURIComponent(value));
+    }
+
+    async open(args: string[] = []): Promise<WMWindow | undefined> {
         //  TODO: have a "allowmultiinstance" option in manifest? it might confuse users, some windows open a second, some focus
         // if (this.windowinstance) return;
         if (this.manifest.type === "auto") {
@@ -26,12 +36,17 @@ class ExternalApp extends App {
                     `border: none; margin: 0; padding: 0; background-color: ${bg};`,
             );
             console.log(this.source);
-            iframe.setAttribute("src", `${this.source}/${this.manifest.index}`);
+            iframe.setAttribute(
+                "src",
+                `${this.source}/${this.manifest.index}${this.manifest.index?.includes("?") ? "&" : "?"}args=${ExternalApp.serializeArgs(args)}`,
+            );
             win.content.appendChild(iframe);
 
             (iframe.contentWindow as any).anura = anura;
             (iframe.contentWindow as any).AliceWM = AliceWM;
+            (iframe.contentWindow as any).ExternalApp = ExternalApp;
             (iframe.contentWindow as any).instance = this;
+            (iframe.contentWindow as any).instanceWindow = win;
 
             return win;
         } else {
