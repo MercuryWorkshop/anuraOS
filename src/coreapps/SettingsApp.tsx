@@ -238,6 +238,31 @@ class SettingsApp extends App {
                             </label>
                         </div>
                         <div class="settings-item">
+                            <h4 class="settings-item-name">
+                                Transparent Anura Shell Background
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "transparent-ashell",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "transparent-ashell",
+                                                false,
+                                            );
+                                        }
+                                    }}
+                                    id="transparent-ashell"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
                             <h4 class="settings-item-name">Custom WS Proxy</h4>
                             <input
                                 class="settings-item-text-input"
@@ -609,6 +634,13 @@ class SettingsApp extends App {
             if (anura.settings.get("clampWindows")) {
                 document
                     .getElementById("clampWindows")!
+                    .setAttribute("checked", "");
+            }
+        }
+        if (document.getElementById("transparent-ashell")) {
+            if (anura.settings.get("transparent-ashell")) {
+                document
+                    .getElementById("transparent-ashell")!
                     .setAttribute("checked", "");
             }
         }

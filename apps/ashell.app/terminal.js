@@ -17,6 +17,7 @@ output.textContent = "Welcome to Anura Shell\n";
       console_log(...args);
       if(!output) return;
       args.forEach(arg=>output.value += `${arg}\n`);
+      output.scrollTop = output.scrollHeight;
     }
   })();
 
@@ -26,16 +27,27 @@ output.textContent = "Welcome to Anura Shell\n";
       console_warn(...args);
       if(!output) return;
       args.forEach(arg=>output.value += `${JSON.stringify(arg)}\n`);
+      output.scrollTop = output.scrollHeight;
     }
 })();
 (()=>{
     const console_error = window.console.warn;
     window.console.error = function(...args){
-        console_error(...args);
-        if(!output) return;
-        args.forEach(arg=>output.value += `${JSON.stringify(arg)}\n`);
-}
+      console_error(...args);
+      if(!output) return;
+      args.forEach(arg=>output.value += `${JSON.stringify(arg)}\n`);
+      output.scrollTop = output.scrollHeight;
+    }
 })();
+
+if (anura.settings.get("transparent-ashell")) {
+    input.classList.add("clear")
+    output.classList.add("clear")
+    frameElement.style.backgroundColor = "rgba(0, 0, 0, 0)"
+    frameElement.parentNode.parentNode.style.backgroundColor = "rgba(0, 0, 0, 0)"
+    frameElement.parentNode.parentNode.style.backdropFilter = "blur(5px)"
+    Array.from(frameElement.parentNode.parentNode.children).filter(e => e.classList.contains("title"))[0].style.backgroundColor = "rgba(20, 21, 22, 0.75)"
+}
 
 const shell = new Filer.fs.Shell()
 
