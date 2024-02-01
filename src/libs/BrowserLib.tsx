@@ -5,10 +5,13 @@ class BrowserLib extends Lib {
     icon = "/assets/chrome.svg";
 
     events: {
-        openTab?: (path: string) => void;
+        openTab?: (path: string, callback?: () => void) => void;
     } = {};
 
-    constructor(app: BrowserApp, openTabEvent: (path: string) => void) {
+    constructor(
+        app: BrowserApp,
+        openTabEvent: (path: string, callback?: () => void) => void,
+    ) {
         super();
         this.events.openTab = openTabEvent;
         this.versions["1.0.0"] = this.events;

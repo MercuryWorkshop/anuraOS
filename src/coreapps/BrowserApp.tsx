@@ -8,66 +8,87 @@ class BrowserApp extends App {
 
     constructor() {
         super();
-        this.lib = new BrowserLib(this, (path: string) => {
-            const win =
-                this.lastWindow || this.windows[this.windows.length - 1];
+        this.lib = new BrowserLib(
+            this,
+            (path: string, callback: () => void) => {
+                const win =
+                    this.lastWindow || this.windows[this.windows.length - 1];
 
-            if (typeof win === "undefined") {
-                console.log("No active browser window. Launching new one.");
-                this.open().then((win) => {
-                    const iframe = win?.content.querySelector("iframe");
-                    iframe?.addEventListener("load", () => {
-                        const browserWindow = iframe?.contentWindow;
-                        const browserDocument =
-                            iframe?.contentDocument ||
-                            iframe?.contentWindow?.document;
+                if (typeof win === "undefined") {
+                    console.log("No active browser window. Launching new one.");
+                    this.open().then((win) => {
+                        const iframe = win?.content.querySelector("iframe");
+                        iframe?.addEventListener("load", () => {
+                            const browserWindow = iframe?.contentWindow;
+                            const browserDocument =
+                                iframe?.contentDocument ||
+                                iframe?.contentWindow?.document;
 
-                        console.log("New browser window", browserDocument);
+                            console.log("New browser window", browserDocument);
 
-                        const config = {
-                            attributes: true,
-                            subtree: true,
-                        };
+                            const config = {
+                                attributes: true,
+                                subtree: true,
+                            };
 
-                        const observer = new MutationObserver(
-                            (mutationList, observer) => {
-                                for (const mutation of mutationList) {
-                                    if (mutation.type === "attributes") {
-                                        const target =
-                                            mutation.target as HTMLElement;
-                                        if (
-                                            target.classList.contains(
-                                                "browserContainer",
-                                            )
-                                        ) {
-                                            // Browser Container attributes changed, so the browser has loaded
-                                            win?.focus();
-                                            //@ts-ignore - aboutbrowser is a global variable
-                                            browserWindow.aboutbrowser.openTab(
-                                                path,
-                                            );
+                            const observer = new MutationObserver(
+                                (mutationList, observer) => {
+                                    for (const mutation of mutationList) {
+                                        if (mutation.type === "attributes") {
+                                            const target =
+                                                mutation.target as HTMLElement;
+                                            if (
+                                                target.classList.contains(
+                                                    "browserContainer",
+                                                )
+                                            ) {
+                                                // Browser Container attributes changed, so the browser has loaded
+                                                win?.focus();
+                                                //@ts-ignore - aboutbrowser is a global variable
+                                                browserWindow.aboutbrowser.openTab(
+                                                    path,
+                                                );
+                                                // Stop observing
+                                                observer.disconnect();
+                                                callback();
+                                            }
                                         }
                                     }
-                                }
-                            },
-                        );
+                                },
+                            );
 
-                        observer.observe(browserDocument!.body!, config);
+                            observer.observe(browserDocument!.body!, config);
+                        });
                     });
-                });
 
-                return;
-            }
-            console.log("Active browser window", win);
-            const iframe = win.content.querySelector("iframe");
-            const browserWindow = iframe?.contentWindow;
-            win.focus();
-            // @ts-ignore
-            browserWindow.aboutbrowser.openTab(path);
-        });
+                    return;
+                }
+                console.log("Active browser window", win);
+                const iframe = win.content.querySelector("iframe");
+                const browserWindow = iframe?.contentWindow;
+                win.focus();
+                // @ts-ignore
+                browserWindow.aboutbrowser.openTab(path);
+                callback();
+            },
+        );
         anura.registerLib(this.lib);
     }
-    async open(): Promise<WMWindow | undefined> {
+    async open(args: string[] = []): Promise<WMWindow | undefined> {
+        if (args.length > 0) {
+            const browser = await anura.import("anura.libbrowser");
+
+            const openTab = (path: string) =>
+                new Promise((resolve) => {
+                    browser.openTab(path, resolve);
+                });
+
+            for (const arg of args) {
+                await openTab(arg);
+            }
+            return;
+        }
+
         const browser = anura.wm.create(
             this,
             {
