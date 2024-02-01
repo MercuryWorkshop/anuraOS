@@ -7,6 +7,10 @@ const input = document.getElementById("input");
  * @type {HTMLInputElement}
  */
 const output = document.getElementById("terminal");
+
+// Clear the terminal
+output.textContent = "Welcome to Anura Shell\n";
+
 (()=>{
     const console_log = window.console.log;
     window.console.log = function(...args){
@@ -40,6 +44,78 @@ input.addEventListener("keyup", function (event) {
         evalUserInput(input.value)
     }
 })
+
+let appListCache = []
+
+async function refresh() {
+    for (let app in appListCache) {
+        delete window[app]
+    }
+    appListCache = []
+    for (let app in anura.apps) {
+        let normalizedApp = app.replace(/\./g, "_")
+        appListCache.push(normalizedApp)
+        // Tag function
+        window[normalizedApp] = (strings, ...values) => {
+            let args = []
+            
+            if (strings && typeof strings == "string" ) {
+                args = strings.split(" ")
+            } else if (strings && strings.length > 0) {
+                const input = strings.reduce((result, str, i) => {
+                    result += str;
+                    if (i < values.length) {
+                        result += values[i];
+                    }
+                    return result;
+                }, '');
+                args = input.match(/(?:[^\s"']|"[^"]*"|'[^']*')+/g).map(arg => arg.replace(/^['"]|['"]$/g, '')) || [];
+            }
+
+            anura.apps[app].open(args)
+            return "Opening " + app + " with args " + args.join(" ")
+        }
+        window[normalizedApp].toString = () => {
+            return `\
+function ${normalizedApp} () {
+    /* 
+     * Launch ${app} with args.
+     * This can be used as a tag
+     * function or a normal function.
+     */ 
+}`
+        }
+    }
+}
+refresh()
+
+async function source(strings, ...values) {
+    const input = strings.reduce((result, str, i) => {
+        result += str;
+        if (i < values.length) {
+            result += values[i];
+        }
+        return result;
+    }, '');
+
+    let resp = "Imported\n"
+    
+    let libs = input.split(" ")
+
+    for (let lib in libs) {
+        const normalizedLib = libs[lib].replace(/\./g, "_")
+        
+        try {
+            window[normalizedLib] = await anura.import(libs[lib])
+        
+            resp += libs[lib] + " as " + normalizedLib + "\n"
+        } catch (e) {
+            resp += "Failed to import " + libs[lib] + ": " + e + "\n"
+        }
+    }
+
+    return resp.trimEnd("\n");
+}
 
 /**
  * 
@@ -82,6 +158,7 @@ async function evalUserInput(userInput) {
         }
         return JSON.stringify(array)
     }
+    refresh()
 
     console.log(await eval(userInput))
     
