@@ -13,12 +13,25 @@ class ExternalApp extends App {
     }
 
     static serializeArgs(args: string[]): string {
-        const encodedValues = args.map((value) => encodeURIComponent(value));
-        return encodedValues.join(",");
+        const encoder = new TextEncoder();
+        const encodedValues = args.map((value) => {
+            const bytes = encoder.encode(value);
+            const binString = String.fromCodePoint(...bytes);
+            return btoa(binString);
+        });
+        return encodeURIComponent(encodedValues.join(","));
     }
 
     static deserializeArgs(args: string): string[] {
-        return args.split(",").map((value) => decodeURIComponent(value));
+        const decoder = new TextDecoder("utf-8");
+        return decodeURIComponent(args)
+            .split(",")
+            .map((value) => {
+                const binString = atob(value);
+                return decoder.decode(
+                    Uint8Array.from(binString, (c) => c.charCodeAt(0)),
+                );
+            });
     }
 
     async open(args: string[] = []): Promise<WMWindow | undefined> {
