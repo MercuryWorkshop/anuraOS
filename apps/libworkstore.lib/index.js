@@ -70,6 +70,8 @@ export class WorkstoreRepo {
     version;
     thumbCache = { apps: {}, libs: {} };
 
+    directories = anura.settings.get("directories");
+
     constructor(client, hooks, baseUrl, name) {
         this.client = client;
         this.hooks = hooks;
@@ -212,7 +214,7 @@ export class WorkstoreRepo {
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
-        const path = `/userApps/${appName}.app`;
+        const path = `${this.directories["apps"]}/${appName}.app`;
 
         await new Promise((resolve) =>
             new fs.Shell().mkdirp(path, function () {
@@ -275,7 +277,7 @@ export class WorkstoreRepo {
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
-        const path = `/userLibs/${libName}.lib`;
+        const path = `${this.directories["apps"]}/${libName}.lib`;
 
         await new Promise((resolve) =>
             new fs.Shell().mkdirp(path, function () {
@@ -331,6 +333,8 @@ export class WorkstoreLegacyRepo {
     repoCache;
     version;
     thumbCache = { apps: {}, libs: {} };
+
+    directories = anura.settings.get("directories");
 
     constructor(client, hooks, baseUrl, name) {
         this.client = client;
@@ -443,7 +447,7 @@ export class WorkstoreLegacyRepo {
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
-        const path = `/userApps/${appName}.app`;
+        const path = `${this.directories["apps"]}/${appName}.app`;
 
         await new Promise((resolve) =>
             new fs.Shell().mkdirp(path, function () {
@@ -492,7 +496,7 @@ export class WorkstoreLegacyRepo {
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
-        const path = `/userLibs/${libName}.lib`;
+        const path = `${this.directories["apps"]}/${libName}.lib`;
 
         await new Promise((resolve) =>
             new fs.Shell().mkdirp(path, function () {

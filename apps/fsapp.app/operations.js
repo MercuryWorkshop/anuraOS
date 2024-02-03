@@ -721,7 +721,7 @@ function installPermanent() {
         fs.stat(path, async function (err, stats) {
             if (stats.isDirectory()) {
                 if ( ext == "app" ) {
-                    const destination = "/userApps" 
+                    const destination = anura.settings.get("directories")["apps"]
                     try {
                         sh.ls(
                             path,
@@ -836,7 +836,7 @@ function installPermanent() {
                     }
                 }
                 if ( ext == "lib" ) {
-                    const destination = "/userLibs" 
+                    const destination = anura.settings.get("directories")["libs"]
                     try {
                         sh.ls(
                             path,

@@ -153,13 +153,63 @@ document.addEventListener("anura-login-completed", async () => {
         anura.registerExternalApp(app);
     }
 
+    /**
+     * These directories are used to load user apps and libs from
+     * the filesystem, along with folder shortcuts and other things.
+     *
+     *
+     */
+    let directories = anura.settings.get("directories");
+
+    if (!directories) {
+        anura.settings.set(
+            "directories",
+            (directories = {
+                apps: "/userApps",
+                libs: "/userLibs",
+                init: "/userInit",
+                opt: "/opt",
+            }),
+        );
+    }
+
+    /**
+     * These directories are required for Anura to function
+     * properly, and are automatically created if they
+     * don't exist.
+     *
+     * This is a setting so that it can be changed by applications
+     * that heavily modify the system. This will also be respected by
+     * the file manager and other system utilities to prevent the user
+     * from removing the shortcuts.
+     */
+    let requiredDirectories = anura.settings.get("requiredDirectories");
+
+    if (!requiredDirectories) {
+        anura.settings.set(
+            "requiredDirectories",
+            (requiredDirectories = ["apps", "libs", "init", "opt"]),
+        );
+    }
+
+    requiredDirectories.forEach((k: string) => {
+        anura.fs.exists(directories[k], (exists: boolean) => {
+            if (!exists) {
+                anura.fs.mkdir(directories[k]);
+            }
+        });
+    });
+
     // Load all persistent sideloaded libs
     try {
-        anura.fs.readdir("/userLibs", (err: Error, files: string[]) => {
+        anura.fs.readdir(directories["libs"], (err: Error, files: string[]) => {
             if (files == undefined) return;
+            console.log(files);
             files.forEach((file) => {
                 try {
-                    anura.registerExternalLib("/fs/userLibs/" + file);
+                    anura.registerExternalLib(
+                        `/fs/${directories["libs"]}/${file}/`,
+                    );
                 } catch (e) {
                     anura.logger.error("Anura failed to load a lib " + e);
                 }
@@ -180,27 +230,36 @@ document.addEventListener("anura-login-completed", async () => {
         // Not in safe mode
         // Load all user provided init scripts
         try {
-            anura.fs.readdir("/userInit", (err: Error, files: string[]) => {
-                // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
-                if (files == undefined) return;
-                files.forEach((file) => {
-                    try {
-                        anura.fs.readFile(
-                            "/userInit/" + file,
-                            function (err: Error, data: Uint8Array) {
-                                if (err) throw "Failed to read file";
-                                try {
-                                    eval(new TextDecoder("utf-8").decode(data));
-                                } catch (e) {
-                                    console.error(e);
-                                }
-                            },
-                        );
-                    } catch (e) {
-                        anura.logger.error("Anura failed to load an app " + e);
-                    }
-                });
-            });
+            anura.fs.readdir(
+                directories["init"],
+                (err: Error, files: string[]) => {
+                    // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
+                    if (files == undefined) return;
+                    files.forEach((file) => {
+                        try {
+                            anura.fs.readFile(
+                                directories["init"] + "/" + file,
+                                function (err: Error, data: Uint8Array) {
+                                    if (err) throw "Failed to read file";
+                                    try {
+                                        eval(
+                                            new TextDecoder("utf-8").decode(
+                                                data,
+                                            ),
+                                        );
+                                    } catch (e) {
+                                        console.error(e);
+                                    }
+                                },
+                            );
+                        } catch (e) {
+                            anura.logger.error(
+                                "Anura failed to load an app " + e,
+                            );
+                        }
+                    });
+                },
+            );
         } catch (e) {
             anura.logger.error(e);
         }
@@ -208,12 +267,14 @@ document.addEventListener("anura-login-completed", async () => {
 
     // Load all persistent sideloaded apps
     try {
-        anura.fs.readdir("/userApps", (err: Error, files: string[]) => {
+        anura.fs.readdir(directories["apps"], (err: Error, files: string[]) => {
             // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
             if (files == undefined) return;
             files.forEach((file) => {
                 try {
-                    anura.registerExternalApp("/fs/userApps/" + file);
+                    anura.registerExternalApp(
+                        `/fs/${directories["apps"]}/${file}`,
+                    );
                 } catch (e) {
                     anura.logger.error("Anura failed to load an app " + e);
                 }
@@ -237,8 +298,8 @@ document.addEventListener("anura-login-completed", async () => {
 
     if (anura.settings.get("kiosk-mode")) {
         taskbar.element.remove();
-        // Why not a race condition?
-        // i love this codebase
+        // There is a race condition here, but it doesn't matter
+        // because this feature is a joke
         await sleep(1000);
         anura.settings.get("kiosk-apps").forEach((app: string) => {
             anura.apps[app].open();
