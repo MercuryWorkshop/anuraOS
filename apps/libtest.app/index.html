@@ -23,7 +23,15 @@
                     })
                 }
             }
+
             let libtest = await anura.import("anura.examplelib")
+            
+            let persist = await anura.import("anura.persistence")
+            let loader = persist.buildLoader(anura)
+            await loader.locate()
+            
+            window.settings = await loader.build(instance)
+
             document.querySelector("#hello_button").addEventListener("click", () => {
                 alert(libtest.hello_world())
             })
