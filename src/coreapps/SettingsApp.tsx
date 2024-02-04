@@ -263,6 +263,31 @@ class SettingsApp extends App {
                             </label>
                         </div>
                         <div class="settings-item">
+                            <h4 class="settings-item-name">
+                                Enable Launcher Keybind
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "launcher-keybind",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "launcher-keybind",
+                                                false,
+                                            );
+                                        }
+                                    }}
+                                    id="launcher-keybind"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
                             <h4 class="settings-item-name">Custom Wisp URL</h4>
                             <input
                                 class="settings-item-text-input"
@@ -655,6 +680,13 @@ class SettingsApp extends App {
             if (anura.settings.get("transparent-ashell")) {
                 document
                     .getElementById("transparent-ashell")!
+                    .setAttribute("checked", "");
+            }
+        }
+        if (document.getElementById("launcher-keybind")) {
+            if (anura.settings.get("launcher-keybind")) {
+                document
+                    .getElementById("launcher-keybind")!
                     .setAttribute("checked", "");
             }
         }

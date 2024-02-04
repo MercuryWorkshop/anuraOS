@@ -327,6 +327,13 @@ document.addEventListener("anura-login-completed", async () => {
             e.preventDefault();
             alttab.onComboPress();
         }
+        if (
+            e.key.toLowerCase() === "meta" &&
+            anura.settings.get("launcher-keybind")
+        ) {
+            launcher.toggleVisible();
+            return;
+        }
     });
     document.addEventListener("keyup", (e) => {
         // console.log("keyup", e);

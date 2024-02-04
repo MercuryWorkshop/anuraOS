@@ -28,6 +28,7 @@
             "anura.term"
         ],
         "clampWindows": true,
+        "launcher-keybind": true,
         "relay-url": "wss://relay.widgetry.org/"
     },
     "x86": {
