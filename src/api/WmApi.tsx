@@ -29,6 +29,9 @@ class WMAPI {
         };
         win.onclose = () => {
             if (onclose) onclose();
+            this.windows = this.windows.filter(
+                (w: WeakRef<WMWindow>) => w.deref() !== win,
+            );
         };
         win.onmaximize = () => {
             if (onmaximize) onmaximize();
