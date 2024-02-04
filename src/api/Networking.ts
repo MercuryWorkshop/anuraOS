@@ -1,5 +1,6 @@
 class Networking {
     libcurl: any;
+    WebSocket: any;
     constructor(wisp_server: string) {
         //@ts-ignore
         import("/libcurl.mjs").then((m) => {
@@ -8,6 +9,7 @@ class Networking {
         });
         document.addEventListener("libcurl_load", () => {
             this.libcurl.set_websocket(wisp_server);
+            this.WebSocket = this.libcurl.WebSocket;
             console.log("libcurl.js ready!");
         });
     }
