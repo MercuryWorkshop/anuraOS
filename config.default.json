@@ -16,7 +16,8 @@
     "libs": [
         "/apps/libfileview.lib",
         "/apps/libfilepicker.lib",
-        "/apps/libworkstore.lib"
+        "/apps/libworkstore.lib",
+        "/apps/libpersist.lib"
     ],
     "defaultsettings": {
         "use-sw-cache": true,

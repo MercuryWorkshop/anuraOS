@@ -1,0 +1,11 @@
+{
+    "name": "AnuraOS Persistent Storage",
+    "icon": "icon.svg",
+    "package": "anura.persistence",
+    "versions": {
+        "1.0.0": "src/index.js"
+    },
+    "installHook": "install.js",
+    "cache": true,
+    "currentVersion": "1.0.0"
+}
