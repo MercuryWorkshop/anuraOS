@@ -263,6 +263,20 @@ class SettingsApp extends App {
                             </label>
                         </div>
                         <div class="settings-item">
+                            <h4 class="settings-item-name">Custom Wisp URL</h4>
+                            <input
+                                class="settings-item-text-input"
+                                on:change={(event: any) => {
+                                    anura.settings.set(
+                                        "wisp-url",
+                                        event.target.value,
+                                    );
+                                }}
+                                placeholder={anura.settings.get("wisp-url")}
+                                type="text"
+                            />
+                        </div>
+                        <div class="settings-item">
                             <h4 class="settings-item-name">Custom WS Proxy</h4>
                             <input
                                 class="settings-item-text-input"

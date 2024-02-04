@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/chideNewNewNew.app/node_modules
+all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/chideNewNewNew.app/node_modules build/libcurl.mjs
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -31,6 +31,9 @@ build/bootstrap:
 
 build/nohost-sw.js:
 	cd nohost; npm i; npm run build; cp -r dist/* ../build/
+
+build/libcurl.mjs:
+	mkdir -p libcurl; cd libcurl; npm i --prefix . libcurl.js; cp node_modules/libcurl.js/libcurl.mjs ../build/; cp node_modules/libcurl.js/libcurl.wasm ../build/; rm -r ../libcurl
 clean:
 	cd v86; make clean
 	rm -rf build/*
