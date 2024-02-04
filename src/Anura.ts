@@ -19,17 +19,20 @@ class Anura {
     config: any;
     notifications: NotificationService;
     x86hdd: FakeFile;
+    net: Networking;
 
     private constructor(
         fs: FilerFS,
         settings: Settings,
         config: any,
         hdd: FakeFile,
+        net: Networking,
     ) {
         this.fs = fs;
         this.settings = settings;
         this.config = config;
         this.x86hdd = hdd;
+        this.net = net;
 
         this.notifications = new NotificationService();
         document.body.appendChild(this.notifications.element);
@@ -45,7 +48,9 @@ class Anura {
         const settings = await Settings.new(fs, config.defaultsettings);
 
         const hdd = await InitV86Hdd();
-        const anuraPartial = new Anura(fs, settings, config, hdd);
+
+        const net = new Networking(settings.get("wisp-url"));
+        const anuraPartial = new Anura(fs, settings, config, hdd, net);
         return anuraPartial;
     }
 
@@ -59,7 +64,6 @@ class Anura {
         warn: console.warn.bind(console, "anuraOS:"),
         error: console.error.bind(console, "anuraOS:"),
     };
-    // net = new Networking();
     async registerApp(app: App) {
         if (app.package in this.apps) {
             throw "Application already installed";
@@ -187,7 +191,7 @@ class Anura {
         });
     }
     get wsproxyURL() {
-        return this.settings.get("wsproxy-url");
+        return this.settings.get("wisp-url");
     }
 }
 

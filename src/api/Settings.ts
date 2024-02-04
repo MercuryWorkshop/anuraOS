@@ -36,9 +36,22 @@ class Settings {
             initial["wsproxy-url"] = url;
         }
 
+        if (!initial["wisp-url"]) {
+            let url = "";
+            if (location.protocol == "https:") {
+                url += "wss://";
+            } else {
+                url += "ws://";
+            }
+            url += window.location.origin.split("://")[1];
+            url += "/";
+            initial["wisp-url"] = url;
+        }
+
         if (!initial["bare-url"]) {
             initial["bare-url"] = location.origin + "/bare/";
         }
+
         if (!initial["relay-url"]) {
             alert("figure this out later");
         }
