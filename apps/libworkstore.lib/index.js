@@ -225,7 +225,7 @@ export class WorkstoreRepo {
         let installHook;
         if (app.InstallHook) {
           const installHookText = await (await this.client.fetch(app.baseUrl + app.installHook)).text()
-          installHookText = installHook
+          installHook = installHookText
         }
 
         try {
@@ -258,7 +258,7 @@ export class WorkstoreRepo {
                     );
                 }
             }
-            await sleep(2000) // race condition because of manifest.json
+            await sleep(500) // race condition because of manifest.json
             await anura.registerExternalApp("/fs" + path);
             if (installHook) window.top.eval(installHook);
             this.hooks.onComplete(appName);
@@ -315,7 +315,7 @@ export class WorkstoreRepo {
                     );
                 }
             }
-            await sleep(2000) // race condition because of manifest.json
+            await sleep(500) // race condition because of manifest.json
             await anura.registerExternalLib("/fs" + path);
             this.hooks.onComplete(libName);
         } catch (error) {
@@ -477,7 +477,7 @@ export class WorkstoreLegacyRepo {
                     );
                 }
             }
-            await sleep(2000) // race condition because of manifest.json
+            await sleep(500) // race condition because of manifest.json
             await anura.registerExternalApp("/fs" + path);
             if (postInstallScript) window.top.eval(postInstallScript);
             this.hooks.onComplete(appName);
@@ -519,7 +519,7 @@ export class WorkstoreLegacyRepo {
                     );
                 }
             }
-            await sleep(2000) // race condition because of manifest.json
+            await sleep(500) // race condition because of manifest.json
             await anura.registerExternalLib("/fs" + path);
             this.hooks.onComplete(libName);
         } catch (error) {
