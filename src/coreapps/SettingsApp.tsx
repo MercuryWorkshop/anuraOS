@@ -302,21 +302,9 @@ class SettingsApp extends App {
                             />
                         </div>
                         <div class="settings-item">
-                            <h4 class="settings-item-name">Custom WS Proxy</h4>
-                            <input
-                                class="settings-item-text-input"
-                                on:change={(event: any) => {
-                                    anura.settings.set(
-                                        "wsproxy-url",
-                                        event.target.value,
-                                    );
-                                }}
-                                placeholder={anura.settings.get("wsproxy-url")}
-                                type="text"
-                            />
-                        </div>
-                        <div class="settings-item">
-                            <h4 class="settings-item-name">Custom Bare URL</h4>
+                            <h4 class="settings-item-name">
+                                Custom Bare URL (deprecated)
+                            </h4>
                             <input
                                 class="settings-item-text-input"
                                 on:change={(event: any) => {
