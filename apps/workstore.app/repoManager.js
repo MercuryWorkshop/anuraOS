@@ -9,7 +9,7 @@ async function loadMainScreen() {
 
     libstoreCache["2.0.0"] ??= (await anura.import("anura.libstore@2.0.0"));
 
-    workstore = workstore ??= new libstoreCache["2.0.0"].Workstore((anura.net)), {
+    workstore = workstore ??= new libstoreCache["2.0.0"].Workstore((anura.net), {
         onError: (appName, error) => {
             anura.notifications.add({
                 title: "Workstore Application",
@@ -38,7 +38,7 @@ async function loadMainScreen() {
                 timeout: 5000,
             });
         },
-    };
+    });
 
     repoList.innerHTML = ''
     appListScreen.style.display = 'none'
