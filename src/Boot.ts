@@ -16,7 +16,10 @@ channel.addEventListener("message", (msg) => {
             elm.remove();
         }
         document.open();
-        document.write("you already have an anura tab open");
+        document.write("Another AnuraOS tab is open.");
+        document.write(
+            "Please return to the first tab or close it before continuing.",
+        );
         document.close();
     }
 });

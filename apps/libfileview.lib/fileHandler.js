@@ -87,7 +87,8 @@ export function openFile (path) {
         fs.readFile(path, function(err, data)  {
             let fileView = AliceWM.create("Text Viewer");
             fileView.content.style.overflow = 'auto'
-            fileView.content.innerText = data;
+            fileView.content.innerText = data
+            fileView.content.style.margin = '10px';
         })
     }
 
