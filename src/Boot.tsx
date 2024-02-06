@@ -24,14 +24,13 @@ channel.addEventListener("message", (msg) => {
 const taskbar = new Taskbar();
 const launcher = new Launcher();
 const contextMenu = new ContextMenu();
-const bootsplash = new Bootsplash();
 const alttab = new AltTabView();
 
 let anura: Anura;
 // global
 
 window.addEventListener("load", async () => {
-    document.body.appendChild(bootsplash.element);
+    document.body.appendChild(bootsplash);
 
     await navigator.serviceWorker.register("/anura-sw.js");
     let conf, milestone, instancemilestone;
@@ -111,7 +110,7 @@ window.addEventListener("load", async () => {
 
     setTimeout(
         () => {
-            bootsplash.element.remove();
+            bootsplash.remove();
             anura.logger.debug("boot completed");
             document.dispatchEvent(new Event("anura-boot-completed"));
         },
