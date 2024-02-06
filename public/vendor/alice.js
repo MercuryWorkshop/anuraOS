@@ -130,7 +130,7 @@
                             isRecursive = true;
                             newthis[propname] = value;
                         });
-                        handle(use(newthis[propname]), (value) => {
+                        handle(window.use(newthis[propname]), (value) => {
                             if (isRecursive) {
                                 isRecursive = false;
                                 return;

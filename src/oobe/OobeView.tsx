@@ -1,101 +1,5 @@
-class OobeView {
-    content: HTMLElement;
-    state = stateful({
-        color: "var(--oobe-bg)",
-        text: "black",
-    });
-    css = styled.new`
-        * {
-            color: ${use(this.state.text)};
-            transition: all 1s;
-        }
-
-        self {
-            background-color: ${use(this.state.color)};
-            z-index: 9996;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-            flex-wrap: wrap;
-        }
-
-        #content {
-            padding: 79.6px 40px 23.8px 40px;
-            width: 1040px;
-            height: 680px;
-            box-sizing: border-box;
-        }
-
-        #content .screen {
-            width: 100%;
-            height: 100%;
-        }
-
-        .screen h1 {
-            margin: 48px 0 0 0;
-        }
-
-        .screen #subtitle {
-            margin: 16px 0 64px 0;
-            font-size: 24px;
-        }
-
-        .screen #gridContent {
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr);
-            grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-        }
-
-        .screen #gridContent #topButtons {
-            grid-column: 1 / span 1;
-            grid-row: 1 / span 1;
-        }
-
-        .screen #gridContent #bottomButtons {
-            align-self: end;
-            justify-self: start;
-            grid-column: 1 / span 1;
-            grid-row: 2 / span 1;
-        }
-
-        .screen .preferredButton {
-            background-color: rgb(26, 115, 232);
-            border-radius: 16px;
-            border-style: none;
-            color: white;
-            height: 2em;
-            padding-left: 1em;
-            padding-right: 1em;
-        }
-
-        .screen button {
-            background-color: var(--oobe-bg);
-            border-radius: 16px;
-            border: 1px solid gray;
-            color: rgb(26, 115, 232);
-            height: 2em;
-            margin: 0.5em;
-            padding-left: 1em;
-            padding-right: 1em;
-        }
-
-        #welcome.screen #animation {
-            grid-column: 2 / span 1;
-            grid-row: 1 / span 2;
-            margin-left: auto;
-        }
-    `;
-    element = (
-        <div class={this.css}>{(this.content = <div id="content"></div>)}</div>
-    );
-
-    nextButton: HTMLElement;
-    steps = [
+function OobeView(): HTMLElement {
+    const steps = [
         {
             elm: (
                 <div class="screen" id="welcome">
@@ -203,8 +107,9 @@ class OobeView {
                 </div>
             ),
             on: async () => {
-                this.state.color = "var(--material-bg)";
-                this.state.text = "whitesmoke";
+                console.log("Finalizing OOBE");
+                this.color = "var(--material-bg)";
+                this.text = "whitesmoke";
                 if (!anura.settings.get("x86-disabled")) {
                     await installx86();
                 }
@@ -215,26 +120,122 @@ class OobeView {
             },
         },
     ];
-    i = 0;
 
-    constructor() {
-        this.nextStep();
-    }
+    this.text ??= "black";
+    this.color ??= "var(--oobe-bg)";
+    this.step ??= 0;
 
-    nextStep() {
-        const step = this.steps[this.i]!;
-        this.content.children[0]?.remove();
-        this.content.appendChild(step.elm);
+    this.nextStep = function () {
+        this.step++;
+        const step = steps[this.step]!;
+        console.log("advancing step", this.step);
+        console.log(step);
         if (step.on) step.on();
-        this.i++;
-    }
-    complete() {
+    };
+
+    this.complete = function () {
         anura.settings.set("oobe-complete", true);
 
         document.dispatchEvent(new Event("anura-login-completed"));
-        this.element.remove();
-    }
+        document.getElementById("oobe-top")!.remove();
+    };
+
+    const css = styled.new`
+        * {
+            color: ${use(this.text)};
+            transition: all 1s;
+        }
+
+        self {
+            background-color: ${use(this.color)};
+            z-index: 9996;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            flex-wrap: wrap;
+        }
+
+        #content {
+            padding: 79.6px 40px 23.8px 40px;
+            width: 1040px;
+            height: 680px;
+            box-sizing: border-box;
+        }
+
+        #content .screen {
+            width: 100%;
+            height: 100%;
+        }
+
+        .screen h1 {
+            margin: 48px 0 0 0;
+        }
+
+        .screen #subtitle {
+            margin: 16px 0 64px 0;
+            font-size: 24px;
+        }
+
+        .screen #gridContent {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+        }
+
+        .screen #gridContent #topButtons {
+            grid-column: 1 / span 1;
+            grid-row: 1 / span 1;
+        }
+
+        .screen #gridContent #bottomButtons {
+            align-self: end;
+            justify-self: start;
+            grid-column: 1 / span 1;
+            grid-row: 2 / span 1;
+        }
+
+        .screen .preferredButton {
+            background-color: rgb(26, 115, 232);
+            border-radius: 16px;
+            border-style: none;
+            color: white;
+            height: 2em;
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+
+        .screen button {
+            background-color: var(--oobe-bg);
+            border-radius: 16px;
+            border: 1px solid gray;
+            color: rgb(26, 115, 232);
+            height: 2em;
+            margin: 0.5em;
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+
+        #welcome.screen #animation {
+            grid-column: 2 / span 1;
+            grid-row: 1 / span 2;
+            margin-left: auto;
+        }
+    `;
+
+    return (
+        <div css={css} id="oobe-top">
+            <div id="content">
+                {use(this.step, (step) => steps[step]!.elm)}{" "}
+            </div>
+        </div>
+    );
 }
+
 async function installx86() {
     const tracker = document.getElementById("tracker");
     console.log("installing x86");
