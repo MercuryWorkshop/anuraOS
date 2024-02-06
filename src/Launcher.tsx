@@ -1,5 +1,6 @@
 class Launcher {
     private search: HTMLInputElement | null;
+
     css = styled.new`
         self {
             position: absolute;
@@ -128,8 +129,9 @@ class Launcher {
             height: 1em;
         }
     `;
+
     element = (
-        <div class={this.css}>
+        <div css={this.css}>
             <div class="topSearchBar">
                 <img src="/assets/icons/googleg.png"></img>
                 <input
@@ -214,24 +216,31 @@ class Launcher {
 
     addShortcut(app: App) {
         if (app.package == "anura.xfrog") return;
-        const shortcut = this.shortcutElement(app);
-        shortcut.addEventListener("click", (...args) => {
-            this.hide();
-            app.open();
-        });
-        this.element.querySelector("#appsView").appendChild(shortcut);
-    }
 
-    shortcutElement(app: App): HTMLElement {
-        return (
-            <div class="app">
-                <input
-                    class="app-shortcut-image showDialog"
-                    type="image"
-                    src={app.icon}
-                />
-                <div class="app-shortcut-name">{app.name}</div>
-            </div>
+        this.element.querySelector("#appsView").appendChild(
+            <LauncherShortcut
+                app={app}
+                onclick={() => {
+                    this.hide();
+                    app.open();
+                }}
+            />,
         );
     }
+}
+
+function LauncherShortcut(props: {
+    app: App;
+    onclick: () => void;
+}): HTMLDivElement {
+    return (
+        <div class="app" on:click={props.onclick}>
+            <input
+                class="app-shortcut-image showDialog"
+                type="image"
+                src={props.app.icon}
+            />
+            <div class="app-shortcut-name">{props.app.name}</div>
+        </div>
+    );
 }
