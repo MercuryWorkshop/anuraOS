@@ -24,18 +24,6 @@ class Settings {
     static async new(fs: FilerFS, defaultsettings: { [key: string]: any }) {
         const initial = defaultsettings;
 
-        if (!initial["wsproxy-url"]) {
-            let url = "";
-            if (location.protocol == "https:") {
-                url += "wss://";
-            } else {
-                url += "ws://";
-            }
-            url += window.location.origin.split("://")[1];
-            url += "/";
-            initial["wsproxy-url"] = url;
-        }
-
         if (!initial["wisp-url"]) {
             let url = "";
             if (location.protocol == "https:") {
