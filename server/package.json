@@ -1,7 +1,7 @@
 {
     "name": "anuraos",
     "version": "0.0.1",
-    "description": "Web OS with v86 integration",
+    "description": "webOS that has v86 capabilities and a modular app system",
     "main": "hterm_poc.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,14 +9,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/MercuryWorkshop/AliceWM.git"
+        "url": "git+https://github.com/MercuryWorkshop/AnuraOS.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/MercuryWorkshop/AliceWM/issues"
+        "url": "https://github.com/MercuryWorkshop/AnuraOS/issues"
     },
-    "homepage": "https://github.com/MercuryWorkshop/AliceWM#readme",
+    "homepage": "https://github.com/MercuryWorkshop/AnuraOS#readme",
     "dependencies": {
         "@tomphttp/bare-server-node": "^2.0.0",
         "@types/express": "^4.17.17",
