@@ -42,6 +42,7 @@ export function routeRequest(ws) {
         closePacket.setUint8(5, reason);
     
         ws.send(Buffer.from(initialPacket.buffer))
+        connections.delete(streamID);
     }
     ws.on('message', (data, isBinary) => {
         try {
@@ -71,6 +72,7 @@ export function routeRequest(ws) {
                 client.on('error', function() {
                     console.error("Something went wrong")
                     close(wispFrame.streamID, 0x03)
+
                 })
 
             }
@@ -96,8 +98,9 @@ export function routeRequest(ws) {
             }
             if (wispFrame.type == CONNECT_TYPE.CLOSE) {
                 // its joever
-                console.log("Client decided to terminate with reason " + new DataView(wispFrame.payload.buffer).getUint8(0))
+                console.log("Client decided to terminate with reason " + new DataView(wispFrame.payload.buffer).getUint8(0));
                 ws.close();
+                connections.delete(wispFrame.streamID);
             } 
 
         } catch(e) {
