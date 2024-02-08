@@ -219,12 +219,16 @@ document.addEventListener("anura-login-completed", async () => {
         anura.logger.error(e);
     }
     if ((await fetch("/fs/")).status === 404) {
-        const notif = anura.notifications.add({
+        // Safe mode
+        // Register recovery helper app
+        const recovery = new RecoveryApp();
+        anura.registerApp(recovery);
+        anura.notifications.add({
             title: "Anura Error",
             description:
-                "Anura has detected a system fault and loaded in safe mode. Click this notification to return to normal mode.",
-            timeout: 500000,
-            callback: () => window.location.reload(),
+                "Anura has detected a system fault and booted in safe mode. Click this notification to enter the recovery app.",
+            timeout: "never",
+            callback: () => anura.apps["anura.recovery"].open(),
         });
     } else {
         // Not in safe mode

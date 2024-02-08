@@ -29,7 +29,7 @@ class NotificationService {
 interface NotifParams {
     title?: string;
     description?: string;
-    timeout?: number;
+    timeout?: number | "never";
     callback?: () => void;
     closeIndicator?: boolean;
     // COMING SOON (hopefully)
@@ -40,7 +40,7 @@ interface NotifParams {
 class AnuraNotification {
     title = "Anura Notification";
     description = "Anura Description";
-    timeout = 2000;
+    timeout: number | "never" = 2000;
     closeIndicator = false;
     callback = () => null;
     close: () => void;
@@ -65,9 +65,10 @@ class AnuraNotification {
                 </div>
             </div>
         );
-        setTimeout(() => {
-            close();
-        }, this.timeout);
+        this.timeout !== "never" &&
+            setTimeout(() => {
+                close();
+            }, this.timeout);
     }
 
     async show() {
@@ -110,10 +111,11 @@ class AnuraNotification {
         notif.appendChild(notifBody);
         notifContainer?.appendChild(notif);
 
-        // remove afyer period
-        setTimeout(() => {
-            deleteNotif();
-        }, this.timeout);
+        // remove after period
+        this.timeout !== "never" &&
+            setTimeout(() => {
+                deleteNotif();
+            }, this.timeout);
 
         function deleteNotif() {
             const oldNotif = document.getElementById(id)!;

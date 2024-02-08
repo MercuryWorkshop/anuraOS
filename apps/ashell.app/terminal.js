@@ -9,7 +9,7 @@ const input = document.getElementById("input");
 const output = document.getElementById("terminal");
 
 // Clear the terminal
-output.textContent = "Welcome to Anura Shell\n";
+output.textContent = "Welcome to Anura Shell\nThis is a JavaScript terminal.\nIf you need to use the Recovery app, type 'recovery()' or initiate a force refresh.\n";
 
 (()=>{
     const console_log = window.console.log;
@@ -127,6 +127,23 @@ async function source(strings, ...values) {
     }
 
     return resp.trimEnd("\n");
+}
+
+function recovery() {
+    let recoveryApp = anura.apps["anura.recovery"];
+    if (recoveryApp) {
+        return recoveryApp.open()
+    }
+
+    const RecoveryApp = window.top.eval("RecoveryApp")
+    if (RecoveryApp) {
+        recoveryApp = new RecoveryApp()
+        anura.registerApp(recoveryApp)
+        return recoveryApp.open()
+    } else {
+        return "Recovery app not found."
+    }
+
 }
 
 /**
