@@ -64,24 +64,26 @@ async function loadMainScreen() {
             }
             e.preventDefault()
         }
-        try {
-            const workstoreRepo = await workstore.getRepo(repos[repo], repo);
-            console.log(workstoreRepo)
-            repoItem.onclick = async function() {
-                await loadappListScreen(workstoreRepo, workstoreRepo.version); 
+        (async function() { // check repo status
+        
+            try {
+                const workstoreRepo = await workstore.getRepo(repos[repo], repo);
+                console.log(workstoreRepo)
+                repoItem.onclick = async function() {
+                    await loadappListScreen(workstoreRepo, workstoreRepo.version); 
+                }
+            } catch (e) {
+                repoItem.innerText += " (Error)";
+                repoItem.style.color = "red";
+                repoItem.onclick = async function() {
+                    anura.notifications.add({
+                        title: "Workstore Application",
+                        description: "The repository " + repo + " encountered an error: " + e,
+                        timeout: 5000,
+                    });
+                }
             }
-        } catch (e) {
-            repoItem.innerText += " (Error)";
-            repoItem.style.color = "red";
-            repoItem.onclick = async function() {
-                anura.notifications.add({
-                    title: "Workstore Application",
-                    description: "The repository " + repo + " encountered an error: " + e,
-                    timeout: 5000,
-                });
-            }
-        }
-
+        })()
         repoItem.className = "repoItem"
         repoList.appendChild(repoItem)
     }
