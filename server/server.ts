@@ -13,6 +13,8 @@ import basicAuth from "express-basic-auth";
 import { readFileSync } from "fs";
 
 import * as crypto from "crypto";
+import e from "express";
+import wisp from "./wisp";
 
 const useAuth = process.argv.includes("--auth");
 const useParanoidAuth = process.argv.includes("--paranoid-auth");
@@ -153,9 +155,13 @@ app.use(async (req, res, next) => {
 
 console.log("Starting wsProxy");
 const wss = new WebSocket.Server({ noServer: true });
-wss.on("connection", (ws) => {
+wss.on("connection", (ws, request) => {
     try {
-        new Proxy(ws as FakeWebSocket);
+        if (request.url?.endsWith('/')) {
+            wisp.routeRequest(ws);
+        } else {
+            new Proxy(ws as FakeWebSocket);
+        }
     } catch (e) {
         console.error(e);
     }
