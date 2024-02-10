@@ -3,7 +3,7 @@ class AboutApp extends App {
     package = "anura.about";
     icon = "/assets/icons/aboutapp.png";
 
-    page = async () => (
+    page = () => (
         <div class="aboutapp-container">
             <div class="aboutapp-logo">
                 <div
@@ -16,28 +16,33 @@ class AboutApp extends App {
                 <p>AnuraOS</p>
                 <p>
                     Version {anura.version.codename} ({anura.version.pretty})
-                    (OS build {await this.getOSBuild()})
+                    (OS build {this.getOSBuild()})
                 </p>
                 <p>© Mercury Workshop. All rights reserved.</p>
                 <br />
-                <p if={!anura.settings.get("x86-disabled")}>
-                    Anura x86 subsystem enabled.
-                </p>
-                <p if={anura.settings.get("x86-disabled")}>
-                    Anura x86 subsystem disabled.
-                </p>
-                <p if={anura.settings.get("x86-disabled")}>
-                    Enable it in{" "}
-                    <button
-                        on:click={() => {
-                            anura.apps["anura.settings"].open();
-                        }}
-                        class="aboutapp-link-button"
-                    >
-                        settings
-                    </button>
-                    .
-                </p>
+                <div
+                    if={anura.settings.get("x86-disabled")}
+                    then={
+                        <p>
+                            Anura x86 subsystem disabled. <br /> Enable it in{" "}
+                            <button
+                                on:click={() => {
+                                    anura.apps["anura.settings"].open();
+                                }}
+                                class="aboutapp-link-button"
+                            >
+                                settings
+                            </button>
+                            .
+                        </p>
+                    }
+                    else={
+                        <p if={!anura.settings.get("x86-disabled")}>
+                            Anura x86 subsystem enabled.
+                        </p>
+                    }
+                />
+
                 <br />
                 <br />
 
@@ -103,7 +108,7 @@ class AboutApp extends App {
                 <div style="background: url(/assets/images/lagtrain.gif); width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat;"></div>,
             );
         } else {
-            aboutview.content.appendChild(await this.page());
+            aboutview.content.appendChild(this.page());
         }
 
         // make borderless
