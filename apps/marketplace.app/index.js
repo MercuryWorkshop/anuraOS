@@ -19,8 +19,8 @@ const repoListButton = document.getElementById("repoListButton");
 repoListButton.addEventListener("click", async function (evt) {
     if (evt.target.dataset.repo) {
         // We were on the overview screen, so load the app list
-        const workstoreRepo = await workstore.getRepo(repos[evt.target.dataset.repo], evt.target.dataset.repo);
-        loadappListScreen(workstoreRepo, evt.target.dataset.repo_version);
+        const marketplaceRepo = await marketplace.getRepo(repos[evt.target.dataset.repo], evt.target.dataset.repo);
+        loadappListScreen(marketplaceRepo, evt.target.dataset.repo_version);
         return;
     }
     loadMainScreen();

@@ -48,7 +48,7 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
     }
     ```
     -   `name` is the name of the library.
-    -   `icon` is the icon of the library (for use in workstore).
+    -   `icon` is the icon of the library (for use in Marketplace).
     -   `package` is the package name of the library.
     -   `versions` is a map of version numbers to entry points.
     -   `installHook` is a file that is run when the library is installed. It should have a default export that is a function that takes the anura instance as an argument.
