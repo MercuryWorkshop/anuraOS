@@ -84,7 +84,7 @@ class WallpaperSelector extends App {
     page = async () => (
         <div
             style="height:100%;width:100%;position:absolute"
-            class={`background ${wallpaperCSS}`}
+            class={`background ${wallpaperCSS} self`}
         >
             <div class="header">
                 <h2 color="white">Wallpaper Selector</h2>
