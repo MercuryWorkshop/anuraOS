@@ -122,7 +122,7 @@
                             isRecursive = true;
                             newthis[propname] = value;
                         });
-                        handle2(use(newthis[propname]), (value) => {
+                        handle2(window.use(newthis[propname]), (value) => {
                             if (isRecursive) {
                                 isRecursive = false;
                                 return;
@@ -442,7 +442,7 @@
                 if (isAJSReferences(prop)) {
                     const current_i = flattened_template.length;
                     let oldparsed;
-                    handle(prop, (val) => {
+                    handle2(prop, (val) => {
                         flattened_template[current_i] = String(val);
                         let parsed = flattened_template.join("");
                         if (parsed != oldparsed)
@@ -535,7 +535,7 @@
                 if (val in markers) val = markers[val];
                 attributes[attr.name] = val;
             }
-            return h(nodename, attributes, children);
+            return window.h(nodename, attributes, children);
         }
         return wraph(dom.body.children[0]);
     }
