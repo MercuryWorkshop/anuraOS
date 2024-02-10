@@ -140,7 +140,7 @@ function OobeView(): HTMLElement {
         document.getElementById("oobe-top")!.remove();
     };
 
-    const css = styled.new`
+    this.css = styled.new`
         * {
             color: ${use(this.text)};
             transition: all 1s;
@@ -228,7 +228,7 @@ function OobeView(): HTMLElement {
     `;
 
     return (
-        <div css={css} id="oobe-top">
+        <div id="oobe-top">
             <div id="content">
                 {use(this.step, (step) => steps[step]!.elm)}{" "}
             </div>
