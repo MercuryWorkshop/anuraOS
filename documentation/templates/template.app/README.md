@@ -11,9 +11,9 @@
 "package": "[organization/author].APPNAME",
 "icon": "appicon.[extension]",
 "title":"Your App Window Name",
-"index": "[the main html document for your program"
+"index": "[the main html document for your program]"
 ```
 
 ## Congrats
 
-You have successfully completed building your basic iFrame app, you can either zip it and add it to a repository for the WorkStore or add it directly into your Anura instance under the apps folder.
+You have successfully completed building your basic iFrame app, you can either zip it and add it to a repository for use in the Marketplace or add it directly into your Anura instance under the apps folder.

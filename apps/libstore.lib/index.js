@@ -9,7 +9,7 @@ delete window.JSZip;
 const fs = Filer.fs;
 const Buffer = Filer.Buffer;
 
-export class Workstore {
+export class Store {
     client;
     cache;
     hooks;
@@ -48,11 +48,11 @@ export class Workstore {
             return this.cache[url];
         }
 
-        let repo = new WorkstoreRepo(this.client, this.hooks, url, name);
+        let repo = new StoreRepo(this.client, this.hooks, url, name);
         let manifestVersion = await repo.getRepoManifest();
         repo.version = manifestVersion;
         if (manifestVersion == "legacy") {
-            repo = new WorkstoreLegacyRepo(this.client, this.hooks, url, name);
+            repo = new StoreLegacyRepo(this.client, this.hooks, url, name);
         }
         await repo.refreshRepoCache();
         this.cache[url] = repo;
@@ -60,7 +60,7 @@ export class Workstore {
     }
 }
 
-export class WorkstoreRepo {
+export class StoreRepo {
     baseUrl;
     name;
     client;
@@ -238,11 +238,11 @@ export class WorkstoreRepo {
                     if (zipEntry.name == "manifest.json") {
                         let manifest = await zipEntry.async("string");
                         manifest = JSON.parse(manifest);
-                        manifest.workstore = {};
-                        manifest.workstore.version = app.version
-                        manifest.workstore.repo = app.repo
+                        manifest.marketplace = {};
+                        manifest.marketplace.version = app.version
+                        manifest.marketplace.repo = app.repo
                         if (app.dependencies) {
-                            manifest.workstore.dependencies = app.dependencies
+                            manifest.marketplace.dependencies = app.dependencies
                         }
                         fs.writeFile(
                             `${path}/${zipEntry.name}`,
@@ -295,11 +295,11 @@ export class WorkstoreRepo {
                     if (zipEntry.name == "manifest.json") {
                         let manifest = await zipEntry.async("string");
                         manifest = JSON.parse(manifest);
-                        manifest.workstore = {};
-                        manifest.workstore.version = lib.version
-                        manifest.workstore.repo = lib.repo
+                        manifest.marketplace = {};
+                        manifest.marketplace.version = lib.version
+                        manifest.marketplace.repo = lib.repo
                         if (lib.dependencies) {
-                            manifest.workstore.dependencies = lib.dependencies
+                            manifest.marketplace.dependencies = lib.dependencies
                         }
                         fs.writeFile(
                             `${path}/${zipEntry.name}`,
@@ -325,7 +325,7 @@ export class WorkstoreRepo {
 
 }
 
-export class WorkstoreLegacyRepo {
+export class StoreLegacyRepo {
     baseUrl;
     name;
     client;

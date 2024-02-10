@@ -9,14 +9,14 @@
         "apps/fsapp.app",
         "apps/chideNewNewNew.app",
         "apps/python.app",
-        "apps/workstore.app",
+        "apps/marketplace.app",
         "apps/taskbarMan.app",
         "apps/ashell.app"
     ],
     "libs": [
         "/apps/libfileview.lib",
         "/apps/libfilepicker.lib",
-        "/apps/libworkstore.lib",
+        "/apps/libstore.lib",
         "/apps/libpersist.lib"
     ],
     "defaultsettings": {

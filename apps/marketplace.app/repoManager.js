@@ -1,6 +1,6 @@
-let Workstore;
+let Store;
 let client;
-let workstore;
+let marketplace;
 
 const libstoreCache = {};
 
@@ -9,32 +9,32 @@ async function loadMainScreen() {
 
     libstoreCache["2.0.0"] ??= (await anura.import("anura.libstore@2.0.0"));
 
-    workstore = workstore ??= new libstoreCache["2.0.0"].Workstore((anura.net), {
+    marketplace = marketplace ??= new libstoreCache["2.0.0"].Store((anura.net), {
         onError: (appName, error) => {
             anura.notifications.add({
-                title: "Workstore Application",
-                description: `Workstore encountered an error while installing ${appName}: ${error}`,
+                title: "Marketplace",
+                description: `Marketplace encountered an error while installing ${appName}: ${error}`,
                 timeout: 5000,
             });
         },
         onDownloadStart: (appName) => {
             anura.notifications.add({
-                title: "Workstore Application",
-                description: `Workstore started downloading ${appName}`,
+                title: "Marketplace",
+                description: `Marketplace started downloading ${appName}`,
                 timeout: 5000,
             });
         },
         onDepInstallStart: (appName, libName) => {
             anura.notifications.add({
-                title: "Workstore Application",
-                description: `Workstore started installing dependency ${libName} for ${appName}`,
+                title: "Marketplace",
+                description: `Marketplace started installing dependency ${libName} for ${appName}`,
                 timeout: 5000,
             });
         },
         onComplete: (appName) => {
             anura.notifications.add({
-                title: "Workstore Application",
-                description: `Workstore finished installing ${appName}`,
+                title: "Marketplace",
+                description: `Marketplace finished installing ${appName}`,
                 timeout: 5000,
             });
         },
@@ -65,19 +65,18 @@ async function loadMainScreen() {
             e.preventDefault()
         }
         (async function() { // check repo status
-        
             try {
-                const workstoreRepo = await workstore.getRepo(repos[repo], repo);
-                console.log(workstoreRepo)
+                const marketplaceRepo = await marketplace.getRepo(repos[repo], repo);
+                console.log(marketplaceRepo)
                 repoItem.onclick = async function() {
-                    await loadappListScreen(workstoreRepo, workstoreRepo.version); 
+                    await loadappListScreen(marketplaceRepo, marketplaceRepo.version); 
                 }
             } catch (e) {
                 repoItem.innerText += " (Error)";
                 repoItem.style.color = "red";
                 repoItem.onclick = async function() {
                     anura.notifications.add({
-                        title: "Workstore Application",
+                        title: "Marketplace",
                         description: "The repository " + repo + " encountered an error: " + e,
                         timeout: 5000,
                     });
@@ -99,7 +98,7 @@ async function loadMainScreen() {
         newRepoButton.onclick = function() {
             if (!newRepoURL.value.endsWith("/")) {
                 anura.notifications.add({
-                    title: "Workstore",
+                    title: "Marketplace",
                     description: "URL does not end with a \"/\" character",
                     timeout: 5000,
                 });
@@ -109,7 +108,7 @@ async function loadMainScreen() {
             repoItem.innerText = newRepoName.value
             if (repos[newRepoName.value]) {
                 anura.notifications.add({
-                    title: "Workstore",
+                    title: "Marketplace",
                     description: "Repo is already added",
                     timeout: 5000,
                 });
