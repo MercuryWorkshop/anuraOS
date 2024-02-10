@@ -55,21 +55,21 @@ class ExternalApp extends App {
             );
             win.content.appendChild(iframe);
 
-            (iframe.contentWindow as any).anura = anura;
-            (iframe.contentWindow as any).AliceWM = AliceWM;
-            (iframe.contentWindow as any).ExternalApp = ExternalApp;
-            (iframe.contentWindow as any).instance = this;
-            (iframe.contentWindow as any).instanceWindow = win;
-
-            // AliceJS api
-            (iframe.contentWindow as any).h = window.h;
-            (iframe.contentWindow as any).stateful = window.stateful;
-            (iframe.contentWindow as any).handle = window.handle;
-            (iframe.contentWindow as any).useValue = window.useValue;
-            (iframe.contentWindow as any).css = window.css;
-            (iframe.contentWindow as any).rule = window.rule;
-            (iframe.contentWindow as any).styled = window.styled;
-            (iframe.contentWindow as any).useValue = window.useValue;
+            Object.assign(iframe.contentWindow as any, {
+                anura,
+                AliceWM,
+                ExternalApp,
+                instance: this,
+                instanceWindow: win,
+                h,
+                stateful,
+                handle,
+                use,
+                useValue,
+                css,
+                rule,
+                styled,
+            });
 
             const matter = document.createElement("link");
             matter.setAttribute("rel", "stylesheet");
