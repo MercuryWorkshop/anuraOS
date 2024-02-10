@@ -61,6 +61,14 @@ class ExternalApp extends App {
             (iframe.contentWindow as any).instance = this;
             (iframe.contentWindow as any).instanceWindow = win;
 
+            const matter = document.createElement("link");
+            matter.setAttribute("rel", "stylesheet");
+            matter.setAttribute("href", "/assets/matter.css");
+
+            iframe.contentWindow!.addEventListener("load", () => {
+                iframe.contentDocument!.head.appendChild(matter);
+            });
+
             return win;
         } else {
             // This type of application is reserved only for scripts meant for hacking anura internals
