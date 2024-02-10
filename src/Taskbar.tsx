@@ -3,24 +3,33 @@ class Taskbar {
         pinnedApps: App[];
         activeApps: App[];
         showBar: boolean;
-        radius: string;
+        rounded: boolean;
         time: string;
         bat_icon: string;
     } = stateful({
         pinnedApps: [],
         activeApps: [],
         showBar: false,
-        radius: "25px",
+        rounded: true,
         time: "",
         bat_icon: "battery_0_bar",
     });
+
+    rounded = styled.rule`
+        border-top-left-radius: 25px;
+        border-top-right-radius: 25px;
+    `;
 
     maximizedWins: WMWindow[] = [];
     dragged = null;
     insidedrag = false;
 
     element = (
-        <footer class={this.footerStyle(React.use(this.state.radius))}>
+        <footer
+            class={[
+                use(this.state.rounded, (rounded) => rounded && this.rounded),
+            ]}
+        >
             <div id="launcher-button-container">
                 <div
                     id="launcher-button"
@@ -86,15 +95,6 @@ class Taskbar {
             </div>
         </footer>
     );
-
-    footerStyle(radius: string) {
-        return styled.new`
-            self {
-                border-top-left-radius: ${radius};
-                border-top-right-radius: ${radius};
-            }
-        `;
-    }
 
     shortcut(app: App) {
         if (!app) return;
@@ -300,9 +300,9 @@ class Taskbar {
     updateRadius() {
         console.log(snappedWindows);
         if (this.maximizedWins.length > 0 || snappedWindows.length > 0) {
-            this.state.radius = "0px";
+            this.state.rounded = false;
         } else {
-            this.state.radius = "25px";
+            this.state.rounded = true;
         }
         console.log("max:", this.maximizedWins.length);
     }

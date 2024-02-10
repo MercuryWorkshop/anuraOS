@@ -131,7 +131,7 @@ class Launcher {
     `;
 
     element = (
-        <div css={this.css}>
+        <div class={this.css + " self"}>
             <div class="topSearchBar">
                 <img src="/assets/icons/googleg.png"></img>
                 <input
@@ -229,18 +229,20 @@ class Launcher {
     }
 }
 
-function LauncherShortcut(props: {
-    app: App;
-    onclick: () => void;
-}): HTMLDivElement {
+function LauncherShortcut(
+    this: DLComponent<{
+        app: App;
+        onclick: () => void;
+    }>,
+): HTMLDivElement {
     return (
-        <div class="app" on:click={props.onclick}>
+        <div class="app" on:click={this.onclick}>
             <input
                 class="app-shortcut-image showDialog"
                 type="image"
-                src={props.app.icon}
+                src={this.app.icon}
             />
-            <div class="app-shortcut-name">{props.app.name}</div>
+            <div class="app-shortcut-name">{this.app.name}</div>
         </div>
     );
 }
