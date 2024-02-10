@@ -160,7 +160,7 @@ class SettingsApp extends App {
     page = async () => (
         <div
             style="height:100%;width:100%;position:absolute"
-            class={`background ${settingsCSS}`}
+            class={`background ${settingsCSS} self`}
         >
             <div class="header">
                 <h2 color="white">Anura Settings</h2>
