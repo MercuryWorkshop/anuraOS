@@ -60,7 +60,7 @@ class RecoveryApp extends App {
     `;
 
     page = async () => (
-        <div class={this.css}>
+        <div class={`${this.css} self`}>
             <div class="recovery-app-logo">
                 <div class="recovery-logo-img" title="Recovery"></div>
             </div>
@@ -111,23 +111,36 @@ class RecoveryApp extends App {
                     Anura Shell
                 </button>
                 {/* Invalidate Cache Button */}
-                <button
-                    style="background: #1B5E20;"
-                    title="Clear the service worker cache. This requires an internet connection on your next boot."
+                <div
                     if={anura.settings.get("use-sw-cache")}
-                    on:click={() => {
-                        const sh = new anura.fs.Shell();
-                        sh.rm("/anura_files", { recursive: true });
-                        anura.notifications.add({
-                            title: "Cache invalidated",
-                            description:
-                                "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
-                            timeout: 2000,
-                        });
-                    }}
-                >
-                    Invalidate Cache
-                </button>
+                    then={
+                        <button
+                            style="background: #1B5E20;"
+                            title="Clear the service worker cache. This requires an internet connection on your next boot."
+                            on:click={() => {
+                                const sh = new anura.fs.Shell();
+                                sh.rm("/anura_files", { recursive: true });
+                                anura.notifications.add({
+                                    title: "Cache invalidated",
+                                    description:
+                                        "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
+                                    timeout: 2000,
+                                });
+                            }}
+                        >
+                            Invalidate Cache
+                        </button>
+                    }
+                    else={
+                        <button
+                            style="background: #1B5E20; opacity: 0.5; cursor: not-allowed;"
+                            title="The cache is disabled, so you cannot invalidate it."
+                            disabled
+                        >
+                            Invalidate Cache
+                        </button>
+                    }
+                ></div>
 
                 <button
                     style="background: #1B5E20"
