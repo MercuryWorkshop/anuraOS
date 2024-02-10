@@ -22,6 +22,7 @@ class Anura {
     notifications: NotificationService;
     x86hdd: FakeFile;
     net: Networking;
+    ui = new AnuraUI();
 
     private constructor(
         fs: FilerFS,

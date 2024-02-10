@@ -36,6 +36,15 @@
                 alert(libtest.hello_world())
             })
 
+            let { awesome_component, AnuraVersion } = await anura.ui.use([
+                "awesome_component",
+                "AnuraVersion"
+            ])
+
+            document.body.appendChild(awesome_component.bind({ name: "libtest" })())
+
+            document.body.appendChild(AnuraVersion.bind({})())
+
             if (!debug) {
                 let debugButton = document.createElement("button")
                 debugButton.innerText = "Restart in debug mode"

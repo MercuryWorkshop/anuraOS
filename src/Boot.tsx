@@ -70,6 +70,8 @@ window.addEventListener("load", async () => {
         }
     }
 
+    anura.ui.init();
+
     if (!anura.settings.get("oobe-complete")) {
         // This is a new install, so an old version containing the old extension
         // handler system can't be installed. We can skip the migration.
