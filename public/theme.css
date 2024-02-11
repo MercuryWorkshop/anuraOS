@@ -1,6 +1,8 @@
 :root {
     --material-bg: #202124;
     --material-border: #444;
+    --matter-surface-rgb: 32, 33, 36;
+    --matter-onsurface-rgb: 255, 255, 255;
 }
 
 .background {

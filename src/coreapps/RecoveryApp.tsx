@@ -49,14 +49,14 @@ class RecoveryApp extends App {
             margin: 0;
         }
 
-        .recovery-app-content button {
+        /* .recovery-app-content button {
             background: var(--material-bg);
             color: white;
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
-        }
+        } */
     `;
 
     page = async () => (
@@ -69,6 +69,7 @@ class RecoveryApp extends App {
                 {/* Powerwash Button */}
                 <button
                     style="background: #B71C1C;"
+                    class="matter-button-contained"
                     title="Reset your Anura install to factory settings. This will delete all of your data."
                     on:click={async () => {
                         if (
@@ -94,6 +95,7 @@ class RecoveryApp extends App {
                 {/* Anura Shell Button */}
                 <button
                     style="background: #2f2f2f;"
+                    class="matter-button-contained"
                     title="Open a shell to help recover your system."
                     on:click={() => {
                         const term = anura.apps["anura.ashell"];
@@ -116,6 +118,7 @@ class RecoveryApp extends App {
                     then={
                         <button
                             style="background: #1B5E20;"
+                            class="matter-button-contained"
                             title="Clear the service worker cache. This requires an internet connection on your next boot."
                             on:click={() => {
                                 const sh = new anura.fs.Shell();
@@ -133,7 +136,8 @@ class RecoveryApp extends App {
                     }
                     else={
                         <button
-                            style="background: #1B5E20; opacity: 0.5; cursor: not-allowed;"
+                            style="background: #1B5E20; cursor: not-allowed;"
+                            class="matter-button-contained"
                             title="The cache is disabled, so you cannot invalidate it."
                             disabled
                         >
@@ -144,6 +148,7 @@ class RecoveryApp extends App {
 
                 <button
                     style="background: #1B5E20"
+                    class="matter-button-contained"
                     title="Return to normal mode"
                     on:click={() => {
                         window.location.reload();
