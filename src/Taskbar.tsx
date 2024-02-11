@@ -57,17 +57,7 @@ class Taskbar {
                     for={use(this.state.pinnedApps)}
                     do={this.shortcut.bind(this)}
                 ></ul>
-                <div
-                    if={use(this.state.showBar)}
-                    class={styled.new`
-                        self {
-                            border: 2px solid white;
-                            height: 70%;
-                            border-radius: 1px;
-                            margin: 1em;
-                        }
-                    `}
-                ></div>
+                <div if={use(this.state.showBar)} class="splitBar"></div>
 
                 <ul
                     for={use(this.state.activeApps)}
