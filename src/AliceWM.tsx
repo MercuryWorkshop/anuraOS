@@ -706,7 +706,7 @@ class WMWindow {
                         document.body.clientWidth;
 
                     bar.leftWindow.element.classList.add("remaxtransitionx");
-                    bar.splitWindowsAround(width / 2 - 4);
+                    bar.splitWindowsAround(width / 2);
 
                     setTimeout(() => {
                         bar.leftWindow.element.classList.remove(
@@ -739,7 +739,7 @@ class WMWindow {
                         document.body.clientWidth;
 
                     bar.leftWindow.element.classList.add("remaxtransitionx");
-                    bar.splitWindowsAround(width / 2 - 4);
+                    bar.splitWindowsAround(width / 2);
 
                     setTimeout(() => {
                         bar.leftWindow.element.classList.remove(
@@ -793,7 +793,7 @@ class WMWindow {
                 snappedWindows.find((x) => x.direction == "right")!.window,
             );
 
-            bar.splitWindowsAround(width / 2 - 4);
+            bar.splitWindowsAround(width / 2);
 
             setTimeout(() => {
                 bar.leftWindow.element.classList.remove("remaxtransitionx");
@@ -878,7 +878,7 @@ class WMWindow {
         let scaledHeight = height;
 
         if (side != "top") {
-            scaledWidth = width / 2 + 4;
+            scaledWidth = width / 2;
         }
         scaledHeight = height - 49;
 
@@ -966,7 +966,8 @@ class WMSplitBar {
 
     handleDrag(evt: MouseEvent) {
         this.splitWindowsAround(
-            this.originalLeft + evt.clientX - this.mouseLeft,
+            // Add 4 to account for the center of the bar
+            this.originalLeft + evt.clientX - this.mouseLeft + 4,
         );
     }
 
@@ -975,11 +976,12 @@ class WMSplitBar {
             window.innerWidth ||
             document.documentElement.clientWidth ||
             document.body.clientWidth;
-        this.element.style.left = x + "px";
-        this.leftWindow.element.style.width = x + "px";
+        // Subtract 4 to account for the center of the bar
+        this.element.style.left = x - 4 + "px";
+        this.leftWindow.element.style.width = x - 4 + "px";
         this.leftWindow.element.style.left = "0px";
         this.rightWindow.element.style.width = width - x - 4 + "px";
-        this.rightWindow.element.style.left = x + 4 + "px";
+        this.rightWindow.element.style.left = x + "px";
     }
 
     fadeIn() {
