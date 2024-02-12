@@ -130,11 +130,10 @@ class AnuraNotification {
         notif.id = id;
 
         const callback = this.callback;
-        const thisNotif = this;
 
-        notif.onclick = function () {
+        notif.onclick = () => {
             deleteNotif();
-            callback(thisNotif);
+            callback(this);
         };
 
         // adding the elements to the list
