@@ -44,11 +44,8 @@ window.addEventListener("load", async () => {
         Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
     } catch (e) {
         conf = JSON.parse(
-            await new Promise((r) =>
-                Filer.fs.readFile(
-                    "/config_cached.json",
-                    (_: any, b: Uint8Array) => r(new TextDecoder().decode(b)),
-                ),
+            new TextDecoder().decode(
+                await Filer.fs.promises.readFile("/config_cached.json"),
             ),
         );
     }

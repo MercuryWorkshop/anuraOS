@@ -62,12 +62,9 @@ class Settings {
     }
     async set(prop: string, val: any) {
         this.cache[prop] = val;
-        return new Promise((r) =>
-            this.fs.writeFile(
-                "/anura_settings.json",
-                JSON.stringify(this.cache),
-                r,
-            ),
+        await this.fs.promises.writeFile(
+            "/anura_settings.json",
+            JSON.stringify(this.cache),
         );
     }
 }
