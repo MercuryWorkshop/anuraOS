@@ -1,4 +1,4 @@
-const wallpaperCSS = styled.new`
+const wallpaperCSS = css`
     .self {
         color: white;
     }

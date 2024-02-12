@@ -252,7 +252,7 @@ class V86Backend {
     screen_container = (
         <div
             id="screen_container"
-            class={styled.new`
+            class={css`
                 self {
                     background-color: #000;
                 }

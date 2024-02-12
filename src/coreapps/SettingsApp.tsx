@@ -1,4 +1,4 @@
-const settingsCSS = styled.new`
+const settingsCSS = css`
     .self {
         color: white;
     }

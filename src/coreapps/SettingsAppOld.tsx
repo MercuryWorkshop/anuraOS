@@ -3,7 +3,7 @@ class SettingsAppOld extends App {
     package = "anura.settings";
     icon = "/assets/icons/settings.png";
 
-    css = styled.new`
+    css = css`
         .self {
             color: white;
         }
@@ -335,7 +335,7 @@ class SettingsAppOld extends App {
                         );
                         const screencontainer = (
                             <div
-                                class={styled.new`
+                                class={css`
                                     canvas {
                                         display: none;
                                     }
@@ -531,7 +531,7 @@ class SettingsAppOld extends App {
                                     </h3>
                                     <img
                                         src="/assets/oobe/spinner.gif"
-                                        class={styled.new`
+                                        class={css`
                                             self {
                                                 width: 10%;
                                                 aspect-ratio: 1/1;

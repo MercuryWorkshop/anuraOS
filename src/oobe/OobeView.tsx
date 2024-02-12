@@ -140,7 +140,7 @@ function OobeView(): HTMLElement {
         document.getElementById("oobe-top")!.remove();
     };
 
-    this.css = styled.new`
+    this.css = css`
         * {
             color: ${use(this.text)};
             transition: all 1s;

@@ -15,7 +15,7 @@ class Taskbar {
         bat_icon: "battery_0_bar",
     });
 
-    rounded = styled.rule`
+    rounded = rule`
         border-top-left-radius: 25px;
         border-top-right-radius: 25px;
         width: calc(100% - 2px);

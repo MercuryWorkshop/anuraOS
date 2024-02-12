@@ -1,7 +1,7 @@
 class Launcher {
     private search: HTMLInputElement | null;
 
-    css = styled.new`
+    css = css`
         self {
             position: absolute;
             width: min(70%, 35em);
@@ -113,7 +113,7 @@ class Launcher {
         }
     `;
 
-    clickoffCheckerCss = styled.new`
+    clickoffCheckerCss = css`
         self {
             display: none;
         }
