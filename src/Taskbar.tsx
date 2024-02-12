@@ -18,6 +18,9 @@ class Taskbar {
     rounded = styled.rule`
         border-top-left-radius: 25px;
         border-top-right-radius: 25px;
+        width: calc(100% - 2px);
+        border-left: 1px solid rgba(0, 0, 0, 0.3);
+        border-right: 1px solid rgba(0, 0, 0, 0.3);
     `;
 
     maximizedWins: WMWindow[] = [];

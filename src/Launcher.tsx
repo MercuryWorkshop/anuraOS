@@ -11,7 +11,7 @@ class Launcher {
             box-shadow: inset 0 0 0 1px #3e3e3e;
 
             border-radius: 1em;
-            bottom: 4.5em;
+            bottom: 60px;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             display: flex;
@@ -32,23 +32,6 @@ class Launcher {
             z-index: 9999;
             transition: all 0.1s ease-in;
             visibility: visible;
-        }
-
-        .clickoffChecker {
-            display: none;
-        }
-
-        .clickoffChecker.active {
-            position: absolute;
-            width: 100%;
-            /* TODO: make this not be a magic number later with css variables */
-            height: calc(100% - 51px);
-            z-index: 9998;
-            opacity: 0;
-            top: 0;
-            left: 0;
-            bottom: 49px;
-            display: block;
         }
 
         .topSearchBar {
@@ -130,6 +113,33 @@ class Launcher {
         }
     `;
 
+    clickoffCheckerCss = styled.new`
+        self {
+            display: none;
+        }
+
+        self.active {
+            position: absolute;
+            width: 100%;
+            height: calc(100%);
+            display: block;
+        }
+    `;
+
+    // self.active {
+    //     position: absolute;
+    //     width: 100%;
+    //     /* TODO: make this not be a magic number later with css variables */
+    //     height: calc(100% - 51px);
+    //     z-index: 9998;
+    //     opacity: 0;
+    //     top: 0;
+    //     left: 0;
+    //     bottom: 49px;
+    //     display: block;
+    // }
+    // `;
+
     element = (
         <div class={this.css + " self"}>
             <div class="topSearchBar">
@@ -147,18 +157,7 @@ class Launcher {
     clickoffChecker = (
         <div
             id="clickoffChecker"
-            class={styled.new`
-                self {
-                    display: none;
-                }
-
-                self.active {
-                    position: absolute;
-                    width: 100%;
-                    height: calc(100%);
-                    display: block;
-                }
-            `}
+            class={`self ${this.clickoffCheckerCss}`}
         ></div>
     );
 
@@ -239,6 +238,7 @@ function LauncherShortcut(
         <div class="app" on:click={this.onclick}>
             <input
                 class="app-shortcut-image showDialog"
+                style="width: 40px; height: 40px"
                 type="image"
                 src={this.app.icon}
             />

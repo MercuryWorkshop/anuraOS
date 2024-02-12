@@ -50,7 +50,7 @@
 #snapSplitBar {
     background-color: rgba(0, 0, 0, 0.1);
     top: 0;
-    height: calc(100% - 61px);
+    height: calc(100% - 49px);
     width: 8px;
     position: fixed;
     transition: background 0.2s;
