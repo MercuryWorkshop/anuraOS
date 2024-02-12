@@ -1,5 +1,98 @@
-function OobeView(): HTMLElement {
-    const steps = [
+class OobeView {
+    state = stateful({
+        color: "var(--oobe-bg)",
+        text: "black",
+        step: 0,
+    });
+
+    css = styled.new`
+        * {
+            color: ${use(this.state.text)};
+            transition: all 1s;
+        }
+
+        self {
+            background-color: ${use(this.state.color)};
+            z-index: 9996;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            flex-wrap: wrap;
+        }
+
+        #content {
+            padding: 79.6px 40px 23.8px 40px;
+            width: 1040px;
+            height: 680px;
+            box-sizing: border-box;
+        }
+
+        #content .screen {
+            width: 100%;
+            height: 100%;
+        }
+
+        .screen h1 {
+            margin: 48px 0 0 0;
+        }
+
+        .screen #subtitle {
+            margin: 16px 0 64px 0;
+            font-size: 24px;
+        }
+
+        .screen #gridContent {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+        }
+
+        .screen #gridContent #topButtons {
+            grid-column: 1 / span 1;
+            grid-row: 1 / span 1;
+        }
+
+        .screen #gridContent #bottomButtons {
+            align-self: end;
+            justify-self: start;
+            grid-column: 1 / span 1;
+            grid-row: 2 / span 1;
+        }
+
+        .screen .preferredButton {
+            background-color: rgb(26, 115, 232);
+            border-radius: 16px;
+            border-style: none;
+            color: white;
+            height: 2em;
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+
+        .screen button {
+            background-color: var(--oobe-bg);
+            border-radius: 16px;
+            border: 1px solid gray;
+            color: rgb(26, 115, 232);
+            height: 2em;
+            margin: 0.5em;
+            padding-left: 1em;
+            padding-right: 1em;
+        }
+
+        #welcome.screen #animation {
+            grid-column: 2 / span 1;
+            grid-row: 1 / span 2;
+            margin-left: auto;
+        }
+    `;
+
+    steps = [
         {
             elm: (
                 <div class="screen" id="welcome">
@@ -107,9 +200,8 @@ function OobeView(): HTMLElement {
                 </div>
             ),
             on: async () => {
-                console.log("Finalizing OOBE");
-                this.color = "var(--material-bg)";
-                this.text = "whitesmoke";
+                this.state.color = "var(--material-bg)";
+                this.state.text = "whitesmoke";
                 if (!anura.settings.get("x86-disabled")) {
                     await installx86();
                 }
@@ -121,119 +213,27 @@ function OobeView(): HTMLElement {
         },
     ];
 
-    this.text ??= "black";
-    this.color ??= "var(--oobe-bg)";
-    this.step ??= 0;
-
-    this.nextStep = function () {
-        this.step++;
-        const step = steps[this.step]!;
-        console.log("advancing step", this.step);
-        console.log(step);
-        if (step.on) step.on();
-    };
-
-    this.complete = function () {
-        anura.settings.set("oobe-complete", true);
-
-        document.dispatchEvent(new Event("anura-login-completed"));
-        document.getElementById("oobe-top")!.remove();
-    };
-
-    this.css = css`
-        * {
-            color: ${use(this.text)};
-            transition: all 1s;
-        }
-
-        self {
-            background-color: ${use(this.color)};
-            z-index: 9996;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-            flex-wrap: wrap;
-        }
-
-        #content {
-            padding: 79.6px 40px 23.8px 40px;
-            width: 1040px;
-            height: 680px;
-            box-sizing: border-box;
-        }
-
-        #content .screen {
-            width: 100%;
-            height: 100%;
-        }
-
-        .screen h1 {
-            margin: 48px 0 0 0;
-        }
-
-        .screen #subtitle {
-            margin: 16px 0 64px 0;
-            font-size: 24px;
-        }
-
-        .screen #gridContent {
-            display: grid;
-            grid-template-columns: auto minmax(0, 1fr);
-            grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-        }
-
-        .screen #gridContent #topButtons {
-            grid-column: 1 / span 1;
-            grid-row: 1 / span 1;
-        }
-
-        .screen #gridContent #bottomButtons {
-            align-self: end;
-            justify-self: start;
-            grid-column: 1 / span 1;
-            grid-row: 2 / span 1;
-        }
-
-        .screen .preferredButton {
-            background-color: rgb(26, 115, 232);
-            border-radius: 16px;
-            border-style: none;
-            color: white;
-            height: 2em;
-            padding-left: 1em;
-            padding-right: 1em;
-        }
-
-        .screen button {
-            background-color: var(--oobe-bg);
-            border-radius: 16px;
-            border: 1px solid gray;
-            color: rgb(26, 115, 232);
-            height: 2em;
-            margin: 0.5em;
-            padding-left: 1em;
-            padding-right: 1em;
-        }
-
-        #welcome.screen #animation {
-            grid-column: 2 / span 1;
-            grid-row: 1 / span 2;
-            margin-left: auto;
-        }
-    `;
-
-    return (
-        <div id="oobe-top">
-            <div id="content">
-                {use(this.step, (step) => steps[step]!.elm)}{" "}
+    element = (
+        <div class={`${this.css} self`}>
+            <div id="oobe-top">
+                <div id="content">
+                    {use(this.state.step, (step) => this.steps[step]!.elm)}
+                </div>
             </div>
         </div>
     );
+
+    nextStep() {
+        this.state.step++;
+        const step = this.steps[this.state.step]!;
+        if (step.on) step.on();
+    }
+    complete() {
+        anura.settings.set("oobe-complete", true);
+
+        document.dispatchEvent(new Event("anura-login-completed"));
+        this.element.remove();
+    }
 }
 
 async function installx86() {

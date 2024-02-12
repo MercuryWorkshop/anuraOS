@@ -24,6 +24,7 @@ channel.addEventListener("message", (msg) => {
 const taskbar = new Taskbar();
 const launcher = new Launcher();
 const contextMenu = new ContextMenu();
+const oobeview = new OobeView();
 const alttab = new AltTabView();
 
 let anura: Anura;
@@ -124,7 +125,7 @@ document.addEventListener("anura-boot-completed", async () => {
     if (anura.settings.get("oobe-complete")) {
         document.dispatchEvent(new Event("anura-login-completed"));
     } else {
-        document.body.appendChild(<OobeView step={0} />);
+        document.body.appendChild(oobeview.element);
     }
 });
 
