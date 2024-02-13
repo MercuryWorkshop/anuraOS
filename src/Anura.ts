@@ -18,6 +18,7 @@ class Anura {
     x86: null | V86Backend;
     settings: Settings;
     fs: FilerFS;
+    fsNext: AnuraFilesystem;
     config: any;
     notifications: NotificationService;
     x86hdd: FakeFile;
@@ -26,12 +27,14 @@ class Anura {
 
     private constructor(
         fs: FilerFS,
+        fsNext: AnuraFilesystem,
         settings: Settings,
         config: any,
         hdd: FakeFile,
         net: Networking,
     ) {
         this.fs = fs;
+        this.fsNext = fsNext;
         this.settings = settings;
         this.config = config;
         this.x86hdd = hdd;
@@ -48,12 +51,16 @@ class Anura {
             provider: new Filer.FileSystem.providers.IndexedDB(),
         });
 
+        const filerProvider = new FilerAFSProvider(Filer.fs);
+
+        const fsNext = new AnuraFilesystem([filerProvider]);
+
         const settings = await Settings.new(fs, config.defaultsettings);
 
         const hdd = await InitV86Hdd();
 
         const net = new Networking(settings.get("wisp-url"));
-        const anuraPartial = new Anura(fs, settings, config, hdd, net);
+        const anuraPartial = new Anura(fs, fsNext, settings, config, hdd, net);
         return anuraPartial;
     }
 
