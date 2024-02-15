@@ -60,8 +60,8 @@ window.addEventListener("load", async () => {
         ) {
             await anura.settings.set("milestone", milestone);
             await anura.settings.set("instancemilestone", instancemilestone);
-            navigator.serviceWorker.controller!.postMessage({
-                anura_target: "anura.cache.invalidate",
+            await new Filer.fs.Shell().promises.rm("/anura_files", {
+                recursive: true,
             });
             console.log("invalidated cache");
             window.location.reload();
