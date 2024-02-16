@@ -2,7 +2,7 @@ var currentlySelected = [];
 var clipboard = [];
 var removeAfterPaste = false;
 
-window.fs = parent.anura.fsNext;
+window.fs = parent.anura.fs;
 window.Buffer = Filer.Buffer;
 let sh = new anura.fs.Shell();
 

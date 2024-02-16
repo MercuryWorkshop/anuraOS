@@ -1,7 +1,7 @@
 class Settings {
     private cache: { [key: string]: any } = {};
-    fs: FilerFS;
-    private constructor(fs: FilerFS, inital: { [key: string]: any }) {
+    fs: AnuraFilesystem;
+    private constructor(fs: AnuraFilesystem, inital: { [key: string]: any }) {
         this.fs = fs;
         this.cache = inital;
 
@@ -21,7 +21,10 @@ class Settings {
         });
     }
 
-    static async new(fs: FilerFS, defaultsettings: { [key: string]: any }) {
+    static async new(
+        fs: AnuraFilesystem,
+        defaultsettings: { [key: string]: any },
+    ) {
         const initial = defaultsettings;
 
         if (!initial["wisp-url"]) {
