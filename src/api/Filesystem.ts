@@ -3,6 +3,13 @@
 // but it is important to get the rest of the
 // filesystem API working first.
 
+const AnuraFDSymbol = Symbol.for("AnuraFD");
+
+type AnuraFD = {
+    fd: number;
+    [AnuraFDSymbol]: string;
+};
+
 abstract class AnuraFSOperations<TStats> {
     /*
      * Synchronous FS operations
@@ -15,9 +22,9 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract ftruncate(
-        fd: number,
+        fd: AnuraFD,
         len: number,
-        callback?: (err: Error | null, fd: number) => void,
+        callback?: (err: Error | null, fd: AnuraFD) => void,
     ): void;
 
     abstract truncate(
@@ -32,7 +39,7 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract fstat(
-        fd: number,
+        fd: AnuraFD,
         callback?: (err: Error | null, stats: TStats) => void,
     ): void;
 
@@ -116,19 +123,19 @@ abstract class AnuraFSOperations<TStats> {
         callback?: (err: Error | null, files: string[]) => void,
     ): void;
 
-    abstract close(fd: number, callback?: (err: Error | null) => void): void;
+    abstract close(fd: AnuraFD, callback?: (err: Error | null) => void): void;
 
     abstract open(
         path: string,
         flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
         mode: number,
-        callback?: (err: Error | null, fd: number) => void,
+        callback?: (err: Error | null, fd: AnuraFD) => void,
     ): void;
 
     abstract open(
         path: string,
         flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
-        callback?: (err: Error | null, fd: number) => void,
+        callback?: (err: Error | null, fd: AnuraFD) => void,
     ): void;
 
     abstract utimes(
@@ -139,7 +146,7 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract futimes(
-        fd: number,
+        fd: AnuraFD,
         atime: number | Date,
         mtime: number | Date,
         callback?: (err: Error | null) => void,
@@ -153,7 +160,7 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract fchown(
-        fd: number,
+        fd: AnuraFD,
         uid: number,
         gid: number,
         callback?: (err: Error | null) => void,
@@ -166,15 +173,15 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract fchmod(
-        fd: number,
+        fd: AnuraFD,
         mode: number,
         callback?: (err: Error | null) => void,
     ): void;
 
-    abstract fsync(fd: number, callback?: (err: Error | null) => void): void;
+    abstract fsync(fd: AnuraFD, callback?: (err: Error | null) => void): void;
 
     abstract write(
-        fd: number,
+        fd: AnuraFD,
         buffer: Uint8Array,
         offset: number,
         length: number,
@@ -183,7 +190,7 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract read(
-        fd: number,
+        fd: AnuraFD,
         buffer: Uint8Array,
         offset: number,
         length: number,
@@ -237,7 +244,7 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract fsetxattr(
-        fd: number,
+        fd: AnuraFD,
         name: string,
         value: string | object,
         flag: "CREATE" | "REPLACE",
@@ -245,7 +252,7 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract fsetxattr(
-        fd: number,
+        fd: AnuraFD,
         name: string,
         value: string | object,
         callback?: (err: Error | null) => void,
@@ -258,7 +265,7 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract fgetxattr(
-        fd: number,
+        fd: AnuraFD,
         name: string,
         callback?: (err: Error | null, value: string | object) => void,
     ): void;
@@ -270,7 +277,7 @@ abstract class AnuraFSOperations<TStats> {
     ): void;
 
     abstract fremovexattr(
-        fd: number,
+        fd: AnuraFD,
         name: string,
         callback?: (err: Error | null) => void,
     ): void;
@@ -301,7 +308,7 @@ abstract class AnuraFSOperations<TStats> {
             path: string,
             flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
             mode?: number,
-        ): Promise<number>;
+        ): Promise<AnuraFD>;
         readdir(
             path: string,
             options?: string | { encoding: string; withFileTypes: boolean },
@@ -362,22 +369,329 @@ abstract class AFSProvider<TStats> extends AnuraFSOperations<TStats> {
     abstract version: string;
 }
 
-// @ts-ignore - This is still being implemented.
 class FilerAFSProvider extends AFSProvider<any> {
     domain = "/";
     name = "Filer";
     version = "1.0.0";
 
+    fs: FilerFS;
+
     constructor(fs: FilerFS) {
         super();
-        const fsproto = Object.getPrototypeOf(fs);
-        for (const key in fsproto) {
-            if (typeof fsproto[key] === "function") {
-                // @ts-ignore - This is still being implemented.
-                this[key] = fsproto[key].bind(fs);
-            }
+        this.fs = fs;
+    }
+
+    rename(
+        oldPath: string,
+        newPath: string,
+        callback?: (err: Error | null) => void,
+    ) {
+        this.fs.rename(oldPath, newPath, callback);
+    }
+
+    ftruncate(
+        fd: AnuraFD,
+        len: number,
+        callback?: (err: Error | null, fd: AnuraFD) => void,
+    ) {
+        this.fs.ftruncate(fd.fd, len, (err, fd) =>
+            callback!(err, { fd, [AnuraFDSymbol]: this.domain }),
+        );
+    }
+
+    truncate(
+        path: string,
+        len: number,
+        callback?: (err: Error | null) => void,
+    ) {
+        this.fs.truncate(path, len, callback);
+    }
+
+    stat(path: string, callback?: (err: Error | null, stats: any) => void) {
+        this.fs.stat(path, callback);
+    }
+
+    fstat(
+        fd: AnuraFD,
+        callback?: ((err: Error | null, stats: any) => void) | undefined,
+    ): void {
+        this.fs.fstat(fd.fd, callback);
+    }
+
+    lstat(path: string, callback?: (err: Error | null, stats: any) => void) {
+        this.fs.lstat(path, callback);
+    }
+
+    /** @deprecated fs.exists() is an anachronism and exists only for historical reasons. */
+    exists(path: string, callback?: (exists: boolean) => void) {
+        this.fs.exists(path, callback);
+    }
+
+    link(
+        srcPath: string,
+        dstPath: string,
+        callback?: (err: Error | null) => void,
+    ) {
+        this.fs.link(srcPath, dstPath, callback);
+    }
+
+    symlink(path: string, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.symlink(path, ...rest);
+    }
+
+    readlink(
+        path: string,
+        callback?: (err: Error | null, linkContents: string) => void,
+    ) {
+        this.fs.readlink(path, callback);
+    }
+
+    unlink(path: string, callback?: (err: Error | null) => void) {
+        this.fs.unlink(path, callback);
+    }
+
+    mknod(path: string, mode: number, callback?: (err: Error | null) => void) {
+        this.fs.mknod(path, mode, callback);
+    }
+
+    rmdir(path: string, callback?: (err: Error | null) => void) {
+        this.fs.rmdir(path, callback);
+    }
+
+    mkdir(path: string, ...rest: any[]) {
+        this.fs.mkdir(path, ...rest);
+    }
+
+    access(path: string, ...rest: any[]) {
+        this.fs.access(path, ...rest);
+    }
+
+    mkdtemp(...args: any[]) {
+        // Temp directories should remain in the root filesystem for now
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.mkdtemp(...args);
+    }
+
+    readdir(path: string, ...rest: any[]) {
+        this.fs.readdir(path, ...rest);
+    }
+
+    close(
+        fd: AnuraFD,
+        callback?: ((err: Error | null) => void) | undefined,
+    ): void {
+        this.fs.close(fd.fd, callback);
+    }
+
+    open(
+        path: string,
+        flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+        mode: number,
+        callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
+    ): void;
+    open(
+        path: string,
+        flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+        callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
+    ): void;
+    open(
+        path: string,
+        flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+        mode?: unknown,
+        callback?: unknown,
+    ): void {
+        if (typeof mode === "number") {
+            this.fs.open(path, flags, mode, (err, fd) =>
+                (callback as (err: Error | null, fd: AnuraFD) => void)!(err, {
+                    fd,
+                    [AnuraFDSymbol]: this.domain,
+                }),
+            );
+        } else {
+            this.fs.open(path, flags, (err, fd) =>
+                (mode as (err: Error | null, fd: AnuraFD) => void)!(err, {
+                    fd,
+                    [AnuraFDSymbol]: this.domain,
+                }),
+            );
         }
     }
+
+    utimes(
+        path: string,
+        atime: number | Date,
+        mtime: number | Date,
+        callback?: (err: Error | null) => void,
+    ) {
+        this.fs.utimes(path, atime, mtime, callback);
+    }
+
+    futimes(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.futimes(fd.fd, ...rest);
+    }
+
+    chown(
+        path: string,
+        uid: number,
+        gid: number,
+        callback?: (err: Error | null) => void,
+    ) {
+        this.fs.chown(path, uid, gid, callback);
+    }
+
+    fchown(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.fchown(fd.fd, ...rest);
+    }
+
+    chmod(path: string, mode: number, callback?: (err: Error | null) => void) {
+        this.fs.chmod(path, mode, callback);
+    }
+
+    fchmod(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.fchmod(fd.fd, ...rest);
+    }
+
+    fsync(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.fsync(fd.fd, ...rest);
+    }
+
+    write(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.write(fd.fd, ...rest);
+    }
+
+    read(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.read(fd.fd, ...rest);
+    }
+
+    readFile(
+        path: string,
+        callback?: (err: Error | null, data: Uint8Array) => void,
+    ) {
+        this.fs.readFile(path, callback);
+    }
+
+    writeFile(path: string, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.writeFile(path, ...rest);
+    }
+
+    appendFile(
+        path: string,
+        data: Uint8Array,
+        callback?: (err: Error | null) => void,
+    ) {
+        this.fs.appendFile(path, data, callback);
+    }
+
+    setxattr(path: string, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.setxattr(path, ...rest);
+    }
+
+    fsetxattr(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.fsetxattr(fd.fd, ...rest);
+    }
+
+    getxattr(
+        path: string,
+        name: string,
+        callback?: (err: Error | null, value: string | object) => void,
+    ) {
+        this.fs.getxattr(path, name, callback);
+    }
+
+    fgetxattr(
+        fd: AnuraFD,
+        name: string,
+        callback?: (err: Error | null, value: string | object) => void,
+    ) {
+        this.fs.fgetxattr(fd.fd, name, callback);
+    }
+
+    removexattr(
+        path: string,
+        name: string,
+        callback?: (err: Error | null) => void,
+    ) {
+        this.fs.removexattr(path, name, callback);
+    }
+
+    fremovexattr(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.fs.fremovexattr(fd.fd, ...rest);
+    }
+
+    promises = {
+        appendFile: (
+            path: string,
+            data: Uint8Array,
+            options: { encoding: string; mode: number; flag: string },
+        ) => this.fs.promises.appendFile(path, data, options),
+        access: (path: string, mode?: number) =>
+            this.fs.promises.access(path, mode),
+        chown: (path: string, uid: number, gid: number) =>
+            this.fs.promises.chown(path, uid, gid),
+        chmod: (path: string, mode: number) =>
+            this.fs.promises.chmod(path, mode),
+        getxattr: (path: string, name: string) =>
+            this.fs.promises.getxattr(path, name),
+        link: (srcPath: string, dstPath: string) =>
+            this.fs.promises.link(srcPath, dstPath),
+        lstat: (path: string) => this.fs.promises.lstat(path),
+        mkdir: (path: string, mode?: number) =>
+            this.fs.promises.mkdir(path, mode),
+        mkdtemp: (prefix: string, options?: { encoding: string }) =>
+            this.fs.promises.mkdtemp(prefix, options),
+        mknod: (path: string, mode: number) =>
+            this.fs.promises.mknod(path, mode),
+        open: async (
+            path: string,
+            flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+            mode?: number,
+        ) => ({
+            fd: await this.fs.promises.open(path, flags, mode),
+            [AnuraFDSymbol]: this.domain,
+        }),
+        readdir: (
+            path: string,
+            options?: { encoding: string; withFileTypes: boolean },
+        ) => this.fs.promises.readdir(path, options),
+        readFile: (path: string) => this.fs.promises.readFile(path),
+        readlink: (path: string) => this.fs.promises.readlink(path),
+        removexattr: (path: string, name: string) =>
+            this.fs.promises.removexattr(path, name),
+        rename: (oldPath: string, newPath: string) =>
+            this.fs.promises.rename(oldPath, newPath),
+        rmdir: (path: string) => this.fs.promises.rmdir(path),
+        setxattr: (
+            path: string,
+            name: string,
+            value: string | object,
+            flag?: "CREATE" | "REPLACE",
+        ) => this.fs.promises.setxattr(path, name, value, flag),
+        stat: (path: string) => this.fs.promises.stat(path),
+        symlink: (srcPath: string, dstPath: string, type?: string) =>
+            this.fs.promises.symlink(srcPath, dstPath, type),
+        truncate: (path: string, len: number) =>
+            this.fs.promises.truncate(path, len),
+
+        unlink: (path: string) => this.fs.promises.unlink(path),
+        utimes: (path: string, atime: number | Date, mtime: number | Date) =>
+            this.fs.promises.utimes(path, atime, mtime),
+        writeFile: (
+            path: string,
+            data: Uint8Array | string,
+            options: { encoding: string; mode: number; flag: string },
+        ) => this.fs.promises.writeFile(path, data, options),
+    };
 }
 
 /**
@@ -433,6 +747,10 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         return provider!;
     }
 
+    processFD(fd: AnuraFD): AFSProvider<any> {
+        return this.processPath(fd[AnuraFDSymbol]);
+    }
+
     rename(
         oldPath: string,
         newPath: string,
@@ -442,13 +760,11 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
     }
 
     ftruncate(
-        fd: number,
+        fd: AnuraFD,
         len: number,
-        callback?: (err: Error | null, fd: number) => void,
+        callback?: (err: Error | null, fd: AnuraFD) => void,
     ) {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+        this.processFD(fd).ftruncate(fd, len, callback);
     }
 
     truncate(
@@ -463,10 +779,11 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).stat(path, callback);
     }
 
-    fstat() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    fstat(
+        fd: AnuraFD,
+        callback?: ((err: Error | null, stats: any) => void) | undefined,
+    ): void {
+        this.processFD(fd).fstat(fd, callback);
     }
 
     lstat(path: string, callback?: (err: Error | null, stats: any) => void) {
@@ -528,16 +845,44 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).readdir(path, ...rest);
     }
 
-    close() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    close(
+        fd: AnuraFD,
+        callback?: ((err: Error | null) => void) | undefined,
+    ): void {
+        this.processFD(fd).close(fd, callback);
     }
 
-    open() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    open(
+        path: string,
+        flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+        mode: number,
+        callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
+    ): void;
+    open(
+        path: string,
+        flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+        callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
+    ): void;
+    open(
+        path: string,
+        flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+        mode?: unknown,
+        callback?: unknown,
+    ): void {
+        if (typeof mode === "number") {
+            this.processPath(path as string).open(
+                path,
+                flags,
+                mode as number,
+                callback as (err: Error | null, fd: AnuraFD) => void,
+            );
+        } else {
+            this.processPath(path as string).open(
+                path,
+                flags,
+                mode as (err: Error | null, fd: AnuraFD) => void,
+            );
+        }
     }
 
     utimes(
@@ -549,10 +894,9 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).utimes(path, atime, mtime, callback);
     }
 
-    futimes() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    futimes(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).futimes(fd, ...rest);
     }
 
     chown(
@@ -564,38 +908,33 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).chown(path, uid, gid, callback);
     }
 
-    fchown() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    fchown(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).fchown(fd, ...rest);
     }
 
     chmod(path: string, mode: number, callback?: (err: Error | null) => void) {
         this.processPath(path).chmod(path, mode, callback);
     }
 
-    fchmod() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    fchmod(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).fchmod(fd, ...rest);
     }
 
-    fsync() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    fsync(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).fsync(fd, ...rest);
     }
 
-    write() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    write(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).write(fd, ...rest);
     }
 
-    read() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    read(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).read(fd, ...rest);
     }
 
     readFile(
@@ -623,10 +962,9 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).setxattr(path, ...rest);
     }
 
-    fsetxattr() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    fsetxattr(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).fsetxattr(fd, ...rest);
     }
 
     getxattr(
@@ -637,10 +975,9 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).getxattr(path, name, callback);
     }
 
-    fgetxattr() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    fgetxattr(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).fgetxattr(fd, ...rest);
     }
 
     removexattr(
@@ -651,10 +988,9 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).removexattr(path, name, callback);
     }
 
-    fremovexattr() {
-        throw new Error(
-            "Method not implemented. File Descriptors will be implemented in a future release.",
-        );
+    fremovexattr(fd: AnuraFD, ...rest: any[]) {
+        // @ts-ignore - Overloaded methods are scary
+        this.processFD(fd).fremovexattr(fd, ...rest);
     }
     // @ts-ignore - This is still being implemented.
     promises = {
@@ -680,11 +1016,11 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
             this.providers.get("/")!.promises.mkdtemp(prefix, options),
         mknod: (path: string, mode: number) =>
             this.processPath(path).promises.mknod(path, mode),
-        open: () => {
-            throw new Error(
-                "Method not implemented. File Descriptors will be implemented in a future release.",
-            );
-        },
+        open: async (
+            path: string,
+            flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+            mode?: number,
+        ) => this.processPath(path).promises.open(path, flags, mode),
         readdir: (
             path: string,
             options?: string | { encoding: string; withFileTypes: boolean },
