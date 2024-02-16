@@ -145,9 +145,7 @@ class WMWindow {
                         }
                     }}
                 >
-                    <div class="titleContent">
-                        {React.use(this.state.title)}
-                    </div>
+                    <div class="titleContent">{use(this.state.title)}</div>
 
                     <button
                         class="windowButton"
@@ -167,12 +165,15 @@ class WMWindow {
                         class="windowButton"
                         on:click={this.maximize.bind(this)}
                     >
-                        <img
-                            src="/assets/window/maximize.svg"
-                            bind:maximizeImg={this}
-                            height="12px"
-                            class="windowButtonIcon"
-                        />
+                        {
+                            (this.maximizeImg = (
+                                <img
+                                    src="/assets/window/maximize.svg"
+                                    height="12px"
+                                    class="windowButtonIcon"
+                                />
+                            ))
+                        }
                     </button>
                     <button
                         class="windowButton"
@@ -185,11 +186,14 @@ class WMWindow {
                         />
                     </button>
                 </div>
-                <div
-                    class="content"
-                    bind:content={this}
-                    style="width: 100%; padding:0; margin:0;"
-                ></div>
+                {
+                    (this.content = (
+                        <div
+                            class="content"
+                            style="width: 100%; padding:0; margin:0;"
+                        ></div>
+                    ))
+                }
             </div>
         );
         this.width = parseFloat(
@@ -427,7 +431,7 @@ class WMWindow {
             );
 
             const newOffsetY = Math.min(
-                window.innerHeight - 61 - this.element.clientHeight,
+                window.innerHeight - 49 - this.element.clientHeight,
                 Math.max(0, offsetY),
             );
 
@@ -530,7 +534,7 @@ class WMWindow {
         this.element.style.top = "0";
         this.element.style.left = "0";
         this.element.style.width = `${width}px`;
-        this.element.style.height = `${height - 61}px`;
+        this.element.style.height = `${height - 49}px`;
         setTimeout(() => {
             this.element.classList.remove("maxtransition");
         }, 200);
@@ -599,7 +603,7 @@ class WMWindow {
             document.body.clientHeight;
         if (this.snapped) {
             splitBar?.splitWindowsAround(width / 2);
-            this.element.style.height = `${height - 61}px`;
+            this.element.style.height = `${height - 49}px`;
             return;
         }
         const oldwidth = parseFloat(this.element.style.width);
@@ -617,7 +621,7 @@ class WMWindow {
         this.element.style.top = "0";
         this.element.style.left = "0";
         this.element.style.width = `${width}px`;
-        this.element.style.height = `${height - 61}px`;
+        this.element.style.height = `${height - 49}px`;
         animx &&
             setTimeout(() => {
                 this.element.classList.remove("remaxtransitionx");
@@ -702,7 +706,7 @@ class WMWindow {
                         document.body.clientWidth;
 
                     bar.leftWindow.element.classList.add("remaxtransitionx");
-                    bar.splitWindowsAround(width / 2 - 4);
+                    bar.splitWindowsAround(width / 2);
 
                     setTimeout(() => {
                         bar.leftWindow.element.classList.remove(
@@ -735,7 +739,7 @@ class WMWindow {
                         document.body.clientWidth;
 
                     bar.leftWindow.element.classList.add("remaxtransitionx");
-                    bar.splitWindowsAround(width / 2 - 4);
+                    bar.splitWindowsAround(width / 2);
 
                     setTimeout(() => {
                         bar.leftWindow.element.classList.remove(
@@ -789,7 +793,7 @@ class WMWindow {
                 snappedWindows.find((x) => x.direction == "right")!.window,
             );
 
-            bar.splitWindowsAround(width / 2 - 4);
+            bar.splitWindowsAround(width / 2);
 
             setTimeout(() => {
                 bar.leftWindow.element.classList.remove("remaxtransitionx");
@@ -815,7 +819,7 @@ class WMWindow {
         }
 
         this.element.style.width = scaledWidth - 4 + "px";
-        this.element.style.height = height - 61 + "px";
+        this.element.style.height = height - 49 + "px";
         this.onresize(this.width, this.height);
         this.dragging = false;
 
@@ -874,9 +878,9 @@ class WMWindow {
         let scaledHeight = height;
 
         if (side != "top") {
-            scaledWidth = width / 2 + 4;
+            scaledWidth = width / 2;
         }
-        scaledHeight = height - 61;
+        scaledHeight = height - 49;
 
         const elem = (
             <div
@@ -962,7 +966,8 @@ class WMSplitBar {
 
     handleDrag(evt: MouseEvent) {
         this.splitWindowsAround(
-            this.originalLeft + evt.clientX - this.mouseLeft,
+            // Add 4 to account for the center of the bar
+            this.originalLeft + evt.clientX - this.mouseLeft + 4,
         );
     }
 
@@ -971,11 +976,12 @@ class WMSplitBar {
             window.innerWidth ||
             document.documentElement.clientWidth ||
             document.body.clientWidth;
-        this.element.style.left = x + "px";
-        this.leftWindow.element.style.width = x + "px";
+        // Subtract 4 to account for the center of the bar
+        this.element.style.left = x - 4 + "px";
+        this.leftWindow.element.style.width = x - 4 + "px";
         this.leftWindow.element.style.left = "0px";
         this.rightWindow.element.style.width = width - x - 4 + "px";
-        this.rightWindow.element.style.left = x + 4 + "px";
+        this.rightWindow.element.style.left = x + "px";
     }
 
     fadeIn() {

@@ -3,7 +3,7 @@ class RecoveryApp extends App {
     package = "anura.recovery";
     icon = "/assets/icons/verificationoff.png";
 
-    css = styled.new`
+    css = css`
         self {
             background-color: var(--material-bg);
             height: 100%;
@@ -49,18 +49,18 @@ class RecoveryApp extends App {
             margin: 0;
         }
 
-        .recovery-app-content button {
+        /* .recovery-app-content button {
             background: var(--material-bg);
             color: white;
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
-        }
+        } */
     `;
 
     page = async () => (
-        <div class={this.css}>
+        <div class={`${this.css} self`}>
             <div class="recovery-app-logo">
                 <div class="recovery-logo-img" title="Recovery"></div>
             </div>
@@ -69,6 +69,7 @@ class RecoveryApp extends App {
                 {/* Powerwash Button */}
                 <button
                     style="background: #B71C1C;"
+                    class="matter-button-contained"
                     title="Reset your Anura install to factory settings. This will delete all of your data."
                     on:click={async () => {
                         if (
@@ -94,6 +95,7 @@ class RecoveryApp extends App {
                 {/* Anura Shell Button */}
                 <button
                     style="background: #2f2f2f;"
+                    class="matter-button-contained"
                     title="Open a shell to help recover your system."
                     on:click={() => {
                         const term = anura.apps["anura.ashell"];
@@ -111,26 +113,42 @@ class RecoveryApp extends App {
                     Anura Shell
                 </button>
                 {/* Invalidate Cache Button */}
-                <button
-                    style="background: #1B5E20;"
-                    title="Clear the service worker cache. This requires an internet connection on your next boot."
+                <div
                     if={anura.settings.get("use-sw-cache")}
-                    on:click={() => {
-                        const sh = new anura.fs.Shell();
-                        sh.rm("/anura_files", { recursive: true });
-                        anura.notifications.add({
-                            title: "Cache invalidated",
-                            description:
-                                "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
-                            timeout: 2000,
-                        });
-                    }}
-                >
-                    Invalidate Cache
-                </button>
+                    then={
+                        <button
+                            style="background: #1B5E20;"
+                            class="matter-button-contained"
+                            title="Clear the service worker cache. This requires an internet connection on your next boot."
+                            on:click={() => {
+                                const sh = new anura.fs.Shell();
+                                sh.rm("/anura_files", { recursive: true });
+                                anura.notifications.add({
+                                    title: "Cache invalidated",
+                                    description:
+                                        "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
+                                    timeout: 2000,
+                                });
+                            }}
+                        >
+                            Invalidate Cache
+                        </button>
+                    }
+                    else={
+                        <button
+                            style="background: #1B5E20; cursor: not-allowed;"
+                            class="matter-button-contained"
+                            title="The cache is disabled, so you cannot invalidate it."
+                            disabled
+                        >
+                            Invalidate Cache
+                        </button>
+                    }
+                ></div>
 
                 <button
                     style="background: #1B5E20"
+                    class="matter-button-contained"
                     title="Return to normal mode"
                     on:click={() => {
                         window.location.reload();

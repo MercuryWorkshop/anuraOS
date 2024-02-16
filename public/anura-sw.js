@@ -38,9 +38,6 @@ addEventListener("message", (event) => {
     if (event.data.anura_target === "anura.cache") {
         cacheenabled = event.data.value;
     }
-    if (event.data.anura_target === "anura.cache.invalidate") {
-        invalidateCache();
-    }
 });
 async function handleRequests({ url, request, event, params }) {
     let clients = (await self.clients.matchAll()).filter(
@@ -70,11 +67,6 @@ async function handleRequests({ url, request, event, params }) {
     });
 
     return new Response(resp.body);
-}
-function invalidateCache() {
-    let sh = new fs.Shell();
-    sh.rm("/anura_files", { recursive: true });
-    console.log("cache invalidated!");
 }
 
 workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {

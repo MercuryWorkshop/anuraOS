@@ -1,7 +1,7 @@
 class Settings {
     private cache: { [key: string]: any } = {};
-    fs: FilerFS;
-    private constructor(fs: FilerFS, inital: { [key: string]: any }) {
+    fs: AnuraFilesystem;
+    private constructor(fs: AnuraFilesystem, inital: { [key: string]: any }) {
         this.fs = fs;
         this.cache = inital;
 
@@ -21,7 +21,10 @@ class Settings {
         });
     }
 
-    static async new(fs: FilerFS, defaultsettings: { [key: string]: any }) {
+    static async new(
+        fs: AnuraFilesystem,
+        defaultsettings: { [key: string]: any },
+    ) {
         const initial = defaultsettings;
 
         if (!initial["wisp-url"]) {
@@ -45,8 +48,9 @@ class Settings {
         }
 
         try {
-            const text = await fs.promises.readFile("/anura_settings.json");
-            Object.assign(initial, JSON.parse(text));
+            const raw = await fs.promises.readFile("/anura_settings.json");
+            // JSON.parse supports Uint8Array, but for some reason typescript doesn't know that???
+            Object.assign(initial, JSON.parse(raw as any));
         } catch (e) {
             fs.writeFile("/anura_settings.json", JSON.stringify(initial));
         }
@@ -62,12 +66,9 @@ class Settings {
     }
     async set(prop: string, val: any) {
         this.cache[prop] = val;
-        return new Promise((r) =>
-            this.fs.writeFile(
-                "/anura_settings.json",
-                JSON.stringify(this.cache),
-                r,
-            ),
+        await this.fs.promises.writeFile(
+            "/anura_settings.json",
+            JSON.stringify(this.cache),
         );
     }
 }

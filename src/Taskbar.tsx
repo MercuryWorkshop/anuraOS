@@ -3,24 +3,36 @@ class Taskbar {
         pinnedApps: App[];
         activeApps: App[];
         showBar: boolean;
-        radius: string;
+        rounded: boolean;
         time: string;
         bat_icon: string;
     } = stateful({
         pinnedApps: [],
         activeApps: [],
         showBar: false,
-        radius: "25px",
+        rounded: true,
         time: "",
         bat_icon: "battery_0_bar",
     });
+
+    rounded = rule`
+        border-top-left-radius: 25px;
+        border-top-right-radius: 25px;
+        width: calc(100% - 2px);
+        border-left: 1px solid rgba(0, 0, 0, 0.3);
+        border-right: 1px solid rgba(0, 0, 0, 0.3);
+    `;
 
     maximizedWins: WMWindow[] = [];
     dragged = null;
     insidedrag = false;
 
     element = (
-        <footer class={this.footerStyle(React.use(this.state.radius))}>
+        <footer
+            class={[
+                use(this.state.rounded, (rounded) => rounded && this.rounded),
+            ]}
+        >
             <div id="launcher-button-container">
                 <div
                     id="launcher-button"
@@ -45,23 +57,13 @@ class Taskbar {
                 }}
             >
                 <ul
-                    for={React.use(this.state.pinnedApps)}
+                    for={use(this.state.pinnedApps)}
                     do={this.shortcut.bind(this)}
                 ></ul>
-                <div
-                    if={React.use(this.state.showBar)}
-                    class={styled.new`
-                        self {
-                            border: 2px solid white;
-                            height: 70%;
-                            border-radius: 1px;
-                            margin: 1em;
-                        }
-                    `}
-                ></div>
+                <div if={use(this.state.showBar)} class="splitBar"></div>
 
                 <ul
-                    for={React.use(this.state.activeApps)}
+                    for={use(this.state.activeApps)}
                     do={this.shortcut.bind(this)}
                 ></ul>
             </nav>
@@ -78,28 +80,19 @@ class Taskbar {
                     </span>
 
                     <span class="material-symbols-outlined">
-                        {React.use(this.state.bat_icon)}
+                        {use(this.state.bat_icon)}
                     </span>
 
-                    <p>{React.use(this.state.time)}</p>
+                    <p>{use(this.state.time)}</p>
                 </div>
             </div>
         </footer>
     );
 
-    footerStyle(radius: string) {
-        return styled.new`
-            self {
-                border-top-left-radius: ${radius};
-                border-top-right-radius: ${radius};
-            }
-        `;
-    }
-
     shortcut(app: App) {
         if (!app) return;
-        return (
-            <li class="taskbar-button" bind:tmp={this}>
+        return ((this as any).tmp = (
+            <li class="taskbar-button">
                 <input
                     type="image"
                     draggable="true"
@@ -136,16 +129,21 @@ class Taskbar {
                         this.showcontext(app, e);
                     }}
                 />
-                <div
-                    class="lightbar"
-                    style={
-                        "position: relative; bottom: 0px; background-color:#FFF; width:30%; left:50%; transform:translateX(-50%)" +
-                        (app.windows?.length == 0 ? ";visibility:hidden" : "")
-                    }
-                    bind:lightbar={this}
-                ></div>
+                {
+                    ((this as any).lightbar = (
+                        <div
+                            class="lightbar"
+                            style={
+                                "position: relative; bottom: 0px; background-color:#FFF; width:30%; left:50%; transform:translateX(-50%)" +
+                                (app.windows?.length == 0
+                                    ? ";visibility:hidden"
+                                    : "")
+                            }
+                        ></div>
+                    ))
+                }
             </li>
-        );
+        ));
     }
     #contextMenu = new ContextMenuAPI(); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
     showcontext(app: App, e: MouseEvent) {
@@ -295,9 +293,9 @@ class Taskbar {
     updateRadius() {
         console.log(snappedWindows);
         if (this.maximizedWins.length > 0 || snappedWindows.length > 0) {
-            this.state.radius = "0px";
+            this.state.rounded = false;
         } else {
-            this.state.radius = "25px";
+            this.state.rounded = true;
         }
         console.log("max:", this.maximizedWins.length);
     }

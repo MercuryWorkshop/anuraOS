@@ -15,7 +15,7 @@ class Networking {
     }
     Socket = class Socket {
         constructor() {}
-        ondata(data: Buffer) {}
+        ondata(data: any) {}
         onconnect() {}
         on(type: string, callback: () => void) {
             switch (type) {
@@ -27,7 +27,7 @@ class Networking {
                     break;
             }
         }
-        write(data: Buffer) {
+        write(data: any) {
             this.websocket.send(data);
         }
         websocket: WebSocket;

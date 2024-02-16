@@ -189,6 +189,6 @@ async function evalUserInput(userInput) {
     }
     refresh()
 
-    console.log(await eval(userInput))
+    console.log(JSON.stringify(await eval(userInput), null, 2))
     
 }

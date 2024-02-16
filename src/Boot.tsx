@@ -24,7 +24,6 @@ channel.addEventListener("message", (msg) => {
 const taskbar = new Taskbar();
 const launcher = new Launcher();
 const contextMenu = new ContextMenu();
-const bootsplash = new Bootsplash();
 const oobeview = new OobeView();
 const alttab = new AltTabView();
 
@@ -32,7 +31,7 @@ let anura: Anura;
 // global
 
 window.addEventListener("load", async () => {
-    document.body.appendChild(bootsplash.element);
+    document.body.appendChild(bootsplash);
 
     await navigator.serviceWorker.register("/anura-sw.js");
     let conf, milestone, instancemilestone;
@@ -45,11 +44,8 @@ window.addEventListener("load", async () => {
         Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
     } catch (e) {
         conf = JSON.parse(
-            await new Promise((r) =>
-                Filer.fs.readFile(
-                    "/config_cached.json",
-                    (_: any, b: Uint8Array) => r(new TextDecoder().decode(b)),
-                ),
+            new TextDecoder().decode(
+                await Filer.fs.promises.readFile("/config_cached.json"),
             ),
         );
     }
@@ -64,13 +60,15 @@ window.addEventListener("load", async () => {
         ) {
             await anura.settings.set("milestone", milestone);
             await anura.settings.set("instancemilestone", instancemilestone);
-            navigator.serviceWorker.controller!.postMessage({
-                anura_target: "anura.cache.invalidate",
+            await new Filer.fs.Shell().promises.rm("/anura_files", {
+                recursive: true,
             });
             console.log("invalidated cache");
             window.location.reload();
         }
     }
+
+    anura.ui.init();
 
     if (!anura.settings.get("oobe-complete")) {
         // This is a new install, so an old version containing the old extension
@@ -112,7 +110,7 @@ window.addEventListener("load", async () => {
 
     setTimeout(
         () => {
-            bootsplash.element.remove();
+            bootsplash.remove();
             anura.logger.debug("boot completed");
             document.dispatchEvent(new Event("anura-boot-completed"));
         },

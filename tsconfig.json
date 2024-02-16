@@ -31,7 +31,11 @@
         "declaration": true,
         "checkJs": false,
         "skipLibCheck": true,
+
         "jsx": "react",
+        "jsxFactory": "h",
+        "jsxFragmentFactory": "YOU_CANT_USE_FRAGMENTS",
+        "types": ["@mercuryworkshop/alicejs"],
 
         // "reso"
     },

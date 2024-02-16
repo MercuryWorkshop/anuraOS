@@ -4,12 +4,13 @@ var removeAfterPaste = false;
 
 window.fs = parent.anura.fs;
 window.Buffer = Filer.Buffer;
-let sh = new fs.Shell();
+let sh = new anura.fs.Shell();
 
 function loadPath(path) {
     console.debug("loading path: ", path);
-    fs.readdir(path, (err, files) => {
+    fs.readdir(path + "/", (err, files) => {
         if (err) throw err;
+        console.debug("files: ", files);
         setBreadcrumbs(path);
         let table = document.querySelector("tbody");
         table.innerHTML = "";

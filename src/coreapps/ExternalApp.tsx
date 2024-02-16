@@ -55,11 +55,29 @@ class ExternalApp extends App {
             );
             win.content.appendChild(iframe);
 
-            (iframe.contentWindow as any).anura = anura;
-            (iframe.contentWindow as any).AliceWM = AliceWM;
-            (iframe.contentWindow as any).ExternalApp = ExternalApp;
-            (iframe.contentWindow as any).instance = this;
-            (iframe.contentWindow as any).instanceWindow = win;
+            Object.assign(iframe.contentWindow as any, {
+                anura,
+                AliceWM,
+                ExternalApp,
+                instance: this,
+                instanceWindow: win,
+                h,
+                stateful,
+                handle,
+                use,
+                useValue,
+                css,
+                rule,
+                styled,
+            });
+
+            const matter = document.createElement("link");
+            matter.setAttribute("rel", "stylesheet");
+            matter.setAttribute("href", "/assets/matter.css");
+
+            iframe.contentWindow!.addEventListener("load", () => {
+                iframe.contentDocument!.head.appendChild(matter);
+            });
 
             return win;
         } else {
