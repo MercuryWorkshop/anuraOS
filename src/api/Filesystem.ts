@@ -1,8 +1,3 @@
-// TODO: Implement File Descriptor support
-// This should be simple enough to implement,
-// but it is important to get the rest of the
-// filesystem API working first.
-
 const AnuraFDSymbol = Symbol.for("AnuraFD");
 
 type AnuraFD = {
@@ -695,13 +690,17 @@ class FilerAFSProvider extends AFSProvider<any> {
 }
 
 /**
- * WIP Wrapper for the anura filesystem provided by Filer
- * This should maintain full compatibility with the Filer API
- * and, by extension, should try to be as close to the Node.js
- * filesystem API as possible. This is a WIP and is not yet
- * ready for use. Upon completion, this should be a drop-in
- * replacement for the Filer API, with added support for
- * additional filesystem providers.
+ * Anura File System API
+ *
+ * This is fully compatible with Filer's filesystem API and,
+ * by extension, most of the Node.js filesystem API. This is
+ * a drop-in replacement for the legacy Filer API and should
+ * be used in place of the Filer API in all new code.
+ *
+ * This API has the added benefit of type safety and a the ability
+ * to register multiple filesystem providers. This allows for the
+ * creation of virtual filesystems and the ability to mount filesystems
+ * at arbitrary paths.
  */
 class AnuraFilesystem implements AnuraFSOperations<any> {
     providers: Map<string, AFSProvider<any>> = new Map();
