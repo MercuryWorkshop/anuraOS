@@ -14,6 +14,7 @@ function loadPath(path) {
         setBreadcrumbs(path);
         let table = document.querySelector("tbody");
         table.innerHTML = "";
+        let filesToLoad = files.length;
         files.forEach((file) => {
             let row = document.createElement("tr");
             let iconContainer = document.createElement("td");
@@ -89,7 +90,9 @@ function loadPath(path) {
                 }
                 console.debug("appending");
                 table.appendChild(row);
-                if (files[files.length - 1] === file) {
+                console.log(files[files.length - 1], file);
+                filesToLoad--;
+                if (filesToLoad == 0) {
                     reloadListeners();
                 }
             });
