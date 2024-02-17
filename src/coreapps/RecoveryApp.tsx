@@ -120,9 +120,13 @@ class RecoveryApp extends App {
                             style="background: #1B5E20;"
                             class="matter-button-contained"
                             title="Clear the service worker cache. This requires an internet connection on your next boot."
-                            on:click={() => {
-                                const sh = new anura.fs.Shell();
-                                sh.rm("/anura_files", { recursive: true });
+                            on:click={async () => {
+                                await new Filer.fs.Shell().promises.rm(
+                                    "/anura_files",
+                                    {
+                                        recursive: true,
+                                    },
+                                );
                                 anura.notifications.add({
                                     title: "Cache invalidated",
                                     description:
