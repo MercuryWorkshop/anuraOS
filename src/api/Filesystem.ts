@@ -926,13 +926,6 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
     constructor(providers: AFSProvider<any>[]) {
         providers.forEach((provider) => {
             this.providers.set(provider.domain, provider);
-            if (provider.domain === "/") {
-                // The Shell is defined by the root filesystem. This is a bit of a hack
-                // and should potentially be manually reimplemented or outright removed
-                // in the next major version. It will not yet be deprecated, but it does
-                // have the potential to be removed in the future.
-                this.Shell = (provider as FilerAFSProvider).fs.Shell;
-            }
         });
     }
 
