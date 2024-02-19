@@ -476,6 +476,7 @@ class FilerAFSProvider extends AFSProvider<any> {
         fd: AnuraFD,
         callback?: ((err: Error | null) => void) | undefined,
     ): void {
+        callback ||= () => {};
         this.fs.close(fd.fd, callback);
     }
 
@@ -695,6 +696,9 @@ class LocalFS extends AFSProvider<any> {
     name = "LocalFS";
     version = "1.0.0";
 
+    fds: FileSystemHandle[] = [];
+    cursors: number[] = [];
+
     constructor(dirHandle: FileSystemDirectoryHandle, domain: string) {
         super();
         this.dirHandle = dirHandle;
@@ -704,6 +708,17 @@ class LocalFS extends AFSProvider<any> {
 
     relativizePath(path: string) {
         return path.replace(this.domain, "").replace(/^\/+/, "");
+    }
+
+    randomId() {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+            /[xy]/g,
+            function (c) {
+                const r = (Math.random() * 16) | 0,
+                    v = c == "x" ? r : (r & 0x3) | 0x8;
+                return v.toString(16).toUpperCase();
+            },
+        );
     }
 
     async getChildDirHandle(path: string) {
@@ -962,23 +977,41 @@ class LocalFS extends AFSProvider<any> {
                     ).getFileHandle(path.substring(path.lastIndexOf("/") + 1));
                 }
             } catch (e) {
-                const handle = await this.getChildDirHandle(path);
-                return {
-                    name: handle.name,
-                    size: 0,
-                    atime: Date.now(),
-                    mtime: Date.now(),
-                    ctime: Date.now(),
-                    atimeMs: Date.now(),
-                    mtimeMs: Date.now(),
-                    ctimeMs: Date.now(),
-                    type: "DIRECTORY",
-                    uid: 0,
-                    gid: 0,
-                    isFile: () => false,
-                    isDirectory: () => true,
-                    isSymbolicLink: () => false,
-                };
+                try {
+                    const handle = await this.getChildDirHandle(path);
+                    return {
+                        name:
+                            path === ""
+                                ? this.domain.split("/").pop()
+                                : handle.name,
+                        size: 0,
+                        atime: new Date(Date.now()),
+                        mtime: new Date(Date.now()),
+                        ctime: new Date(Date.now()),
+                        atimeMs: Date.now(),
+                        mtimeMs: Date.now(),
+                        ctimeMs: Date.now(),
+                        node: this.randomId(),
+                        nlinks: 1,
+                        mode: 16877,
+                        type: "DIRECTORY",
+                        uid: 0,
+                        gid: 0,
+                        isFile: () => false,
+                        isDirectory: () => true,
+                        isSymbolicLink: () => false,
+                        dev: "localfs",
+                    };
+                } catch (e) {
+                    throw {
+                        name: "ENOENT",
+                        code: "ENOENT",
+                        errno: 34,
+                        message: "no such file or directory",
+                        path: (this.domain + "/" + path).replace("//", "/"),
+                        stack: e,
+                    };
+                }
             }
             const file = await handle.getFile();
             return {
@@ -991,12 +1024,16 @@ class LocalFS extends AFSProvider<any> {
                 atimeMs: file.lastModified,
                 mtimeMs: file.lastModified,
                 ctimeMs: file.lastModified,
+                node: this.randomId(),
+                nlinks: 1,
+                mode: 33188,
                 type: "FILE",
                 uid: 0,
                 gid: 0,
                 isFile: () => true,
                 isDirectory: () => false,
                 isSymbolicLink: () => false,
+                dev: "localfs",
             };
         },
         truncate: async (path: string, len: number) => {
@@ -1004,151 +1041,869 @@ class LocalFS extends AFSProvider<any> {
             await this.promises.writeFile(path, data.slice(0, len));
         },
         access: () => {
+            console.error("Not implemented: access");
             throw new Error("Not implemented");
         },
         chown: () => {
+            console.error("Not implemented: chown");
             throw new Error("Not implemented");
         },
         chmod: () => {
+            console.error("Not implemented: chmod");
             throw new Error("Not implemented");
         },
         getxattr: () => {
+            console.error("Not implemented: getxattr");
             throw new Error("Not implemented");
         },
         link: () => {
+            console.error("Not implemented: link");
             throw new Error("Not implemented");
         },
-        lstat: () => {
-            throw new Error("Not implemented");
+        lstat: (...args: any[]) => {
+            // @ts-ignore - This is just here for compat with v86
+            return this.promises.stat(...args);
         },
         mkdtemp: () => {
+            console.error("Not implemented: mkdtemp");
             throw new Error("Not implemented");
         },
         mknod: () => {
+            console.error("Not implemented: mknod");
             throw new Error("Not implemented");
         },
-        open: () => {
-            throw new Error("Not implemented");
+        open: async (
+            path: string,
+            _flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+            _mode?: any,
+        ) => {
+            let parentHandle = this.dirHandle;
+            if (path.includes("/")) {
+                const parts = path.split("/");
+                const finalFile = parts.pop();
+                parentHandle = await this.getChildDirHandle(parts.join("/"));
+                path = finalFile!;
+            }
+            const handle = await parentHandle.getFileHandle(path, {
+                create: true,
+            });
+            this.fds.push(handle);
+            return {
+                fd: this.fds.length - 1,
+                [AnuraFDSymbol]: this.domain,
+            };
         },
         readlink: () => {
+            console.error("Not implemented: readlink");
             throw new Error("Not implemented");
         },
         removexattr: () => {
+            console.error("Not implemented: removexattr");
             throw new Error("Not implemented");
         },
         setxattr: () => {
+            console.error("Not implemented: setxattr");
             throw new Error("Not implemented");
         },
         symlink: () => {
+            console.error("Not implemented: symlink");
             throw new Error("Not implemented");
         },
         utimes: () => {
+            console.error("Not implemented: utimes");
             throw new Error("Not implemented");
         },
     };
 
     ftruncate() {
+        console.error("Not implemented: ftruncate");
         throw new Error("Method not implemented.");
     }
 
-    fstat(): void {
-        throw new Error("Method not implemented.");
+    fstat(fd: AnuraFD, callback: (err: Error | null, stats: any) => void) {
+        callback ||= () => {};
+        const handle = this.fds[fd.fd];
+        if (handle === undefined) {
+            callback(
+                {
+                    name: "EBADF",
+                    code: "EBADF",
+                    errno: 9,
+                    message: "bad file descriptor",
+                    stack: "Error: bad file descriptor",
+                } as Error,
+                null,
+            );
+            return;
+        }
+
+        if (handle.kind === "file") {
+            (handle as FileSystemFileHandle).getFile().then((file) => {
+                callback(null, {
+                    name: file.name,
+                    size: file.size,
+                    atime: new Date(file.lastModified),
+                    mtime: new Date(file.lastModified),
+                    ctime: new Date(file.lastModified),
+                    atimeMs: file.lastModified,
+                    mtimeMs: file.lastModified,
+                    ctimeMs: file.lastModified,
+                    node: this.randomId(),
+                    nlinks: 1,
+                    mode: 33188,
+                    type: "FILE",
+                    uid: 0,
+                    gid: 0,
+                    isFile: () => true,
+                    isDirectory: () => false,
+                    isSymbolicLink: () => false,
+                    dev: "localfs",
+                });
+            });
+        } else {
+            callback(
+                {
+                    name: "EISDIR",
+                    code: "EISDIR",
+                    errno: 21,
+                    message: "Is a directory",
+                    stack: "Error: Is a directory",
+                } as Error,
+                null,
+            );
+        }
     }
 
-    lstat() {
-        throw new Error("Method not implemented.");
+    lstat(...args: any[]) {
+        // @ts-ignore - This is just here for compat with v86
+        return this.stat(...args);
     }
 
     link() {
+        console.error("Not implemented: link");
         throw new Error("Method not implemented.");
     }
 
     symlink() {
+        console.error("Not implemented: symlink");
         throw new Error("Method not implemented.");
     }
 
     readlink() {
+        console.error("Not implemented: readlink");
         throw new Error("Method not implemented.");
     }
 
     mknod() {
+        console.error("Not implemented: mknod");
         throw new Error("Method not implemented.");
     }
 
     access() {
+        console.error("Not implemented: access");
         throw new Error("Method not implemented.");
     }
 
     mkdtemp() {
+        console.error("Not implemented: mkdtemp");
         throw new Error("Method not implemented.");
     }
 
     fchown() {
+        console.error("Not implemented: fchown");
         throw new Error("Method not implemented.");
     }
 
     chmod() {
+        console.error("Not implemented: chmod");
         throw new Error("Method not implemented.");
     }
 
     fchmod() {
+        console.error("Not implemented: fchmod");
         throw new Error("Method not implemented.");
     }
 
     fsync() {
+        console.error("Not implemented: fsync");
         throw new Error("Method not implemented.");
     }
 
-    write() {
-        throw new Error("Method not implemented.");
+    write(
+        fd: AnuraFD,
+        buffer: Uint8Array,
+        offset: number,
+        length: number,
+        position: number | null,
+        callback?: (err: Error | null, nbytes: number) => void,
+    ) {
+        callback ||= () => {};
+        const handle = this.fds[fd.fd];
+        if (position !== null) {
+            position += this.cursors[fd.fd] || 0;
+        } else {
+            position = this.cursors[fd.fd] || 0;
+        }
+        if (handle === undefined) {
+            callback(
+                {
+                    name: "EBADF",
+                    code: "EBADF",
+                    errno: 9,
+                    message: "bad file descriptor",
+                    stack: "Error: bad file descriptor",
+                } as Error,
+                0,
+            );
+            return;
+        }
+        if (handle.kind === "directory") {
+            callback(
+                {
+                    name: "EISDIR",
+                    code: "EISDIR",
+                    errno: 21,
+                    message: "Is a directory",
+                    stack: "Error: Is a directory",
+                } as Error,
+                0,
+            );
+            return;
+        }
+        const bufferSlice = buffer.slice(offset, offset + length);
+        (handle as FileSystemFileHandle).createWritable().then((writer) => {
+            writer.seek(position || 0);
+            writer.write(bufferSlice);
+            writer.close();
+            this.cursors[fd.fd] = (position || 0) + bufferSlice.length;
+            callback!(null, bufferSlice.length);
+        });
     }
 
     read() {
+        console.error("Not implemented: read");
         throw new Error("Method not implemented.");
     }
 
     setxattr() {
+        console.error("Not implemented: setxattr");
         throw new Error("Method not implemented.");
     }
 
     fsetxattr() {
+        console.error("Not implemented: fsetxattr");
         throw new Error("Method not implemented.");
     }
 
     getxattr() {
+        console.error("Not implemented: getxattr");
         throw new Error("Method not implemented.");
     }
 
     fgetxattr() {
+        console.error("Not implemented: fgetxattr");
         throw new Error("Method not implemented.");
     }
 
     removexattr() {
+        console.error("Not implemented: removexattr");
         throw new Error("Method not implemented.");
     }
 
     fremovexattr() {
+        console.error("Not implemented: fremovexattr");
         throw new Error("Method not implemented.");
     }
 
     utimes() {
+        console.error("Not implemented: utimes");
         throw new Error("Method not implemented.");
     }
 
     futimes() {
+        console.error("Not implemented: futimes");
         throw new Error("Method not implemented.");
     }
 
     chown() {
+        console.error("Not implemented: chown");
         throw new Error("Method not implemented.");
     }
 
-    close() {
-        throw new Error("Method not implemented.");
+    close(fd: AnuraFD, callback: (err: Error | null) => void) {
+        callback ||= () => {};
+        const handle = this.fds[fd.fd];
+        if (handle === undefined) {
+            callback({
+                name: "EBADF",
+                code: "EBADF",
+                errno: 9,
+                message: "bad file descriptor",
+                stack: "Error: bad file descriptor",
+            } as Error);
+            return;
+        }
+        delete this.fds[fd.fd];
+        callback(null);
     }
 
-    open() {
-        throw new Error("Method not implemented.");
+    open(
+        path: string,
+        flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
+        mode?: any,
+        callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
+    ): void {
+        path = this.relativizePath(path);
+        if (typeof mode === "function") {
+            callback = mode;
+        }
+        callback ||= () => {};
+        this.promises
+            .open(path, flags, mode)
+            .then((fd) => {
+                callback!(null, fd);
+            })
+            .catch((e) =>
+                callback!(e, { fd: -1, [AnuraFDSymbol]: this.domain }),
+            );
+    }
+}
+
+class AFSShell {
+    env = new Proxy({} as { [key: string]: string }, {
+        get: (target: { [key: string]: string }, prop: string) => {
+            if (prop === "set") {
+                return (key: string, value: string) => {
+                    target[key] = value;
+                };
+            }
+            if (prop === "get") {
+                return (key: string) => target[key];
+            }
+            if (prop in target) {
+                return target[prop];
+            }
+            return undefined;
+        },
+        set: (target: any, prop: string, value: string) => {
+            if (prop === "set" || prop === "get") {
+                return false;
+            }
+            target[prop] = value;
+            return true;
+        },
+    });
+
+    #relativeToAbsolute(path: string) {
+        if (path.startsWith("/")) {
+            return path;
+        }
+        return (this.env.PWD + "/" + path).replace(/\/+/g, "/");
+    }
+
+    cat(
+        files: string[],
+        callback: (err: Error | null, contents: string) => void,
+    ) {
+        let contents = "";
+        let remaining = files.length;
+        files.forEach((file) => {
+            anura.fs.readFile(this.#relativeToAbsolute(file), (err, data) => {
+                if (err) {
+                    callback(err, contents);
+                    return;
+                }
+                contents += data.toString() + "\n";
+                remaining--;
+                if (remaining === 0) {
+                    callback(null, contents.replace(/\n$/, ""));
+                }
+            });
+        });
+    }
+    // This differs from the Filer version, because here we can use the anura.files API to open the file
+    // instead of evaluating the contents as js. The behaviour of the Filer version can be replicated by
+    // registering a file provider that evaluates the contents as js.
+    exec(path: string) {
+        anura.files.open(this.#relativeToAbsolute(path));
+    }
+    find(
+        path: string,
+        options?: {
+            /**
+             * Regex to match file paths against
+             */
+            regex?: RegExp;
+            /**
+             * Base name to search for (match patern)
+             */
+            name?: string;
+            /**
+             * Folder to search in (match pattern)
+             */
+            path?: string;
+            /**
+             * Callback to execute on each file.
+             */
+            exec?: (path: string, next: () => void) => void;
+        },
+        callback?: (err: Error | null, files: string[]) => void,
+    ): void;
+    find(
+        path: string,
+        callback?: (err: Error | null, files: string[]) => void,
+    ): void;
+    find(
+        path: string,
+        options?: any,
+        callback?: (err: Error | null, files: string[]) => void,
+    ) {
+        if (typeof options === "function") {
+            callback = options;
+            options = {};
+        }
+
+        callback ||= () => {};
+        options ||= {};
+
+        function walk(
+            dir: string,
+            done: (err: Error | null, files: string[]) => void,
+        ) {
+            const results: string[] = [];
+            anura.fs.readdir(dir, (err: Error | null, list: string[]) => {
+                if (err) {
+                    done(err, results);
+                    return;
+                }
+                let pending = list.length;
+                if (!pending) {
+                    done(null, results);
+                    return;
+                }
+                list.forEach((file) => {
+                    file = dir + "/" + file;
+                    anura.fs.stat(file, (err, stat) => {
+                        if (err) {
+                            done(err, results);
+                            return;
+                        }
+                        if (stat.isDirectory()) {
+                            walk(file, (err, res) => {
+                                results.push(...res);
+                                pending--;
+                                if (!pending) {
+                                    done(null, results);
+                                }
+                            });
+                        } else {
+                            results.push(file);
+                            pending--;
+                            if (!pending) {
+                                done(null, results);
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        walk(this.#relativeToAbsolute(path), (err, results) => {
+            if (err) {
+                callback!(err, []);
+                return;
+            }
+            if (options.regex) {
+                results = results.filter((file) => options.regex!.test(file));
+            }
+            if (options.name) {
+                results = results.filter((file) =>
+                    file.includes(options.name!),
+                );
+            }
+            if (options.path) {
+                results = results.filter((file) =>
+                    file.includes(options.path!),
+                );
+            }
+            if (options.exec) {
+                let remaining = results.length;
+                results.forEach((file) => {
+                    options.exec!(file, () => {
+                        remaining--;
+                        if (remaining === 0) {
+                            callback!(null, results);
+                        }
+                    });
+                });
+            } else {
+                callback!(null, results);
+            }
+        });
+    }
+    ls(
+        dir: string,
+        options?: {
+            recursive?: boolean;
+        },
+        callback?: (err: Error | null, entries: any[]) => void,
+    ): void;
+    ls(
+        dir: string,
+        callback?: (err: Error | null, entries: any[]) => void,
+    ): void;
+    ls(
+        dir: string,
+        options?: any,
+        callback?: (err: Error | null, entries: any[]) => void,
+    ) {
+        if (typeof options === "function") {
+            callback = options;
+            options = {};
+        }
+        callback ||= () => {};
+        options ||= {};
+
+        const entries: any[] = [];
+
+        if (options.recursive) {
+            this.find(
+                dir,
+                {
+                    exec: (path, next = () => {}) => {
+                        entries.push(path);
+                        next();
+                    },
+                },
+                (err, _) => {
+                    if (err) {
+                        callback!(err, []);
+                        return;
+                    }
+                    callback!(null, entries);
+                },
+            );
+        } else {
+            anura.fs.readdir(
+                this.#relativeToAbsolute(dir),
+                (err: Error | null, files: string[]) => {
+                    if (err) {
+                        callback!(err, []);
+                        return;
+                    }
+                    if (files.length === 0) {
+                        callback!(null, []);
+                        return;
+                    }
+                    let pending = files.length;
+                    files.forEach((file) => {
+                        anura.fs.stat(
+                            this.#relativeToAbsolute(dir) + "/" + file,
+                            (err, stats: { isDirectory: () => boolean }) => {
+                                if (err) {
+                                    callback!(err, []);
+                                    return;
+                                }
+                                entries.push(stats);
+                                pending--;
+                                if (!pending) {
+                                    callback!(null, entries);
+                                }
+                            },
+                        );
+                    });
+                },
+            );
+        }
+    }
+    mkdirp(path: string, callback: (err: Error | null) => void) {
+        const parts = this.#relativeToAbsolute(path).split("/");
+        callback ||= () => {};
+        parts.reduce((acc, part) => {
+            acc += "/" + part;
+            anura.fs.mkdir(acc, (err: Error | null) => {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+            });
+            return acc;
+        });
+        callback(null);
+    }
+    rm(
+        path: string,
+        options?: { recursive?: boolean },
+        callback?: (err: Error | null) => void,
+    ): void;
+    rm(path: string, callback?: (err: Error | null) => void): void;
+    rm(path: string, options?: any, callback?: (err: Error | null) => void) {
+        path = this.#relativeToAbsolute(path);
+        if (typeof options === "function") {
+            callback = options;
+            options = {};
+        }
+        callback ||= () => {};
+        options ||= {};
+
+        function walk(dir: string, done: (err: Error | null) => void) {
+            anura.fs.readdir(dir, (err: Error | null, list: string[]) => {
+                if (err) {
+                    done(err);
+                    return;
+                }
+                let pending = list.length;
+                if (!pending) {
+                    anura.fs.rmdir(dir, done);
+                    return;
+                }
+                list.forEach((file: string) => {
+                    file = dir + "/" + file;
+                    anura.fs.stat(
+                        file,
+                        (
+                            err,
+                            stats: {
+                                isDirectory: () => boolean;
+                            },
+                        ) => {
+                            if (err) {
+                                done(err);
+                                return;
+                            }
+                            if (stats.isDirectory()) {
+                                walk(file, (err) => {
+                                    if (err) {
+                                        done(err);
+                                        return;
+                                    }
+                                    pending--;
+                                    if (!pending) {
+                                        anura.fs.rmdir(dir, done);
+                                    }
+                                });
+                            } else {
+                                anura.fs.unlink(file, (err) => {
+                                    if (err) {
+                                        done(err);
+                                        return;
+                                    }
+                                    pending--;
+                                    if (!pending) {
+                                        anura.fs.rmdir(dir, done);
+                                    }
+                                });
+                            }
+                        },
+                    );
+                });
+            });
+        }
+
+        anura.fs.stat(
+            path,
+            (err: Error | null, stats: { isDirectory: () => boolean }) => {
+                if (err) {
+                    callback!(err);
+                    return;
+                }
+                if (!stats.isDirectory()) {
+                    anura.fs.unlink(path, callback);
+                    return;
+                }
+
+                if (options.recursive) {
+                    walk(path, callback!);
+                } else {
+                    anura.fs.readdir(
+                        path,
+                        (err: Error | null, files: string[]) => {
+                            if (err) {
+                                callback!(err);
+                                return;
+                            }
+                            if (files.length > 0) {
+                                callback!(
+                                    new Error(
+                                        "Directory not empty! Pass { recursive: true } instead to remove it and all its contents.",
+                                    ),
+                                );
+                                return;
+                            }
+                        },
+                    );
+                }
+            },
+        );
+    }
+    tempDir(callback?: (err: Error | null, path: string) => void) {
+        callback ||= () => {};
+        const tmp = this.env.TMP;
+        anura.fs.mkdir(tmp, () => {
+            callback!(null, tmp);
+        });
+    }
+    touch(
+        path: string,
+        options?: { updateOnly?: boolean; date?: Date },
+        callback?: (err: Error | null) => void,
+    ): void;
+    touch(path: string, callback?: (err: Error | null) => void): void;
+    touch(path: string, options?: any, callback?: (err: Error | null) => void) {
+        path = this.#relativeToAbsolute(path);
+        if (typeof options === "function") {
+            callback = options;
+            options = {
+                updateOnly: false,
+                date: Date.now(),
+            };
+        }
+        callback ||= () => {};
+        options ||= {
+            updateOnly: false,
+            date: Date.now(),
+        };
+
+        function createFile() {
+            anura.fs.writeFile(path, "", callback);
+        }
+
+        function updateTimes() {
+            anura.fs.utimes(path, options.date, options.date, callback);
+        }
+
+        anura.fs.stat(path, (err: Error | null) => {
+            if (err) {
+                if (options.updateOnly) {
+                    callback!(
+                        new Error("File does not exist and updateOnly is true"),
+                    );
+                    return;
+                } else {
+                    createFile();
+                }
+            } else {
+                updateTimes();
+            }
+        });
+    }
+
+    cd(dir: string) {
+        this.env.PWD = this.#relativeToAbsolute(dir);
+    }
+
+    pwd() {
+        return this.env.PWD;
+    }
+
+    promises = {
+        cat: async (files: string[]) => {
+            let contents = "";
+            for (const file of files) {
+                contents += (
+                    await anura.fs.promises.readFile(
+                        this.#relativeToAbsolute(file),
+                    )
+                ).toString();
+            }
+            return contents;
+        },
+        exec: async (path: string) => {
+            anura.files.open(this.#relativeToAbsolute(path));
+        },
+        find: (
+            path: string,
+            options?: {
+                regex?: RegExp;
+                name?: string;
+                path?: string;
+                exec?: (path: string, next: () => void) => void;
+            },
+        ) => {
+            return new Promise<string[]>((resolve, reject) => {
+                this.find(path, options, (err, files) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(files);
+                });
+            });
+        },
+        ls: (
+            dir: string,
+            options?: {
+                recursive?: boolean;
+            },
+        ) => {
+            return new Promise<string[]>((resolve, reject) => {
+                this.ls(dir, options, (err, entries) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(entries);
+                });
+            });
+        },
+        mkdirp: (path: string) => {
+            return new Promise<void>((resolve, reject) => {
+                this.mkdirp(path, (err) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                });
+            });
+        },
+        rm: (
+            path: string,
+            options?: {
+                recursive?: boolean;
+            },
+        ) => {
+            return new Promise<void>((resolve, reject) => {
+                this.rm(path, options, (err) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                });
+            });
+        },
+        touch: (
+            path: string,
+            options?: {
+                updateOnly?: boolean;
+                date?: Date;
+            },
+        ) => {
+            return new Promise<void>((resolve, reject) => {
+                this.touch(path, options, (err) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                });
+            });
+        },
+    };
+
+    constructor(options?: { env?: { [key: string]: string } }) {
+        options ||= {
+            env: {
+                PWD: "/",
+                TMP: "/tmp",
+            },
+        };
+        if (options?.env) {
+            Object.entries(options.env).forEach(([key, value]) => {
+                this.env.set(key, value);
+            });
+        }
     }
 }
 
@@ -1169,7 +1924,9 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
     providers: Map<string, AFSProvider<any>> = new Map();
     providerCache: { [path: string]: AFSProvider<any> } = {};
 
-    Shell: any;
+    // Note: Intentionally aliasing the property to a class instead of an instance
+    static Shell = AFSShell;
+    Shell = AFSShell;
 
     constructor(providers: AFSProvider<any>[]) {
         providers.forEach((provider) => {
@@ -1211,7 +1968,6 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         parts.pop();
         while (!provider && parts.length > 0) {
             const checkPath = "/" + parts.join("/");
-            console.log("Checking", checkPath, provider);
             provider = this.providers.get(checkPath);
             parts.pop();
         }
