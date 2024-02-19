@@ -44,9 +44,20 @@ class LocalFS extends AFSProvider<any> {
     }
 
     static async new(anuraPath: string) {
-        const dirHandle = await window.showDirectoryPicker({
-            id: `anura-${anuraPath.replace(/\/|\s/g, "-")}`,
-        });
+        let dirHandle;
+        try {
+            dirHandle = await window.showDirectoryPicker({
+                id: `anura-${anuraPath.replace(/\/|\s|\./g, "-")}`,
+            });
+        } catch (e) {
+            if (e.name !== "TypeError") {
+                throw e;
+            }
+            // The path may not be a valid id, fallback to less specific id
+            dirHandle = await window.showDirectoryPicker({
+                id: "anura-localfs",
+            });
+        }
         dirHandle.requestPermission({ mode: "readwrite" });
         try {
             await anura.fs.promises.mkdir(anuraPath);
