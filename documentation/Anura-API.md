@@ -26,6 +26,22 @@ anura.x86.emulator; // Get v86 emulator object
 anura.x86.openpty; // Open a PTY terminal (see usage in sourcecode for terminal.app)
 ```
 
+## anura.net
+
+This API provides access to Anura's networking backend, for routing your requests through a [Wisp](https://github.com/MercuryWorkshop/wisp-protocol) compatible backend using [libcurl.js](https://github.com/ading2210/libcurl.js).
+
+**Usage:**
+
+```js
+anura.net.fetch; // Same functionality as built in fetch function
+
+anura.net.WebSocket; // Same functionality as built in WebSocket constructor
+
+anura.net.Socket; // Open a TCP Socket
+
+anura.x86.TLSSocket; // Open a TCP socket but using TLS
+```
+
 ## anura.fs
 
 This API provides access the Anura's internal filesystem, loosely following the node filesystem spec(slightly out of date).
