@@ -152,79 +152,15 @@ const uv = new UVServiceWorker();
 //     );
 // });
 
-workbox.routing.registerRoute(/\/service\//, async (event) => {
-    console.log("Got UV req");
-    return await uv.fetch(event);
+const methods = ["GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS", "PATCH"];
+
+methods.forEach((method) => {
+    workbox.routing.registerRoute(
+        /\/service\//,
+        async (event) => {
+            console.log("Got UV req");
+            return await uv.fetch(event);
+        },
+        method,
+    );
 });
-
-workbox.routing.registerRoute(
-    /\/service\//,
-    async (event) => {
-        console.log("Got UV req");
-        return await uv.fetch(event);
-    },
-    "HEAD",
-);
-
-workbox.routing.registerRoute(
-    /\/service\//,
-    async (event) => {
-        console.log("Got UV req");
-        return await uv.fetch(event);
-    },
-    "POST",
-);
-
-workbox.routing.registerRoute(
-    /\/service\//,
-    async (event) => {
-        console.log("Got UV req");
-        return await uv.fetch(event);
-    },
-    "PUT",
-);
-
-workbox.routing.registerRoute(
-    /\/service\//,
-    async (event) => {
-        console.log("Got UV req");
-        return await uv.fetch(event);
-    },
-    "DELETE",
-);
-
-workbox.routing.registerRoute(
-    /\/service\//,
-    async (event) => {
-        console.log("Got UV req");
-        return await uv.fetch(event);
-    },
-    "CONNECT",
-);
-
-workbox.routing.registerRoute(
-    /\/service\//,
-    async (event) => {
-        console.log("Got UV req");
-        return await uv.fetch(event);
-    },
-    "OPTIONS",
-);
-
-workbox.routing.registerRoute(
-    /\/service\//,
-    async (event) => {
-        console.log("Got UV req");
-        return await uv.fetch(event);
-    },
-    "TRACE",
-);
-
-workbox.routing.registerRoute(
-    /\/service\//,
-    async (event) => {
-        console.log("Got UV req");
-        return await uv.fetch(event);
-    },
-    "PATCH",
-);
