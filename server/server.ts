@@ -91,7 +91,8 @@ app.use(async (req, res, next) => {
     res.header("Cross-Origin-Resource-Policy", "same-site");
 
     if (bare.shouldRoute(req)) {
-        bare.routeRequest(req, res);
+        console.log("Error: bare request");
+        // bare.routeRequest(req, res);
         return;
     }
     next();
