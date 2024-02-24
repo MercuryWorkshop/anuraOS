@@ -19,7 +19,7 @@ class TLSClient extends bare.Client {
         arrayBufferImpl: any,
     ) {
         //@ts-ignore
-        return window.parent.anura.net.fetch(remote.href, {
+        return anura.net.fetch(remote.href, {
             method,
             headers: requestHeaders,
             body,
