@@ -3,7 +3,7 @@
 // importScripts('/assets/libs/workbox/workbox-sw.js');
 
 importScripts("/nohost-sw.js");
-importScripts("/sw.js");
+// importScripts("/sw.js");
 
 var cacheenabled = false;
 
@@ -126,3 +126,33 @@ workbox.routing.registerRoute(
     },
     "GET",
 );
+
+importScripts("./uv/uv.bundle.js");
+importScripts("./uv/uv.config.js");
+importScripts("./uv/uv.sw.js");
+
+const uv = new UVServiceWorker();
+// const dynamic = new Dynamic();
+
+// self.addEventListener("fetch", (event) => {
+//     console.log("Got fetch")
+//     event.respondWith(
+//         (async () => {
+//             console.log(location.origin + __uv$config.prefix)
+//             if (
+//                 event.request.url.startsWith(
+//                     location.origin + __uv$config.prefix,
+//                 )
+//             ) {
+//                 console.log("UV should fetch")
+//                 return await uv.fetch(event);
+//             }
+//             return await fetch(event.request);
+//         })(),
+//     );
+// });
+
+workbox.routing.registerRoute(/\/service\//, async() => {
+    console.log("Got UV req")
+    return await uv.fetch(event);
+})
