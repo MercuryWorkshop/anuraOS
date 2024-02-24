@@ -79,7 +79,7 @@ workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
 });
 
 workbox.routing.registerRoute(
-    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin|\/images\/debian|\/ultraviolet\/))/,
+    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin|\/images\/debian|\/service\/))/,
     ({ url }) => {
         if (!cacheenabled) return;
         if (url.pathname === "/") {
@@ -152,7 +152,7 @@ const uv = new UVServiceWorker();
 //     );
 // });
 
-workbox.routing.registerRoute(/\/service\//, async() => {
+workbox.routing.registerRoute(/\/service\//, async(event) => {
     console.log("Got UV req")
     return await uv.fetch(event);
 })
