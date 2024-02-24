@@ -150,7 +150,7 @@ class Anura {
         for (const appName in anura.apps) {
             const app = anura.apps[appName];
             app.windows.forEach((win: any) => {
-                if (win.element.parentElement == null) {
+                if (!win.element.parentElement) {
                     app.windows.splice(app.windows.indexOf(win), 1);
                 }
             });

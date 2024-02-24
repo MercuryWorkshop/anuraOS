@@ -35,7 +35,9 @@ class AltTabView {
                         src={app?.icon}
                         alt="App Icon"
                     />
-                    <span class="alttab-window-title-text">{app.name}</span>
+                    <span class="alttab-window-title-text">
+                        {win.state.title || app.name}
+                    </span>
                 </div>
             </div>
         );
