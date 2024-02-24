@@ -152,7 +152,7 @@ const uv = new UVServiceWorker();
 //     );
 // });
 
-workbox.routing.registerRoute(/\/service\//, async(event) => {
-    console.log("Got UV req")
+workbox.routing.registerRoute(/\/service\//, async (event) => {
+    console.log("Got UV req");
     return await uv.fetch(event);
-})
+});
