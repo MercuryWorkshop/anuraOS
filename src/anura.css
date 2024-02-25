@@ -65,8 +65,11 @@ nav li {
     top: 0;
     left: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-content: center;
+    text-align: center;
+    color: white;
     flex-wrap: wrap;
     transition: 0.3s;
 }

@@ -61,9 +61,35 @@ window.addEventListener("load", async () => {
             await anura.settings.set("milestone", milestone);
             await anura.settings.set("instancemilestone", instancemilestone);
             if (anura.settings.get("use-sw-cache")) {
+                const tracker = document.getElementById("systemstatus");
+                tracker!.innerText = "Anura is updating your system...";
                 await new Filer.fs.Shell().promises.rm("/anura_files", {
                     recursive: true,
                 });
+                try {
+                    const list = await (await fetch("cache-load.json")).json();
+                    /*
+                     * The list has a few items that aren't exactly real
+                     * as a result of the developers schizophrenia.
+                     * Because of this, there will be a few errors on the fetch.
+                     * These can safely be ignored, just like the voices in
+                     * the developers head.
+                     */
+                    const chunkSize = 10;
+                    const promises = [];
+                    let i = 0;
+                    for (const item in list) {
+                        promises.push(fetch(list[item]));
+                        if (Number(item) % chunkSize === chunkSize - 1) {
+                            await Promise.all(promises);
+                        }
+                        tracker!.innerText = `Downloading anura system files, chunk ${i}`;
+                        i++;
+                    }
+                    await Promise.all(promises);
+                } catch (e) {
+                    console.warn("error durring oobe preload", e);
+                }
             }
             console.log("invalidated cache");
             window.location.reload();
