@@ -66,9 +66,13 @@ window.addEventListener("load", async () => {
                 tracker.style.display = "unset";
                 tracker_br.style.display = "unset";
                 tracker.innerText = "Anura is updating your system...";
-                await new Filer.fs.Shell().promises.rm("/anura_files", {
-                    recursive: true,
-                });
+                try {
+                    await new Filer.fs.Shell().promises.rm("/anura_files", {
+                        recursive: true,
+                    });
+                } catch {
+                    console.log("cache already invalidated");
+                }
                 try {
                     const list = await (await fetch("cache-load.json")).json();
                     /*

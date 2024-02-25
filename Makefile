@@ -33,7 +33,7 @@ build/nohost-sw.js:
 	cd nohost; npm i; npm run build; cp -r dist/* ../build/
 
 build/libcurl.mjs:
-	mkdir -p libcurl; cd libcurl; npm i --prefix . libcurl.js; cp node_modules/libcurl.js/libcurl.mjs ../build/; cp node_modules/libcurl.js/libcurl.wasm ../build/; rm -r ../libcurl
+	cp node_modules/libcurl.js/libcurl.mjs build/; cp node_modules/libcurl.js/libcurl.wasm build/
 
 build/lib/bare.cjs: build/bootstrap
 	cp node_modules/@mercuryworkshop/bare-client-custom/dist/bare.cjs build/lib/bare.cjs
