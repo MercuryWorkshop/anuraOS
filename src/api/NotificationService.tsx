@@ -63,13 +63,18 @@ class AnuraNotification {
                 <div
                     class="notif-close-indicator"
                     on:click={() => {
-                        this.callback(this);
                         this.close();
                     }}
                 >
                     <span class="material-symbols-outlined">close</span>
                 </div>
-                <div class="notif-body">
+                <div
+                    class="notif-body"
+                    on:click={() => {
+                        this.callback(this);
+                        this.close();
+                    }}
+                >
                     <div class="notif-title">{this.title}</div>
                     <div class="notif-description">{this.description}</div>
                     <div
