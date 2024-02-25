@@ -30,6 +30,9 @@ addContextMenuItem("Delete", function () {
 addContextMenuItem("Rename", function () {
     rename();
 });
+addContextMenuItem("Refresh", function () {
+    reload();
+});
 
 appcontextmenu.addItem("Install (Session)", function () {
     // While this is the same as double clicking, it's still useful to have the verbosely named option
@@ -55,9 +58,12 @@ emptycontextmenu.addItem("New folder", function () {
 emptycontextmenu.addItem("New file", function () {
     newFile();
 })
+emptycontextmenu.addItem("Paste", function () {
+    paste();
+});
 emptycontextmenu.addItem("Refresh", function () {
     reload();
-});;
+});
 
 const min = 150;
 // The max (fr) values for grid-template-columns
