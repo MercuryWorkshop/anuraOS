@@ -36,6 +36,7 @@ interface NotifParams {
         text: string;
         style?: "contained" | "outlined" | "text";
         callback: (notif: AnuraNotification) => void;
+        close?: boolean;
     }>;
     // COMING SOON (hopefully)
     // icon?: string
@@ -70,9 +71,14 @@ class AnuraNotification {
                 </div>
                 <div
                     class="notif-body"
-                    on:click={() => {
-                        this.callback(this);
-                        this.close();
+                    on:click={(e: PointerEvent) => {
+                        if (
+                            (e.target as HTMLElement).tagName.toLowerCase() !==
+                            "button"
+                        ) {
+                            this.callback(this);
+                            this.close();
+                        }
                     }}
                 >
                     <div class="notif-title">{this.title}</div>
@@ -85,6 +91,7 @@ class AnuraNotification {
                         do={(value: {
                             text: string;
                             style?: "contained" | "outlined" | "text";
+                            close?: boolean;
                             callback: (notif: AnuraNotification) => void;
                         }) => (
                             <button
@@ -92,7 +99,15 @@ class AnuraNotification {
                                     "notif-button",
                                     `matter-button-${value.style || "contained"}`,
                                 ]}
-                                on:click={() => value.callback(this)}
+                                on:click={() => {
+                                    value.callback(this);
+                                    if (
+                                        typeof value.close === "undefined" ||
+                                        value.close === true
+                                    ) {
+                                        this.close();
+                                    }
+                                }}
                             >
                                 {value.text}
                             </button>
