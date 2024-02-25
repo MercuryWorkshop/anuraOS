@@ -1,7 +1,7 @@
 const bootsplash = (
     <div class="bootsplash">
         <img src="/assets/images/bootsplash.png" />
-        <br />
-        <h2 id="systemstatus"></h2>
+        <br id="systemstatus-br" style="display: none;" />
+        <h2 id="systemstatus" style="display: none;"></h2>
     </div>
 );

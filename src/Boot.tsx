@@ -61,8 +61,11 @@ window.addEventListener("load", async () => {
             await anura.settings.set("milestone", milestone);
             await anura.settings.set("instancemilestone", instancemilestone);
             if (anura.settings.get("use-sw-cache")) {
-                const tracker = document.getElementById("systemstatus");
-                tracker!.innerText = "Anura is updating your system...";
+                const tracker = document.getElementById("systemstatus")!;
+                const tracker_br = document.getElementById("systemstatus-br")!;
+                tracker.style.display = "unset";
+                tracker_br.style.display = "unset";
+                tracker.innerText = "Anura is updating your system...";
                 await new Filer.fs.Shell().promises.rm("/anura_files", {
                     recursive: true,
                 });
