@@ -1,4 +1,4 @@
-const settingsCSS = styled.new`
+const settingsCSS = css`
     .self {
         color: white;
     }
@@ -160,7 +160,7 @@ class SettingsApp extends App {
     page = async () => (
         <div
             style="height:100%;width:100%;position:absolute"
-            class={`background ${settingsCSS}`}
+            class={`background ${settingsCSS} self`}
         >
             <div class="header">
                 <h2 color="white">Anura Settings</h2>
@@ -213,21 +213,98 @@ class SettingsApp extends App {
                             </label>
                         </div>
                         <div class="settings-item">
-                            <h4 class="settings-item-name">Custom WS Proxy</h4>
+                            <h4 class="settings-item-name">
+                                Window Edge Clamping
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "clampWindows",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "clampWindows",
+                                                false,
+                                            );
+                                        }
+                                    }}
+                                    id="clampWindows"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">
+                                Transparent Anura Shell Background
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "transparent-ashell",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "transparent-ashell",
+                                                false,
+                                            );
+                                        }
+                                    }}
+                                    id="transparent-ashell"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">
+                                Enable Launcher Keybind
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "launcher-keybind",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "launcher-keybind",
+                                                false,
+                                            );
+                                        }
+                                    }}
+                                    id="launcher-keybind"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">Custom Wisp URL</h4>
                             <input
                                 class="settings-item-text-input"
                                 on:change={(event: any) => {
                                     anura.settings.set(
-                                        "wsproxy-url",
+                                        "wisp-url",
                                         event.target.value,
                                     );
                                 }}
-                                placeholder={anura.settings.get("wsproxy-url")}
+                                placeholder={anura.settings.get("wisp-url")}
                                 type="text"
                             />
                         </div>
                         <div class="settings-item">
-                            <h4 class="settings-item-name">Custom Bare URL</h4>
+                            <h4 class="settings-item-name">
+                                Custom Bare URL (deprecated)
+                            </h4>
                             <input
                                 class="settings-item-text-input"
                                 on:change={(event: any) => {
@@ -568,6 +645,7 @@ class SettingsApp extends App {
             title: "",
             width: "910px",
             height: "720px",
+            resizable: false,
         });
 
         win.content.appendChild(await this.page());
@@ -576,6 +654,27 @@ class SettingsApp extends App {
             if (anura.settings.get("borderless-aboutbrowser")) {
                 document
                     .getElementById("borderless-aboutbrowser")!
+                    .setAttribute("checked", "");
+            }
+        }
+        if (document.getElementById("clampWindows")) {
+            if (anura.settings.get("clampWindows")) {
+                document
+                    .getElementById("clampWindows")!
+                    .setAttribute("checked", "");
+            }
+        }
+        if (document.getElementById("transparent-ashell")) {
+            if (anura.settings.get("transparent-ashell")) {
+                document
+                    .getElementById("transparent-ashell")!
+                    .setAttribute("checked", "");
+            }
+        }
+        if (document.getElementById("launcher-keybind")) {
+            if (anura.settings.get("launcher-keybind")) {
+                document
+                    .getElementById("launcher-keybind")!
                     .setAttribute("checked", "");
             }
         }

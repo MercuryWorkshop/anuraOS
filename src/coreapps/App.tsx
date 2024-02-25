@@ -8,5 +8,5 @@ class App {
      */
     hidden = false;
     windows: WMWindow[] = [];
-    open(): void {}
+    open(args: string[] = []): void {}
 }

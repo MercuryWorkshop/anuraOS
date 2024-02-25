@@ -3,9 +3,9 @@
     "type": "auto",
     "package": "anura.ide",
     "index": "index.html",
-    "icon": "visual-studio-code.svg",
+    "icon": "chideicon2.png",
     "wininfo": {
-        "title": "chIDE",
+        "title": "",
         "width": "700px",
         "height": "500px"
     }

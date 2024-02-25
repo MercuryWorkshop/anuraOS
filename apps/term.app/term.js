@@ -31,6 +31,20 @@ window.addEventListener("load", async () => {
 		t.setCursorColor("#bbb");
         currentCol = t.screenSize.width;
         currentRow = t.screenSize.height;
+
+
+		if (anura.x86 == undefined) {
+			io.print("\u001b[33mThe anura x86 subsystem is not enabled. Please enable it in the settings.\u001b[0m")
+			return;
+		}
+
+		if (!anura.x86.termready) {
+			io.print("\u001b[33mThe anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m")
+			return;
+		}
+
+		await io.print("Welcome to the Anura x86 subsystem.\r\nTo access your filesystem within linux use the /root directory.\r\n")
+
 		const pty = await anura.x86.openpty("TERM=xterm DISPLAY=:0 bash", t.screenSize.width, t.screenSize.height, (data) => {
 			io.print(data);
 		});

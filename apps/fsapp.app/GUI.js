@@ -1,35 +1,63 @@
 // implementing it myself was too hard so i just stole it from https://codepen.io/adam-lynch/pen/GaqgXP
 
+// This context menu is for files and folders
 const newcontextmenu = new anura.ContextMenu();
-newcontextmenu.addItem("Get Info", function () {});
-newcontextmenu.addItem("Pin to Shelf", function () {});
-newcontextmenu.addItem("Refresh", function () {
-    reload();
-});
-newcontextmenu.addItem("Cut", function () {
+// This context menu is for applications and libraries
+const appcontextmenu = new anura.ContextMenu();
+// This context menu is for when no files are selected
+const emptycontextmenu = new anura.ContextMenu();
+
+// Helper to add context menu items to both menus
+function addContextMenuItem(name, func) {
+    newcontextmenu.addItem(name, func);
+    appcontextmenu.addItem(name, func);
+}
+
+// addContextMenuItem("Get Info", function () {});
+// addContextMenuItem("Pin to Shelf", function () {});
+addContextMenuItem("Cut", function () {
     cut();
 });
-newcontextmenu.addItem("Copy", function () {
+addContextMenuItem("Copy", function () {
     copy();
 });
-newcontextmenu.addItem("Paste", function () {
+addContextMenuItem("Paste", function () {
     paste();
 });
-newcontextmenu.addItem("Delete", function () {
+addContextMenuItem("Delete", function () {
     deleteFile();
 });
-newcontextmenu.addItem("Rename", function () {
+addContextMenuItem("Rename", function () {
     rename();
 });
-newcontextmenu.addItem("Upload from PC", function () {
+
+appcontextmenu.addItem("Install (Session)", function () {
+    // While this is the same as double clicking, it's still useful to have the verbosely named option
+    installSession();
+});
+
+appcontextmenu.addItem("Install (Permanent)", function () {
+    // This is not the same as double clicking, as it will install the app permanently
+    installPermanent();
+});
+
+appcontextmenu.addItem("Navigate", function () {
+    // Normally, double clicking a folder will navigate into it, but for apps and libs, this is not the case
+    navigate();
+});
+
+emptycontextmenu.addItem("Upload from PC", function () {
     upload();
 });
-newcontextmenu.addItem("New folder", function () {
+emptycontextmenu.addItem("New folder", function () {
     newFolder();
 });
-newcontextmenu.addItem("New file", function () {
+emptycontextmenu.addItem("New file", function () {
     newFile();
-});
+})
+emptycontextmenu.addItem("Refresh", function () {
+    reload();
+});;
 
 const min = 150;
 // The max (fr) values for grid-template-columns

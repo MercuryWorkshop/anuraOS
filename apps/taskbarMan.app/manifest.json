@@ -3,11 +3,11 @@
     "type": "auto",
     "package": "anura.taskbarMan",
     "index": "index.html",
-    "icon": "taskbar.svg",
+    "icon": "tskbrman.png",
     "wininfo":{
-      "title":"Taskbar Manager",
-      "width": "650px",
-      "height": "300px",
+      "title":"",
+      "width": "500px",
+      "height": "200px",
       "allowMultipleInstance": "true"
     }
   }

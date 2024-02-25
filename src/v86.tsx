@@ -247,12 +247,12 @@ class V86Backend {
     private s_cols_phys_addr: number;
     private resize_intent_phys_addr: number;
 
-    vgacanvas: HTMLCanvasElement;
+    vgacanvas: HTMLCanvasElement = null!;
 
     screen_container = (
         <div
             id="screen_container"
-            class={styled.new`
+            class={css`
                 self {
                     background-color: #000;
                 }
@@ -262,7 +262,7 @@ class V86Backend {
             `}
         >
             <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-            <canvas bind:vgacanvas={this}></canvas>
+            {(this.vgacanvas = <canvas></canvas>)}
         </div>
     );
 
@@ -310,7 +310,7 @@ class V86Backend {
             },
 
             cmdline:
-                "rw init=/sbin/init root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
+                "rw init=/sbin/init root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off mitigations=off",
             filesystem: { fs, sh, Path, Buffer },
 
             bios: { url: "/bios/seabios.bin" },
@@ -464,7 +464,7 @@ class V86Backend {
     ): Promise<number> {
         if (!anura.x86!.termready) {
             onData(
-                "the x86 subsystem hasn't booted yet, please try again later",
+                "\u001b[33mThe anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m",
             );
             return new Promise((resolve) => {
                 resolve(-1);

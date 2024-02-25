@@ -1,4 +1,4 @@
-# Template Anure app for an easy HTML iFrame
+# Template Anura app for an easy HTML iFrame
 
 ## Instructions for use:
 
@@ -8,20 +8,12 @@
 
 ```json
 "name": "Your Desired app name"
-
-"package": "anura.APPNAME",
-
-"icon": "appicon.svg",
-
+"package": "[organization/author].APPNAME",
+"icon": "appicon.[extension]",
 "title":"Your App Window Name",
-```
-
-4.  Go to launchapp.js and modify the following line, replacing "template" with "yourappsname"
-
-```js
-let glxgears = AliceWM.create("template");
+"index": "[the main html document for your program]"
 ```
 
 ## Congrats
 
-You have successfully completed building your basic iFrame app, you can either zip it and add it to a repository for the WorkStore or add it directly into your Anura instance under the apps folder.
+You have successfully completed building your basic iFrame app, you can either zip it and add it to a repository for use in the Marketplace or add it directly into your Anura instance under the apps folder.

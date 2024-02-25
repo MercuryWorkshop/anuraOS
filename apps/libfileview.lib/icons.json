@@ -1,0 +1,134 @@
+{
+  "files": [
+    {
+      "ext": "txt",
+      "icon": "icons/txt.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/text-plain.svg",
+      "type": "Text File"
+    },
+    {
+      "ext": "mp3",
+      "icon": "icons/mp3.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/audio-mpeg.svg",
+      "type": "MPEG Audio"
+    },
+    {
+      "ext": "flac",
+      "icon": "icons/flac.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/audio-flac.svg",
+      "type": "FLAC Audio"
+    },
+    {
+      "ext": "wav",
+      "icon": "icons/wav.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/audio-x-wav.svg",
+      "type": "WAV Audio"
+    },
+    {
+      "ext": "ogg",
+      "icon": "icons/ogg.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/audio-x-generic.svg",
+      "type": "OGG Audio"
+    },
+    {
+      "ext": "mp4",
+      "icon": "icons/mp4.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/video-mp4.svg",
+      "type": "MPEG Video"
+    },
+    {
+      "ext": "mov",
+      "icon": "icons/mov.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/video.svg",
+      "type": "Quicktime Video"
+    },
+    {
+      "ext": "webm",
+      "icon": "icons/webm.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/video-webm.svg",
+      "type": "WebM Video"
+    },
+    {
+      "ext": "gif",
+      "icon": "icons/gif.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/image-gif.svg",
+      "type": "GIF Image"
+    },
+    {
+      "ext": "png",
+      "icon": "icons/png.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/image-png.svg",
+      "type": "PNG Image"
+    },
+    {
+      "ext": "jpg",
+      "icon": "icons/jpeg.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/image-jpeg.svg",
+      "type": "JPEG Image"
+    },
+    {
+      "ext": "jpeg",
+      "icon": "icons/jpeg.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/image-jpeg.svg",
+      "type": "JPEG Image"
+    },
+    {
+      "ext": "svg",
+      "icon": "icons/svg.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/image-svg+xml.svg",
+      "type": "SVG Image"
+    },
+    {
+      "ext": "pdf",
+      "icon": "icons/pdf.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/application-pdf.svg",
+      "type": "PDF Document"
+    },
+    {
+      "ext": "py",
+      "icon": "icons/py.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/application-x-python-bytecode.svg",
+      "type": "Python Script"
+    },
+    {
+      "ext": "js",
+      "icon": "icons/js.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/application-javascript.svg",
+      "type": "JavaScript Code"
+    },
+    {
+      "ext": "mjs",
+      "icon": "icons/js.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/application-javascript.svg",
+      "type": "JavaScript Module"
+    },
+    {
+      "ext": "cjs",
+      "icon": "icons/js.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/application-javascript.svg",
+      "type": "JavaScript CommonJS Module"
+    },
+    {
+      "ext": "json",
+      "icon": "icons/json.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/application-json.svg",
+      "type": "JSON Data"
+    },
+    {
+      "ext": "html",
+      "icon": "icons/html.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/text-html.svg",
+      "type": "HTML Document"
+    },
+    {
+      "ext": "css",
+      "icon": "icons/css.svg",
+      "source": "papirus/Papirus/16x16/mimetypes/text-css.svg",
+      "type": "CSS Stylesheet"
+    }
+  ],
+  "default": "icons/txt.svg",
+  "defaultSource": "papirus/Papirus/16x16/mimetypes/text-plain.svg",
+  "folder": "icons/folder.svg",
+  "folderSource": "papirus/Papirus/16x16/places/folder-white.svg"
+}

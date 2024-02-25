@@ -29,45 +29,77 @@ class NotificationService {
 interface NotifParams {
     title?: string;
     description?: string;
-    timeout?: number;
-    callback?: () => void;
+    timeout?: number | "never";
+    callback?: (notif: AnuraNotification) => void;
     closeIndicator?: boolean;
+    buttons?: Array<{
+        text: string;
+        style?: "contained" | "outlined" | "text";
+        callback: (notif: AnuraNotification) => void;
+    }>;
     // COMING SOON (hopefully)
     // icon?: string
-    // buttons?: Array<{ text: string, callback: Function }>
 }
 
 class AnuraNotification {
     title = "Anura Notification";
     description = "Anura Description";
-    timeout = 2000;
+    timeout: number | "never" = 2000;
     closeIndicator = false;
-    callback = () => null;
+    callback = (_notif: AnuraNotification) => null;
+    buttons: Array<{
+        text: string;
+        style?: "contained" | "outlined" | "text";
+        callback: (notif: AnuraNotification) => void;
+    }> = [];
     close: () => void;
     element: HTMLElement;
     constructor(params: NotifParams, close: () => void) {
         Object.assign(this, params);
         this.close = close;
+        this.buttons = params.buttons || [];
         this.element = (
             <div class="notif">
-                <div class="notif-close-indicator">
-                    <span class="material-symbols-outlined">close</span>
-                </div>
                 <div
-                    class="notif-body"
+                    class="notif-close-indicator"
                     on:click={() => {
-                        this.callback();
+                        this.callback(this);
                         this.close();
                     }}
                 >
+                    <span class="material-symbols-outlined">close</span>
+                </div>
+                <div class="notif-body">
                     <div class="notif-title">{this.title}</div>
                     <div class="notif-description">{this.description}</div>
+                    <div
+                        class={[
+                            this.buttons.length > 0 && "notif-button-container",
+                        ]}
+                        for={this.buttons}
+                        do={(value: {
+                            text: string;
+                            style?: "contained" | "outlined" | "text";
+                            callback: (notif: AnuraNotification) => void;
+                        }) => (
+                            <button
+                                class={[
+                                    "notif-button",
+                                    `matter-button-${value.style || "contained"}`,
+                                ]}
+                                on:click={() => value.callback(this)}
+                            >
+                                {value.text}
+                            </button>
+                        )}
+                    />
                 </div>
             </div>
         );
-        setTimeout(() => {
-            close();
-        }, this.timeout);
+        this.timeout !== "never" &&
+            setTimeout(() => {
+                close();
+            }, this.timeout);
     }
 
     async show() {
@@ -99,9 +131,9 @@ class AnuraNotification {
 
         const callback = this.callback;
 
-        notif.onclick = function () {
+        notif.onclick = () => {
             deleteNotif();
-            callback();
+            callback(this);
         };
 
         // adding the elements to the list
@@ -110,10 +142,11 @@ class AnuraNotification {
         notif.appendChild(notifBody);
         notifContainer?.appendChild(notif);
 
-        // remove afyer period
-        setTimeout(() => {
-            deleteNotif();
-        }, this.timeout);
+        // remove after period
+        this.timeout !== "never" &&
+            setTimeout(() => {
+                deleteNotif();
+            }, this.timeout);
 
         function deleteNotif() {
             const oldNotif = document.getElementById(id)!;

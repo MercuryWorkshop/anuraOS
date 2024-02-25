@@ -3,21 +3,36 @@ class Taskbar {
         pinnedApps: App[];
         activeApps: App[];
         showBar: boolean;
+        rounded: boolean;
         time: string;
         bat_icon: string;
     } = stateful({
         pinnedApps: [],
         activeApps: [],
         showBar: false,
+        rounded: true,
         time: "",
         bat_icon: "battery_0_bar",
     });
 
+    rounded = rule`
+        border-top-left-radius: 25px;
+        border-top-right-radius: 25px;
+        width: calc(100% - 2px);
+        border-left: 1px solid rgba(0, 0, 0, 0.3);
+        border-right: 1px solid rgba(0, 0, 0, 0.3);
+    `;
+
+    maximizedWins: WMWindow[] = [];
     dragged = null;
     insidedrag = false;
 
     element = (
-        <footer>
+        <footer
+            class={[
+                use(this.state.rounded, (rounded) => rounded && this.rounded),
+            ]}
+        >
             <div id="launcher-button-container">
                 <div
                     id="launcher-button"
@@ -42,23 +57,13 @@ class Taskbar {
                 }}
             >
                 <ul
-                    for={React.use(this.state.pinnedApps)}
+                    for={use(this.state.pinnedApps)}
                     do={this.shortcut.bind(this)}
                 ></ul>
-                <div
-                    if={React.use(this.state.showBar)}
-                    class={styled.new`
-                        self {
-                            border: 2px solid white;
-                            height: 70%;
-                            border-radius: 1px;
-                            margin: 1em;
-                        }
-                    `}
-                ></div>
+                <div if={use(this.state.showBar)} class="splitBar"></div>
 
                 <ul
-                    for={React.use(this.state.activeApps)}
+                    for={use(this.state.activeApps)}
                     do={this.shortcut.bind(this)}
                 ></ul>
             </nav>
@@ -75,10 +80,10 @@ class Taskbar {
                     </span>
 
                     <span class="material-symbols-outlined">
-                        {React.use(this.state.bat_icon)}
+                        {use(this.state.bat_icon)}
                     </span>
 
-                    <p>{React.use(this.state.time)}</p>
+                    <p>{use(this.state.time)}</p>
                 </div>
             </div>
         </footer>
@@ -86,8 +91,8 @@ class Taskbar {
 
     shortcut(app: App) {
         if (!app) return;
-        return (
-            <li class="taskbar-button" bind:tmp={this}>
+        return ((this as any).tmp = (
+            <li class="taskbar-button">
                 <input
                     type="image"
                     draggable="true"
@@ -124,23 +129,41 @@ class Taskbar {
                         this.showcontext(app, e);
                     }}
                 />
-                <div
-                    class="lightbar"
-                    style={
-                        "position: relative; bottom: 0px; background-color:#FFF; width:30%; left:50%; transform:translateX(-50%)" +
-                        (app.windows?.length == 0 ? ";visibility:hidden" : "")
-                    }
-                    bind:lightbar={this}
-                ></div>
+                {
+                    ((this as any).lightbar = (
+                        <div
+                            class="lightbar"
+                            style={
+                                "position: relative; bottom: 0px; background-color:#FFF; width:30%; left:50%; transform:translateX(-50%)" +
+                                (app.windows?.length == 0
+                                    ? ";visibility:hidden"
+                                    : "")
+                            }
+                        ></div>
+                    ))
+                }
             </li>
-        );
+        ));
     }
     #contextMenu = new ContextMenuAPI(); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
     showcontext(app: App, e: MouseEvent) {
         if (app.windows.length > 0) {
             this.#contextMenu.removeAllItems();
             this.#contextMenu.addItem("New Window", () => {
-                app.open();
+                const potentialFuture = app.open();
+                console.log(potentialFuture);
+                if (
+                    typeof potentialFuture != "undefined" &&
+                    //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
+                    // Typescript doesn't like this, so we have to ignore it.
+                    typeof potentialFuture.then == "function"
+                ) {
+                    // @ts-ignore - Same as above
+                    potentialFuture.then((win) => {
+                        if (typeof win == "undefined") return;
+                        this.updateRadius();
+                    });
+                }
             });
 
             let winEnumerator = 1;
@@ -178,7 +201,20 @@ class Taskbar {
 
             console.log(c);
         } else {
-            app.open();
+            const potentialFuture = app.open();
+            console.log(potentialFuture);
+            if (
+                typeof potentialFuture != "undefined" &&
+                //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
+                // Typescript doesn't like this, so we have to ignore it.
+                typeof potentialFuture.then == "function"
+            ) {
+                // @ts-ignore - Same as above
+                potentialFuture.then((win) => {
+                    if (typeof win == "undefined") return;
+                    this.updateRadius();
+                });
+            }
         }
     }
 
@@ -252,6 +288,16 @@ class Taskbar {
             this.state.activeApps.length > 0;
 
         console.log(this.state.activeApps);
+    }
+
+    updateRadius() {
+        console.log(snappedWindows);
+        if (this.maximizedWins.length > 0 || snappedWindows.length > 0) {
+            this.state.rounded = false;
+        } else {
+            this.state.rounded = true;
+        }
+        console.log("max:", this.maximizedWins.length);
     }
     // removeShortcuts() {
     //     for (const name in this.shortcuts) {

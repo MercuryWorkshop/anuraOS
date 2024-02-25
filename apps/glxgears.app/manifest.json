@@ -3,7 +3,7 @@
   "type": "auto",
   "package": "anura.glxgears",
   "index": "b.html",
-  "icon": "glxgears.png",
+  "icon": "glxicon.png",
   "wininfo":{
     "title":"glxgears",
     "width":"350px",

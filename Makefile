@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json
+all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/chideNewNewNew.app/node_modules build/libcurl.mjs build/lib/bare.cjs build/assets/matter.css 
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -13,6 +13,12 @@ hooks: FORCE
 	mkdir -p .git/hooks
 	echo -e "#!/bin/sh\nmake lint\ngit add -A" > .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
+
+apps/libfileview.lib/icons:
+	cd apps/libfileview.lib; bash geticons.sh
+
+apps/chideNewNewNew.app/node_modules:
+	cd apps/chideNewNewNew.app; npm i
 
 public/config.json:
 	cp config.default.json public/config.json
@@ -25,6 +31,17 @@ build/bootstrap:
 
 build/nohost-sw.js:
 	cd nohost; npm i; npm run build; cp -r dist/* ../build/
+
+build/libcurl.mjs:
+	mkdir -p libcurl; cd libcurl; npm i --prefix . libcurl.js; cp node_modules/libcurl.js/libcurl.mjs ../build/; cp node_modules/libcurl.js/libcurl.wasm ../build/; rm -r ../libcurl
+
+build/lib/bare.cjs: build/bootstrap
+	cp node_modules/@mercuryworkshop/bare-client-custom/dist/bare.cjs build/lib/bare.cjs
+
+build/assets/matter.css:
+	mkdir -p build/assets
+	curl https://github.com/finnhvman/matter/releases/latest/download/matter.css -L -o build/assets/matter.css
+
 clean:
 	cd v86; make clean
 	rm -rf build/*

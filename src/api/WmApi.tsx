@@ -1,14 +1,19 @@
 class WMAPI {
     windows: WeakRef<WMWindow>[] = [];
+    hasFullscreenWindow = false;
     create(
         ctx: App,
         info: object,
         onfocus: (() => void) | null = null,
         onresize: ((w: number, h: number) => void) | null = null,
         onclose: (() => void) | null = null,
+        onmaximize: (() => void) | null = null,
+        onunmaximize: (() => void) | null = null,
+        onsnap:
+            | ((snapDirection: "left" | "right" | "top") => void)
+            | null = null,
     ): WMWindow {
         const win = AliceWM.create(info as unknown as any);
-
         win.focus();
 
         win.onfocus = () => {
@@ -24,6 +29,26 @@ class WMAPI {
         };
         win.onclose = () => {
             if (onclose) onclose();
+            this.windows = this.windows.filter(
+                (w: WeakRef<WMWindow>) => w.deref() !== win,
+            );
+        };
+        win.onmaximize = () => {
+            if (onmaximize) onmaximize();
+            taskbar.maximizedWins.push(win);
+            taskbar.updateRadius();
+        };
+        win.onunmaximize = () => {
+            if (onunmaximize) onunmaximize();
+            taskbar.maximizedWins = taskbar.maximizedWins.filter(
+                (w) => w !== win,
+            );
+            taskbar.updateRadius();
+        };
+        win.onsnap = (snapDirection: "left" | "right" | "top") => {
+            if (onsnap) onsnap(snapDirection);
+            console.log(snappedWindows);
+            taskbar.updateRadius();
         };
         ctx.windows.push(win);
         this.windows.push(new WeakRef(win));

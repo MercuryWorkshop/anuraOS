@@ -12,7 +12,7 @@ class AltTabView {
         return (
             <div>
                 <div
-                    class={React.use(
+                    class={use(
                         this.state.index,
                         (stateIndex) =>
                             "alttab-window " +
@@ -35,7 +35,9 @@ class AltTabView {
                         src={app?.icon}
                         alt="App Icon"
                     />
-                    <span class="alttab-window-title-text">{app.name}</span>
+                    <span class="alttab-window-title-text">
+                        {win.state.title || app.name}
+                    </span>
                 </div>
             </div>
         );
@@ -44,16 +46,16 @@ class AltTabView {
     view() {
         return (
             <div
-                class={React.use(
+                class={use(
                     this.state.active,
                     (active) =>
                         "alttab-container " + (active ? "" : "alttab-hidden"),
                 )}
-                if={React.use(this.state.windows, (w) => Boolean(w.length))}
+                if={use(this.state.windows, (w) => Boolean(w.length))}
                 then={
                     <div
                         class="alttab-window-list"
-                        for={React.use(
+                        for={use(
                             this.state.windows,
                             (windows: [App, WMWindow][]) =>
                                 windows.map(([a, w], i) => [a, w, i]),

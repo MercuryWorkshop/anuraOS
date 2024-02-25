@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Libtest</title>
+    </head>
+    <body>
+        <script type="module">
+            const url = new URL(window.location.href);
+            const args = ExternalApp.deserializeArgs(url.searchParams.get("args"))
+
+            let debug = false;
+
+            if (args) {
+                console.log("args", args)
+                const debugArgs = args.filter(arg => arg.startsWith("debug=")).map(arg => arg.split("=")[1]);
+                if (debugArgs.length > 0 && debugArgs[debugArgs.length - 1] === "true") {
+                    debug = true;
+                    anura.notifications.add({
+                        title: "libtest",
+                        description: `libtest app is being ran in debug mode.`,
+                        timeout: 5000
+                    })
+                }
+            }
+
+            let libtest = await anura.import("anura.examplelib")
+            
+            let persist = await anura.import("anura.persistence")
+            let loader = persist.buildLoader(anura)
+            await loader.locate()
+            
+            window.settings = await loader.build(instance)
+
+            document.querySelector("#hello_button").addEventListener("click", () => {
+                alert(libtest.hello_world())
+            })
+
+            let { awesome_component, AnuraVersion } = await anura.ui.use([
+                "awesome_component",
+                "AnuraVersion"
+            ])
+
+            document.body.appendChild(awesome_component.bind({ name: "libtest" })())
+
+            document.body.appendChild(AnuraVersion.bind({})())
+
+            if (!debug) {
+                let debugButton = document.createElement("button")
+                debugButton.innerText = "Restart in debug mode"
+                debugButton.addEventListener("click", () => {
+                    instance.open(["debug=true"])
+                    instanceWindow.close()
+                })
+                document.body.appendChild(debugButton)
+            }
+        </script>
+        <button id="hello_button">test hello</button>
+    </body>
+</html>

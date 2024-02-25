@@ -1,17 +1,18 @@
 class OobeView {
-    content: HTMLElement;
     state = stateful({
         color: "var(--oobe-bg)",
         text: "black",
+        step: 0,
     });
+
     css = styled.new`
         * {
-            color: ${React.use(this.state.text)};
+            color: ${use(this.state.text)};
             transition: all 1s;
         }
 
         self {
-            background-color: ${React.use(this.state.color)};
+            background-color: ${use(this.state.color)};
             z-index: 9996;
             position: absolute;
             width: 100%;
@@ -90,13 +91,7 @@ class OobeView {
             margin-left: auto;
         }
     `;
-    element = (
-        <div class={this.css}>
-            <div bind:content={this} id="content"></div>
-        </div>
-    );
 
-    nextButton: HTMLElement;
     steps = [
         {
             elm: (
@@ -212,43 +207,26 @@ class OobeView {
                 }
                 if (anura.settings.get("use-sw-cache")) await preloadFiles();
                 console.log("Cached important files");
-                // Register default filehandlers
-
-                anura.files.set(
-                    "/apps/libfileview.app/fileHandler.js",
-                    "default",
-                );
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "txt");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "mp3");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "flac");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "wav");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "ogg");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "mp4");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "mov");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "webm");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "gif");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "png");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "jpg");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "jpeg");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "pdf");
-                anura.files.set("/apps/libfileview.app/fileHandler.js", "py");
 
                 this.complete();
             },
         },
     ];
-    i = 0;
 
-    constructor() {
-        this.nextStep();
-    }
+    element = (
+        <div class={`${this.css} self`}>
+            <div id="oobe-top">
+                <div id="content">
+                    {use(this.state.step, (step) => this.steps[step]!.elm)}
+                </div>
+            </div>
+        </div>
+    );
 
     nextStep() {
-        const step = this.steps[this.i]!;
-        this.content.children[0]?.remove();
-        this.content.appendChild(step.elm);
+        this.state.step++;
+        const step = this.steps[this.state.step]!;
         if (step.on) step.on();
-        this.i++;
     }
     complete() {
         anura.settings.set("oobe-complete", true);
@@ -257,6 +235,7 @@ class OobeView {
         this.element.remove();
     }
 }
+
 async function installx86() {
     const tracker = document.getElementById("tracker");
     console.log("installing x86");

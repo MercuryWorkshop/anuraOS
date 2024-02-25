@@ -2,54 +2,69 @@
 
 See [This Document](./templates/template.app/README.md) for instructions on how to set up a basic iFrame app.
 
-Every application is a .app folder with a manifest file called manifest.json. In this file, the basic properties of the app are defined.
+# AnuraOS Apps
 
-## `name`
+AnuraOS apps are simple creatures. They live inside folders with the suffix `.app` and the resources specific to each app are contained within that folder.
 
--   **Type:** String
--   **Description:** Defines the name of the application.
+## Manifest
 
-## `type`
+Each app contains a `manifest.json`, which defines the functionality of the app. See [`manifest.json.example`](./manifest.json.example).
 
--   **Types:** auto, manual
--   **Description:** Specifies if Anura should handle functions of this application or whether it will be done manually.
+-   `name`: `String` - Program name. Required.
+-   `type`: `String` - Program type. "auto" or "manual". Required.
 
-## `package`
+*   "manual": Evaluates at top-window level. Highly discouraged.
+*   "auto": Evaluates within a contained iframe.
 
--   **Type:** String
--   **Description:** Represents the package name for the application.
+-   `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
+-   `index`: `String` - Path (from app directory) to the index HTML file. Required if `type` is `"auto"` - the iframe source will be set to this.
+-   `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Anura will display this icon throughout the DE.
+-   `background`: Background color of iframe while it is loading. Optional.
+-   `handler`: `String` - Path (from app directory) to a file containing JavaScript to execute at the top-level document. Required if `type` is `"manual"`, ignored otherwise - the top-level document will execute this file as JavaScript.
+-   `wininfo`: `Object {title, width, height}` - Required if `type` is `"auto"`.
 
-## `index`
+*   `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
+*   `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
+*   `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
 
--   **Type:** String
--   **Description:** Specifies the main entry point or the primary HTML file for the application.
+# AnuraOS Libraries
 
-## `icon`
+AnuraOS libraries are just like apps but contain utilities or functionality that other apps could import and use. They live inside folders with the suffix `.lib` and the resources specific to each app are contained within that folder.
 
--   **Type:** String
--   **Description:** Indicates the icon file used to represent the application.
+## Manifest
 
-## `handler`
+-   You write a library that consists of a `manifest.json` file and an ES module. An example of the manifest file is below.
+    ```json
+    {
+        "name": "Example Library",
+        "icon": "libtest.png",
+        "package": "anura.examplelib",
+        "versions": {
+            "0.0.1": "deprecated/0.0.1/index.js",
+            "1.0.0": "index.js"
+        },
+        "installHook": "install.js",
+        "currentVersion": "1.0.0"
+    }
+    ```
+    -   `name` is the name of the library.
+    -   `icon` is the icon of the library (for use in Marketplace).
+    -   `package` is the package name of the library.
+    -   `versions` is a map of version numbers to entry points.
+    -   `installHook` is a file that is run when the library is installed. It should have a default export that is a function that takes the anura instance as an argument.
+    -   `currentVersion` is the current version of the library, which will be used as the default version when using the `anura.import` api.
 
--   **Type:** String
--   **Description:** Points to a javascript file contained in the app that handles the apps launch.
+## Usage
 
-## `wininfo`
+-   Libraries can be imported using the `anura.import` api. This api takes the package id of the library and an optional version number. The version number is specified by appending `@<version>` to the package id. If no version is specified, the current version of the library is used.
 
--   **Type:** Object
--   **Description:** Contains information specific to the application's window settings.
+```js
+anura.import("anura.examplelib@1.0.0").then((lib) => {
+    // Do stuff with the library.
+});
+```
 
-    ### `title`
-
-    -   **Type:** String
-    -   **Description:** Specifies the title or name of the application's window.
-
-    ### `width`
-
-    -   **Type:** String
-    -   **Description:** Determines the width of the application's window.
-
-    ### `height`
-
-    -   **Type:** String
-    -   **Description:** Determines the height of the application's window.
+```js
+let lib = await anura.import("anura.examplelib");
+// Do stuff with the library.
+```

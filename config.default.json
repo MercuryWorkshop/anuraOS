@@ -9,8 +9,15 @@
         "apps/fsapp.app",
         "apps/chideNewNewNew.app",
         "apps/python.app",
-        "apps/workstore.app",
-        "apps/taskbarMan.app"
+        "apps/marketplace.app",
+        "apps/taskbarMan.app",
+        "apps/ashell.app"
+    ],
+    "libs": [
+        "/apps/libfileview.lib",
+        "/apps/libfilepicker.lib",
+        "/apps/libstore.lib",
+        "/apps/libpersist.lib"
     ],
     "defaultsettings": {
         "use-sw-cache": true,
@@ -20,6 +27,8 @@
             "anura.fsapp",
             "anura.term"
         ],
+        "clampWindows": true,
+        "launcher-keybind": true,
         "relay-url": "wss://relay.widgetry.org/"
     },
     "x86": {

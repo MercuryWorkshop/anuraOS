@@ -3,7 +3,7 @@
 // importScripts('/assets/libs/workbox/workbox-sw.js');
 
 importScripts("/nohost-sw.js");
-importScripts("/sw.js");
+// importScripts("/sw.js");
 
 var cacheenabled = false;
 
@@ -38,9 +38,6 @@ addEventListener("message", (event) => {
     if (event.data.anura_target === "anura.cache") {
         cacheenabled = event.data.value;
     }
-    if (event.data.anura_target === "anura.cache.invalidate") {
-        invalidateCache();
-    }
 });
 async function handleRequests({ url, request, event, params }) {
     let clients = (await self.clients.matchAll()).filter(
@@ -71,11 +68,6 @@ async function handleRequests({ url, request, event, params }) {
 
     return new Response(resp.body);
 }
-function invalidateCache() {
-    let sh = new fs.Shell();
-    sh.rm("/anura_files", { recursive: true });
-    console.log("cache invalidated!");
-}
 
 workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
     console.log("Caught a aboutbrowser extension request");
@@ -87,7 +79,7 @@ workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
 });
 
 workbox.routing.registerRoute(
-    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin|\/images\/debian|\/ultraviolet\/))/,
+    /^(?!.*(\/bare|\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin|\/images\/debian|\/service\/))/,
     ({ url }) => {
         if (!cacheenabled) return;
         if (url.pathname === "/") {
@@ -134,3 +126,41 @@ workbox.routing.registerRoute(
     },
     "GET",
 );
+
+importScripts("./uv/uv.bundle.js");
+importScripts("./uv/uv.config.js");
+importScripts("./uv/uv.sw.js");
+
+const uv = new UVServiceWorker();
+// const dynamic = new Dynamic();
+
+// self.addEventListener("fetch", (event) => {
+//     console.log("Got fetch")
+//     event.respondWith(
+//         (async () => {
+//             console.log(location.origin + __uv$config.prefix)
+//             if (
+//                 event.request.url.startsWith(
+//                     location.origin + __uv$config.prefix,
+//                 )
+//             ) {
+//                 console.log("UV should fetch")
+//                 return await uv.fetch(event);
+//             }
+//             return await fetch(event.request);
+//         })(),
+//     );
+// });
+
+const methods = ["GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS", "PATCH"];
+
+methods.forEach((method) => {
+    workbox.routing.registerRoute(
+        /\/service\//,
+        async (event) => {
+            console.log("Got UV req");
+            return await uv.fetch(event);
+        },
+        method,
+    );
+});

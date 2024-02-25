@@ -10,7 +10,6 @@
 | 1.1.1   | :white_check_mark: |
 | 1.0.0   | :x:                |
 
-
 ## Reporting a Vulnerability
 
 In the case that you somehow manage to find a vulnerability in Anura please contact security@mercurywork.shop

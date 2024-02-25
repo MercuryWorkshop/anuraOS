@@ -1,0 +1,11 @@
+{
+  "name": "Anura Shell",
+  "type": "auto",
+  "package": "anura.ashell",
+  "index": "term.html",
+  "icon": "term.png",
+  "wininfo":{
+    "title":"Terminal",
+    "allowMultipleInstance": "true"
+  }
+}

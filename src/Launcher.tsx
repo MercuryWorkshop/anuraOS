@@ -1,16 +1,17 @@
 class Launcher {
     private search: HTMLInputElement | null;
-    css = styled.new`
+
+    css = css`
         self {
             position: absolute;
             width: min(70%, 35em);
             height: min(60%, 30em);
-            background-color: rgba(22, 22, 22, 0.8);
+            background-color: rgba(22, 22, 22, 0.9);
             border: 1px solid rgba(0, 0, 0, 1);
             box-shadow: inset 0 0 0 1px #3e3e3e;
 
             border-radius: 1em;
-            bottom: 4.5em;
+            bottom: 60px;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             display: flex;
@@ -31,23 +32,6 @@ class Launcher {
             z-index: 9999;
             transition: all 0.1s ease-in;
             visibility: visible;
-        }
-
-        .clickoffChecker {
-            display: none;
-        }
-
-        .clickoffChecker.active {
-            position: absolute;
-            width: 100%;
-            /* TODO: make this not be a magic number later with css variables */
-            height: calc(100% - 51px);
-            z-index: 9998;
-            opacity: 0;
-            top: 0;
-            left: 0;
-            bottom: 49px;
-            display: block;
         }
 
         .topSearchBar {
@@ -128,8 +112,36 @@ class Launcher {
             height: 1em;
         }
     `;
+
+    clickoffCheckerCss = css`
+        self {
+            display: none;
+        }
+
+        self.active {
+            position: absolute;
+            width: 100%;
+            height: calc(100%);
+            display: block;
+        }
+    `;
+
+    // self.active {
+    //     position: absolute;
+    //     width: 100%;
+    //     /* TODO: make this not be a magic number later with css variables */
+    //     height: calc(100% - 51px);
+    //     z-index: 9998;
+    //     opacity: 0;
+    //     top: 0;
+    //     left: 0;
+    //     bottom: 49px;
+    //     display: block;
+    // }
+    // `;
+
     element = (
-        <div class={this.css}>
+        <div class={this.css + " self"}>
             <div class="topSearchBar">
                 <img src="/assets/icons/googleg.png"></img>
                 <input
@@ -145,18 +157,7 @@ class Launcher {
     clickoffChecker = (
         <div
             id="clickoffChecker"
-            class={styled.new`
-                self {
-                    display: none;
-                }
-
-                self.active {
-                    position: absolute;
-                    width: 100%;
-                    height: calc(100%);
-                    display: block;
-                }
-            `}
+            class={`self ${this.clickoffCheckerCss}`}
         ></div>
     );
 
@@ -214,24 +215,34 @@ class Launcher {
 
     addShortcut(app: App) {
         if (app.hidden) return;
-        const shortcut = this.shortcutElement(app);
-        shortcut.addEventListener("click", (...args) => {
-            this.hide();
-            app.open();
-        });
-        this.element.querySelector("#appsView").appendChild(shortcut);
-    }
 
-    shortcutElement(app: App): HTMLElement {
-        return (
-            <div class="app">
-                <input
-                    class="app-shortcut-image showDialog"
-                    type="image"
-                    src={app.icon}
-                />
-                <div class="app-shortcut-name">{app.name}</div>
-            </div>
+        this.element.querySelector("#appsView").appendChild(
+            <LauncherShortcut
+                app={app}
+                onclick={() => {
+                    this.hide();
+                    app.open();
+                }}
+            />,
         );
     }
+}
+
+function LauncherShortcut(
+    this: DLComponent<{
+        app: App;
+        onclick: () => void;
+    }>,
+): HTMLDivElement {
+    return (
+        <div class="app" on:click={this.onclick}>
+            <input
+                class="app-shortcut-image showDialog"
+                style="width: 40px; height: 40px"
+                type="image"
+                src={this.app.icon}
+            />
+            <div class="app-shortcut-name">{this.app.name}</div>
+        </div>
+    );
 }

@@ -3,7 +3,7 @@
   "type": "auto",
   "package": "anura.vnc",
   "index": "loginForm.html",
-  "icon": "vnc.svg",
+  "icon": "vnc.png",
   "wininfo":{
     "title":"VNC Client",
     "height": "400px",
