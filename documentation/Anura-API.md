@@ -38,8 +38,71 @@ This API provides access to Anura's x86 backend; Which is used to create PTYs, w
 
 ```js
 anura.x86.emulator; // Get v86 emulator object
+```
 
-anura.x86.openpty; // Open a PTY terminal (see usage in sourcecode for terminal.app)
+### anura.x86.openpty
+
+This allows you to open a PTY and run commands inside of it. It returns the number of the PTY and is used in other interactions.
+
+```js
+const pty = await anura.x86.openpty(
+    "TERM=xterm DISPLAY=:0 bash",
+    screenSize.width,
+    screenSize.height,
+    (data) => {
+        // callback gets called every time the PTY returns data
+    },
+);
+```
+
+### anura.x86.writepty
+
+This allows you to send data to a PTY. This data should be a string or converted to one.
+
+```js
+const pty = await anura.x86.openpty(
+    "TERM=xterm DISPLAY=:0 bash",
+    screenSize.width,
+    screenSize.height,
+    (data) => {
+        console.log(data);
+    },
+);
+anura.x86.writepty(pty, "Hello World!");
+```
+
+### anura.x86.resizepty
+
+This allows you to send resize a PTY.
+
+```js
+const pty = await anura.x86.openpty(
+    "TERM=xterm DISPLAY=:0 bash",
+    screenSize.width,
+    screenSize.height,
+    (data) => {
+        console.log(data);
+    },
+);
+anura.x86.resizepty(pty, screenSize.height, screenSize.width);
+```
+
+## anura.wm
+
+### anura.wm.create
+
+This api allows you to create a window that will be displayed in the DE.
+
+Usage
+
+```js
+let win = anura.wm.create(instance, {
+    title: "Example Window",
+    width: "1280px",
+    height: "720px",
+});
+
+// do things with the window that gets returned
 ```
 
 ## anura.net
@@ -52,10 +115,6 @@ This API provides access to Anura's networking backend, for routing your request
 anura.net.fetch; // Same functionality as built in fetch function
 
 anura.net.WebSocket; // Same functionality as built in WebSocket constructor
-
-anura.net.Socket; // Open a TCP Socket
-
-anura.x86.TLSSocket; // Open a TCP socket but using TLS
 ```
 
 ## anura.fs
@@ -82,19 +141,14 @@ This API provides access to Anura's notification service, useful if you need to 
 **Usage:**
 
 ```js
-
 anura.notifications.add({
-
-title: "Test Notification",
-
-description: `This is a test notification`,
-
-callback: function() {console.log('hi')}
-
-timeout: 2000
-
-}) // Show a notification to the user, on click, it says hi in console, it lasts for 2 seconds.
-
+    title: "Test Notification",
+    description: `This is a test notification`,
+    callback: function () {
+        console.log("hi");
+    },
+    timeout: 2000,
+}); // Show a notification to the user, on click, it says hi in console, it lasts for 2 seconds.
 ```
 
 ## anura.wsproxyURL

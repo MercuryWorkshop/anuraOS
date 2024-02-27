@@ -52,11 +52,11 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
     -   `package` is the package name of the library.
     -   `versions` is a map of version numbers to entry points.
     -   `installHook` is a file that is run when the library is installed. It should have a default export that is a function that takes the anura instance as an argument.
-    -   `currentVersion` is the current version of the library, which will be used as the default version when using the `anura.import` api.
+    -   `currentVersion` is the current version of the library, which will be used as the default version when using the [`anura.import`](./Anura-API.md#anuraimport) api.
 
 ## Usage
 
--   Libraries can be imported using the `anura.import` api. This api takes the package id of the library and an optional version number. The version number is specified by appending `@<version>` to the package id. If no version is specified, the current version of the library is used.
+-   Libraries can be imported using the [`anura.import`](./Anura-API.md#anuraimport) api. This api takes the package id of the library and an optional version number. The version number is specified by appending `@<version>` to the package id. If no version is specified, the current version of the library is used.
 
 ```js
 anura.import("anura.examplelib@1.0.0").then((lib) => {
