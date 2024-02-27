@@ -1,5 +1,5 @@
 [toolchain]
-channel = "stable"
-components = [ "rustc" ]
+channel = "nightly"
+components = [ "rustc", "rust-std" ]
 targets = [ "wasm32-unknown-unknown" ]
 profile = "minimal"
