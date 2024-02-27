@@ -8,7 +8,7 @@ class AboutApp extends App {
             <div class="aboutapp-logo">
                 <div
                     class="aboutapp-logo-img"
-                    title="離れ離れ街を繋ぐ列車は行ってしまったね.."
+                    title="Toss all your change to the wellspring..."
                 ></div>
             </div>
             <div class="aboutapp-logo-divider"></div>
