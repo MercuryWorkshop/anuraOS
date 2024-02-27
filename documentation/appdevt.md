@@ -69,3 +69,35 @@ anura.import("anura.examplelib@1.0.0").then((lib) => {
 let lib = await anura.import("anura.examplelib");
 // Do stuff with the library.
 ```
+
+# System Libraries
+
+Anura has a assortment of preinstalled system libraries to streamline the developer experience. This part of the documentation outlines how to use them in your application using the [`anura.import`](./Anura-API.md#anuraimport) api.
+
+## libbrowser
+
+This library allows you to interact with Anura's browser. Instead of using `window.open` in your anura apps, using this API will ensure that the webpage will open up in the Anura Browser.
+
+Usage:
+
+```js
+const browser = await anura.import("anura.libbrowser");
+
+browser.openTab("https://google.com/");
+```
+
+## libfilepicker
+
+This library allows you to select files from inside of anura's filesystem. It returns a path and supports both files and folders.
+
+```js
+let picker = await anura.import("anura.filepicker");
+// select file of any type
+let file = await picker.selectFile();
+// regex supported
+let fileWithFilter = await picker.selectFile(
+    "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
+);
+// select folder
+let folder = await picker.selectFolder();
+```

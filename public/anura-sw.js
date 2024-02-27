@@ -86,7 +86,10 @@ workbox.routing.registerRoute(
             url.pathname = "/index.html";
         }
         if (url.password)
-            return new Response("<script>window.location.href = window.location.href</script>", {headers: {"content-type": "text/html"}});
+            return new Response(
+                "<script>window.location.href = window.location.href</script>",
+                { headers: { "content-type": "text/html" } },
+            );
         const basepath = "/anura_files";
         let sh = new fs.Shell();
         // this is more annoying than it needs to be because this uses an old-ass compiler which doesn't like promises
