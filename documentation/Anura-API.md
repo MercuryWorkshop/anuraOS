@@ -93,6 +93,164 @@ const pty = await anura.x86.openpty(
 anura.x86.resizepty(pty, screenSize.height, screenSize.width);
 ```
 
+## anura.x86hdd
+
+This api allows you to interact with the v86 virtual hard disk.
+
+### anura.x86hdd.size
+
+This returns the size of the v86 hard disk in bytes.
+
+**Usage:**
+
+```js
+console.log("v86 hard disk size: " + anura.x86hdd.size);
+```
+
+### anura.x86hdd.loadfile
+
+This allows you to load a image into the x86 hard disk.
+
+**Usage:**
+
+```js
+// single file
+const rootfs = await fetch(anura.config.x86[x86image].rootfs);
+const blob = await rootfs.blob();
+await anura.x86hdd.loadfile(blob);
+
+// split into multiple files
+const files = [];
+let file_1 = await fetch(anura.config.x86[x86image].rootfs["1"]);
+files["1"] = await file_1.blob();
+let file_2 = await fetch(anura.config.x86[x86image].rootfs["2"]);
+files["2"] = await file_2.blob();
+await anura.x86hdd.loadfile(new Blob(files));
+```
+
+### anura.x86hdd.delete
+
+Deletes the x86 hard disk and refreshes the page. This is a destructive action!
+
+**Usage:**
+
+```js
+console.log("saving hard disk");
+await anura.x86hdd.delete();
+```
+
+### anura.x86hdd.resize
+
+Deletes the x86 hard disk and refreshes the page. This is a destructive action!
+
+**Usage:**
+
+```js
+console.log("saving hard disk")
+anura.x86?.emulator.stop();
+clearInterval(
+    anura.x86?.saveinterval,
+);
+await anura.x86.resize(4294967296) // 4 GB
+// actually resizing it and making it visible to linux
+const emulator = new V86Starter(
+    {
+        wasm_path:
+            "/lib/v86.wasm",
+        memory_size:
+            512 * 1024 * 1024,
+        vga_memory_size:
+            8 * 1024 * 1024,
+        screen_container:
+            anura.x86!
+                .screen_container,
+
+        initrd: {
+            url: "/images/resizefs.img",
+        },
+
+        bzimage: {
+            url: "/images/bzResize",
+            async: false,
+        },
+        hda: {
+            buffer: anura.x86hdd,
+            async: true,
+        },
+
+        cmdline:
+            "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
+
+        bios: {
+            url: "/bios/seabios.bin",
+        },
+        vga_bios: {
+            url: "/bios/vgabios.bin",
+        },
+        autostart: true,
+        uart1: true,
+        uart2: true,
+    },
+);
+let s0data = "";
+emulator.add_listener(
+    "serial0-output-byte",
+    async (byte: number) => {
+        const char =
+            String.fromCharCode(
+                byte,
+            );
+        if (char === "\r") {
+            anura.logger.debug(
+                s0data,
+            );
+
+            if (
+                s0data.includes(
+                    "Finished Disk",
+                )
+            ) {
+                await anura.x86hdd.save(
+                    emulator,
+                );
+                this.state.resizing =
+                    false;
+                if (
+                    document.getElementById(
+                        "resize-disk-btn",
+                    )
+                ) {
+                    document.getElementById(
+                        "resize-disk-btn",
+                    )!.innerText =
+                        "Resize Disk";
+                }
+                confirm(
+                    "Resized disk! Would you like to reload the page?",
+                )
+                    ? window.location.reload()
+                    : null;
+            }
+
+            s0data = "";
+            return;
+        }
+        s0data += char;
+    },
+);
+```
+
+### anura.x86hdd.save
+
+This allows you to save the v86 hard disk and sends a notification to the user.
+
+**Usage:**
+
+```js
+console.log("saving hard disk");
+await anura.x86hdd.save();
+```
+
 ## anura.wm
 
 ### anura.wm.create
