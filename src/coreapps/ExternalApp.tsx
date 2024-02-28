@@ -1,12 +1,15 @@
 class ExternalApp extends App {
     manifest: AppManifest;
     source: string;
+    icon = "/assets/icons/generic.png";
 
     constructor(manifest: AppManifest, source: string) {
         super();
         this.manifest = manifest;
         this.name = manifest.name;
-        this.icon = source + "/" + manifest.icon;
+        if (manifest.icon) {
+            this.icon = source + "/" + manifest.icon;
+        }
         this.source = source;
         this.package = manifest.package;
         this.hidden = manifest.hidden || false;

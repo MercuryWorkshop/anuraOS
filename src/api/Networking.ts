@@ -11,6 +11,7 @@ class Networking {
             Object.assign(this, {
                 WebSocket: this.libcurl.WebSocket,
                 fetch: this.libcurl.fetch,
+                Socket: this.libcurl.WispConnection,
             });
             console.log("libcurl.js ready!");
         });
