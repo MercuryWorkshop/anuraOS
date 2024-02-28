@@ -111,6 +111,24 @@ let win = anura.wm.create(instance, {
 // do things with the window that gets returned
 ```
 
+### anura.wm.createGeneric
+
+This is is the same as the `anura.wm.create` api but creates a window under the Generic App instance.
+**Usage:**
+
+```js
+let win = anura.wm.createGeneric({
+    title: "Example Window",
+    width: "1280px",
+    height: "720px",
+});
+
+// another use case
+let win = anura.wm.createGeneric("Example Window");
+
+// do stuff with the window that gets returned
+```
+
 ## anura.net
 
 This API provides access to Anura's networking backend, for routing your requests through a [Wisp](https://github.com/MercuryWorkshop/wisp-protocol) compatible backend using [libcurl.js](https://github.com/ading2210/libcurl.js).

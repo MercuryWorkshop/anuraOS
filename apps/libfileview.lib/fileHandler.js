@@ -6,7 +6,7 @@ export function openFile (path) {
     async function runPython(path) {
         let pythonInterpreter = await window.parent.anura.python("test")
         fs.readFile(path, async function(err, data)  {
-            let fileView = AliceWM.create("Python Output")
+            let fileView = anura.wm.createGeneric("Python Output")
             fileView.content.style.overflow = 'auto'
             function handleOutput (out) {
                 fileView.content.innerText += out
@@ -21,7 +21,7 @@ export function openFile (path) {
     
     function openImage(path, mimetype) {
         fs.readFile(path, function(err, data) {
-            let fileView = AliceWM.create("Image File")
+            let fileView = anura.wm.createGeneric("Image File")
             fileView.content.style.overflow = 'auto'
             let bloburl = URL.createObjectURL(new Blob([data]))
             if (mimetype == 'image/svg+xml') {
@@ -41,7 +41,7 @@ export function openFile (path) {
     
     function openPDF(path) {
         fs.readFile(path, function(err, data) {
-            let fileView = AliceWM.create("PDF File")
+            let fileView = anura.wm.createGeneric("PDF File")
             fileView.content.style.overflow = 'auto'
             let bloburl = URL.createObjectURL(new Blob([data], { type: "application/pdf" }))
             let doc = document.createElement('embed')
@@ -54,7 +54,7 @@ export function openFile (path) {
     
     function openAudio(path, mimetype) {
         fs.readFile(path, function(err, data) {
-            let fileView = AliceWM.create("Audio File")
+            let fileView = anura.wm.createGeneric("Audio File")
             fileView.content.parentElement.style.width = "300px"
             fileView.content.parentElement.style.height = "83px"
             let bloburl = URL.createObjectURL(new Blob([data]))
@@ -67,7 +67,7 @@ export function openFile (path) {
     }
     function openVideo(path, mimetype) {
         fs.readFile(path, function(err, data) {
-            let fileView = AliceWM.create("Video File")
+            let fileView = anura.wm.createGeneric("Video File")
             fileView.content.style.overflow = 'hidden'
             fileView.content.style.backgroundColor = "black"
             let bloburl = URL.createObjectURL(new Blob([data]))
@@ -85,7 +85,7 @@ export function openFile (path) {
     
     function openText(path) {
         fs.readFile(path, function(err, data)  {
-            let fileView = AliceWM.create("Text Viewer");
+            let fileView = anura.wm.createGeneric("Text Viewer");
             fileView.content.style.overflow = 'auto'
             fileView.content.innerText = data;
         })
@@ -93,7 +93,7 @@ export function openFile (path) {
 
     function openHTML(path) {
         fs.readFile(path, function(err, data)  {
-            let fileView = AliceWM.create("HTML Viewer");
+            let fileView = anura.wm.createGeneric("HTML Viewer");
             let iframe = document.createElement('iframe')
             iframe.setAttribute(
                 "style",

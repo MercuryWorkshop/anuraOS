@@ -162,6 +162,9 @@ document.addEventListener("anura-boot-completed", async () => {
 });
 
 document.addEventListener("anura-login-completed", async () => {
+    const generic = new GenericApp();
+    anura.registerApp(generic);
+
     const browser = new BrowserApp();
     anura.registerApp(browser);
 
