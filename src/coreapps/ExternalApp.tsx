@@ -59,6 +59,7 @@ class ExternalApp extends App {
                 anura,
                 AliceWM,
                 ExternalApp,
+                LocalFS,
                 instance: this,
                 instanceWindow: win,
                 h,

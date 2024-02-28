@@ -6,6 +6,18 @@ window.fs = anura.fs;
 window.Buffer = Filer.Buffer;
 let sh = new anura.fs.Shell();
 
+async function mountLocalFs() {
+    let path = prompt("Enter the path where you want to mount the local filesystem")
+    if (!path.startsWith("/")) {
+        anura.notifications.add( {
+            title: "File Manager",
+            description: "Path does not start with a \"/\" character",
+            timeout: 5000,
+        });
+        return;
+    }
+    await LocalFS.new(path)
+}
 function loadPath(path) {
     console.debug("loading path: ", path);
     fs.readdir(path + "/", (err, files) => {
