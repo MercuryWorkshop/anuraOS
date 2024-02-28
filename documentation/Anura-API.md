@@ -18,7 +18,7 @@ anura.settings.get("applist", ["anura.x86mgr", "anura.browser"]); // Set pinned 
 
 This API is used to import libraries. These libraries are similar to apps and can be installed from the Marketplace or sideloaded through the File Manager.
 
-This can be used like so:
+**Usage:**
 
 ```js
 const browser = await anura.import("anura.libbrowser");
@@ -42,6 +42,8 @@ anura.x86.emulator; // Get v86 emulator object
 
 This allows you to open a PTY and run commands inside of it. It returns the number of the PTY and is used in other interactions.
 
+**Usage:**
+
 ```js
 const pty = await anura.x86.openpty(
     "TERM=xterm DISPLAY=:0 bash",
@@ -56,6 +58,8 @@ const pty = await anura.x86.openpty(
 ### anura.x86.writepty
 
 This allows you to send data to a PTY. This data should be a string or converted to one.
+
+**Usage:**
 
 ```js
 const pty = await anura.x86.openpty(
@@ -72,6 +76,8 @@ anura.x86.writepty(pty, "Hello World!");
 ### anura.x86.resizepty
 
 This allows you to send resize a PTY.
+
+**Usage:**
 
 ```js
 const pty = await anura.x86.openpty(
@@ -91,7 +97,7 @@ anura.x86.resizepty(pty, screenSize.height, screenSize.width);
 
 This api allows you to create a window that will be displayed in the DE.
 
-Usage
+**Usage:**
 
 ```js
 let win = anura.wm.create(instance, {
@@ -122,6 +128,8 @@ This API provides access the Anura's internal filesystem, loosely following the 
 The best documentation on the usage of this API can probably be found [Here](https://github.com/filerjs/filer).
 
 The FS API also allows for the registration of virtual filesystems. These must extend the AFSProvider class and implement all of the filesystem methods. Here is an example for registering an instance of the built in LocalFS provider.
+
+**Usage:**
 
 ```js
 await anura.fs.promises.mkdir("/local-mnt");
@@ -171,6 +179,29 @@ webSocket.onopen = (event) => {
 };
 
 // Sends HTTP 1.1 request to alicesworld.tech using wsproxy
+```
+
+## anura.ContextMenu
+
+This API creates a anura style context menu you can use in your apps.
+
+**Usage:**
+
+```js
+const contextmenu = new anura.ContextMenu();
+contextmenu.addItem("Log to console", function () {
+    console.log("hello world!");
+});
+element.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    const boundingRect = window.frameElement.getBoundingClientRect();
+    contextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+    document.onclick = (e) => {
+        document.onclick = null;
+        contextmenu.hide();
+        e.preventDefault();
+    };
+});
 ```
 
 ## anura.python
