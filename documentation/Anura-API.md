@@ -28,6 +28,8 @@ browser.openTab("https://google.com/");
 
 AnuraOS provides some preinstalled libraries to help streamline the development experience. This includes the browser library as shown above, along with the anura persistence library and the file picker.
 
+You can find the documentation for the preinstalled libraries [here](./appdevt.md#system-libraries).
+
 ## anura.x86
 
 This API provides access to Anura's x86 backend; Which is used to create PTYs, write directly to serial terminals (not recommended) or access v86 itself.
