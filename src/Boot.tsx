@@ -90,7 +90,7 @@ window.addEventListener("load", async () => {
                         if (Number(item) % chunkSize === chunkSize - 1) {
                             await Promise.all(promises);
                         }
-                        tracker!.innerText = `Downloading anura system files, chunk ${i}`;
+                        tracker!.innerText = `Downloading anura system files, chunk ${i}/${list.length}`;
                         i++;
                     }
                     await Promise.all(promises);
