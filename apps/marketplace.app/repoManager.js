@@ -56,7 +56,8 @@ async function loadMainScreen() {
                 await anura.settings.set('workstore-repos', repos)
                 loadMainScreen();
             });
-            newcontextmenu.show(e.clientX, e.clientY)
+            const boundingRect = window.frameElement.getBoundingClientRect();
+            newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y)
             document.onclick = (e) => {
                 document.onclick = null;
                 newcontextmenu.hide();

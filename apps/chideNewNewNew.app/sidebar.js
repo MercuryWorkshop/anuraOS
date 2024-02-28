@@ -1,6 +1,4 @@
-let anura = window.parent.anura;
 window.fs = anura.fs;
-
 let activeElement;
 
 /**
@@ -56,14 +54,15 @@ function createRow(RowElement, isFolder, path, file) {
     let name = document.createElement("span");
     name.addEventListener("contextmenu",e=>{
             e.preventDefault();
-            const newcontextmenu = new parent.anura.ContextMenu();
+            const newcontextmenu = new anura.ContextMenu();
             newcontextmenu.addItem("Delete", function () {
                 anura.fs.unlink(`${path}/${file}`)
             });
             newcontextmenu.addItem("New", function () {
                 anura.fs.writeFile(`${path}/${prompt("file name?")}`,"")
             });
-            newcontextmenu.show(e.clientX,e.clientY)
+            const boundingRect = window.frameElement.getBoundingClientRect();
+            newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y)
         })
     if (isFolder) {
         name.innerText = `${file}/`;
