@@ -238,7 +238,9 @@ export class StoreRepo {
                         let manifest = await zipEntry.async("string");
                         manifest = JSON.parse(manifest);
                         manifest.marketplace = {};
-                        manifest.marketplace.version = app.version
+                        if (app.version) {
+                            manifest.marketplace.version = app.version
+                        }
                         manifest.marketplace.repo = app.repo
                         if (app.dependencies) {
                             manifest.marketplace.dependencies = app.dependencies
