@@ -1,5 +1,5 @@
 // app arg is either app or lib
-async function loadOverviewScreen(repo, app, repoVersion) {
+async function loadOverviewScreen(repo, app) {
     overviewScreen.style.display = ''
     overviewScreen.innerHTML = ''
 
@@ -7,10 +7,9 @@ async function loadOverviewScreen(repo, app, repoVersion) {
     appListScreen.style.display = 'none'
 
     repoListButton.dataset.repo = repo.name
-    repoListButton.dataset.repo_version = repo.version
     repoListButton.value = repo.name
     let query;
-    if (repoVersion == "legacy") {
+    if (repo.version == "legacy") {
         query = app.name
     } else {
         query = app.package
@@ -90,7 +89,7 @@ async function loadOverviewScreen(repo, app, repoVersion) {
     }
     appTitle.innerText = app.name;
     appCategory.innerText = app.category;
-    if (repoVersion == "legacy") {
+    if (repo.version == "legacy") {
         aboutDesc.innerText = app.desc;
     } else {
         aboutTitle.innerText = app.summary;

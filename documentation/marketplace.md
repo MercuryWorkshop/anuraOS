@@ -77,4 +77,56 @@ After doing this you can add host the repo statically and be able to use it in l
 
 # libstore
 
-TODO
+## Initialization
+
+To initialize the libstore library, call the `Store` constructor with a networking client. The client must have a fetch function that returns `Response` objects.
+
+**Usage:**
+
+```js
+let libstore = await anura.import("anura.libstore@2.0.0");
+
+marketplace = new libstore.Store(anura.net, {
+    onError: (appName, error) => {
+        anura.notifications.add({
+            title: "libstore",
+            description: `libstore encountered an error while installing ${appName}: ${error}`,
+            timeout: 5000,
+        });
+    },
+    onDownloadStart: (appName) => {
+        anura.notifications.add({
+            title: "libstore",
+            description: `libstore started downloading ${appName}`,
+            timeout: 5000,
+        });
+    },
+    onDepInstallStart: (appName, libName) => {
+        anura.notifications.add({
+            title: "libstore",
+            description: `libstore started installing dependency ${libName} for ${appName}`,
+            timeout: 5000,
+        });
+    },
+    onComplete: (appName) => {
+        anura.notifications.add({
+            title: "libstore",
+            description: `libstore finished installing ${appName}`,
+            timeout: 5000,
+        });
+    },
+});
+```
+
+## Adding a repo
+
+To fetch a repo and its contents use the `getRepo` method. This method will return a `StoreRepo` or a `StoreRepoLegacy` Object. The repo url must end with a trailing slash.
+
+**Usage:**
+
+```js
+const marketplaceRepo = await marketplace.getRepo(
+    "Anura App Repository",
+    "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
+);
+```

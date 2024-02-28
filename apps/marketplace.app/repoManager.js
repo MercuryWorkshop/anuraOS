@@ -70,7 +70,7 @@ async function loadMainScreen() {
                 const marketplaceRepo = await marketplace.getRepo(repos[repo], repo);
                 console.log(marketplaceRepo)
                 repoItem.onclick = async function() {
-                    await loadappListScreen(marketplaceRepo, marketplaceRepo.version); 
+                    await loadappListScreen(marketplaceRepo); 
                 }
             } catch (e) {
                 repoItem.innerText += " (Error)";

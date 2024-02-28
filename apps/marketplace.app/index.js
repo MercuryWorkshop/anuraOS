@@ -20,13 +20,13 @@ repoListButton.addEventListener("click", async function (evt) {
     if (evt.target.dataset.repo) {
         // We were on the overview screen, so load the app list
         const marketplaceRepo = await marketplace.getRepo(repos[evt.target.dataset.repo], evt.target.dataset.repo);
-        loadappListScreen(marketplaceRepo, evt.target.dataset.repo_version);
+        loadappListScreen(marketplaceRepo);
         return;
     }
     loadMainScreen();
 });
 
-async function loadappListScreen(repo, repoVersion) {
+async function loadappListScreen(repo) {
     appListScreen.style.display = ''
     appListScreen.innerHTML = ''
     repoList.style.display = 'none'
@@ -78,7 +78,7 @@ async function loadappListScreen(repo, repoVersion) {
         const view = document.createElement('input')
 
         itemText.innerText = app.name;
-        if (repoVersion == "legacy") {
+        if (repo.version == "legacy") {
             itemDesc.innerText = app.desc;
             thumbnail.src = await repo.getAppThumb(app.name);
         } else {
@@ -95,7 +95,7 @@ async function loadappListScreen(repo, repoVersion) {
         view.onclick = () => {
             // repo.installApp(app.name);
             // nuh uh
-            loadOverviewScreen(repo, app, repoVersion);
+            loadOverviewScreen(repo, app);
         };
 
         thumbnailContainer.appendChild(thumbnail);
@@ -117,7 +117,7 @@ async function loadappListScreen(repo, repoVersion) {
         const view = document.createElement('input')
 
         itemText.innerText = lib.name;
-        if (repoVersion == "legacy") {
+        if (repo.version == "legacy") {
             itemDesc.innerText = lib.desc;
             thumbnail.src = await repo.getLibThumb(lib.name);
         } else {
@@ -134,7 +134,7 @@ async function loadappListScreen(repo, repoVersion) {
         view.onclick = () => {
             // repo.installLib(lib.name);
             // nuh uh
-            loadOverviewScreen(repo, lib, repoVersion);
+            loadOverviewScreen(repo, lib);
         };
 
         thumbnailContainer.appendChild(thumbnail);
