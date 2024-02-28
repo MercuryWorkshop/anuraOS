@@ -152,7 +152,7 @@ clearInterval(
     anura.x86?.saveinterval,
 );
 await anura.x86.resize(4294967296) // 4 GB
-// actually resizing it and making it visible to linux
+// make the os able to see the empty bytes
 const emulator = new V86Starter(
     {
         wasm_path:

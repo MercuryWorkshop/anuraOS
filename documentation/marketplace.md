@@ -21,7 +21,22 @@ manifest.json
 ### Manifest
 
 Each app is supposed to have its own manifest that lists details about the app.
-An example is put below.
+
+-   `name`: `String` - Program name. Required.
+-   `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Marketplace will display this icon throughout the App.
+-   `summary`: `String` - Short program app description. Shown in the app preview. Required.
+-   `desc`: `String` - Long program app description. Shown in the app overview screen. Required.
+-   `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
+-   `data`: `String` - Path (from app directory) to the archive containing the app data. Required.
+-   `installHook`: `String` - Path (from app directory) to the archive containing the app data. Only read if the program is an app. Optional.
+-   `screenshots`: `Array [{ path, desc }]` - Array of all the screenshots of an app. Optional.
+-   `screenshots.path`: `String` - Path (from app directory) to the screenshots. Required if object is present.
+-   `screenshots.desc`: `String` - Description of the screenshots. Optional.
+-   `version`: `String` - Version of the program. Used in the future for the anura update api. Optional.
+-   `dependencies`: `Array [ String ]` - Array of all the screenshots of all the dependencies of an app. Will be installed alongside your app. Optional.
+-   `category`: `String` - Program category. Required.
+
+Here is an example of a manifest.json
 
 ```json
 {
@@ -57,3 +72,9 @@ To make a repo accessible via the Store Library you should use the utility [crea
 ```bash
 $ npx create-anura-repo
 ```
+
+After doing this you can add host the repo statically and be able to use it in libstore.
+
+# libstore
+
+TODO
