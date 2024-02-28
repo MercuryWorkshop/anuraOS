@@ -1,3 +1,0 @@
-# The Work Store
-
-TODO

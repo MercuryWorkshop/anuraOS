@@ -87,14 +87,13 @@ export class StoreRepo {
         try {
             let list = await (await this.client.fetch(this.baseUrl + "list.json")).json();
             let repoCache = {};
-            repoCache['apps'] = [];
-            repoCache['libs'] = [];
+            console.log(list)
             for (const category in list) {
+                repoCache[`${category}`] = [];
                 await Promise.all(list[category].map(async (app) => {
-                    const manifestContent = await (await this.client.fetch(this.baseUrl + category + '/' + app + "/manifest.json")).json()
-                    manifestContent.baseUrl = this.baseUrl + category + '/' + app + '/'
-                    manifestContent.repo = this.baseUrl
-                    repoCache[`${category}`].push(manifestContent);
+                    app.baseUrl = this.baseUrl + category + '/' + app.package + '/'
+                    app.repo = this.baseUrl
+                    repoCache[`${category}`].push(app);
                 }));
             }
     
