@@ -1,5 +1,4 @@
 {
-    "milestone": 2,
     "apps": [
         "apps/term.app",
         "apps/glxgears.app",

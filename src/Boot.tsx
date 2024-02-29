@@ -38,7 +38,6 @@ window.addEventListener("load", async () => {
     try {
         conf = await (await fetch("/config.json")).json();
         milestone = await (await fetch("/MILESTONE")).text();
-        instancemilestone = conf.milestone;
 
         console.log("writing config??");
         Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
@@ -54,12 +53,8 @@ window.addEventListener("load", async () => {
     if (milestone) {
         const stored = anura.settings.get("milestone");
         if (!stored) await anura.settings.set("milestone", milestone);
-        else if (
-            stored != milestone ||
-            anura.settings.get("instancemilestone") != instancemilestone
-        ) {
+        else if (stored != milestone) {
             await anura.settings.set("milestone", milestone);
-            await anura.settings.set("instancemilestone", instancemilestone);
             if (anura.settings.get("use-sw-cache")) {
                 const tracker = document.getElementById("systemstatus")!;
                 const tracker_br = document.getElementById("systemstatus-br")!;
