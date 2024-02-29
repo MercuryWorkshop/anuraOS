@@ -175,7 +175,7 @@ class SettingsApp extends App {
                     </div>
                     <div class="sidebar-settings-item">
                         <h4 class="sidebar-settings-item-name">
-                            <a href="#v86">v86</a>
+                            <a href="#v86">Anura x86</a>
                         </h4>
                     </div>
                     <div class="sidebar-settings-item">
