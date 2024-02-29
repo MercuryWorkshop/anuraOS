@@ -318,6 +318,50 @@ dirHandle.requestPermission({ mode: "readwrite" });
 anura.fs.installProvider(new LocalFS(dirHandle, anuraPath));
 ```
 
+## anura.files
+
+This API provides access to Anura's file service, it is useful for handling the opening of files and setting file handlers.
+
+### anura.files.open
+
+This method takes a file path and then opens this file using the file handler for the file, falling back to the default if it doesnt have a handler for it.
+
+**Usage:**
+
+```js
+anura.files.open("/config_cached.json"); // uses file handler to open json
+```
+
+### anura.files.getIcon
+
+This method takes a path and returns an icon based on the file extension using a file handler.
+
+**Usage:**
+
+```js
+anura.files.getIcon("/config_cached.json"); // returns icon for json
+```
+
+### anura.files.getFileType
+
+This method takes a path and returns a human readable file type based on the file extension using a file handler.
+
+**Usage:**
+
+```js
+anura.files.getFileType("/config_cached.json"); // returns icon for json
+```
+
+### anura.files.setModule
+
+This method takes an anura library that has an `openFile` function that takes a `path`.
+
+**Usage:**
+
+```js
+anura.files.setModule("anura.fileviewer", "png"); // set anura.fileviewer library as default handler for png
+```
+
 ## anura.notifications
 
 This API provides access to Anura's notification service, useful if you need to display an alert to the user.
