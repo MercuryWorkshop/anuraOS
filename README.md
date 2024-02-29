@@ -76,6 +76,12 @@ npm start -- --auth
 
 -   If you started the server, Anura should be running at `localhost:8000`.
 
+## App Development
+
+App development is highly encouraged! Good apps can even be added to the offical workstore after review by a AnuraOS maintainer. Apps are stored in .app files which are read by AnuraOS to provide you, well, an app!
+
+For more information about developing an AnuraOS app visit [here](./documentation/appdevt.md)
+
 ## Documentation
 
 Still being written. (See the current index of documentation [here](./documentation/README.md))
