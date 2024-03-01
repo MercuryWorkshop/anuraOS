@@ -195,16 +195,16 @@ export class StoreRepo {
         if (!app) {
             throw new Error("App not found");
         }
-        this.hooks.onDownloadStart(appName);
+        this.hooks.onDownloadStart(app.name);
 
         if (app.dependencies) {
             for (const lib of app.dependencies) {
                 let hasDep =
                     Object.keys(anura.libs).filter(
-                        (x) => anura.libs[x].name == lib,
+                        (x) => anura.libs[x].package == lib,
                     ).length > 0;
                 if (hasDep) continue;
-                this.hooks.onDepInstallStart(appName, lib);
+                this.hooks.onDepInstallStart(app.name, lib);
                 await this.installLib(lib);
             }
         }
@@ -221,7 +221,7 @@ export class StoreRepo {
             }),
         );
 
-        let installHook;
+        let installHook = null;
         if (app.InstallHook) {
           const installHookText = await (await this.client.fetch(app.baseUrl + app.installHook)).text()
           installHook = installHookText
@@ -262,9 +262,9 @@ export class StoreRepo {
             await sleep(500) // race condition because of manifest.json
             await anura.registerExternalApp("/fs" + path);
             if (installHook) window.top.eval(installHook);
-            this.hooks.onComplete(appName);
+            this.hooks.onComplete(app.name);
         } catch (error) {
-            this.hooks.onError(appName, error);
+            this.hooks.onError(app.name, error);
         }
     }
 
@@ -273,7 +273,7 @@ export class StoreRepo {
         if (!lib) {
             throw new Error("Lib not found");
         }
-        this.hooks.onDownloadStart(libName);
+        this.hooks.onDownloadStart(lib.name);
         const zipFile = await (await this.client.fetch(lib.baseUrl + lib.data)).blob();
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
@@ -297,7 +297,9 @@ export class StoreRepo {
                         let manifest = await zipEntry.async("string");
                         manifest = JSON.parse(manifest);
                         manifest.marketplace = {};
-                        manifest.marketplace.version = lib.version
+                        if (lib.version) {
+                            manifest.marketplace.version = lib.version
+                        }
                         manifest.marketplace.repo = lib.repo
                         if (lib.dependencies) {
                             manifest.marketplace.dependencies = lib.dependencies
@@ -318,15 +320,15 @@ export class StoreRepo {
             }
             await sleep(500) // race condition because of manifest.json
             await anura.registerExternalLib("/fs" + path);
-            this.hooks.onComplete(libName);
+            this.hooks.onComplete(lib.name);
         } catch (error) {
-            this.hooks.onError(libName, error);
+            this.hooks.onError(lib.name, error);
         }
     }
 
 }
 
-export class StoreLegacyRepo {
+export class StoreRepoLegacy {
     baseUrl;
     name;
     client;
