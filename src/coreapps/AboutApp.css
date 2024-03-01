@@ -1,5 +1,5 @@
 .aboutapp-container {
-    background-color: var(--material-bg);
+    background-color: #b41515;
     height: 100%;
     width: 100%;
     position: absolute;
@@ -17,6 +17,7 @@
 }
 
 .aboutapp-logo-img {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition: background 1s ease-in-out;
     /* height: 100%; */
     border-radius: 10%;
@@ -26,6 +27,7 @@
     height: 128px;
     width: 128px;
 }
+
 .aboutapp-logo-img:hover {
     background: url(/assets/images/whalefall.gif);
     background-size: contain;

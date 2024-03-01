@@ -1,156 +1,179 @@
 @font-face {
-    font-family: NerdFonts;
-    src: url("/assets/fonts/SymbolsNerdFont-Regular.ttf") format("truetype");
- }
- 
- 
- body {
-    color: white;
-    overflow-y: hidden;
-    user-select: none;
-    margin: 0px;
-    font-family:
-        system-ui,
-        Ubuntu,
-        Droid Sans,
-        sans-serif;
-    background-color: #252526;
- }
- .monaco-editor {
-    position: absolute !important; /* Fix for monaco editor resize bug */
- }
- 
- 
- .container {
-    display: flex;
-    /* Misc */
-    /* border: 1px solid #cbd5e0; */
-    /* height: 32rem; */
-    width: 100%;
-    height: 100%;
- }
- .resizer[data-direction="horizontal"] {
-    background-color: #434546;
-    cursor: ew-resize;
-    height: 100%;
-    width: 4px;
- }
- .resizer[data-direction="vertical"] {
-    background-color: #434546;
-    cursor: ns-resize;
-    height: 4px;
-    width: 100%;
- }
- .container__left {
-    /* Initially, the left takes 1/4 width */
-    width: 25%;
-    overflow: auto;
-    /* Misc */
-    /* align-items: center; */
-    display: flex;
-    /* justify-content: center; */
- }
- .container__right {
-    /* Take the remaining width */
-    flex: 1;
- 
- 
-    /* Misc */
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
- }
- .container__top {
-    /* Initial height */
-    height: 12rem;
-    width: 100%;
-    /* Misc */
-    align-items: center;
-    display: flex;
-    justify-content: center;
- }
- .container__bottom {
-    /* Take the remaining height */
-    flex: 1;
-    width: 100%;
-    height: 100%;
-    /* Misc */
-    align-items: center;
-    display: flex;
-    justify-content: center;
- }
- 
- 
- #monaco-container {
-    width: 100%;
-    height: 100%;
- }
- 
- 
- span:hover {
-    background-color: #3e3e42;
- }
- 
- 
- [active="true"] {
-    background-color: #3e3e42;
- }
- 
- 
- /*
+   font-family: NerdFonts;
+   src: url("/assets/fonts/SymbolsNerdFont-Regular.ttf") format("truetype");
+}
+
+/* SIDEBAR STYLE */
+body {
+   color: white;
+   overflow-y: hidden;
+   user-select: none;
+   margin: 0px;
+   font-family:
+      system-ui,
+      Ubuntu,
+      Droid Sans,
+      sans-serif;
+   background-color: #292c3c;
+}
+
+.monaco-editor {
+   position: absolute !important;
+   /* Fix for monaco editor resize bug */
+}
+
+
+.container {
+   display: flex;
+   /* Misc */
+   /* border: 1px solid #cbd5e0; */
+   /* height: 32rem; */
+   width: 100%;
+   height: 100%;
+}
+
+/* SIDEBAR BORDER */
+.resizer[data-direction="horizontal"] {
+   background-color: #ca9ee6;
+   cursor: ew-resize;
+   height: 100%;
+   width: 4px;
+}
+
+.resizer[data-direction="vertical"] {
+   background-color: #ca9ee6;
+   cursor: ns-resize;
+   height: 4px;
+   width: 100%;
+}
+
+.container__left {
+   /* Initially, the left takes 1/4 width */
+   width: 25%;
+   overflow: auto;
+   /* Misc */
+   /* align-items: center; */
+   display: flex;
+   /* justify-content: center; */
+}
+
+.container__right {
+   /* Take the remaining width */
+   flex: 1;
+
+
+   /* Misc */
+   align-items: center;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+}
+
+.container__top {
+   /* Initial height */
+   height: 12rem;
+   width: 100%;
+   /* Misc */
+   align-items: center;
+   display: flex;
+   justify-content: center;
+}
+
+.container__bottom {
+   /* Take the remaining height */
+   flex: 1;
+   width: 100%;
+   height: 100%;
+   /* Misc */
+   align-items: center;
+   display: flex;
+   justify-content: center;
+}
+
+
+#monaco-container {
+   width: 100%;
+   height: 100%;
+}
+
+
+span:hover {
+   background-color: #3e3e42;
+}
+
+
+[active="true"] {
+   background-color: #3e3e42;
+}
+
+
+/*
  * This is the section where you add your icons
  */
- [data-type="plaintext"]::marker {
-    content: " "; /* FontAwesome Unicode */
-    font-family: NerdFonts;
- }
- [data-type="javascript"]::marker {
-    content: " "; /* FontAwesome Unicode */
-    color: yellow;
-    font-family: NerdFonts;
- }
- [data-type="typescript"]::marker {
-    content: "󰛦 "; /* FontAwesome Unicode */
-    color: yellow;
-    font-family: NerdFonts;
- }
- [data-type="json"]::marker {
-    content: "󰘦 "; /* FontAwesome Unicode */
-    color: yellow;
-    font-family: NerdFonts;
- }
- [data-type="dir"]::marker {
-    content: " "; /* FontAwesome Unicode */
-    color: peachpuff;
-    font-family: NerdFonts;
- }
- [data-type="svg"]::marker {
-    content: " "; /* FontAwesome Unicode */
-    color: lightblue;
-    font-family: NerdFonts;
- }
- [data-type="shell"]::marker {
-    content: " "; /* FontAwesome Unicode */
-    color: white;
-    font-family: NerdFonts;
- }
- [data-type="img"]::marker {
-    content: "󰟜 "; /* FontAwesome Unicode */
-    color: white;
-    font-family: NerdFonts;
- }
- [data-type="font"]::marker {
-    content: " "; /* FontAwesome Unicode */
-    color: white;
-    font-family: NerdFonts;
- }
- 
- 
- ::marker {
-    padding-left: 20px;
-    right: 2px;
- }
+[data-type="plaintext"]::marker {
+   content: " ";
+   /* FontAwesome Unicode */
+   font-family: NerdFonts;
+}
 
- 
- 
+[data-type="javascript"]::marker {
+   content: " ";
+   /* FontAwesome Unicode */
+   color: yellow;
+   font-family: NerdFonts;
+}
+
+[data-type="typescript"]::marker {
+   content: "󰛦 ";
+   /* FontAwesome Unicode */
+   color: yellow;
+   font-family: NerdFonts;
+}
+
+[data-type="json"]::marker {
+   content: "󰘦 ";
+   /* FontAwesome Unicode */
+   color: yellow;
+   font-family: NerdFonts;
+}
+
+[data-type="dir"]::marker {
+   content: " ";
+   /* FontAwesome Unicode */
+   color: peachpuff;
+   font-family: NerdFonts;
+}
+
+[data-type="svg"]::marker {
+   content: " ";
+   /* FontAwesome Unicode */
+   color: lightblue;
+   font-family: NerdFonts;
+}
+
+[data-type="shell"]::marker {
+   content: " ";
+   /* FontAwesome Unicode */
+   color: white;
+   font-family: NerdFonts;
+}
+
+[data-type="img"]::marker {
+   content: "󰟜 ";
+   /* FontAwesome Unicode */
+   color: white;
+   font-family: NerdFonts;
+}
+
+[data-type="font"]::marker {
+   content: " ";
+   /* FontAwesome Unicode */
+   color: white;
+   font-family: NerdFonts;
+}
+
+
+::marker {
+   padding-left: 20px;
+   right: 2px;
+}
