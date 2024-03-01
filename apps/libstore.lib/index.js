@@ -52,7 +52,7 @@ export class Store {
         let manifestVersion = await repo.getRepoManifest();
         repo.version = manifestVersion;
         if (manifestVersion == "legacy") {
-            repo = new StoreLegacyRepo(this.client, this.hooks, url, name);
+            repo = new StoreRepoLegacy(this.client, this.hooks, url, name);
         }
         await repo.refreshRepoCache();
         this.cache[url] = repo;
