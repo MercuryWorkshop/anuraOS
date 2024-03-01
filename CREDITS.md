@@ -33,7 +33,7 @@
     Note: This list is non-exhaustive and may not contain all of the code snippets used in production of this software.
 
     -   [original base](https://gist.github.com/chwkai/290488)
-    -   Resizable Table columns in fsapp UNKNOWN PLEASE FIND SOURCE!!
+    -   Resizable Table columns in fsapp [codepen](https://codepen.io/adam-lynch/pen/GaqgXP)
 
 -   Design & Assets
 
