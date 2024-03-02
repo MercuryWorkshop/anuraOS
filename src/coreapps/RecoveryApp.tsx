@@ -79,6 +79,7 @@ class RecoveryApp extends App {
                         ) {
                             const sh = new anura.fs.Shell();
                             try {
+                                localStorage.clear();
                                 await sleep(2);
                                 await sh.promises.rm("/", {
                                     recursive: true,
