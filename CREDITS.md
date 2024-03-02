@@ -1,15 +1,17 @@
 # Credits
 
 -   Contributors
-    -  Project Name: @ember3141
-    -  Project Maintainers:
-       -  @ProgrammerIn-wonderland
-       -  @Endercass
-       -  @Percslol
-    -  Large contributers
-       -  @CoolElectronics
-       -  @r58playz
-       -  @MadjikDotPng
+
+    -   Project Name: @ember3141
+    -   Project Maintainers:
+        -   @ProgrammerIn-wonderland
+        -   @Endercass
+        -   @Percslol
+    -   Large contributers
+
+        -   @CoolElectronics
+        -   @r58playz
+        -   @MadjikDotPng
 
     -   A full list of contributors can be found [here](https://github.com/MercuryWorkshop/anuraOS/graphs/contributors)
 
@@ -26,7 +28,6 @@
     -   Default networking stack- [libcurl.js with OpenSSL](https://github.com/ading2210/libcurl.js)
     -   VNC Client [noVNC](https://github.com/novnc/noVNC)
     -   SSH Client [sshy](https://github.com/stuicey/SSHy)
-
 
 -   Code snippets used
 

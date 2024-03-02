@@ -13,6 +13,9 @@
             height: 100%;
             width: 100%;
         }
+        .app-info-mnt {
+            display: none;
+        }
 
         body {
             background-color: #202124;
@@ -60,6 +63,13 @@
             justify-content: center;
             width: calc(100% - 56px);
             gap: 1rem;
+        }
+        #install-button-strip {
+            position: absolute;
+            bottom: 5px;
+        }
+        #install-button-strip > button {
+            margin: 10px;
         }
 
         #app-logo {
@@ -133,10 +143,26 @@
         </div>
         <div id="app-divider"></div>
         <div id="app-info">
-            <h2>Manifest</h2>
-            <table id="app-info-mnt"></table>
+            <span id="button-strip"><button class="matter-button-contained" id="manifestButton" onclick="manifestShow()">Manifest</button></span>
+            <table id="app-info-mnt" style=""></table>
         </div>
+        <span id="install-button-strip"></span>
         <script>
+            let currentlyShowingMenu = document.getElementById("app-info-mnt");
+            let currentlyShowingButton = document.getElementById('manifestButton')
+            function manifestShow() {
+                const appInfoTable = document.getElementById('app-info-mnt')
+                const appInfoButton = document.getElementById('manifestButton')
+                if (appInfoTable !== currentlyShowingMenu) {
+                    currentlyShowingMenu.style.display = 'none';
+                    appInfoTable.style.display = ''
+                    currentlyShowingMenu = appInfoTable;
+                    currentlyShowingButton.className = 'matter-button-text';
+                    appInfoButton.className = 'matter-button-contained'
+                    currentlyShowingButton = appInfoButton;
+                }
+            }
+
             const appName = document.querySelector("#app-name");
             appName.innerText = manifest.name;
     
@@ -181,11 +207,23 @@
                         if (typeof value === "object") {
                             const subTable = document.createElement("table");
                             parseObject(subTable, value);
+                            subTable.style.display = 'none';
 
-                            const subTableTitle = document.createElement("h2");
+                            const subTableTitle = document.createElement("button");
+                            subTableTitle.className = "matter-button-text"
                             subTableTitle.innerText = key;
+                            subTableTitle.onclick = () => {
+                                if (subTable !== currentlyShowingMenu) {
+                                    currentlyShowingMenu.style.display = 'none';
+                                    subTable.style.display = ''
+                                    currentlyShowingMenu = subTable;
+                                    currentlyShowingButton.className = 'matter-button-text';
+                                    subTableTitle.className = 'matter-button-contained'
+                                    currentlyShowingButton = subTableTitle;
+                                }
+                            }
 
-                            document.getElementById("app-info").appendChild(subTableTitle);
+                            document.getElementById("button-strip").appendChild(subTableTitle);
                             document.getElementById("app-info").appendChild(subTable);
                         } else {
                             const tr = document.createElement("tr");
@@ -209,7 +247,7 @@
                     button.classList.add("matter-button-contained");
                     button.style.backgroundColor = "#4f46e5";
                     button.onclick = window.install.session;
-                    document.getElementById("app-info").appendChild(button);
+                    document.getElementById("install-button-strip").appendChild(button);
                 }
                 if (window.install.permanent) {
                     const button = document.createElement("button");
@@ -217,7 +255,7 @@
                     button.classList.add("matter-button-contained");
                     button.style.backgroundColor = "#22b30f";
                     button.onclick = window.install.permanent;
-                    document.getElementById("app-info").appendChild(button);
+                    document.getElementById("install-button-strip").appendChild(button);
                 }
             }
         </script>

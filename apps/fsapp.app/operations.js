@@ -227,7 +227,7 @@ async function fileAction(selected) {
                         const win = anura.wm.create(instance, {
                             title: "",
                             width: "450px",
-                            height: "500px",
+                            height: "525px",
                         });
 
                         const iframe = document.createElement("iframe");
@@ -391,7 +391,7 @@ async function fileAction(selected) {
                         const win = anura.wm.create(instance, {
                             title: "",
                             width: "450px",
-                            height: "500px",
+                            height: "525px",
                         });
 
                         const iframe = document.createElement("iframe");
@@ -599,7 +599,7 @@ async function fileAction(selected) {
                                     const win = anura.wm.create(instance, {
                                         title: "",
                                         width: "450px",
-                                        height: "500px",
+                                        height: "525px",
                                     });
                             
                                     const iframe = document.createElement("iframe");
@@ -722,7 +722,7 @@ async function fileAction(selected) {
                                     const win = anura.wm.create(instance, {
                                         title: "",
                                         width: "450px",
-                                        height: "500px",
+                                        height: "525px",
                                     });
 
                                     const iframe = document.createElement("iframe");
