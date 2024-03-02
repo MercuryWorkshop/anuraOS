@@ -278,7 +278,7 @@ export class StoreRepo {
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
-        const path = `${this.directories["apps"]}/${libName}.lib`;
+        const path = `${this.directories["libs"]}/${libName}.lib`;
 
         await new Promise((resolve) =>
             new fs.Shell().mkdirp(path, function () {
@@ -499,7 +499,7 @@ export class StoreRepoLegacy {
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
-        const path = `${this.directories["apps"]}/${libName}.lib`;
+        const path = `${this.directories["libs"]}/${libName}.lib`;
 
         await new Promise((resolve) =>
             new fs.Shell().mkdirp(path, function () {
