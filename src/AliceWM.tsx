@@ -891,7 +891,7 @@ class WMWindow {
         );
 
         setTimeout(() => {
-            elem.style.opacity = "unset";
+            elem.style.removeProperty("opacity");
         }, 10);
 
         return elem;
@@ -955,7 +955,7 @@ class WMSplitBar {
         this.element.style.left = width / 2 - 4 + "px";
         document.body.appendChild(this.element);
         setTimeout(() => {
-            this.element.style.backgroundColor = "unset";
+            this.element.style.removeProperty("background-color");
         }, 10);
         document.addEventListener("mousemove", (evt) => {
             if (this.dragging) {
@@ -989,7 +989,7 @@ class WMSplitBar {
     }
 
     fadeOut() {
-        this.element.style.backgroundColor = "unset";
+        this.element.style.removeProperty("background-color");
     }
 
     remove() {
