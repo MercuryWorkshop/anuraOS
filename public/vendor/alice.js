@@ -167,7 +167,7 @@
                             isRecursive = true;
                             newthis[propname] = value;
                         });
-                        handle2(use(newthis[propname]), (value) => {
+                        handle2(window.use(newthis[propname]), (value) => {
                             if (isRecursive) {
                                 isRecursive = false;
                                 return;
@@ -270,6 +270,7 @@
                 JSXAddAttributes(elm, name, prop);
             }
         }
+        // eslint-disable-next-line no-self-assign
         if (xmlns) elm.innerHTML = elm.innerHTML;
         return elm;
     }
@@ -347,10 +348,10 @@
             flattened_template.push(strings[i]);
             if (values[i]) {
                 const prop = values[i];
-                if (isDLPtr(prop)) {
+                if (window.isDLPtr(prop)) {
                     const current_i = flattened_template.length;
                     let oldparsed;
-                    handle(prop, (val) => {
+                    window.handle(prop, (val) => {
                         flattened_template[current_i] = String(val);
                         let parsed = flattened_template.join("");
                         if (parsed != oldparsed)
@@ -445,7 +446,7 @@
                 if (val in markers) val = markers[val];
                 attributes[attr.name] = val;
             }
-            return h(nodename, attributes, children);
+            return window.h(nodename, attributes, children);
         }
         return wraph(dom.body.children[0]);
     }
@@ -459,6 +460,6 @@
             console.info("[dreamland.js]: saving " + ident);
             localStorage.setItem(ident, JSON.stringify(target));
         });
-        return stateful(target);
+        return window.stateful(target);
     }
 })();

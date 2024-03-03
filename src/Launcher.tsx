@@ -233,7 +233,7 @@ const LauncherShortcut: Component<
         app: App;
         onclick: () => void;
     },
-    {}
+    Record<string, never>
 > = function () {
     return (
         <div class="app" on:click={this.onclick}>

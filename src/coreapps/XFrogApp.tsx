@@ -100,7 +100,7 @@ class XFrogApp extends App {
                         );
                         win!.content.querySelector("img")!.remove();
                     }
-                    win!.content.appendChild(anura.x86?.screen_container!);
+                    win!.content.appendChild(anura.x86!.screen_container!);
 
                     // anura.x86?.vgacanvas.requestPointerLock();
                     // anura.x86?.vgacanvas.addEventListener("click", () => {
