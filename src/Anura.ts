@@ -164,6 +164,7 @@ class Anura {
         const version = splitName[1] || null;
         return this.libs[pkg].getImport(version);
     }
+    uri = new URIHandlerAPI();
     files = new FilesAPI();
     async python(appname: string) {
         return await new Promise((resolve, reject) => {

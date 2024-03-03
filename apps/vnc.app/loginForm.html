@@ -5,11 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VNC Login thing</title>
     <script>
+        if (!anura.uri.has("vnc")) {
+            anura.uri.set("vnc", {
+                handler: {
+                    tag: "app",
+                    pkg: instance.package,
+                    method: {
+                        tag: "split",
+                        separator: ":",
+                    }
+                },
+            });
+            anura.notifications.add({
+                title: "VNC",
+                description: "The VNC app has registered itself with the vnc:// protocol. You can now use the vnc:// protocol to open VNC connections.",
+            });
+        }
+
         const url = new URL(window.location.href);
         const args = ExternalApp.deserializeArgs(url.searchParams.get("args"))
 
         if (args && args.length > 0 && args[0] !== "") {
             if (args.length == 1) args.push("5900");
+            if (args[0].startsWith("//")) args[0] = args[0].substring(2);
             window.location.href = `vnc_lite.html?hname=${args[0]}&port=${args[1]}`;
         }
     </script>

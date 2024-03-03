@@ -16,6 +16,28 @@ class BrowserLib extends Lib {
         this.events.openTab = openTabEvent;
         this.versions["1.0.0"] = this.events;
         this.latestVersion = "1.0.0";
+        if (!anura.uri.has("http")) {
+            anura.uri.set("http", {
+                handler: {
+                    tag: "lib",
+                    pkg: this.package,
+                    version: this.latestVersion,
+                    import: "openTab",
+                },
+                prefix: "http:",
+            });
+        }
+        if (!anura.uri.has("https")) {
+            anura.uri.set("https", {
+                handler: {
+                    tag: "lib",
+                    pkg: this.package,
+                    version: this.latestVersion,
+                    import: "openTab",
+                },
+                prefix: "https:",
+            });
+        }
     }
 
     async getImport(version?: string): Promise<any> {
