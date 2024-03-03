@@ -362,6 +362,65 @@ This method takes an anura library that has an `openFile` function that takes a 
 anura.files.setModule("anura.fileviewer", "png"); // set anura.fileviewer library as default handler for png
 ```
 
+## anura.uri
+
+This API provides access to Anura's URI handler. It is useful for handling the opening of URIs and setting URI handlers.
+
+### anura.uri.handle
+
+This method takes a URI and then opens this URI using the handlers that have been registered for it.
+
+**Usage:**
+
+```js
+anura.uri.handle("https://google.com"); // opens google.com in the default browser
+```
+
+### anura.uri.set
+
+This method takes a protocol and a URIHandlerOptions interface and sets the handler for the protocol.
+
+The URIHandlerOptions interface is defined in [URIHandler.ts](/src/api/URIHandler.ts)
+
+**Usage:**
+
+```js
+anura.uri.set("https", {
+    handler: {
+        // Specifies that the handler is a library
+        tag: "lib",
+        // The package name of the library
+        pkg: "anura.browser,
+        // The (optional) version of the library
+        version: "1.0.0",
+        // The function to call in the library
+        import: "openTab",
+    },
+    // The (optional) prefix to be prepended to the URI
+    prefix: "https:",
+});
+```
+
+### anura.uri.remove
+
+This method takes a protocol and removes the handler for the protocol.
+
+**Usage:**
+
+```js
+anura.uri.remove("https");
+```
+
+### anura.uri.has
+
+This method takes a protocol and returns a boolean indicating if the protocol has a handler.
+
+**Usage:**
+
+```js
+anura.uri.has("https"); // Should always return true because the browser registers itself as the handler for https automatically
+```
+
 ## anura.notifications
 
 This API provides access to Anura's notification service, useful if you need to display an alert to the user.
