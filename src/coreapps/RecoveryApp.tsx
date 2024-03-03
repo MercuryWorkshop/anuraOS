@@ -114,9 +114,9 @@ class RecoveryApp extends App {
                     Anura Shell
                 </button>
                 {/* Invalidate Cache Button */}
-                <div
-                    if={anura.settings.get("use-sw-cache")}
-                    then={
+                <div>
+                    {$if(
+                        anura.settings.get("use-sw-cache"),
                         <button
                             style="background: #1B5E20;"
                             class="matter-button-contained"
@@ -132,9 +132,7 @@ class RecoveryApp extends App {
                             }}
                         >
                             Invalidate Cache
-                        </button>
-                    }
-                    else={
+                        </button>,
                         <button
                             style="background: #1B5E20; cursor: not-allowed;"
                             class="matter-button-contained"
@@ -142,9 +140,9 @@ class RecoveryApp extends App {
                             disabled
                         >
                             Invalidate Cache
-                        </button>
-                    }
-                ></div>
+                        </button>,
+                    )}
+                </div>
 
                 <button
                     style="background: #1B5E20"

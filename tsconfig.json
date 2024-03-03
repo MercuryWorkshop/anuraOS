@@ -35,7 +35,7 @@
         "jsx": "react",
         "jsxFactory": "h",
         "jsxFragmentFactory": "YOU_CANT_USE_FRAGMENTS",
-        "types": ["@mercuryworkshop/alicejs", "@types/wicg-file-system-access"],
+        "types": ["dreamland", "@types/wicg-file-system-access"],
 
         // "reso"
     },

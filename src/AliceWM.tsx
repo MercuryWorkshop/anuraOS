@@ -172,7 +172,7 @@ class WMWindow {
                                     height="12px"
                                     class="windowButtonIcon"
                                 />
-                            ))
+                            ) as HTMLImageElement)
                         }
                     </button>
                     <button
@@ -882,7 +882,7 @@ class WMWindow {
         }
         scaledHeight = height - 49;
 
-        const elem = (
+        const elem: DLElement<any> = (
             <div
                 class={`snapPreview-${side}`}
                 id="snapPreview"
@@ -891,7 +891,7 @@ class WMWindow {
         );
 
         setTimeout(() => {
-            elem.style.opacity = null;
+            elem.style.opacity = "unset";
         }, 10);
 
         return elem;
@@ -955,7 +955,7 @@ class WMSplitBar {
         this.element.style.left = width / 2 - 4 + "px";
         document.body.appendChild(this.element);
         setTimeout(() => {
-            this.element.style.backgroundColor = null;
+            this.element.style.backgroundColor = "unset";
         }, 10);
         document.addEventListener("mousemove", (evt) => {
             if (this.dragging) {
@@ -989,7 +989,7 @@ class WMSplitBar {
     }
 
     fadeOut() {
-        this.element.style.backgroundColor = null;
+        this.element.style.backgroundColor = "unset";
     }
 
     remove() {

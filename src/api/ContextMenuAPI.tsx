@@ -53,14 +53,14 @@ class ContextMenuAPI {
             document.body.getBoundingClientRect().bottom
         ) {
             this.#element.style.top = "";
-            this.#element.style.bottom = 0;
+            this.#element.style.bottom = "0px";
         }
         if (
             this.#element.getBoundingClientRect().right >=
             document.body.getBoundingClientRect().right
         ) {
             this.#element.style.left = "";
-            this.#element.style.right = 0;
+            this.#element.style.right = "0px";
         }
 
         return this.#element;

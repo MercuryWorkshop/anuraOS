@@ -65,19 +65,14 @@ class ExternalApp extends App {
                 LocalFS,
                 instance: this,
                 instanceWindow: win,
-                h,
-                stateful,
-                handle,
-                use,
-                useValue,
-                css,
-                rule,
-                styled,
             });
 
             const matter = document.createElement("link");
             matter.setAttribute("rel", "stylesheet");
             matter.setAttribute("href", "/assets/matter.css");
+            const dreamlandjs = document.createElement("script");
+            dreamlandjs.setAttribute("src", "/vendor/alice.js");
+            iframe.contentDocument!.head.appendChild(dreamlandjs);
 
             iframe.contentWindow!.addEventListener("load", () => {
                 iframe.contentDocument!.head.appendChild(matter);

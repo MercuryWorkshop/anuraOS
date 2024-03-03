@@ -172,7 +172,7 @@ class Launcher {
         const searchQuery = (
             event.target as HTMLInputElement
         ).value.toLowerCase();
-        const appsView = this.element.querySelector("#appsView");
+        const appsView = this.element.querySelector("#appsView") as HTMLElement;
         const apps = appsView.querySelectorAll(".app");
 
         apps.forEach((app: HTMLElement) => {
@@ -206,7 +206,7 @@ class Launcher {
         if (this.search) {
             this.search.value = "";
         }
-        const appsView = this.element.querySelector("#appsView");
+        const appsView = this.element.querySelector("#appsView") as HTMLElement;
         const apps = appsView.querySelectorAll(".app");
         apps.forEach((app: HTMLElement) => {
             app.style.display = "";
@@ -216,7 +216,7 @@ class Launcher {
     addShortcut(app: App) {
         if (app.hidden) return;
 
-        this.element.querySelector("#appsView").appendChild(
+        this.element.querySelector("#appsView")!.appendChild(
             <LauncherShortcut
                 app={app}
                 onclick={() => {
@@ -228,12 +228,13 @@ class Launcher {
     }
 }
 
-function LauncherShortcut(
-    this: DLComponent<{
+const LauncherShortcut: Component<
+    {
         app: App;
         onclick: () => void;
-    }>,
-): HTMLDivElement {
+    },
+    {}
+> = function () {
     return (
         <div class="app" on:click={this.onclick}>
             <input
@@ -245,4 +246,4 @@ function LauncherShortcut(
             <div class="app-shortcut-name">{this.app.name}</div>
         </div>
     );
-}
+};

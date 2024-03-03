@@ -262,7 +262,7 @@ class V86Backend {
             `}
         >
             <div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-            {(this.vgacanvas = <canvas></canvas>)}
+            {(this.vgacanvas = (<canvas></canvas>) as HTMLCanvasElement)}
         </div>
     );
 

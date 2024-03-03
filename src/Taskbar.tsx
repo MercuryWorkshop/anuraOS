@@ -56,16 +56,19 @@ class Taskbar {
                     e.preventDefault();
                 }}
             >
-                <ul
-                    for={use(this.state.pinnedApps)}
-                    do={this.shortcut.bind(this)}
-                ></ul>
-                <div if={use(this.state.showBar)} class="splitBar"></div>
+                <ul>
+                    {use(this.state.pinnedApps, (apps: App[]) =>
+                        apps.map(this.shortcut.bind(this)),
+                    )}
+                </ul>
 
-                <ul
-                    for={use(this.state.activeApps)}
-                    do={this.shortcut.bind(this)}
-                ></ul>
+                {$if(use(this.state.showBar), <div class="splitBar"></div>)}
+
+                <ul>
+                    {use(this.state.activeApps, (apps: App[]) =>
+                        apps.map(this.shortcut.bind(this)),
+                    )}
+                </ul>
             </nav>
             <div id="taskinfo-container">
                 <div class="flex flexcenter">

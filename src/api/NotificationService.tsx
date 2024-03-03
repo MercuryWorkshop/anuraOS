@@ -87,32 +87,35 @@ class AnuraNotification {
                         class={[
                             this.buttons.length > 0 && "notif-button-container",
                         ]}
-                        for={this.buttons}
-                        do={(value: {
-                            text: string;
-                            style?: "contained" | "outlined" | "text";
-                            close?: boolean;
-                            callback: (notif: AnuraNotification) => void;
-                        }) => (
-                            <button
-                                class={[
-                                    "notif-button",
-                                    `matter-button-${value.style || "contained"}`,
-                                ]}
-                                on:click={() => {
-                                    value.callback(this);
-                                    if (
-                                        typeof value.close === "undefined" ||
-                                        value.close === true
-                                    ) {
-                                        this.close();
-                                    }
-                                }}
-                            >
-                                {value.text}
-                            </button>
+                    >
+                        {this.buttons.map(
+                            (value: {
+                                text: string;
+                                style?: "contained" | "outlined" | "text";
+                                close?: boolean;
+                                callback: (notif: AnuraNotification) => void;
+                            }) => (
+                                <button
+                                    class={[
+                                        "notif-button",
+                                        `matter-button-${value.style || "contained"}`,
+                                    ]}
+                                    on:click={() => {
+                                        value.callback(this);
+                                        if (
+                                            typeof value.close ===
+                                                "undefined" ||
+                                            value.close === true
+                                        ) {
+                                            this.close();
+                                        }
+                                    }}
+                                >
+                                    {value.text}
+                                </button>
+                            ),
                         )}
-                    />
+                    </div>
                 </div>
             </div>
         );

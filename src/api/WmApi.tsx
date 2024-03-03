@@ -21,7 +21,7 @@ class WMAPI {
             document.activeElement?.blur();
             alttab.update();
 
-            taskbar.element.style.zIndex = getHighestZindex() + 3;
+            taskbar.element.style.zIndex = getHighestZindex() + 3 + "";
             if (onfocus) onfocus();
         };
         win.onresize = (width: number, height: number) => {
@@ -77,7 +77,7 @@ class WMAPI {
             document.activeElement?.blur();
             alttab.update();
 
-            taskbar.element.style.zIndex = getHighestZindex() + 3;
+            taskbar.element.style.zIndex = getHighestZindex() + 3 + "";
             if (onfocus) onfocus();
         };
         win.onresize = (width: number, height: number) => {

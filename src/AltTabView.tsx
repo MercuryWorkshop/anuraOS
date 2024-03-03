@@ -6,7 +6,7 @@ type AltTabViewState = {
 
 class AltTabView {
     element: HTMLElement;
-    state: AltTabViewState;
+    state: Stateful<AltTabViewState>;
 
     viewWindow([app, win, index]: [App, WMWindow, number]) {
         return (
@@ -51,24 +51,21 @@ class AltTabView {
                     (active) =>
                         "alttab-container " + (active ? "" : "alttab-hidden"),
                 )}
-                if={use(this.state.windows, (w) => Boolean(w.length))}
-                then={
-                    <div
-                        class="alttab-window-list"
-                        for={use(
-                            this.state.windows,
-                            (windows: [App, WMWindow][]) =>
-                                windows.map(([a, w], i) => [a, w, i]),
+            >
+                {$if(
+                    use(this.state.windows.length, Boolean),
+                    <div class="alttab-window-list">
+                        {use(this.state.windows, (windows: [App, WMWindow][]) =>
+                            windows
+                                .map(([a, w], i) => [a, w, i])
+                                .map(this.viewWindow.bind(this)),
                         )}
-                        do={this.viewWindow.bind(this)}
-                    />
-                }
-                else={
+                    </div>,
                     <div class="alttab-nowindows">
                         <span>No windows</span>
-                    </div>
-                }
-            />
+                    </div>,
+                )}
+            </div>
         );
     }
 
@@ -94,7 +91,7 @@ class AltTabView {
         // ensure index doesn't underflow or overflow
         this.state.index = Math.max(
             0,
-            Math.min(this.state.index, 0, this.state.windows.length - 1),
+            Math.min(this.state.index, this.state.windows.length - 1),
         );
 
         this.element.style.setProperty(

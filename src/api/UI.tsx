@@ -2,7 +2,7 @@ class AnuraUI {
     /**
      * This map contains all the built-in components that have been registered.
      */
-    builtins = new Map<string, DLComponent<any>>();
+    builtins = new Map<string, Component<any, any, any>>();
 
     /**
      * This map contains all the components that have been registered from external libraries.
@@ -14,9 +14,13 @@ class AnuraUI {
      * @param component - The name of the component to register.
      * @param element - A function component that returns an HTMLElement.
      */
-    async registerComponent(
+    async registerComponent<
+        TPublic,
+        TPrivate,
+        TConstructed extends string | number | symbol = never,
+    >(
         component: string,
-        element: DLComponent<any>,
+        element: Component<TPublic, TPrivate, TConstructed>,
     ): Promise<void> {
         this.builtins.set(component, element);
     }
@@ -52,7 +56,11 @@ class AnuraUI {
      * @param name - The name of the component to import.
      * @returns A promise that resolves to a function component that returns an HTMLElement.
      */
-    async get(name: string): Promise<DLComponent<any>> {
+    async get<
+        TPublic,
+        TPrivate,
+        TConstructed extends string | number | symbol = never,
+    >(name: string): Promise<Component<TPublic, TPrivate, TConstructed>> {
         const comp = this.components.get(name);
 
         if (!comp) {
@@ -109,10 +117,16 @@ class AnuraUI {
      * document.body.appendChild(boundButton);
      * ```
      */
-    async use(
+    async use<
+        TPublic,
+        TPrivate,
+        TConstructed extends string | number | symbol = never,
+    >(
         components: string[] | string | "*" = [],
-    ): Promise<{ [key: string]: DLComponent<any> }> {
-        const result: { [key: string]: DLComponent<any> } = {};
+    ): Promise<{ [key: string]: Component<TPublic, TPrivate, TConstructed> }> {
+        const result: {
+            [key: string]: Component<TPublic, TPrivate, TConstructed>;
+        } = {};
 
         if (components === "*") {
             components = Array.from(this.components.keys()).concat(

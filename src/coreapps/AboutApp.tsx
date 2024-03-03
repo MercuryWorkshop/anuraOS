@@ -20,28 +20,22 @@ class AboutApp extends App {
                 </p>
                 <p>© Mercury Workshop. All rights reserved.</p>
                 <br />
-                <div
-                    if={anura.settings.get("x86-disabled")}
-                    then={
-                        <p>
-                            Anura x86 subsystem disabled. <br /> Enable it in{" "}
-                            <button
-                                on:click={() => {
-                                    anura.apps["anura.settings"].open();
-                                }}
-                                class="aboutapp-link-button"
-                            >
-                                settings
-                            </button>
-                            .
-                        </p>
-                    }
-                    else={
-                        <p if={!anura.settings.get("x86-disabled")}>
-                            Anura x86 subsystem enabled.
-                        </p>
-                    }
-                />
+                {$if(
+                    anura.settings.get("x86-disabled"),
+                    <p>
+                        Anura x86 subsystem disabled. <br /> Enable it in{" "}
+                        <button
+                            on:click={() => {
+                                anura.apps["anura.settings"].open();
+                            }}
+                            class="aboutapp-link-button"
+                        >
+                            settings
+                        </button>
+                        .
+                    </p>,
+                    <p>Anura x86 subsystem enabled.</p>,
+                )}
 
                 <br />
                 <br />

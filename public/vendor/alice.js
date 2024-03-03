@@ -1,120 +1,165 @@
 (() => {
     // js.js
-    var __reference_stack = [];
-    var ALICEJS_REFERENCES_MAPPING = Symbol();
-    var ALICEJS_REFERENCES_MARKER = Symbol();
-    var ALICEJS_STATEFUL_LISTENERS = Symbol();
+    var Fragment = Symbol();
+    var [USE_MAPFN, TARGET, PROXY, STEPS, LISTENERS, IF] = new Array(6)
+        .fill()
+        .map(Symbol);
+    var __use_trap = false;
     Object.defineProperty(window, "use", {
         get: () => {
-            __reference_stack = [];
-            return (_sink, mapping) => {
-                let references = __reference_stack;
-                __reference_stack = [];
-                references[ALICEJS_REFERENCES_MARKER] = true;
-                if (mapping) references[ALICEJS_REFERENCES_MAPPING] = mapping;
-                return references;
+            __use_trap = true;
+            return (ptr, mapping) => {
+                __use_trap = false;
+                if (mapping) ptr[USE_MAPFN] = mapping;
+                return ptr;
             };
         },
     });
-    Object.assign(window, { h: h2, stateful, handle: handle2, useValue });
-    function stateful(target) {
-        target[ALICEJS_STATEFUL_LISTENERS] = [];
+    Object.assign(window, {
+        isDLPtr: isDLPtr2,
+        h: h2,
+        stateful: stateful2,
+        handle: handle2,
+        useValue,
+        $if,
+        Fragment,
+    });
+    var TRAPS = /* @__PURE__ */ new Map();
+    function stateful2(target, hook) {
+        target[LISTENERS] = [];
+        target[TARGET] = target;
         const proxy = new Proxy(target, {
             get(target2, property, proxy2) {
-                __reference_stack.push({
-                    target: target2,
-                    property,
-                    proxy: proxy2,
-                });
+                if (__use_trap) {
+                    let sym = Symbol();
+                    let trap = new Proxy(
+                        {
+                            [TARGET]: target2,
+                            [PROXY]: proxy2,
+                            [STEPS]: [property],
+                            [Symbol.toPrimitive]: () => sym,
+                        },
+                        {
+                            get(target3, property2) {
+                                if (
+                                    [
+                                        TARGET,
+                                        PROXY,
+                                        STEPS,
+                                        USE_MAPFN,
+                                        Symbol.toPrimitive,
+                                    ].includes(property2)
+                                )
+                                    return target3[property2];
+                                property2 = TRAPS.get(property2) || property2;
+                                target3[STEPS].push(property2);
+                                return trap;
+                            },
+                        },
+                    );
+                    TRAPS.set(sym, trap);
+                    return trap;
+                }
                 return Reflect.get(target2, property, proxy2);
             },
             set(target2, property, val) {
-                for (const listener of target2[ALICEJS_STATEFUL_LISTENERS]) {
+                if (hook) hook(target2, property, val);
+                let trap = Reflect.set(target2, property, val);
+                for (const listener of target2[LISTENERS]) {
                     listener(target2, property, val);
                 }
-                return Reflect.set(target2, property, val);
+                return trap;
             },
         });
         return proxy;
     }
-    function isAJSReferences(arr) {
-        return arr instanceof Array && ALICEJS_REFERENCES_MARKER in arr;
+    var isobj = (o) => o instanceof Object;
+    function isDLPtr2(arr) {
+        return isobj(arr) && TARGET in arr;
     }
-    function handle2(references, callback) {
-        if (!isAJSReferences(references))
-            throw new Error("Not an AliceJS reference set!");
-        if (ALICEJS_REFERENCES_MAPPING in references) {
-            const mapping = references[ALICEJS_REFERENCES_MAPPING];
-            const used_props = [];
-            const used_targets = [];
-            const values = /* @__PURE__ */ new Map();
-            const pairs = [];
-            const partial_update = (target, prop, val) => {
-                if (
-                    used_props.includes(prop) &&
-                    used_targets.includes(target)
-                ) {
-                    values.get(target)[prop] = val;
-                }
-            };
-            const full_update = () => {
-                const flattened_values = pairs.map(
-                    (pair) => values.get(pair[0])[pair[1]],
-                );
-                const value = mapping(...flattened_values.reverse());
-                callback(value);
-            };
-            for (const p of references) {
-                const target = p.target;
-                const prop = p.property;
-                used_props.push(prop);
-                used_targets.push(target);
-                pairs.push([target, prop]);
-                if (!values.has(target)) {
-                    values.set(target, {});
-                }
-                partial_update(target, prop, target[prop]);
-                target[ALICEJS_STATEFUL_LISTENERS].push((t, p2, v) => {
-                    partial_update(t, p2, v);
-                    full_update();
-                });
+    function $if(condition, then, otherwise) {
+        otherwise ??= document.createTextNode("");
+        if (!isDLPtr2(condition)) return condition ? then : otherwise;
+        return { [IF]: condition, then, otherwise };
+    }
+    function handle2(ptr, callback) {
+        let step,
+            resolvedSteps = [];
+        function update() {
+            let val = ptr[TARGET];
+            for (step of resolvedSteps) {
+                val = val[step];
+                if (!isobj(val)) break;
             }
-            full_update();
-        } else {
-            const reference = references[references.length - 1];
-            const subscription = (target, prop, val) => {
-                if (
-                    prop === reference.property &&
-                    target === reference.target
-                ) {
-                    callback(val);
+            let mapfn = ptr[USE_MAPFN];
+            if (mapfn) val = mapfn(val);
+            callback(val);
+        }
+        const curry = (target, i) =>
+            function subscription(tgt, prop, val) {
+                if (prop === resolvedSteps[i] && target === tgt) {
+                    update();
+                    if (val instanceof Object) {
+                        let v = val[LISTENERS];
+                        if (v && !v.includes(subscription)) {
+                            v.push(curry(val[TARGET], i + 1));
+                        }
+                    }
                 }
             };
-            reference.target[ALICEJS_STATEFUL_LISTENERS].push(subscription);
-            subscription(
-                reference.target,
-                reference.property,
-                reference.target[reference.property],
-            );
+        for (let i in ptr[STEPS]) {
+            let step2 = ptr[STEPS][i];
+            if (isobj(step2) && step2[TARGET]) {
+                handle2(step2, (val) => {
+                    resolvedSteps[i] = val;
+                    update();
+                });
+                continue;
+            }
+            resolvedSteps[i] = step2;
         }
+        let sub = curry(ptr[TARGET], 0);
+        ptr[TARGET][LISTENERS].push(sub);
+        sub(ptr[TARGET], resolvedSteps[0], ptr[TARGET][resolvedSteps[0]]);
     }
     function useValue(references) {
         let reference = references[references.length - 1];
         return reference.proxy[reference.property];
     }
+    function JSXAddFixedWrapper(ptr, cb, $if2) {
+        let before, appended, first, flag;
+        handle2(ptr, (val) => {
+            first = appended?.[0];
+            if (first)
+                before = first.previousSibling || (flag = first.parentNode);
+            if (appended) appended.forEach((a) => a.remove());
+            appended = JSXAddChild(
+                $if2 ? (val ? $if2.then : $if2.otherwise) : val,
+                (el) => {
+                    if (before) {
+                        if (flag) {
+                            before.prepend(el);
+                            flag = null;
+                        } else before.after(el);
+                        before = el;
+                    } else cb(el);
+                },
+            );
+        });
+    }
     function h2(type, props, ...children) {
-        if (typeof type === "function") {
-            let newthis = stateful(Object.create(type.prototype));
+        if (type == Fragment) return children;
+        if (typeof type == "function") {
+            let newthis = stateful2(Object.create(type.prototype));
             for (const name in props) {
-                const references = props[name];
-                if (isAJSReferences(references) && name.startsWith("bind:")) {
-                    let reference = references[references.length - 1];
+                const ptr = props[name];
+                if (isDLPtr2(ptr) && name.startsWith("bind:")) {
                     const propname = name.substring(5);
                     if (propname == "this") {
-                        reference.proxy[reference.property] = newthis;
+                        ptr[PROXY][ptr[STEPS][0]] = newthis;
                     } else {
                         let isRecursive = false;
-                        handle2(references, (value) => {
+                        handle2(ptr, (value) => {
                             if (isRecursive) {
                                 isRecursive = false;
                                 return;
@@ -122,13 +167,13 @@
                             isRecursive = true;
                             newthis[propname] = value;
                         });
-                        handle2(window.use(newthis[propname]), (value) => {
+                        handle2(use(newthis[propname]), (value) => {
                             if (isRecursive) {
                                 isRecursive = false;
                                 return;
                             }
                             isRecursive = true;
-                            reference.proxy[reference.property] = value;
+                            ptr[PROXY][ptr[STEPS][0]] = value;
                         });
                     }
                     delete props[name];
@@ -149,11 +194,20 @@
                 elm2.classList.add(newthis.css);
                 elm2.classList.add("self");
             }
+            elm2.setAttribute("data-component", type.name);
+            if (typeof newthis.mount === "function") newthis.mount();
             return elm2;
         }
-        const elm = document.createElement(type);
+        let xmlns = props?.xmlns;
+        const elm = xmlns
+            ? document.createElementNS(xmlns, type)
+            : document.createElement(type);
         for (const child of children) {
-            JSXAddChild(child, elm.appendChild.bind(elm));
+            let cond = child && !isDLPtr2(child) && child[IF];
+            let bappend = elm.append.bind(elm);
+            if (cond) {
+                JSXAddFixedWrapper(cond, bappend, child);
+            } else JSXAddChild(child, bappend);
         }
         if (!props) return elm;
         function useProp(name, callback) {
@@ -162,121 +216,21 @@
             callback(prop);
             delete props[name];
         }
-        useProp("before", (callback) => {
-            JSXAddChild(callback());
-        });
-        useProp("if", (condition) => {
-            let thenblock = props["then"];
-            let elseblock = props["else"];
-            if (isAJSReferences(condition)) {
-                if (thenblock) elm.appendChild(thenblock);
-                if (elseblock) elm.appendChild(elseblock);
-                handle2(condition, (val) => {
-                    if (thenblock) {
-                        if (val) {
-                            thenblock.style.display = "";
-                            if (elseblock) elseblock.style.display = "none";
-                        } else {
-                            thenblock.style.display = "none";
-                            if (elseblock) elseblock.style.display = "";
-                        }
-                    } else {
-                        if (val) {
-                            elm.style.display = "";
-                        } else {
-                            elm.style.display = "none";
-                        }
-                    }
-                });
-            } else {
-                if (thenblock) {
-                    if (condition) {
-                        elm.appendChild(thenblock);
-                    } else if (elseblock) {
-                        elm.appendChild(elseblock);
-                    }
-                } else {
-                    if (condition) {
-                        elm.appendChild(thenblock);
-                    } else if (elseblock) {
-                        elm.appendChild(elseblock);
-                    } else {
-                        elm.style.display = "none";
-                        return document.createTextNode("");
-                    }
-                }
-            }
-            delete props["then"];
-            delete props["else"];
-        });
-        if ("for" in props && "do" in props) {
-            const predicate = props["for"];
-            const closure = props["do"];
-            if (isAJSReferences(predicate)) {
-                const __elms = [];
-                let lastpredicate = [];
-                handle2(predicate, (val) => {
-                    if (
-                        Object.keys(val).length &&
-                        Object.keys(val).length == lastpredicate.length
-                    ) {
-                        let i = 0;
-                        for (const index in val) {
-                            if (deepEqual(val[index], lastpredicate[index])) {
-                                continue;
-                            }
-                            const part = closure(val[index], index, val);
-                            elm.replaceChild(part, __elms[i]);
-                            __elms[i] = part;
-                            i += 1;
-                        }
-                        lastpredicate = Object.keys(
-                            JSON.parse(JSON.stringify(val)),
-                        );
-                    } else {
-                        for (const part of __elms) {
-                            part.remove();
-                        }
-                        for (const index in val) {
-                            const value = val[index];
-                            const part = closure(value, index, val);
-                            if (part instanceof HTMLElement) {
-                                __elms.push(part);
-                                elm.appendChild(part);
-                            }
-                        }
-                        lastpredicate = [];
-                    }
-                });
-            } else {
-                for (const index in predicate) {
-                    const value = predicate[index];
-                    const part = closure(value, index, predicate);
-                    if (part instanceof Node) elm.appendChild(part);
-                }
-            }
-            delete props["for"];
-            delete props["do"];
-        }
-        useProp("after", (callback) => {
-            JSXAddChild(callback());
-        });
         for (const name in props) {
-            const references = props[name];
-            if (isAJSReferences(references) && name.startsWith("bind:")) {
-                let reference = references[references.length - 1];
+            const ptr = props[name];
+            if (isDLPtr2(ptr) && name.startsWith("bind:")) {
                 const propname = name.substring(5);
                 if (propname == "this") {
-                    reference.proxy[reference.property] = elm;
+                    ptr[PROXY][ptr[STEPS][0]] = elm;
                 } else if (propname == "value") {
-                    handle2(references, (value) => (elm.value = value));
+                    handle2(ptr, (value) => (elm.value = value));
                     elm.addEventListener("change", () => {
-                        reference.proxy[reference.property] = elm.value;
+                        ptr[PROXY][ptr[STEPS][0]] = elm.value;
                     });
                 } else if (propname == "checked") {
-                    handle2(references, (value) => (elm.checked = value));
+                    handle2(ptr, (value) => (elm.checked = value));
                     elm.addEventListener("click", () => {
-                        reference.proxy[reference.property] = elm.checked;
+                        ptr[PROXY][ptr[STEPS][0]] = elm.checked;
                     });
                 }
                 delete props[name];
@@ -287,12 +241,12 @@
                 elm.className = classlist;
                 return;
             }
-            if (isAJSReferences(classlist)) {
+            if (isDLPtr2(classlist)) {
                 handle2(classlist, (classname) => (elm.className = classname));
                 return;
             }
             for (const name of classlist) {
-                if (isAJSReferences(name)) {
+                if (isDLPtr2(name)) {
                     let oldvalue = null;
                     handle2(name, (value) => {
                         if (typeof oldvalue === "string") {
@@ -308,7 +262,7 @@
         });
         for (const name in props) {
             const prop = props[name];
-            if (isAJSReferences(prop)) {
+            if (isDLPtr2(prop)) {
                 handle2(prop, (val) => {
                     JSXAddAttributes(elm, name, val);
                 });
@@ -316,38 +270,25 @@
                 JSXAddAttributes(elm, name, prop);
             }
         }
+        if (xmlns) elm.innerHTML = elm.innerHTML;
         return elm;
     }
     function JSXAddChild(child, cb) {
-        if (isAJSReferences(child)) {
-            let appended = [];
-            handle2(child, (val) => {
-                if (appended.length > 1) {
-                    appended.forEach((n) => n.remove());
-                    appended = JSXAddChild(val, cb);
-                } else if (appended.length > 0) {
-                    let old = appended[0];
-                    appended = JSXAddChild(val, cb);
-                    if (appended[0]) {
-                        old.replaceWith(appended[0]);
-                    } else {
-                        old.remove();
-                    }
-                } else {
-                    appended = JSXAddChild(val, cb);
-                }
-            });
+        let childchild, elms, node;
+        if (isDLPtr2(child)) {
+            JSXAddFixedWrapper(child, cb);
         } else if (child instanceof Node) {
             cb(child);
             return [child];
         } else if (child instanceof Array) {
-            let elms = [];
-            for (const childchild of child) {
+            elms = [];
+            for (childchild of child) {
                 elms = elms.concat(JSXAddChild(childchild, cb));
             }
+            if (!elms[0]) elms = JSXAddChild("", cb);
             return elms;
         } else {
-            let node = document.createTextNode(child);
+            node = document.createTextNode(child);
             cb(node);
             return [node];
         }
@@ -368,48 +309,12 @@
             }
             return;
         }
-        if (typeof prop === "function" && name.startsWith("observe")) {
-            const observerclass = window[`${name.substring(8)}Observer`];
-            if (!observerclass) {
-                console.error(`Observer ${name} does not exist`);
-                return;
-            }
-            const observer = new observerclass((entries) => {
-                for (const entry of entries) {
-                    window.$el = elm;
-                    prop(entry);
-                }
-            });
-            observer.observe(elm);
-            return;
-        }
         elm.setAttribute(name, prop);
-    }
-    function deepEqual(object1, object2) {
-        const keys1 = Object.keys(object1);
-        const keys2 = Object.keys(object2);
-        if (keys1.length !== keys2.length) {
-            return false;
-        }
-        for (const key of keys1) {
-            const val1 = object1[key];
-            const val2 = object2[key];
-            const areObjects = isObject(val1) && isObject(val2);
-            if (
-                (areObjects && !deepEqual(val1, val2)) ||
-                (!areObjects && val1 !== val2)
-            ) {
-                return false;
-            }
-        }
-        return true;
-    }
-    function isObject(object) {
-        return object != null && typeof object === "object";
     }
 
     // css.js
     Object.assign(window, { css, rule, styled: { new: css, rule } });
+    var cssmap = {};
     function scopify_css(uid, css2) {
         const virtualDoc = document.implementation.createHTMLDocument("");
         const virtualStyleElement = document.createElement("style");
@@ -426,10 +331,13 @@
         return cssParsed;
     }
     function tagcss(strings, values, isblock) {
-        const uid = `dream-${Array(16)
+        let cached = cssmap[strings[0]];
+        let cachable = strings.length == 1;
+        if (cachable && cached) return cached;
+        const uid = `dl${Array(5)
             .fill(0)
             .map(() => {
-                return Math.floor(Math.random() * 16).toString(16);
+                return Math.floor(Math.random() * 36).toString(36);
             })
             .join("")}`;
         const styleElement = document.createElement("style");
@@ -439,10 +347,10 @@
             flattened_template.push(strings[i]);
             if (values[i]) {
                 const prop = values[i];
-                if (isAJSReferences(prop)) {
+                if (isDLPtr(prop)) {
                     const current_i = flattened_template.length;
                     let oldparsed;
-                    handle2(prop, (val) => {
+                    handle(prop, (val) => {
                         flattened_template[current_i] = String(val);
                         let parsed = flattened_template.join("");
                         if (parsed != oldparsed)
@@ -468,6 +376,7 @@
         } else {
             styleElement.textContent = `.${uid} { ${flattened_template.join("")}; }`;
         }
+        if (cachable) cssmap[strings[0]] = uid;
         return uid;
     }
     function rule(strings, ...values) {
@@ -478,6 +387,7 @@
     }
 
     // html.js
+    Object.assign(window, { html });
     function html(strings, ...values) {
         let flattened = "";
         let markers = {};
@@ -535,8 +445,20 @@
                 if (val in markers) val = markers[val];
                 attributes[attr.name] = val;
             }
-            return window.h(nodename, attributes, children);
+            return h(nodename, attributes, children);
         }
         return wraph(dom.body.children[0]);
+    }
+
+    // store.js
+    Object.assign(window, { $store });
+    function $store(target, ident, type) {
+        let stored = localStorage.getItem(ident);
+        target = JSON.parse(stored) ?? target;
+        addEventListener("beforeunload", () => {
+            console.info("[dreamland.js]: saving " + ident);
+            localStorage.setItem(ident, JSON.stringify(target));
+        });
+        return stateful(target);
     }
 })();
