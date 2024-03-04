@@ -158,11 +158,48 @@ class Anura {
         taskbar.updateTaskbar();
         alttab.update();
     }
-    import(packageName: string) {
+    async import(packageName: string, searchPath?: string) {
+        if (searchPath) {
+            // Using node-style module resolution
+            let scope: string | null;
+            let name: string;
+            let filename: string;
+            if (packageName.startsWith("@")) {
+                const [_scope, _name, ...rest] = packageName.split("/");
+                scope = _scope!;
+                name = _name!;
+                filename = rest.join("/");
+            } else {
+                const [_name, ...rest] = packageName.split("/");
+                scope = null;
+                name = _name!;
+                filename = rest.join("/");
+            }
+
+            if (!filename || filename === "") {
+                const data: any = await anura.fs.promises.readFile(
+                    `${searchPath}/${scope}/${name}/package.json`,
+                );
+                const pkg = JSON.parse(data);
+                console.log("pkg", pkg);
+                if (pkg.main) {
+                    filename = pkg.main;
+                } else {
+                    filename = "index.js";
+                }
+            }
+
+            const file = await anura.fs.promises.readFile(
+                `${searchPath}/${scope}/${name}/${filename}`,
+            );
+            const blob = new Blob([file], { type: "application/javascript" });
+            const url = URL.createObjectURL(blob);
+            return await import(url);
+        }
         const splitName = packageName.split("@");
         const pkg: string = splitName[0]!;
         const version = splitName[1] || null;
-        return this.libs[pkg].getImport(version);
+        return await this.libs[pkg].getImport(version);
     }
     uri = new URIHandlerAPI();
     files = new FilesAPI();
