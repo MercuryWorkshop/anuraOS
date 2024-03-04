@@ -176,6 +176,9 @@ document.addEventListener("anura-login-completed", async () => {
             "/assets/wallpaper/bundled_wallpapers/Default.jpg",
     );
 
+    anura.registerLib(new NodeFS());
+    anura.registerLib(new NodePrelude());
+
     for (const lib of anura.config.libs) {
         anura.registerExternalLib(lib);
     }
