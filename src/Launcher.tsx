@@ -239,7 +239,7 @@ const LauncherShortcut: Component<
         <div class="app" on:click={this.onclick}>
             <input
                 class="app-shortcut-image showDialog"
-                style="width: 40px; height: 40px"
+                style="width: 40px; height: 40px; border-radius: 100%"
                 type="image"
                 src={this.app.icon}
             />
