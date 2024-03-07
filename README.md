@@ -20,10 +20,6 @@ An entirely local browser "OS" and development environment with complete graphic
 Anura uses the features of a progressive-web-app to make its environment work fully offline, providing a virtual filesystem (synced with the linux emulator), a code editor, and a modular and extensible app system. You can even edit Anura's code live while inside of it!
 
 Anura shows as more of a proof-of-concept with what's possible on the modern web rather than an actual product. However, it proves useful in many actual cases and is a useful educational tool.
-
-## What can AnuraOS do?
-
--   Run linux GUI apps from a terminal
     ![](/assets/showcase1.gif)
 
 # Development
