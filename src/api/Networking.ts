@@ -1,5 +1,9 @@
 class Networking {
     libcurl: any;
+    fetch: typeof fetch;
+    WebSocket: typeof WebSocket;
+    Socket: any;
+    TLSSocket: any;
     constructor(wisp_server: string) {
         //@ts-ignore
         import("/libcurl.mjs").then((m) => {
@@ -12,6 +16,7 @@ class Networking {
                 WebSocket: this.libcurl.WebSocket,
                 fetch: this.libcurl.fetch,
                 Socket: this.libcurl.WispConnection,
+                TLSSocket: this.libcurl.TLSSocket,
             });
             console.log("libcurl.js ready!");
         });
