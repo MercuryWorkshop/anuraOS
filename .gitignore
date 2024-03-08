@@ -27,4 +27,5 @@ package-lock.json
 .direnv
 result
 public/config.json
+static/
 
