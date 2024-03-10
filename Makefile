@@ -88,7 +88,7 @@ css: src/*.css
 bundle: tsc css lint milestone
 	mkdir -p build/artifacts
 milestone:
-	bash -c "cat /dev/urandom | tr -dc '[:alpha:]' | fold -w $${1:-50} | head -n 1 > build/MILESTONE"
+	uuidgen > build/MILESTONE"
 lint:
 	npx prettier -w --loglevel error .
 	npx eslint . --fix
