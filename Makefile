@@ -88,7 +88,7 @@ css: src/*.css
 bundle: tsc css lint milestone
 	mkdir -p build/artifacts
 milestone:
-	uuidgen > build/MILESTONE"
+	uuidgen > build/MILESTONE
 lint:
 	npx prettier -w --loglevel error .
 	npx eslint . --fix
