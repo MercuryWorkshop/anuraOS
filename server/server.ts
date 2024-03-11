@@ -13,7 +13,7 @@ import basicAuth from "express-basic-auth";
 import { readFileSync } from "fs";
 
 import * as crypto from "crypto";
-import wisp from "./wisp";
+import wisp from "wisp-server-node";
 
 const useAuth = process.argv.includes("--auth");
 const useParanoidAuth = process.argv.includes("--paranoid-auth");
