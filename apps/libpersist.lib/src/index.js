@@ -36,6 +36,13 @@ export class PersistenceProvider {
         this.cache[prop] = val;
     }
 
+    createStoreFn(_stateful, _win) {
+        return function () {
+            // Not implemented for generic provider
+            throw new Error("Not implemented");
+        }
+    }
+
     toProxy() {
         return new Proxy(this, {
             get: (target, prop) => {

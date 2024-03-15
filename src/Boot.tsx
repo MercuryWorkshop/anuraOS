@@ -50,6 +50,59 @@ window.addEventListener("load", async () => {
     }
 
     anura = await Anura.new(conf);
+
+    // TODO: Serialize state in a way that nested statefuls are preserved
+    function $store<T>(
+        target: T,
+        ident: string,
+        backing:
+            | string
+            | ((
+                  ident: string,
+                  target: T,
+              ) => {
+                  get: () => T;
+                  set: (val: T) => void;
+              }) = "anura",
+    ): Stateful<T> {
+        let get: () => T;
+        let set: (val: T) => void;
+        if (typeof backing === "function") {
+            const { get: g, set: s } = backing(ident, target);
+            get = g;
+            set = s;
+        } else {
+            switch (backing) {
+                case "anura":
+                    get = () =>
+                        anura.settings.get(`dreamland.${ident}`) || target;
+                    set = (val) =>
+                        anura.settings.set(`dreamland.${ident}`, val);
+                    break;
+                case "localstorage":
+                    get = () => {
+                        const stored = localStorage.getItem(ident);
+                        if (stored === null) return target;
+                        return JSON.parse(stored);
+                    };
+                    set = (val) => {
+                        localStorage.setItem(ident, JSON.stringify(val));
+                    };
+                    break;
+                default:
+                    throw new Error("invalid backing");
+            }
+        }
+        target = get();
+
+        addEventListener("beforeunload", () => {
+            console.info("[dreamland.js]: saving " + ident);
+            set(target);
+        });
+
+        return stateful(target);
+    }
+
     if (milestone) {
         const stored = anura.settings.get("milestone");
         if (!stored) await anura.settings.set("milestone", milestone);
@@ -98,6 +151,11 @@ window.addEventListener("load", async () => {
         }
     }
 
+    Object.assign(window, {
+        $store,
+        anura,
+    });
+
     anura.ui.init();
 
     if (!anura.settings.get("oobe-complete")) {
@@ -135,8 +193,6 @@ window.addEventListener("load", async () => {
         anura.settings.set("FileExts", extHandlers);
         anura.settings.set("handler-migration-complete", true);
     }
-
-    (window as any).anura = anura;
 
     setTimeout(
         () => {

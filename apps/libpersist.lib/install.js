@@ -58,6 +58,26 @@ export default class Anureg extends PersistenceProvider {
         this.cache[prop] = val;
         return new Promise((r) => this.fs.writeFile(this.file, JSON.stringify(this.cache), r));
     }
+
+    createStoreFn(stateful, win) {
+        return async (
+            target,
+            ident,
+            _backing
+        ) => {
+            target = (await this.get("dreamland." + ident)) || target;
+
+            const oldonclose = win.onclose;
+
+            win.onclose = () => {
+                if (oldonclose) oldonclose();
+                console.info("[dreamland.js]: saving " + ident);
+                this.set("dreamland." + ident, target);
+            }
+            
+            return stateful(target);
+        }
+    }
 }
 export const using = ["fs", "basepath"];
 export const lifecycle = ["init"];`)

@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/chideNewNewNew.app/node_modules build/libcurl.mjs build/lib/bare.cjs build/assets/matter.css 
+all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/chideNewNewNew.app/node_modules build/libcurl.mjs build/lib/bare.cjs build/assets/matter.css build/dreamland 
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -74,6 +74,18 @@ libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v86/Cargo.toml
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
+
+build/dreamland:
+	mkdir -p build/dreamland
+	git clone https://github.com/MercuryWorkshop/dreamlandjs.git dreamland.tmp --depth 1
+	cd dreamland.tmp; npm i; npx rollup -c -f iife 
+	cp dreamland.tmp/dist/js.js build/dreamland/js.js
+	cp dreamland.tmp/dist/js.js.map build/dreamland/js.js.map
+	cp dreamland.tmp/dist/css.js build/dreamland/css.js
+	cp dreamland.tmp/dist/css.js.map build/dreamland/css.js.map
+	cp dreamland.tmp/dist/html.js build/dreamland/html.js
+	cp dreamland.tmp/dist/html.js.map build/dreamland/html.js.map
+	rm -rf dreamland.tmp
 
 watch: bundle FORCE
 	which inotifywait || echo "INSTALL INOTIFYTOOLS"

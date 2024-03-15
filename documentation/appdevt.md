@@ -28,6 +28,61 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
 *   `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
 *   `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
 
+## Including Dreamland
+
+dreamland.js is a reactive JSX-inspired rendering library with no virtual dom and no build step. You can find the source code [here](https://github.com/MercuryWorkshop/dreamlandjs) and the documentation [here](https://dreamland.js.org/).
+
+AnuraOS itself uses dreamland for the desktop environment, and you can use it in your apps as well. To include dreamland in your app, you can add the following to the `head` section of your `index.html` file:
+
+```html
+<script src="/dreamland/js.js"></script>
+<script src="/dreamland/css.js"></script>
+<script src="/dreamland/html.js"></script>
+```
+
+While dreamland itself includes a `$store` function for preserving state between page reloads, this function is not available by default. Instead, you can use the [`anura.persistence`](#libpersist) library to build a `$store` function bound to your app instance.
+
+```jsx
+const { buildLoader } = await anura.import("anura.persistence");
+const loader = buildLoader(anura);
+await loader.locate();
+
+const persistence = await loader.build(instance);
+const $store = persistence.createStoreFn(stateful, instanceWindow);
+
+let persistentState = await $store(
+    {
+        count: 0,
+    },
+    "state",
+);
+
+let externalState = stateful({
+    count: 0,
+});
+
+function App() {
+    return (
+        <div>
+            <button
+                on:click={() => {
+                    persistentState.count++;
+                    externalState.count++;
+                }}
+            >
+                Increment
+            </button>
+            <div>Persistent: {use(persistentState.count)}</div>
+            <div>Session: {use(externalState.count)}</div>
+        </div>
+    );
+}
+
+document.body.appendChild(<App />);
+```
+
+A demo app using dreamland can be found [here](/apps/dreamlanddemo.app/index.js). This app is the same as the `$store` example above, but using the `html` tag function instead of JSX to demonstrate that dreamland can be used without a build step.
+
 # AnuraOS Libraries
 
 AnuraOS libraries are just like apps but contain utilities or functionality that other apps could import and use. They live inside folders with the suffix `.lib` and the resources specific to each app are contained within that folder.
@@ -100,4 +155,38 @@ let fileWithFilter = await picker.selectFile(
 );
 // select folder
 let folder = await picker.selectFolder();
+```
+
+## libpersist
+
+This library allows you to create and manage persistent data stores. It uses the anura filesystem to store data.
+
+The default storage backend uses the same format as the [`anura.settings`](./Anura-API.md#anurasettings) api, except that it is stored in a file related to the app's data directory instead of in the root settings file. The persistence library also has the ability to be turned into a proxy object that will automatically save changes to the persistence store.
+
+```js
+let persist = await anura.import("anura.persistence");
+let loader = persist.buildLoader(anura);
+await loader.locate();
+// instance is a global variable in external apps that contains the app's instance
+let persistence = await loader.build(instance);
+
+// set a value
+await persistence.set("key", "value");
+
+// get a value
+let value = await persistence.get("key");
+
+// Create a proxy that will automatically save changes to the persistence store
+let proxy = persistence.toProxy();
+
+// set a value
+// Notice that setting a value on an object is not an async operation, but the value will be
+// saved to the persistence store asynchronously. This can cause issues if you are trying to
+// read the value immediately after setting it. If you need to read the value immediately
+// after setting it, you should avoid using the proxy and use the `set` method instead.
+proxy.key = "value";
+
+// get a value
+// Here the value returned is a promise, so you need to use `await` or `.then` to get the value.
+let value = await proxy.key;
 ```
