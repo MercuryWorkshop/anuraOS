@@ -128,13 +128,7 @@ export class StoreRepo {
         if (!app) {
             throw new Error("App not found");
         }
-        let thumb;
-        try {
-            thumb = URL.createObjectURL(await (await fetch(app.baseUrl + app.icon)).blob())
-        } catch (e) {
-            // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
-            thumb = URL.createObjectURL(await (await this.client.fetch(app.baseUrl + app.icon)).blob())
-        }
+        let thumb = URL.createObjectURL(await (await this.client.fetch(app.baseUrl + app.icon)).blob());
         this.thumbCache.apps[appName] = thumb;
         return thumb;
     }
@@ -147,13 +141,7 @@ export class StoreRepo {
         if (!lib) {
             throw new Error("Lib not found");
         }
-        let thumb;
-        try {
-            thumb = URL.createObjectURL(await (await fetch(lib.baseUrl + lib.icon)).blob())
-        } catch (e) {
-            // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
-            thumb = URL.createObjectURL(await (await this.client.fetch(lib.baseUrl + lib.icon)).blob())
-        }
+        let thumb = URL.createObjectURL(await (await this.client.fetch(lib.baseUrl + lib.icon)).blob());
         this.thumbCache.libs[libName] = thumb;
         return thumb;
     }
@@ -369,13 +357,7 @@ export class StoreRepoLegacy {
         if (!app) {
             throw new Error("App not found");
         }
-        let thumb;
-        try {
-            thumb = URL.createObjectURL(await (await fetch(this.baseUrl + app.icon)).blob())
-        } catch (e) {
-            // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
-            thumb = URL.createObjectURL(await (await this.client.fetch(this.baseUrl + app.icon)).blob())
-        }
+        let thumb = URL.createObjectURL(await (await this.client.fetch(this.baseUrl + app.icon)).blob());
         this.thumbCache.apps[appName] = thumb;
         return thumb;
     }
@@ -388,13 +370,7 @@ export class StoreRepoLegacy {
         if (!lib) {
             throw new Error("Lib not found");
         }
-        let thumb;
-        try {
-            thumb = URL.createObjectURL(await (await fetch(this.baseUrl + lib.icon)).blob())
-        } catch (e) {
-            // Probably a network error, the sysadmin might have blocked the repo, this isn't the default because its a massive waste of bandwidth
-            thumb = URL.createObjectURL(await (await this.client.fetch(this.baseUrl + lib.icon)).blob())
-        }
+        let thumb = URL.createObjectURL(await (await this.client.fetch(this.baseUrl + lib.icon)).blob());
         this.thumbCache.libs[libName] = thumb;
         return thumb;
     }
