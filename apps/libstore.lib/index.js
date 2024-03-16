@@ -197,7 +197,7 @@ export class StoreRepo {
             }
         }
 
-        const zipFile = await (await this.client.fetch(app.baseUrl + app.data)).blob();
+        const zipFile = await (await this.client.fetch(encodeURI(app.baseUrl + app.data))).blob();
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
@@ -422,7 +422,7 @@ export class StoreRepoLegacy {
             }
         }
 
-        const zipFile = await (await this.client.fetch(this.baseUrl + app.data)).blob();
+        const zipFile = await (await this.client.fetch(encodeURI(this.baseUrl + app.data))).blob();
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
@@ -471,7 +471,7 @@ export class StoreRepoLegacy {
             throw new Error("Lib not found");
         }
         this.hooks.onDownloadStart(libName);
-        const zipFile = await (await this.client.fetch(this.baseUrl + lib.data)).blob();
+        const zipFile = await (await this.client.fetch(encodeURI(this.baseUrl + lib.data))).blob();
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
