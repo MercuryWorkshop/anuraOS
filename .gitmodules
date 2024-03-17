@@ -7,6 +7,3 @@
 [submodule "aboutproxy"]
 	path = aboutproxy
 	url = https://github.com/MercuryWorkshop/aboutproxy
-[submodule "libapps"]
-	path = libapps
-	url = https://chromium.googlesource.com/apps/libapps
