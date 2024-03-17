@@ -227,6 +227,10 @@ document.addEventListener("anura-login-completed", async () => {
 
     const wallpaper = new WallpaperSelector();
     anura.registerApp(wallpaper);
+
+    const dialog = new Dialog();
+    anura.registerApp(dialog);
+
     wallpaper.setWallpaper(
         anura.settings.get("wallpaper") ||
             "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
