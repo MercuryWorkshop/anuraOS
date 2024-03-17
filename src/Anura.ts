@@ -3,12 +3,12 @@ const YOU_CANT_USE_FRAGMENTS = "undefined";
 class Anura {
     version = {
         semantic: {
-            major: "1",
-            minor: "2",
-            patch: "1",
+            major: "2",
+            minor: "0",
+            patch: "0",
         },
         buildstate: "alpha",
-        codename: "Whalefall",
+        codename: "UNNAMED",
         get pretty() {
             const semantic = anura.version.semantic;
             return `${semantic.major}.${semantic.minor}.${semantic.patch} ${anura.version.buildstate}`;
@@ -203,38 +203,6 @@ class Anura {
     }
     uri = new URIHandlerAPI();
     files = new FilesAPI();
-    async python(appname: string) {
-        return await new Promise((resolve, reject) => {
-            const iframe = document.createElement("iframe");
-            iframe.setAttribute("style", "display: none");
-            iframe.setAttribute("src", "/apps/python.app/lib.html");
-            iframe.id = appname;
-            iframe.onload = async function () {
-                console.log("Called from python");
-                //@ts-ignore
-                const pythonInterpreter = await document
-                    //@ts-ignore
-                    .getElementById(appname)
-                    //@ts-ignore
-                    .contentWindow.loadPyodide({
-                        stdin: () => {
-                            const result = prompt();
-                            //@ts-ignore
-                            echo(result);
-                            return result;
-                        },
-                    });
-                pythonInterpreter.globals.set("AliceWM", AliceWM);
-                pythonInterpreter.globals.set("anura", anura);
-                //@ts-ignore
-                pythonInterpreter.window = (<any>(
-                    document.getElementById(appname)
-                )).contentWindow;
-                resolve(pythonInterpreter);
-            };
-            document.body.appendChild(iframe);
-        });
-    }
     get wsproxyURL() {
         return this.settings.get("wisp-url");
     }

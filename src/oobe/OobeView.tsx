@@ -99,20 +99,6 @@ class OobeView {
                     <h1>Welcome to AnuraOS</h1>
                     <div id="subtitle">Effortless. Modern. Powerful.</div>
                     <div id="gridContent">
-                        <div
-                            on:click={() => {
-                                const script = document.createElement("script");
-                                script.src = `/apps/eruda.app/eruda.js`;
-                                document.head.appendChild(script);
-                                script.onload = function () {
-                                    // @ts-expect-error
-                                    eruda.init();
-                                };
-                            }}
-                            id="topButtons"
-                        >
-                            <button>Enable Eruda</button>
-                        </div>
                         <img id="animation" src="assets/oobe/welcome.gif" />
                         <div id="bottomButtons">
                             <button

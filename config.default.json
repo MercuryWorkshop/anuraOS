@@ -1,13 +1,7 @@
 {
     "apps": [
         "apps/term.app",
-        "apps/glxgears.app",
-        "apps/eruda.app",
-        "apps/vnc.app",
-        "apps/sshy.app",
         "apps/fsapp.app",
-        "apps/chideNewNewNew.app",
-        "apps/python.app",
         "apps/marketplace.app",
         "apps/taskbarMan.app",
         "apps/ashell.app"

@@ -229,7 +229,7 @@ document.addEventListener("anura-login-completed", async () => {
     anura.registerApp(wallpaper);
     wallpaper.setWallpaper(
         anura.settings.get("wallpaper") ||
-            "/assets/wallpaper/bundled_wallpapers/Default.jpg",
+            "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
     );
 
     anura.registerLib(new NodeFS());
