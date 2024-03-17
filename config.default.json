@@ -14,12 +14,7 @@
     ],
     "defaultsettings": {
         "use-sw-cache": true,
-        "applist": [
-            "anura.browser",
-            "anura.settings",
-            "anura.fsapp",
-            "anura.term"
-        ],
+        "applist": ["anura.browser", "anura.settings", "anura.fsapp"],
         "clampWindows": true,
         "launcher-keybind": true,
         "relay-url": "wss://relay.widgetry.org/"

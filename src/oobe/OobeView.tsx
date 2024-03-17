@@ -123,6 +123,10 @@ class OobeView {
                         on:click={() => {
                             anura.settings.set("x86-disabled", false);
                             anura.settings.set("x86-image", "alpine");
+                            anura.settings.set("applist", [
+                                ...anura.settings.get("applist"),
+                                "anura.term",
+                            ]);
                             this.nextStep();
                         }}
                     >
@@ -133,6 +137,10 @@ class OobeView {
                         on:click={() => {
                             anura.settings.set("x86-disabled", false);
                             anura.settings.set("x86-image", "debian");
+                            anura.settings.set("applist", [
+                                ...anura.settings.get("applist"),
+                                "anura.term",
+                            ]);
                             this.nextStep();
                         }}
                     >
@@ -143,6 +151,10 @@ class OobeView {
                         on:click={() => {
                             anura.settings.set("x86-disabled", false);
                             anura.settings.set("x86-image", "arch");
+                            anura.settings.set("applist", [
+                                ...anura.settings.get("applist"),
+                                "anura.term",
+                            ]);
                             this.nextStep();
                         }}
                     >
@@ -152,6 +164,10 @@ class OobeView {
                     <button
                         on:click={() => {
                             anura.settings.set("x86-disabled", true);
+                            anura.settings.set("applist", [
+                                ...anura.settings.get("applist"),
+                                "anura.ashell",
+                            ]);
                             this.nextStep();
                         }}
                     >
@@ -162,6 +178,10 @@ class OobeView {
                         on:click={() => {
                             anura.settings.set("x86-disabled", true);
                             anura.settings.set("use-sw-cache", false);
+                            anura.settings.set("applist", [
+                                ...anura.settings.get("applist"),
+                                "anura.ashell",
+                            ]);
                             this.nextStep();
                         }}
                     >
