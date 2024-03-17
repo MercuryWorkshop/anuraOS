@@ -54,6 +54,7 @@ const shell = new Filer.fs.Shell()
 input.addEventListener("keyup", function (event) {
     if (event.key == "Enter") {
         evalUserInput(input.value)
+        input.value = ''
     }
 })
 
