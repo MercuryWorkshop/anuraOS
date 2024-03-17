@@ -214,6 +214,31 @@ class SettingsApp extends App {
                         </div>
                         <div class="settings-item">
                             <h4 class="settings-item-name">
+                                Reduce animations
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "disable-animation",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "disable-animation",
+                                                false,
+                                            );
+                                        }
+                                    }}
+                                    id="disable-animation"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">
                                 Window Edge Clamping
                             </h4>
                             <label class="switch">

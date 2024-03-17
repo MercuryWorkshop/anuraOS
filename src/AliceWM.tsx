@@ -530,14 +530,18 @@ class WMWindow {
             document.documentElement.clientHeight ||
             document.body.clientHeight;
 
-        this.element.classList.add("maxtransition");
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("maxtransition");
+
         this.element.style.top = "0";
         this.element.style.left = "0";
         this.element.style.width = `${width}px`;
         this.element.style.height = `${height - 49}px`;
-        setTimeout(() => {
-            this.element.classList.remove("maxtransition");
-        }, 200);
+
+        if (!anura.settings.get("disable-animation"))
+            setTimeout(() => {
+                this.element.classList.remove("maxtransition");
+            }, 200);
 
         this.maximizeImg.src = "/assets/window/restore.svg";
 
@@ -576,11 +580,13 @@ class WMWindow {
 
         if (this.onunmaximize) this.onunmaximize();
         console.log("restoring");
-        this.element.classList.add("maxtransition");
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("maxtransition");
         this.element.setAttribute("style", this.oldstyle!);
-        setTimeout(() => {
-            this.element.classList.remove("maxtransition");
-        }, 200);
+        if (!anura.settings.get("disable-animation"))
+            setTimeout(() => {
+                this.element.classList.remove("maxtransition");
+            }, 200);
         this.maximizeImg.src = "/assets/window/maximize.svg";
 
         await sleep(10); // Race condition as a feature
@@ -611,10 +617,12 @@ class WMWindow {
         // Determine if the change in size is higher than some threshold to prevent sluggish animations
 
         const animx =
-            Math.abs(oldwidth - width) > 0.1 * Math.max(oldwidth, width);
+            Math.abs(oldwidth - width) > 0.1 * Math.max(oldwidth, width) &&
+            !anura.settings.get("disable-animation");
 
         const animy =
-            Math.abs(oldheight - height) > 0.1 * Math.max(oldheight, height);
+            Math.abs(oldheight - height) > 0.1 * Math.max(oldheight, height) &&
+            !anura.settings.get("disable-animation");
 
         animx && this.element.classList.add("remaxtransitionx");
         animy && this.element.classList.add("remaxtransitiony");
@@ -705,14 +713,19 @@ class WMWindow {
                         document.documentElement.clientWidth ||
                         document.body.clientWidth;
 
-                    bar.leftWindow.element.classList.add("remaxtransitionx");
-                    bar.splitWindowsAround(width / 2);
-
-                    setTimeout(() => {
-                        bar.leftWindow.element.classList.remove(
+                    if (!anura.settings.get("disable-animation"))
+                        bar.leftWindow.element.classList.add(
                             "remaxtransitionx",
                         );
-                    }, 200);
+
+                    bar.splitWindowsAround(width / 2);
+
+                    if (!anura.settings.get("disable-animation"))
+                        setTimeout(() => {
+                            bar.leftWindow.element.classList.remove(
+                                "remaxtransitionx",
+                            );
+                        }, 200);
                 }
             }
 
@@ -737,15 +750,18 @@ class WMWindow {
                         window.innerWidth ||
                         document.documentElement.clientWidth ||
                         document.body.clientWidth;
-
-                    bar.leftWindow.element.classList.add("remaxtransitionx");
-                    bar.splitWindowsAround(width / 2);
-
-                    setTimeout(() => {
-                        bar.leftWindow.element.classList.remove(
+                    if (!anura.settings.get("disable-animation"))
+                        bar.leftWindow.element.classList.add(
                             "remaxtransitionx",
                         );
-                    });
+                    bar.splitWindowsAround(width / 2);
+
+                    if (!anura.settings.get("disable-animation"))
+                        setTimeout(() => {
+                            bar.leftWindow.element.classList.remove(
+                                "remaxtransitionx",
+                            );
+                        });
                 }
             }
         }
@@ -794,10 +810,10 @@ class WMWindow {
             );
 
             bar.splitWindowsAround(width / 2);
-
-            setTimeout(() => {
-                bar.leftWindow.element.classList.remove("remaxtransitionx");
-            }, 200);
+            if (!anura.settings.get("disable-animation"))
+                setTimeout(() => {
+                    bar.leftWindow.element.classList.remove("remaxtransitionx");
+                }, 200);
         }
 
         console.log("calling onSnap", this.onsnap);
