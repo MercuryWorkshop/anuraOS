@@ -189,6 +189,36 @@ class SettingsApp extends App {
                         <h3 class="settings-category-name">General</h3>
                         <div class="settings-item">
                             <h4 class="settings-item-name">
+                                Allow offline use
+                            </h4>
+                            <label class="switch">
+                                <input
+                                    on:click={(event: any) => {
+                                        if (event.target.checked) {
+                                            anura.settings.set(
+                                                "use-sw-cache",
+                                                true,
+                                            );
+                                        } else {
+                                            anura.settings.set(
+                                                "use-sw-cache",
+                                                false,
+                                            );
+                                        }
+                                        anura.settings.set(
+                                            "milestone",
+                                            "INVALID",
+                                        );
+                                        window.location.reload();
+                                    }}
+                                    id="use-sw-cache"
+                                    type="checkbox"
+                                />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-item">
+                            <h4 class="settings-item-name">
                                 Borderless AboutBrowser
                             </h4>
                             <label class="switch">
@@ -675,7 +705,13 @@ class SettingsApp extends App {
         });
 
         win.content.appendChild(await this.page());
-
+        if (document.getElementById("use-sw-cache")) {
+            if (anura.settings.get("use-sw-cache")) {
+                document
+                    .getElementById("use-sw-cache")!
+                    .setAttribute("checked", "");
+            }
+        }
         if (document.getElementById("borderless-aboutbrowser")) {
             if (anura.settings.get("borderless-aboutbrowser")) {
                 document
@@ -705,6 +741,13 @@ class SettingsApp extends App {
             }
         }
 
+        if (document.getElementById("disable-animation")) {
+            if (anura.settings.get("disable-animation")) {
+                document
+                    .getElementById("disable-animation")!
+                    .setAttribute("checked", "");
+            }
+        }
         return win;
     }
 }
