@@ -1,7 +1,7 @@
 class OobeView {
     state = stateful({
         color: "var(--oobe-bg)",
-        text: "black",
+        text: "#202124",
         step: 0,
     });
 
@@ -44,6 +44,8 @@ class OobeView {
         .screen #subtitle {
             margin: 16px 0 64px 0;
             font-size: 24px;
+            /* https://partnermarketinghub.withgoogle.com/brands/chromebook/visual-identity/visual-identity/color-palette/ */
+            color: #5f6368;
         }
 
         .screen #gridContent {
@@ -72,6 +74,12 @@ class OobeView {
             height: 2em;
             padding-left: 1em;
             padding-right: 1em;
+            transition: 0s;
+        }
+
+        .screen .preferredButton:hover {
+            background-color: rgb(26, 115, 232);
+            filter: brightness(1.1);
         }
 
         .screen button {
@@ -83,6 +91,7 @@ class OobeView {
             margin: 0.5em;
             padding-left: 1em;
             padding-right: 1em;
+            cursor: pointer;
         }
 
         #welcome.screen #animation {
@@ -105,7 +114,7 @@ class OobeView {
                                 on:click={() => this.nextStep()}
                                 class="preferredButton"
                             >
-                                Next
+                                Get Started
                             </button>
                         </div>
                     </div>
@@ -196,7 +205,7 @@ class OobeView {
                 <div class="screen" id="downloadingFiles">
                     <div id="assetsDiv" style="display:none;"></div>
                     <h1>Downloading assets</h1>
-                    <div id="subtitle">
+                    <div id="subtitle" style="color: white;">
                         For the best experience, AnuraOS needs to download
                         required assets.
                     </div>
