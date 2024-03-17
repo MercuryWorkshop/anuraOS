@@ -17,12 +17,13 @@ hooks: FORCE
 apps/libfileview.lib/icons:
 	cd apps/libfileview.lib; bash geticons.sh
 
-apps/chideNewNewNew.app/node_modules:
+apps/chideNewNewNew.app/node_modules: apps/chideNewNewNew.app/package.json
 	cd apps/chideNewNewNew.app; npm i
 
 public/config.json:
 	cp config.default.json public/config.json
-build/bootstrap: 
+
+build/bootstrap: package.json server/package.json
 	mkdir -p build/lib
 	npm i
 	cd server; npm i
