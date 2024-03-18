@@ -9,20 +9,17 @@ class Dialog extends App {
         super();
     }
 
-    async alert(title: string, description: string): Promise<void> {
+    alert(message: string) {
         const dialog = this as object;
-        (dialog as any).title = title;
+        (dialog as any).title = "";
         const win = anura.wm.create(this, dialog);
         const matter = document.createElement("link");
         matter.setAttribute("rel", "stylesheet");
         matter.setAttribute("href", "/assets/matter.css");
         win.content.appendChild(matter);
-        const titleElement = document.createElement("h2");
-        titleElement.textContent = title;
-        win.content.appendChild(titleElement);
-        const descriptionElement = document.createElement("p");
-        descriptionElement.textContent = description;
-        win.content.appendChild(descriptionElement);
+        const messageElement = document.createElement("h2");
+        messageElement.textContent = message;
+        win.content.appendChild(messageElement);
         const closeButton = document.createElement("button");
         closeButton.addEventListener("click", (event) => {
             win.close();
@@ -30,21 +27,18 @@ class Dialog extends App {
         closeButton.textContent = "OK";
         win.content.appendChild(closeButton);
     }
-    async confirm(title: string, description: string): Promise<boolean> {
+    async confirm(message: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
             const dialog = this as object;
-            (dialog as any).title = title;
+            (dialog as any).title = "";
             const win = anura.wm.create(this, dialog);
             const matter = document.createElement("link");
             matter.setAttribute("rel", "stylesheet");
             matter.setAttribute("href", "/assets/matter.css");
             win.content.appendChild(matter);
-            const titleElement = document.createElement("h2");
-            titleElement.textContent = title;
-            win.content.appendChild(titleElement);
-            const descriptionElement = document.createElement("p");
-            descriptionElement.textContent = description;
-            win.content.appendChild(descriptionElement);
+            const messageElement = document.createElement("h2");
+            messageElement.textContent = message;
+            win.content.appendChild(messageElement);
             const cancelButton = document.createElement("button");
             cancelButton.addEventListener("click", (event) => {
                 resolve(false);
