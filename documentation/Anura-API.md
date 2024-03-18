@@ -135,18 +135,18 @@ Deletes the x86 hard disk and refreshes the page. This is a destructive action!
 **Usage:**
 
 ```js
-console.log("saving hard disk");
+console.log("deleting hard disk");
 await anura.x86hdd.delete();
 ```
 
 ### anura.x86hdd.resize
 
-Deletes the x86 hard disk and refreshes the page. This is a destructive action!
+Resizes the x86 hard disk by adding empty bytes to the image.
 
 **Usage:**
 
 ```js
-console.log("saving hard disk")
+console.log("rezising hard disk")
 anura.x86?.emulator.stop();
 clearInterval(
     anura.x86?.saveinterval,
@@ -483,16 +483,4 @@ element.addEventListener("contextmenu", (e) => {
         e.preventDefault();
     };
 });
-```
-
-## anura.python
-
-This API creates a python interpreter for use in Anura apps (based on Python 3.10.2).
-
-**Usage:**
-
-```js
-let interpreter = await anura.python();
-
-interpreter.runPython("print('Hi')"); // prints Hi in console
 ```
