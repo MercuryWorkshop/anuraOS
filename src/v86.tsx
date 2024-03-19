@@ -253,9 +253,8 @@ class V86Backend {
         <div
             id="screen_container"
             class={css`
-                self {
-                    background-color: #000;
-                }
+                background-color: #000;
+
                 canvas {
                     background-color: #000;
                 }

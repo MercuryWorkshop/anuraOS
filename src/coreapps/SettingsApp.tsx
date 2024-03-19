@@ -1,7 +1,6 @@
 const settingsCSS = css`
-    .self {
-        color: white;
-    }
+    color: white;
+
     .header {
         margin-left: 20px;
     }
@@ -160,7 +159,7 @@ class SettingsApp extends App {
     page = async () => (
         <div
             style="height:100%;width:100%;position:absolute"
-            class={`background ${settingsCSS} self`}
+            class={`background ${settingsCSS}`}
         >
             <div class="header">
                 <h2 color="white">Anura Settings</h2>

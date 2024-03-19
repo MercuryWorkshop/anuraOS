@@ -4,16 +4,14 @@ class RecoveryApp extends App {
     icon = "/assets/icons/verificationoff.png";
 
     css = css`
-        self {
-            background-color: var(--material-bg);
-            height: 100%;
-            width: 100%;
-            display: flex;
-            padding: 0;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+        background-color: var(--material-bg);
+        height: 100%;
+        width: 100%;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
         .recovery-app-logo {
             height: 128px;
@@ -60,7 +58,7 @@ class RecoveryApp extends App {
     `;
 
     page = async () => (
-        <div class={`${this.css} self`}>
+        <div class={this.css}>
             <div class="recovery-app-logo">
                 <div class="recovery-logo-img" title="Recovery"></div>
             </div>

@@ -6,24 +6,16 @@ class OobeView {
     });
 
     css = styled.new`
-        * {
-            color: ${use(this.state.text)};
-            transition: all 1s;
-        }
-
-        self {
-            background-color: ${use(this.state.color)};
-            z-index: 9996;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-            flex-wrap: wrap;
-        }
+        z-index: 9996;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: wrap;
 
         #content {
             padding: 79.6px 40px 23.8px 40px;
@@ -229,7 +221,13 @@ class OobeView {
     ];
 
     element = (
-        <div class={`${this.css} self`}>
+        <div
+            class={this.css}
+            style={{
+                backgroundColor: use(this.state.color),
+                color: use(this.state.text),
+            }}
+        >
             <div id="oobe-top">
                 <div id="content">
                     {use(this.state.step, (step) => this.steps[step]!.elm)}

@@ -14,6 +14,7 @@ class x86MgrApp extends App {
         } as unknown as any);
         this.windows[0] = win;
 
+        win.content.style.backgroundColor = "#000";
         win.content.appendChild(anura.x86!.screen_container);
 
         taskbar.updateTaskbar();

@@ -1,7 +1,6 @@
 const wallpaperCSS = css`
-    .self {
-        color: white;
-    }
+    color: white;
+
     .header {
         margin-left: 20px;
     }
@@ -84,7 +83,7 @@ class WallpaperSelector extends App {
     page = async () => (
         <div
             style="height:100%;width:100%;position:absolute"
-            class={`background ${wallpaperCSS} self`}
+            class={`background ${wallpaperCSS}`}
         >
             <div class="header">
                 <h2 color="white">Wallpaper Selector</h2>

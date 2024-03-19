@@ -2,37 +2,26 @@ class Launcher {
     private search: HTMLInputElement | null;
 
     css = css`
-        self {
-            position: absolute;
-            width: min(70%, 35em);
-            height: min(60%, 30em);
-            background-color: rgba(22, 22, 22, 0.9);
-            border: 1px solid rgba(0, 0, 0, 1);
-            box-shadow: inset 0 0 0 1px #3e3e3e;
+        position: absolute;
+        width: min(70%, 35em);
+        height: min(60%, 30em);
+        background-color: rgba(22, 22, 22, 0.9);
+        border: 1px solid rgba(0, 0, 0, 1);
+        box-shadow: inset 0 0 0 1px #3e3e3e;
 
-            border-radius: 1em;
-            bottom: 60px;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            display: flex;
-            flex-direction: column;
-            display: block;
-            transition: all 0.1s ease-out;
-            opacity: 0;
-            z-index: -1;
-            overflow-y: hidden;
-            visibility: hidden;
-            left: 10px;
-        }
-
-        self.active {
-            display: block;
-            opacity: 1;
-            height: min(80%, 40em);
-            z-index: 9999;
-            transition: all 0.1s ease-in;
-            visibility: visible;
-        }
+        border-radius: 1em;
+        bottom: 60px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        display: flex;
+        flex-direction: column;
+        display: block;
+        transition: all 0.1s ease-out;
+        opacity: 0;
+        z-index: -1;
+        overflow-y: hidden;
+        visibility: hidden;
+        left: 10px;
 
         .topSearchBar {
             display: flex;
@@ -113,17 +102,24 @@ class Launcher {
         }
     `;
 
-    clickoffCheckerCss = css`
-        self {
-            display: none;
-        }
+    activeCss = css`
+        display: block;
+        opacity: 1;
+        height: min(80%, 40em);
+        z-index: 9999;
+        transition: all 0.1s ease-in;
+        visibility: visible;
+    `;
 
-        self.active {
-            position: absolute;
-            width: 100%;
-            height: calc(100%);
-            display: block;
-        }
+    clickoffCheckerCss = css`
+        display: none;
+    `;
+
+    clickoffActiveCss = css`
+        position: absolute;
+        width: 100%;
+        height: calc(100%);
+        display: block;
     `;
 
     // self.active {
@@ -141,7 +137,7 @@ class Launcher {
     // `;
 
     element = (
-        <div class={this.css + " self"}>
+        <div class={this.css}>
             <div class="topSearchBar">
                 <img src="/assets/icons/googleg.png"></img>
                 <input
@@ -155,10 +151,7 @@ class Launcher {
     );
 
     clickoffChecker = (
-        <div
-            id="clickoffChecker"
-            class={`self ${this.clickoffCheckerCss}`}
-        ></div>
+        <div id="clickoffChecker" class={this.clickoffCheckerCss}></div>
     );
 
     constructor() {
@@ -191,14 +184,14 @@ class Launcher {
     }
 
     toggleVisible() {
-        this.element.classList.toggle("active");
-        this.clickoffChecker.classList.toggle("active");
+        this.element.classList.toggle(this.activeCss);
+        this.clickoffChecker.classList.toggle(this.clickoffActiveCss);
         this.clearSearch();
     }
 
     hide() {
-        this.element.classList.remove("active");
-        this.clickoffChecker.classList.remove("active");
+        this.element.classList.remove(this.activeCss);
+        this.clickoffChecker.classList.remove(this.clickoffActiveCss);
         this.clearSearch();
     }
 
