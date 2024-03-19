@@ -79,7 +79,7 @@ class Dialog extends App {
             const confirmButton = document.createElement("button");
             confirmButton.addEventListener("click", (event) => {
                 const value = inputElement.value;
-                if (value) {
+                if (value && value !== "") {
                     resolve(value);
                 } else if (defaultValue) {
                     resolve(defaultValue);
