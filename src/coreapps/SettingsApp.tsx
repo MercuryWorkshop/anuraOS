@@ -380,9 +380,11 @@ class SettingsApp extends App {
                                 <button
                                     on:click={async () => {
                                         this.state.x86_installing = true;
-                                        const chosenRootFS = prompt(
-                                            'Enter the name of the rootfs you want to install ("alpine", "debian", "arch")',
-                                        );
+                                        const chosenRootFS =
+                                            await anura.dialog.prompt(
+                                                'Enter the name of the rootfs you want to install ("alpine", "debian", "arch")',
+                                            );
+                                        console.log(chosenRootFS);
                                         if (
                                             chosenRootFS == "debian" ||
                                             chosenRootFS == "arch" ||

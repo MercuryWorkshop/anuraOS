@@ -55,4 +55,41 @@ class Dialog extends App {
             win.content.appendChild(confirmButton);
         });
     }
+    async prompt(message: string, defaultValue?: any): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const dialog = this as object;
+            (dialog as any).title = "";
+            const win = anura.wm.create(this, dialog);
+            const matter = document.createElement("link");
+            matter.setAttribute("rel", "stylesheet");
+            matter.setAttribute("href", "/assets/matter.css");
+            win.content.appendChild(matter);
+            const messageElement = document.createElement("h2");
+            messageElement.textContent = message;
+            win.content.appendChild(messageElement);
+            const inputElement = document.createElement("input");
+            win.content.appendChild(inputElement);
+            const cancelButton = document.createElement("button");
+            cancelButton.addEventListener("click", (event) => {
+                resolve(null);
+                win.close();
+            });
+            cancelButton.textContent = "Cancel";
+            win.content.appendChild(cancelButton);
+            const confirmButton = document.createElement("button");
+            confirmButton.addEventListener("click", (event) => {
+                const value = inputElement.value;
+                if (value) {
+                    resolve(value);
+                } else if (defaultValue) {
+                    resolve(defaultValue);
+                } else {
+                    resolve(null);
+                }
+                win.close();
+            });
+            confirmButton.textContent = "OK";
+            win.content.appendChild(confirmButton);
+        });
+    }
 }
