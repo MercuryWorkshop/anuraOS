@@ -417,7 +417,7 @@ class SettingsApp extends App {
                                                 )!.innerText = "Installed!";
                                             }
                                         } else {
-                                            alert(
+                                            anura.dialog.alert(
                                                 "Invalid rootfs name! Valid names are: alpine, debian, arch",
                                             );
                                         }
@@ -567,9 +567,9 @@ class SettingsApp extends App {
                                                                     )!.innerText =
                                                                         "Resize Disk";
                                                                 }
-                                                                confirm(
+                                                                (await anura.dialog.confirm(
                                                                     "Resized disk! Would you like to reload the page?",
-                                                                )
+                                                                ))
                                                                     ? window.location.reload()
                                                                     : null;
                                                             }
@@ -605,9 +605,9 @@ class SettingsApp extends App {
                                         Disable x86 Subsystem
                                     </button>
                                     <button
-                                        on:click={() => {
+                                        on:click={async () => {
                                             if (
-                                                confirm(
+                                                await anura.dialog.confirm(
                                                     "Custom RootFSes are in beta and may not work properly. Continue?",
                                                 )
                                             ) {
@@ -636,7 +636,7 @@ class SettingsApp extends App {
                                                                         },
                                                                     );
                                                                 } catch (e) {
-                                                                    alert(
+                                                                    anura.dialog.alert(
                                                                         "Error loading file: " +
                                                                             e,
                                                                     );
@@ -665,9 +665,10 @@ class SettingsApp extends App {
                             <button
                                 class="settings-button"
                                 on:click={async () => {
-                                    const confirmation = await confirm(
-                                        "Are you sure you want to powerwash Anura? All of your data will be lost.",
-                                    );
+                                    const confirmation =
+                                        await anura.dialog.confirm(
+                                            "Are you sure you want to powerwash Anura? All of your data will be lost.",
+                                        );
                                     if (confirmation) {
                                         const sh = new anura.fs.Shell();
                                         try {

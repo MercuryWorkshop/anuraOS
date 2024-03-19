@@ -230,7 +230,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     const dialog = new Dialog();
     const dialogApp = await anura.registerApp(dialog);
-    anura.dialog = dialogApp;
+    (anura.dialog as any) = dialogApp;
 
     wallpaper.setWallpaper(
         anura.settings.get("wallpaper") ||

@@ -23,7 +23,7 @@ class Anura {
     x86hdd: FakeFile;
     net: Networking;
     ui = new AnuraUI();
-    dialog: any;
+    dialog: Dialog;
 
     private constructor(
         fs: AnuraFilesystem,
