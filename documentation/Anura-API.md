@@ -484,3 +484,49 @@ element.addEventListener("contextmenu", (e) => {
     };
 });
 ```
+
+## anura.dialog
+
+This api provides dialogs for Anura. For app developers, these should be used instead of using native browser dialogs to keep the user inside of the desktop environment and to make your app integrate better with Anura.
+
+### anura.dialog.alert
+
+This creates a alert dialog window.
+
+**Usage:**
+
+```js
+anura.dialog.alert("Hello World!");
+```
+
+### anura.dialog.confirm
+
+This creates a dialog window that gives the user a prompt to confirm an action. This function returns a `boolean` you can use.
+
+**Usage:**
+
+```js
+let confirm = await anura.dialog.confirm("Are you sure?");
+if (confirm) {
+    console.log("They were sure.");
+}
+```
+
+### anura.dialog.prompt
+
+This gives a user a dialog prompt where the user can enter text. If the user decides to not input text and a default value exists, it returns that instead or returns null if none of those are met.
+
+**Usage:**
+
+```js
+let input = await anura.dialog.prompt("What is your favorite number?");
+if (input) {
+    console.log(input);
+}
+
+// default value mode
+let input = await anura.dialog.prompt("What is your favorite number?", "3");
+if (input) {
+    console.log(input);
+}
+```
