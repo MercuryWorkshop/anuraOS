@@ -6,12 +6,26 @@ This document has a brief explanation of all the Anura JS APIs and how to use th
 
 This API is used to define system settings in Anura, it is a key value store of JS objects.
 
+### anura.settings.get
+
+This api allows you to get settings and change already defined settings values.
+
 **Usage:**
 
 ```js
 anura.settings.get("applist"); // Get pinned apps in anura's taskbar
 
 anura.settings.get("applist", ["anura.x86mgr", "anura.browser"]); // Set pinned apps in anura's taskbar in this order
+```
+
+### anura.settings.set
+
+This allows you to set a settings value in the api
+
+**Usage:**
+
+```js
+anura.settings.set("launcher-keybind", false); // Disables the launcher keybind.
 ```
 
 ## anura.import
@@ -272,6 +286,7 @@ let win = anura.wm.create(instance, {
 ### anura.wm.createGeneric
 
 This is is the same as the `anura.wm.create` api but creates a window under the Generic App instance.
+
 **Usage:**
 
 ```js
@@ -425,6 +440,10 @@ anura.uri.has("https"); // Should always return true because the browser registe
 
 This API provides access to Anura's notification service, useful if you need to display an alert to the user.
 
+### anura.notifications.add
+
+This api allows you to add a notification to the notification service and have a callback that executes along with it.
+
 **Usage:**
 
 ```js
@@ -487,7 +506,7 @@ element.addEventListener("contextmenu", (e) => {
 
 ## anura.dialog
 
-This api provides dialogs for Anura. For app developers, these should be used instead of using native browser dialogs to keep the user inside of the desktop environment and to make your app integrate better with Anura.
+This API provides dialogs for Anura. For app developers, these should be used instead of using native browser dialogs to keep the user inside of the desktop environment and to make your app integrate better with Anura.
 
 ### anura.dialog.alert
 
