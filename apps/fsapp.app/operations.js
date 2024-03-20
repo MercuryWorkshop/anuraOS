@@ -7,7 +7,7 @@ window.Buffer = Filer.Buffer;
 let sh = new anura.fs.Shell();
 
 async function mountLocalFs() {
-    let path = prompt(
+    let path = await anura.dialog.prompt(
         "Enter the path where you want to mount the local filesystem",
     );
     if (!path.startsWith("/")) {
@@ -19,6 +19,7 @@ async function mountLocalFs() {
         return;
     }
     await LocalFS.new(path);
+    reload();
 }
 
 async function loadPath(path) {
