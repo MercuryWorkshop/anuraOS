@@ -73,7 +73,7 @@ To make a repo accessible via the Store Library you should use the utility [crea
 $ npx create-anura-repo
 ```
 
-After doing this you can add host the repo statically and be able to use it in libstore.
+After doing this you can add host the repo statically and be able to use it in libstore. Keep in mind you will have to rerun this command whenever a change is made to the repo.
 
 # libstore
 

@@ -73,11 +73,11 @@ npm start -- --auth
 
 App development is highly encouraged! Good apps can even be added to the offical app repositories after review by a AnuraOS maintainer. Apps are stored in .app files which are read by AnuraOS to provide you, well, an app!
 
-For more information about developing an AnuraOS app visit [here](./documentation/appdevt.md)
+For more information about developing an AnuraOS app please visit [this page](./documentation/appdevt.md) and for using Anura API's in your code, please visit [this page](./documentation/Anura-API.md).
 
 ## Documentation
 
-See the current index of documentation [here](./documentation/README.md)
+See the current index of documentation [here](./documentation/README.md).
 
 ## Security
 
