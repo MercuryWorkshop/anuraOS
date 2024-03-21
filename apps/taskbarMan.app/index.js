@@ -77,6 +77,8 @@ function drawTaskbar() {
         if (taskbarList.includes(appName))
             continue;
         const app = anura.apps[appName]
+        if (app.hidden)
+            continue;
         let newImg = document.createElement('img')
         if (app.icon.startsWith('/'))
             newImg.src = app.icon;
