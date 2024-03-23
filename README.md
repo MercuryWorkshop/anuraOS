@@ -51,7 +51,7 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 -   Clone the repository with `git clone --recursive https://github.com/MercuryWorkshop/anuraOS`
 -   Then, `make all`
 
-> [!NOTE]
+> [!TIP]
 > You can use `make all -B` instead if you want to force a full build.
 
 ### Building the Linux RootFS
@@ -75,13 +75,13 @@ Or, run authenticated with
 cd server
 npm start -- --auth
 ```
-If you started the server, Anura should now be running at `localhost:8000`.
+Anura should now be running at `localhost:8000`.
 
 ## App Development
 
 App development is highly encouraged! Good apps can even be added to the official workstore after review by an AnuraOS maintainer. Apps are stored in .app files which are read by AnuraOS to provide you, well, an app!
 
-For more information about developing an AnuraOS app visit [here](./documentation/appdevt.md)
+For more information about developing an AnuraOS app visit [here](./documentation/appdevt.md).
 
 ## Documentation
 
