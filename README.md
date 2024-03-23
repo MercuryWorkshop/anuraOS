@@ -40,9 +40,11 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 - A recent version of `java`
 - `inotifytools`
 - `rustup`
+- `make`
+- `gcc` (or any other C compiler)
 
 > [!NOTE]
-> You will have to install the required toolchain by running `rustup target add wasm32-unknown-unknown`.
+> You will have to install the required Rust toolchain by running `rustup target add wasm32-unknown-unknown`.
 
 #### Building
 
