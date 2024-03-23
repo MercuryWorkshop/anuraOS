@@ -7,7 +7,7 @@
         -   @ProgrammerIn-wonderland
         -   @Endercass
         -   @Percslol
-    -   Large contributers
+    -   Large contributors
 
         -   @CoolElectronics
         -   @r58playz
