@@ -20,7 +20,7 @@ Anura uses the features of a PWA (Progressive Web App) to make its environment w
 Anura shows as more of a proof-of-concept with what's possible on the modern web rather than an actual product. However, it proves useful in many actual cases and is a useful educational tool.
 ![](/assets/showcase1.gif)
 
-# Development
+## Development
 
 > [!IMPORTANT]  
 > Anura will not build on Windows. Please use a Linux VM or WSL.
@@ -91,7 +91,7 @@ Still being written. (See the current index of documentation [here](./documentat
 
 See [SECURITY.md](./SECURITY.md) for reporting instructions.
 
-# Credits
+## Credits
 
 AnuraOS is created by [Mercury Workshop](https://mercurywork.shop). Linux emulation is based off of the [v86](https://github.com/copy/v86) project
 for more credits, checkout CREDITS.MD
