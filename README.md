@@ -93,7 +93,6 @@ See [SECURITY.md](./SECURITY.md) for reporting instructions.
 
 ## Credits
 
-AnuraOS is created by [Mercury Workshop](https://mercurywork.shop). Linux emulation is based off of the [v86](https://github.com/copy/v86) project
-for more credits, checkout CREDITS.MD
+AnuraOS is created by [Mercury Workshop](https://mercurywork.shop). Linux emulation is based off of the [v86](https://github.com/copy/v86) project. For more credits, see [CREDITS.MD](./CREDITS.md).
 
 (p.s. for hackers: the entrypoint to anura is [src/Boot.tsx](./src/Boot.tsx))
