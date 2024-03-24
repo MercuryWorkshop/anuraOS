@@ -8,7 +8,8 @@
     position: fixed;
     overflow: hidden;
     z-index: 91;
-    display: flex; /* FLEXBOX #2 */
+    display: flex;
+    /* FLEXBOX #2 */
     border: 2px solid var(--material-border);
     flex-direction: column;
     box-shadow:
@@ -18,9 +19,19 @@
     transform: scale(1);
     transition:
         visibility 0s,
-        transform 0.2s ease,
-        opacity 0.2s linear;
+        opacity 0.15s cubic-bezier(0, 0, 0.4, 1);
     opacity: 1;
+}
+
+.scaletransition {
+    transition:
+        visibility 0s,
+        transform 0.15s cubic-bezier(0, 0, 0.4, 1),
+        opacity 0.15s cubic-bezier(0, 0, 0.4, 1);
+}
+
+.opacity0.scaletransition {
+    transform: scale(0.9);
 }
 
 .maxtransition {
@@ -30,6 +41,7 @@
         top 0.2s,
         left 0.2s;
 }
+
 .remaxtransitionx {
     transition:
         width 0.2s,
@@ -75,7 +87,6 @@
 
 .opacity0 {
     opacity: 0;
-    transform: scale(0.9);
 }
 
 .aliceWMwin .title {
@@ -133,46 +144,56 @@
     position: absolute;
     z-index: 2;
 }
+
 .resize-edge {
     position: absolute;
     z-index: 2;
     padding: 5px;
 }
+
 .resize-edge.left {
     left: -5px;
     height: 100%;
     cursor: e-resize;
 }
+
 .resize-edge.right {
     right: -5px;
     height: 100%;
     cursor: e-resize;
 }
+
 .resize-edge.top {
     top: -5px;
     width: 100%;
     cursor: s-resize;
 }
+
 .resize-edge.bottom {
     bottom: -5px;
     width: 100%;
     cursor: s-resize;
 }
+
 .resize-corner.top-left {
     left: -5px;
     top: -5px;
-    cursor: nwse-resize; /*resizer cursor*/
+    cursor: nwse-resize;
+    /*resizer cursor*/
 }
+
 .resize-corner.top-right {
     right: -5px;
     top: -5px;
     cursor: nesw-resize;
 }
+
 .resize-corner.bottom-left {
     left: -5px;
     bottom: -5px;
     cursor: nesw-resize;
 }
+
 .resize-corner.bottom-right {
     right: -5px;
     bottom: -5px;
