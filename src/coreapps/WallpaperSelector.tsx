@@ -45,6 +45,7 @@ const wallpaperCSS = css`
     .wallpaper-list-item-image {
         aspect-ratio: 16/9;
         height: 100px;
+
         border-radius: 10px;
     }
     .wallpaper-list-item-name {
@@ -128,6 +129,7 @@ class WallpaperSelector extends App {
                             });
                     }}
                     id="custom-wallpaper-btn"
+                    class="matter-button-contained"
                 >
                     Upload
                 </button>
