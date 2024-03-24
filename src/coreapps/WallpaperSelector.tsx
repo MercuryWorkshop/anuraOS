@@ -49,7 +49,7 @@ const wallpaperCSS = css`
         border-radius: 10px;
     }
     .wallpaper-list-item-name {
-        margin: 10Fix px;
+        margin: 10px;
     }
 
     .custom-wallpaper {
