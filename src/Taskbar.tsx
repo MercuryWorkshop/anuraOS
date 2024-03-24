@@ -70,7 +70,7 @@ class Taskbar {
                     )}
                 </ul>
             </nav>
-            <div id="taskinfo-container" style="font-size: 0.9rem">
+            <div id="taskinfo-container">
                 <div class="flex flexcenter">
                     <span
                         id="settings-icn"
@@ -78,15 +78,11 @@ class Taskbar {
                             anura.apps["anura.settings"].open();
                         }}
                         class="material-symbols-outlined"
-                        style="font-size: 1rem"
                     >
                         settings
                     </span>
 
-                    <span
-                        class="material-symbols-outlined"
-                        style="font-size: 1rem"
-                    >
+                    <span class="material-symbols-outlined">
                         {use(this.state.bat_icon)}
                     </span>
 
