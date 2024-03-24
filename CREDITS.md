@@ -12,6 +12,7 @@
         -   @CoolElectronics
         -   @r58playz
         -   @MadjikDotPng
+        -   @BomberFish
 
     -   A full list of contributors can be found [here](https://github.com/MercuryWorkshop/anuraOS/graphs/contributors)
 
