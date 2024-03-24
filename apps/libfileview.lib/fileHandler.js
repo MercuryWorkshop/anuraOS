@@ -87,7 +87,13 @@ export function openFile (path) {
         fs.readFile(path, function(err, data)  {
             let fileView = anura.wm.createGeneric("Text Viewer");
             fileView.content.style.overflow = 'auto'
-            fileView.content.innerText = data;
+            fileView.content.style.backgroundColor = "var(--material-bg)"
+            fileView.content.style.color = "white"
+            const text = document.createElement("div")
+            text.style.fontFamily = '"Roboto Mono", monospace'
+            text.style.margin = "8px"
+            text.innerText = data;
+            fileView.content.appendChild(text)
         })
     }
 
