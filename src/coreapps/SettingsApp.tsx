@@ -3,7 +3,7 @@ const settingsCSS = css`
 
     .header {
         margin-left: 20px;
-        font-family: "Google Sans", Roboto, sans-serif;
+        font-family: Roboto, sans-serif;
     }
     .container {
         display: flex;
