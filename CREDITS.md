@@ -25,7 +25,7 @@
     -   Service worker web proxy - [Ultraviolet](https://github.com/titaniumnetwork-dev/Ultraviolet)
     -   Material Components - [Matter CSS](https://github.com/finnhvman/matter)
     -   A full list of dependencies can be found [here](https://github.com/MercuryWorkshop/anuraOS/network/dependencies)
-    -   Default networking stack- [libcurl.js with OpenSSL](https://github.com/ading2210/libcurl.js)
+    -   Default networking stack- [libcurl.js with WolfSSL](https://github.com/ading2210/libcurl.js)
     -   VNC Client [noVNC](https://github.com/novnc/noVNC)
     -   SSH Client [sshy](https://github.com/stuicey/SSHy)
 
