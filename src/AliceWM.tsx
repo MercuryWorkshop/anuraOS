@@ -417,6 +417,9 @@ class WMWindow {
             };
         }
 
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("scaletransition");
+
         setTimeout(() => this.element.classList.remove("opacity0"), 10);
     }
 
@@ -496,6 +499,9 @@ class WMWindow {
         if (this.onfocus) this.onfocus();
     }
     close() {
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("scaletransition");
+
         this.element.classList.add("opacity0");
         setTimeout(() => {
             this.element.remove();
@@ -532,6 +538,7 @@ class WMWindow {
 
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("maxtransition");
+        this.element.classList.add("scaletransition");
 
         this.element.style.top = "0";
         this.element.style.left = "0";
@@ -541,6 +548,7 @@ class WMWindow {
         if (!anura.settings.get("disable-animation"))
             setTimeout(() => {
                 this.element.classList.remove("maxtransition");
+                this.element.classList.remove("scaletransition");
             }, 200);
 
         this.maximizeImg.src = "/assets/window/restore.svg";
@@ -582,10 +590,12 @@ class WMWindow {
         console.log("restoring");
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("maxtransition");
+        this.element.classList.add("scaletransition");
         this.element.setAttribute("style", this.oldstyle!);
         if (!anura.settings.get("disable-animation"))
             setTimeout(() => {
                 this.element.classList.remove("maxtransition");
+                this.element.classList.remove("scaletransition");
             }, 200);
         this.maximizeImg.src = "/assets/window/maximize.svg";
 
@@ -766,6 +776,9 @@ class WMWindow {
             }
         }
         this.element.style.display = "";
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("scaletransition");
+
         setTimeout(() => {
             this.element.classList.remove("opacity0");
         }, 10);
