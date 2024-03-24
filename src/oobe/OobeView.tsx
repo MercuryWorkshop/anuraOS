@@ -30,6 +30,7 @@ class OobeView {
         }
 
         .screen h1 {
+            font-family: "Google Sans", Roboto, sans-serif;
             margin: 48px 0 0 0;
         }
 
@@ -75,6 +76,7 @@ class OobeView {
         }
 
         .screen button {
+            font-family: Roboto, sans-serif;
             background-color: var(--oobe-bg);
             border-radius: 16px;
             border: 1px solid gray;

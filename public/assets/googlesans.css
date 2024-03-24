@@ -1,0 +1,71 @@
+@font-face {
+    font-family: "Google Sans";
+    src:
+        local("Google Sans Medium"),
+        local("GoogleSans-Medium"),
+        url("/assets/fonts/GoogleSans-Medium.woff2") format("woff2"),
+        url("/assets/fonts/GoogleSans-Medium.woff") format("woff");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Google Sans";
+    src:
+        local("Google Sans Regular"),
+        local("GoogleSans-Regular"),
+        url("/assets/fonts/GoogleSans-Regular.woff2") format("woff2"),
+        url("/assets/fonts/GoogleSans-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Google Sans";
+    src:
+        local("Google Sans Medium Italic"),
+        local("GoogleSans-MediumItalic"),
+        url("/assets/fonts/GoogleSans-MediumItalic.woff2") format("woff2"),
+        url("/assets/fonts/GoogleSans-MediumItalic.woff") format("woff");
+    font-weight: 500;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Google Sans";
+    src:
+        local("Google Sans Italic"),
+        local("GoogleSans-Italic"),
+        url("/assets/fonts/GoogleSans-Italic.woff2") format("woff2"),
+        url("/assets/fonts/GoogleSans-Italic.woff") format("woff");
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Google Sans";
+    src:
+        local("Google Sans Bold"),
+        local("GoogleSans-Bold"),
+        url("/assets/fonts/GoogleSans-Bold.woff2") format("woff2"),
+        url("/assets/fonts/GoogleSans-Bold.woff") format("woff");
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Google Sans";
+    src:
+        local("Google Sans Bold Italic"),
+        local("GoogleSans-BoldItalic"),
+        url("/assets/fonts/GoogleSans-BoldItalic.woff2") format("woff2"),
+        url("/assets/fonts/GoogleSans-BoldItalic.woff") format("woff");
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}

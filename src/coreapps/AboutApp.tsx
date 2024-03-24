@@ -13,7 +13,7 @@ class AboutApp extends App {
             </div>
             <div class="aboutapp-logo-divider"></div>
             <div class="aboutapp-content">
-                <p>AnuraOS</p>
+                <h2 id="aboutapp-title">AnuraOS</h2>
                 <p>
                     Version {anura.version.codename} ({anura.version.pretty})
                     (OS build {this.getOSBuild()})

@@ -19,7 +19,7 @@
 .aboutapp-logo-img {
     transition: background 1s ease-in-out;
     /* height: 100%; */
-    border-radius: 10%;
+    border-radius: 0;
     background: url(icon.png);
     background-size: contain;
     background-repeat: no-repeat;
@@ -64,4 +64,11 @@
     cursor: pointer;
     font-family: Roboto, sans-serif;
     font-size: 16px;
+}
+
+#aboutapp-title {
+    text-align: center;
+    font-family: "Google Sans", Roboto, sans-serif;
+    margin-top: 5px;
+    margin-bottom: 1rem;
 }

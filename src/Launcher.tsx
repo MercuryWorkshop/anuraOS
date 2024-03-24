@@ -16,7 +16,7 @@ class Launcher {
         display: flex;
         flex-direction: column;
         display: block;
-        transition: all 0.1s ease-out;
+        transition: all 0.2s ease-in-out;
         opacity: 0;
         z-index: -1;
         overflow-y: hidden;
@@ -107,7 +107,7 @@ class Launcher {
         opacity: 1;
         height: min(80%, 40em);
         z-index: 9999;
-        transition: all 0.1s ease-in;
+        transition: all 0.2s ease-in-out;
         visibility: visible;
     `;
 
