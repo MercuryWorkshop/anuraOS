@@ -15,6 +15,7 @@ const overviewScreen = document.getElementById("overviewScreen");
 const appListScreen = document.getElementById("appListScreen");
 const appInstallerScreen = document.getElementById("appInstallerScreen");
 const repoListButton = document.getElementById("repoListButton");
+const repoListButtonLabel = document.getElementById("repoListButtonLabel");
 
 repoListButton.addEventListener("click", async function (evt) {
     if (evt.target.dataset.repo) {
@@ -31,7 +32,7 @@ async function loadappListScreen(repo) {
     appListScreen.innerHTML = ''
     repoList.style.display = 'none'
     overviewScreen.style.display = 'none'
-    repoListButton.style.display = '';
+    repoListButtonLabel.style.display = '';
     document.getElementById("head").innerHTML = repo.name;
 
     delete repoListButton.dataset.repo;
@@ -43,7 +44,7 @@ async function loadappListScreen(repo) {
     search.setAttribute('placeholder', 'Search for apps...');
     search.style.color = 'white'
     search.setAttribute('class', 'search');
-    search.addEventListener('input', function() {
+    search.addEventListener('input', function () {
         const searchQuery = this.value.toLowerCase();
         const appButtons = document.querySelectorAll(".app");
 
@@ -64,6 +65,7 @@ async function loadappListScreen(repo) {
     appListScreen.appendChild(search);
 
     const appList = document.createElement("div");
+    appList.id = "appList";
 
     let apps = await repo.getApps()
     let libs = await repo.getLibs()
@@ -75,7 +77,8 @@ async function loadappListScreen(repo) {
         const infoContainer = document.createElement('div');
         const itemText = document.createElement('span')
         const itemDesc = document.createElement('p')
-        const view = document.createElement('input')
+
+        const installButton = document.createElement('input');
 
         itemText.innerText = app.name;
         if (repo.version == "legacy") {
@@ -89,12 +92,30 @@ async function loadappListScreen(repo) {
         appElem.className = 'app'
         thumbnailContainer.className = 'thumbnailContainer'
         infoContainer.className = 'infoContainer'
-        view.type = 'button'
-        view.value = 'View'
-        
-        view.onclick = () => {
-            // repo.installApp(app.name);
-            // nuh uh
+
+        let query;
+        if (repo.version == "legacy") {
+            query = app.name
+        } else {
+            query = app.package
+        }
+
+        installButton.classList.add('overview-installButton');
+        installButton.classList.add('matter-button-contained');
+        installButton.type = 'button';
+
+        if (anura.apps[app.package] || (repo.version == "legacy" && anura.apps[app.name])) {
+            installButton.value = 'Installed';
+            installButton.disabled = true;
+        } else {
+            installButton.classList.add('matter-success');
+            installButton.onclick = async () => {
+                await repo.installApp(query);
+            };
+            installButton.value = 'Install';
+        }
+
+        appElem.onclick = () => {
             loadOverviewScreen(repo, app);
         };
 
@@ -103,10 +124,10 @@ async function loadappListScreen(repo) {
         infoContainer.appendChild(itemText);
         infoContainer.appendChild(itemDesc);
         appElem.appendChild(infoContainer);
-        appElem.appendChild(view);
+        appElem.appendChild(installButton);
         appList.appendChild(appElem);
     });
-    
+
     libs.forEach(async (lib) => {
         const libElem = document.createElement('div')
         const thumbnailContainer = document.createElement('div');
@@ -114,7 +135,7 @@ async function loadappListScreen(repo) {
         const infoContainer = document.createElement('div');
         const itemText = document.createElement('span')
         const itemDesc = document.createElement('p')
-        const view = document.createElement('input')
+        const installButton = document.createElement('input');
 
         itemText.innerText = lib.name;
         if (repo.version == "legacy") {
@@ -128,12 +149,33 @@ async function loadappListScreen(repo) {
         libElem.className = 'app'
         thumbnailContainer.className = 'thumbnailContainer'
         infoContainer.className = 'infoContainer'
-        view.type = 'button'
-        view.value = 'View'
-        
-        view.onclick = () => {
-            // repo.installLib(lib.name);
-            // nuh uh
+
+
+        let query;
+        if (repo.version == "legacy") {
+            query = lib.name
+        } else {
+            query = lib.package
+        }
+
+
+        installButton.classList.add('overview-installButton')
+        installButton.classList.add('matter-success');
+        installButton.classList.add('matter-button-contained');
+        installButton.type = 'button';
+    
+        if (anura.apps[lib.package] || (repo.version == "legacy" && anura.apps[lib.name])) {
+            installButton.value = 'Installed';
+            installButton.disabled = true;
+        } else {
+            installButton.classList.add('matter-success');
+            installButton.onclick = async () => {
+                await repo.installLib(query);
+            };
+            installButton.value = 'Install';
+        }
+
+        libElem.onclick = () => {
             loadOverviewScreen(repo, lib);
         };
 
@@ -142,7 +184,7 @@ async function loadappListScreen(repo) {
         infoContainer.appendChild(itemText);
         infoContainer.appendChild(itemDesc);
         libElem.appendChild(infoContainer);
-        libElem.appendChild(view);
+        libElem.appendChild(installButton);
         appList.appendChild(libElem);
     });
     appListScreen.appendChild(appList);

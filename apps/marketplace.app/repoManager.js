@@ -5,7 +5,7 @@ let marketplace;
 const libstoreCache = {};
 
 async function loadMainScreen() {
-    document.getElementById("repoListButton").style.display = "none";
+    document.getElementById("repoListButtonLabel").style.display = "none";
 
     libstoreCache["2.0.0"] ??= (await anura.import("anura.libstore@2.0.0"));
 
@@ -45,13 +45,13 @@ async function loadMainScreen() {
     overviewScreen.style.display = 'none'
     repoList.style.display = ''
     document.getElementById("head").innerHTML = "Select a Repository";
-    
+
     for (const repo in repos) {
         const repoItem = document.createElement('div')
         repoItem.innerText = repo
         repoItem.oncontextmenu = (e) => {
             const newcontextmenu = new anura.ContextMenu();
-            newcontextmenu.addItem("Delete Repo", async function() {
+            newcontextmenu.addItem("Delete Repo", async function () {
                 delete repos[repo];
                 await anura.settings.set('workstore-repos', repos)
                 loadMainScreen();
@@ -65,17 +65,17 @@ async function loadMainScreen() {
             }
             e.preventDefault()
         }
-        (async function() { // check repo status
+        (async function () { // check repo status
             try {
                 const marketplaceRepo = await marketplace.getRepo(repos[repo], repo);
                 console.log(marketplaceRepo)
-                repoItem.onclick = async function() {
-                    await loadappListScreen(marketplaceRepo); 
+                repoItem.onclick = async function () {
+                    await loadappListScreen(marketplaceRepo);
                 }
             } catch (e) {
                 repoItem.innerText += " (Error)";
                 repoItem.style.color = "red";
-                repoItem.onclick = async function() {
+                repoItem.onclick = async function () {
                     anura.notifications.add({
                         title: "Marketplace",
                         description: "The repository " + repo + " encountered an error: " + e,
@@ -96,7 +96,7 @@ async function loadMainScreen() {
         newRepoURL.placeholder = "https://anura.repo/"
         newRepoButton.type = 'submit'
         newRepoButton.value = 'add repo'
-        newRepoButton.onclick = function() {
+        newRepoButton.onclick = function () {
             if (!newRepoURL.value.endsWith("/")) {
                 anura.notifications.add({
                     title: "Marketplace",
@@ -116,7 +116,7 @@ async function loadMainScreen() {
                 return;
             }
             repos[newRepoName.value] = newRepoURL.value;
-            repoItem.onclick = function() {
+            repoItem.onclick = function () {
                 loadappListScreen(newRepoName.value)
             }
             repoItem.className = "repoItem";
@@ -130,7 +130,8 @@ async function loadMainScreen() {
         newRepo.appendChild(newRepoButton)
         repoList.appendChild(newRepo)
     }
-        
+
 
 }
+
 loadMainScreen()

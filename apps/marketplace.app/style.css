@@ -1,6 +1,6 @@
 body {
     color: #eeeeee;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: "Roboto", sans-serif;
     padding-top: 70px;
     margin: 0;
 }
@@ -9,10 +9,16 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+#repoListButton {
+    display: none;
+}
+
 body {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
 
 #overviewScreen {
     display: flex;
@@ -66,7 +72,7 @@ body {
     text-align: left;
     color: #aaaaaa;
     width: 100%;
-} 
+}
 
 .overview-thumbnailContainer {
     display: flex;
@@ -74,16 +80,6 @@ body {
     justify-content: center;
     height: 80px;
     width: 80px;
-}
-
-.overview-installButton {
-    /* margin-left: auto; */
-    border: none;
-    width: 10%;
-    height: 30px;
-    border-radius: 7px;
-    background-image: linear-gradient(#388e3c, #5aaf5e);
-    color: #fafafa;
 }
 
 .overview-installButton:hover {
@@ -125,29 +121,53 @@ body {
     color: #aaaaaa;
 }
 
-.app {
-    height: 100px;
-    width: 75%;
-    border-color: #444;
-    border-style: solid;
-    border-width: 1px;
-    margin-right: auto;
-    margin-left: auto;
-    background: rgb(20,20,20);
-    display: flex;
-    align-items: center;
+.app:first-of-type {
+    border-radius: 4px 4px 0 0;
+}
+
+
+.app:last-of-type {
+    border-radius: 0 0 4px 4px;
     border-bottom: none;
 }
 
-.app:last-of-type {
-    border-bottom: #444 solid 1px;
+.app:only-of-type {
+    border-radius: 4px;
+    border-bottom: none;
 }
 
-.app > input:hover {
+#appList {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 75%;
+    overflow: scroll;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.app {
+    height: 100px;
+    width: 100%;
+    border-bottom: #333 solid 1px;
+    background: rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    transition: 0.2s;
+}
+
+.app:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transition: 0.2s;
+}
+
+.app>input:hover {
     cursor: pointer;
     transition: 0.3s;
 }
-.thumbnailContainer > img {
+
+.thumbnailContainer>img {
     display: block;
     position: relative;
     height: 80px;
@@ -163,7 +183,7 @@ body {
     justify-content: center;
 }
 
-.infoContainer > span {
+.infoContainer>span {
     display: block;
     position: relative;
     font-size: 16px;
@@ -171,7 +191,7 @@ body {
     color: #fafafa;
 }
 
-.infoContainer > p {
+.infoContainer>p {
     display: block;
     position: relative;
     font-size: 14px;
@@ -181,16 +201,9 @@ body {
     padding: 0;
 }
 
-.app > input {
-    float: right;
-    margin-right: 15px;
+.app>input {
     margin-left: auto;
-    border: none;
-    width: 70px;
-    height: 30px;
-    border-radius: 7px;
-    background-image: linear-gradient(#3c3c3c, #5e5e5e);
-    color: #fafafa;
+    margin-right: 30px;
 }
 
 nav {
@@ -199,62 +212,79 @@ nav {
     width: 100vw;
     height: 70px;
     font-size: large;
-    
+    background-color: rgba(32,33,36,0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: #bdbdbd;
     top: 0;
-}
-nav > div > h1 {
-    /* position: fixed; */
-    font-size: 12px;
-    float: left;
-    margin-left: 2vw;
-    margin-top: 20px;
+    z-index: 1000; /* avoid firefox funkiness? */
 }
 
-nav > div > input {
+#header {
+    float: left;
+    margin-left: 1vw;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+#head {
+    font-size: 22px;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+#repoListButton {
     border: none;
     height: 30px;
     border-radius: 7px;
-    background-color: rgb(20,20,20);
-    float: right;
-    margin-right: 2.5vw;
-    margin-top: 20px;
+    background: transparent;
     color: #eeeeee;
 }
 
-nav > div {
+#repoListButtonLabel {
+    display: flex;
+}
+
+nav>div {
     width: 100vw;
     display: table;
 }
 
-nav > div > input:hover {
+nav>div>input:hover {
     cursor: pointer;
 }
 
 .repoItem {
-    background: rgb(20,20,20);
+    background: rgba(255, 255, 255, 0.05);
     margin-right: auto;
     margin-left: auto;
     height: 65px;
     line-height: 65px;
-    width: 75vw;
+    width: 60vw;
     text-align: center;
     color: #eeeeee;
-    border-color: #444;
-    border-style: solid;
-    border-width: 0.5px;
-    border-bottom: none;
+    font-weight: 500;
+    transition: 0.3s;
 }
 
-.repoItem:nth-last-child(2) {
-    border-bottom: #444 solid 0.5px;
+.repoItem:first-of-type {
+    border-radius: 4px 4px 0 0;
+}
+
+.repoItem:last-of-type {
+    border-radius: 0 0 4px 4px;
+}
+
+.repoItem:not(:last-of-type) {
+    border-bottom: 1px solid #333;
 }
 
 .repoItem:hover {
     cursor: pointer;
-    transition: 0.3s;
-    background-color: #4caf50;
-    color: #212121;
+    transition: 0.2s;
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
 .repoAdd {
@@ -265,10 +295,13 @@ nav > div > input:hover {
     margin-top: 20px;
 }
 
-.repoAdd > input {
-    border-width: 1px;
-    border-color: #444;
-    background-color: rgb(20,20,20);
+.repoAdd>input {
+    appearance: none;
+    background-color: transparent;
+    border: none; /* reset */
+    border-style: solid;
+    border: 0px solid transparent;
+    border-bottom: 4px solid #444;
     box-shadow: none !important;
     border-style: solid !important;
     margin-right: 5px;
@@ -278,26 +311,48 @@ nav > div > input:hover {
     color: #bdbdbd;
 }
 
-.repoItem > p {
+.repoAdd>input:focus {
+    outline: none;
+    border-bottom-color: #3ca1ff;
+    transition: 0.2s;
+    transition: 0.2s;
+}
+
+.repoAdd > input[type="submit"] {
+    background: rgb(20,20,20);
+    padding: 6px;
+    border-radius: 6px;
+    border: none!important;
+}
+
+.repoItem>p {
     margin: 0;
     font-size: 10px;
     color: #bdbdbd;
 }
 
 .search {
-    border-width: 1px;
-    background-color: rgb(20,20,20);
-    border-color: #444;
+    appearance: none;
+    background-color: transparent;
+    border: none; /* reset */
+    border-style: solid;
+    border: 0px solid transparent;
+    border-bottom: 3px solid #444;
     box-shadow: none !important;
     border-style: solid !important;
     margin-right: auto;
     margin-bottom: 50px;
+    padding-bottom: 2px;
     margin-left: auto;
     display: flex;
     width: 40vw;
     height: 3vh;
+    transition: 0.2s;
+    font-family: inherit;
 }
 
 .search:focus {
     outline: none;
+    border-bottom-color: #3ca1ff;
+    transition: 0.2s;
 }
