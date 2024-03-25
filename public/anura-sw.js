@@ -1,11 +1,14 @@
 /* global workbox */
 
 // importScripts('/assets/libs/workbox/workbox-sw.js');
-
 importScripts("/nohost-sw.js");
+importScripts("/idb-keyval.js");
 // importScripts("/sw.js");
 
 var cacheenabled = false;
+idbKeyval.get("cacheenabled").then((result) => {
+    if (result !== undefined) cacheenabled = result;
+});
 
 // workbox.setConfig({ modulePathPrefix: "/assets/libs/workbox" });
 
@@ -36,6 +39,7 @@ addEventListener("message", (event) => {
         }
     }
     if (event.data.anura_target === "anura.cache") {
+        idbKeyval.set("cacheenabled", event.data.value);
         cacheenabled = event.data.value;
     }
 });
