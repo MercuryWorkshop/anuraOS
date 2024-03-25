@@ -1,6 +1,8 @@
 class Launcher {
     private search: HTMLInputElement | null;
 
+    private transition = "all 0.175s cubic-bezier( 0.445, 0.05, 0.55, 0.95 )";
+
     css = css`
         position: absolute;
         width: min(70%, 35em);
@@ -16,7 +18,7 @@ class Launcher {
         display: flex;
         flex-direction: column;
         display: block;
-        transition: all 0.1s ease-out;
+        transition: ${this.transition};
         opacity: 0;
         z-index: -1;
         overflow-y: hidden;
@@ -107,7 +109,7 @@ class Launcher {
         opacity: 1;
         height: min(80%, 40em);
         z-index: 9999;
-        transition: all 0.1s ease-in;
+        transition: ${this.transition};
         visibility: visible;
     `;
 
