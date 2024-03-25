@@ -19,7 +19,7 @@
 .aboutapp-logo-img {
     transition: background 1s ease-in-out;
     /* height: 100%; */
-    border-radius: 10%;
+    /* border-radius: 10%; */
     background: url(icon.png);
     background-size: contain;
     background-repeat: no-repeat;
