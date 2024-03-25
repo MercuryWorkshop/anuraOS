@@ -10,10 +10,6 @@ class Settings {
                 anura_target: "anura.cache",
                 value: this.cache["use-sw-cache"],
             });
-            isReady.active!.postMessage({
-                anura_target: "anura.bareurl",
-                value: this.cache["bare-url"],
-            });
             console.log(
                 "ANURA-SW: For this boot, cache will be " +
                     (this.cache["use-sw-cache"] ? "enabled" : "disabled"),
