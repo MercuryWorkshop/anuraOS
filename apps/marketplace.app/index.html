@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/assets/matter.css">
+    <link rel="stylesheet" href="/assets/materialsymbols.css">
 </head>
+
 <body>
     <nav id="topbar">
-        <div><h1 id="head">Marketplace</h1><input value="Repo List" id="repoListButton" type="button"></div>
-    </span>
+        <div id="header">
+            <input id="repoListButton" value="Repo List" type="button" />
+            <label for="repoListButton" id="repoListButtonLabel">
+                <span class="material-symbols-outlined">
+                    arrow_back
+                </span>
+            </label>
+            <span id="head">Marketplace</span>
+        </div>
+        </span>
     </nav>
     <div id="repoScreen">
         <div id="repoList">
@@ -22,10 +34,11 @@
 
     </div>
     <div id="overviewScreen" style="display: none;">
-    
+
     </div>
     <script src="index.js"></script>
     <script src="overview.js"></script>
     <script src="repoManager.js"></script>
 </body>
+
 </html>

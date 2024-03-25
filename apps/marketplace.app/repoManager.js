@@ -5,7 +5,7 @@ let marketplace;
 const libstoreCache = {};
 
 async function loadMainScreen() {
-    document.getElementById("repoListButton").style.display = "none";
+    document.getElementById("repoListButtonLabel").style.display = "none";
 
     libstoreCache["2.0.0"] ??= (await anura.import("anura.libstore@2.0.0"));
 

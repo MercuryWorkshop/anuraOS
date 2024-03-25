@@ -32,7 +32,9 @@ async function loadOverviewScreen(repo, app) {
     const appCategory = document.createElement('span');
     appCategory.className = 'overview-appCategory';
     const installButton = document.createElement('input');
-    installButton.className = 'overview-installButton';
+    installButton.classList.add('overview-installButton')
+    installButton.classList.add('matter-success');
+    installButton.classList.add('matter-button-contained');
     installButton.type = 'button';
     installButton.value = 'Install';
     thumbnailContainer.appendChild(thumbnail);

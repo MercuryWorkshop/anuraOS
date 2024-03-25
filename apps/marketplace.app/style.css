@@ -9,6 +9,10 @@ body::-webkit-scrollbar {
     display: none;
 }
 
+#repoListButton {
+    display: none;
+}
+
 body {
     -ms-overflow-style: none;
     /* IE and Edge */
@@ -78,16 +82,6 @@ body {
     width: 80px;
 }
 
-.overview-installButton {
-    /* margin-left: auto; */
-    border: none;
-    width: 10%;
-    height: 30px;
-    border-radius: 7px;
-    background-image: linear-gradient(#388e3c, #5aaf5e);
-    color: #fafafa;
-}
-
 .overview-installButton:hover {
     cursor: pointer;
 }
@@ -128,28 +122,44 @@ body {
 }
 
 .app:first-of-type {
-    border-radius: 16px 16px 0 0;
+    border-radius: 4px 4px 0 0;
 }
 
+
 .app:last-of-type {
+    border-radius: 0 0 4px 4px;
     border-bottom: none;
-    border-radius: 0 0 16px 16px
 }
 
 .app:only-of-type {
-    border-radius: 16px;
+    border-radius: 4px;
     border-bottom: none;
+}
+
+#appList {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 75%;
+    overflow: scroll;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .app {
     height: 100px;
-    width: 75%;
-    border-bottom: #444 solid 1px;
-    margin-right: auto;
-    margin-left: auto;
-    background: rgb(20, 20, 20);
+    width: 100%;
+    border-bottom: #333 solid 1px;
+    background: rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
+    transition: 0.2s;
+}
+
+.app:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transition: 0.2s;
 }
 
 .app>input:hover {
@@ -192,15 +202,8 @@ body {
 }
 
 .app>input {
-    float: right;
-    margin-right: 15px;
     margin-left: auto;
-    border: none;
-    width: 70px;
-    height: 30px;
-    border-radius: 7px;
-    background-image: linear-gradient(#3c3c3c, #5e5e5e);
-    color: #fafafa;
+    margin-right: 30px;
 }
 
 nav {
@@ -210,29 +213,33 @@ nav {
     height: 70px;
     font-size: large;
     background-color: rgba(32,33,36,0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-bottom: #bdbdbd;
     top: 0;
     z-index: 1000; /* avoid firefox funkiness? */
 }
 
-nav>div>h1 {
-    /* position: fixed; */
-    font-size: 12px;
+#header {
     float: left;
-    margin-left: 2vw;
+    margin-left: 1vw;
     margin-top: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
 }
 
-nav>div>input {
+#head {
+    font-size: 22px;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+#repoListButton {
     border: none;
     height: 30px;
     border-radius: 7px;
-    background-color: rgb(20, 20, 20);
-    float: right;
-    margin-right: 2.5vw;
-    margin-top: 20px;
+    background: transparent;
     color: #eeeeee;
 }
 
@@ -246,8 +253,7 @@ nav>div>input:hover {
 }
 
 .repoItem {
-    background: rgb(20, 20, 20);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
     margin-right: auto;
     margin-left: auto;
     height: 65px;
@@ -255,15 +261,26 @@ nav>div>input:hover {
     width: 60vw;
     text-align: center;
     color: #eeeeee;
-    margin-bottom: 10px;
     font-weight: 500;
     transition: 0.3s;
 }
 
+.repoItem:first-of-type {
+    border-radius: 4px 4px 0 0;
+}
+
+.repoItem:last-of-type {
+    border-radius: 0 0 4px 4px;
+}
+
+.repoItem:not(:last-of-type) {
+    border-bottom: 1px solid #333;
+}
+
 .repoItem:hover {
     cursor: pointer;
-    transition: 0.3s;
-    background-color: rgba(24,25,28);
+    transition: 0.2s;
+    background-color: rgba(255, 255, 255, 0.08);
 }
 
 .repoAdd {
@@ -316,7 +333,7 @@ nav>div>input:hover {
     border: none; /* reset */
     border-style: solid;
     border: 0px solid transparent;
-    border-bottom: 4px solid #444;
+    border-bottom: 3px solid #444;
     box-shadow: none !important;
     border-style: solid !important;
     margin-right: auto;
@@ -327,6 +344,7 @@ nav>div>input:hover {
     width: 40vw;
     height: 3vh;
     transition: 0.2s;
+    font-family: inherit;
 }
 
 .search:focus {
