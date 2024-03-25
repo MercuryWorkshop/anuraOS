@@ -70,13 +70,6 @@ You can run Anura with the command
 make server
 ```
 
-Or, run authenticated with
-
-```sh
-cd server
-npm start -- --auth
-```
-
 Anura should now be running at `localhost:8000`.
 
 ## App Development
