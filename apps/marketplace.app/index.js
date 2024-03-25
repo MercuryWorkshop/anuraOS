@@ -100,15 +100,20 @@ async function loadappListScreen(repo) {
             query = app.package
         }
 
-        installButton.classList.add('overview-installButton')
-        installButton.classList.add('matter-success');
+        installButton.classList.add('overview-installButton');
         installButton.classList.add('matter-button-contained');
         installButton.type = 'button';
-        installButton.value = 'Install';
 
+        if (anura.apps[app.package] || (repo.version == "legacy" && anura.apps[app.name])) {
+            installButton.value = 'Installed';
+            installButton.disabled = true;
+        } else {
+            installButton.classList.add('matter-success');
             installButton.onclick = async () => {
                 await repo.installApp(query);
             };
+            installButton.value = 'Install';
+        }
 
         appElem.onclick = () => {
             loadOverviewScreen(repo, app);
@@ -130,7 +135,7 @@ async function loadappListScreen(repo) {
         const infoContainer = document.createElement('div');
         const itemText = document.createElement('span')
         const itemDesc = document.createElement('p')
-        const view = document.createElement('input')
+        const installButton = document.createElement('input');
 
         itemText.innerText = lib.name;
         if (repo.version == "legacy") {
@@ -144,7 +149,7 @@ async function loadappListScreen(repo) {
         libElem.className = 'app'
         thumbnailContainer.className = 'thumbnailContainer'
         infoContainer.className = 'infoContainer'
-        
+
 
         let query;
         if (repo.version == "legacy") {
@@ -153,20 +158,22 @@ async function loadappListScreen(repo) {
             query = lib.package
         }
 
-            installButton.onclick = async () => {
-                await repo.installLib(query);
-            };
-
 
         installButton.classList.add('overview-installButton')
         installButton.classList.add('matter-success');
         installButton.classList.add('matter-button-contained');
         installButton.type = 'button';
-        installButton.value = 'Install';
-
-        installButton.onclick = async () => {
-            await repo.installLib(query);
-        };
+    
+        if (anura.apps[lib.package] || (repo.version == "legacy" && anura.apps[lib.name])) {
+            installButton.value = 'Installed';
+            installButton.disabled = true;
+        } else {
+            installButton.classList.add('matter-success');
+            installButton.onclick = async () => {
+                await repo.installLib(query);
+            };
+            installButton.value = 'Install';
+        }
 
         libElem.onclick = () => {
             loadOverviewScreen(repo, lib);

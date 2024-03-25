@@ -243,6 +243,10 @@ nav {
     color: #eeeeee;
 }
 
+#repoListButtonLabel {
+    display: flex;
+}
+
 nav>div {
     width: 100vw;
     display: table;

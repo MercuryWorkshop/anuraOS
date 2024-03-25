@@ -103,6 +103,4 @@ async function loadOverviewScreen(repo, app) {
     overviewScreen.appendChild(infoSection);
     overviewScreen.appendChild(screenshotSection);
     overviewScreen.appendChild(aboutSection);
-
-
 }
