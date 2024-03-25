@@ -9,19 +9,21 @@
 .notif {
     position: relative;
     font-family: "Roboto";
-    background-color: rgba(22, 22, 22, 0.9);
-    border-radius: 7px;
+    background-color: rgba(22, 22, 22, 0.8);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-radius: 20px;
     color: white;
     min-height: 115px;
     width: 400px;
     cursor: pointer;
     margin: 10px;
     left: 525px;
-    animation: slideIn 0.5s ease-in-out forwards;
+    animation: slideIn 0.35s ease-in-out forwards;
     opacity: 1;
-    transition: 350ms ease-in-out;
-    border: 1px solid rgba(0, 0, 0, 1);
-    box-shadow: inset 0 0 0 1px #3e3e3e;
+    transition: 250ms ease-in-out;
+    border: 1px solid #3e3e3e;
+    /* box-shadow: inset 0 0 0 1px #3e3e3e; */
 }
 
 @keyframes slideIn {
@@ -57,18 +59,18 @@
     padding-top: 10px;
     padding-left: 10px;
     padding-bottom: 10px;
-    font-size: 16px;
+    font-size: 14px;
 }
 .notif-title {
     font-size: 18px;
     padding-left: 10px;
     padding-top: 10px;
-    font-weight: bold;
+    font-weight: 700px;
 }
 .notif-close-indicator {
     position: absolute;
-    top: 6px;
-    left: 370px;
+    top: 10px;
+    right: 10px;
 }
 .notif-button-container {
     display: flex;
