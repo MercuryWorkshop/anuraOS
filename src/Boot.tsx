@@ -16,7 +16,36 @@ channel.addEventListener("message", (msg) => {
             elm.remove();
         }
         document.open();
-        document.write("you already have an anura tab open");
+        document.write(
+            `
+            <html>
+            <head>
+            <style>
+            body {
+                font-family: 'Roboto', system-ui, sans-serif;
+                text-align: center;
+                background: black;
+                color: white;
+                overflow: none;
+            }
+            #wrapper {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+            }
+            </style>
+            </head>
+            <body>
+            <div id="wrapper">
+            <h1>AnuraOS is already running in another tab</h1>
+            <p>Please close the other tab and reload.</p>
+            </div>
+            </body>
+            </html>
+            `,
+        );
         document.close();
     }
 });
