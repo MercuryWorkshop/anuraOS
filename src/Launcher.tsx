@@ -1,7 +1,7 @@
 class Launcher {
     private search: HTMLInputElement | null;
 
-    private transition = "all 0.175s cubic-bezier( 0.445, 0.05, 0.55, 0.95 )";
+    private transition = "all 0.1s cubic-bezier( 0.445, 0.05, 0.55, 0.95 )";
 
     css = css`
         position: absolute;
