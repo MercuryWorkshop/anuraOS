@@ -137,7 +137,7 @@ class Launcher {
     // `;
 
     element = (
-        <div class={this.css}>
+        <div id="launcher" class={this.css}>
             <div class="topSearchBar">
                 <img src="/assets/icons/googleg.png"></img>
                 <input

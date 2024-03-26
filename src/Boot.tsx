@@ -103,6 +103,10 @@ window.addEventListener("load", async () => {
         return stateful(target);
     }
 
+    if (anura.settings.get("blur-disable")) {
+        document.body.classList.add("blur-disable");
+    }
+
     if (milestone) {
         const stored = anura.settings.get("milestone");
         if (!stored) await anura.settings.set("milestone", milestone);
