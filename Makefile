@@ -44,8 +44,7 @@ build/assets/matter.css:
 	curl https://github.com/finnhvman/matter/releases/latest/download/matter.css -L -o build/assets/matter.css
 
 clean:
-	cd v86; make clean
-	rm -rf build/*
+	rm -rf build
 
 rootfs-debian: FORCE
 	cd x86_image_wizard/debian; sh build-debian-bin.sh
