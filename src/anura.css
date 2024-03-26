@@ -84,35 +84,37 @@ nav li {
 
 .custom-menu {
     position: absolute;
-    background-color: rgba(20, 20, 20);
+    background-color: rgba(20, 20, 20, 0.8);
     padding: 5px 0;
     width: 150px;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
 
     z-index: 10000;
     overflow: hidden;
+
+    backdrop-filter: blur(20px);
+    padding: 0;
+    border-radius: 10px;
 }
-.custom-menu-item {
-    padding: 10px 14px;
-    color: #ffffff;
-    cursor: pointer;
-    user-select: none;
-    font-size: 13px;
-}
+
 .custom-menu-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
+    transition: 0.3s;
 }
 
 .material-symbols-outlined {
     font-family: "Material Symbols Outlined", sans-serif;
 }
+
 .custom-menu-item {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 10px 14px;
+    font-size: 14px;
     color: #ffffff;
     cursor: pointer;
     user-select: none;
+    transition: 0.3s;
 }
 
 .custom-menu-item .material-symbols-outlined {
