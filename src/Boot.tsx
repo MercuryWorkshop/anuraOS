@@ -40,7 +40,7 @@ channel.addEventListener("message", (msg) => {
             <body>
             <div id="wrapper">
             <h1>AnuraOS is already running in another tab</h1>
-            <p>Please close the other tab to continue.</p>
+            <p>Please close the other tab and reload.</p>
             </div>
             </body>
             </html>
