@@ -188,8 +188,8 @@ class WallpaperSelector extends App {
             currWallpaperName == undefined ||
             currWallpaperName == null
         ) {
-            currWallpaper = "/assets/wallpaper/bundled_wallpapers/Default.jpg";
-            currWallpaperName = "Default";
+            currWallpaper = "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg";
+            currWallpaperName = "Nocturne";
             anura.settings.set("wallpaper", currWallpaper);
             anura.settings.set("wallpaper-name", currWallpaperName);
         }
