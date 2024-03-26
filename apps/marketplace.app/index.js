@@ -20,7 +20,10 @@ const repoListButtonLabel = document.getElementById("repoListButtonLabel");
 repoListButton.addEventListener("click", async function (evt) {
     if (evt.target.dataset.repo) {
         // We were on the overview screen, so load the app list
-        const marketplaceRepo = await marketplace.getRepo(repos[evt.target.dataset.repo], evt.target.dataset.repo);
+        const marketplaceRepo = await marketplace.getRepo(
+            repos[evt.target.dataset.repo],
+            evt.target.dataset.repo,
+        );
         loadappListScreen(marketplaceRepo);
         return;
     }
@@ -28,11 +31,11 @@ repoListButton.addEventListener("click", async function (evt) {
 });
 
 async function loadappListScreen(repo) {
-    appListScreen.style.display = ''
-    appListScreen.innerHTML = ''
-    repoList.style.display = 'none'
-    overviewScreen.style.display = 'none'
-    repoListButtonLabel.style.display = '';
+    appListScreen.style.display = "";
+    appListScreen.innerHTML = "";
+    repoList.style.display = "none";
+    overviewScreen.style.display = "none";
+    repoListButtonLabel.style.display = "";
     document.getElementById("head").innerHTML = repo.name;
 
     delete repoListButton.dataset.repo;
@@ -40,11 +43,11 @@ async function loadappListScreen(repo) {
 
     const search = document.createElement("input");
 
-    search.setAttribute('type', 'text');
-    search.setAttribute('placeholder', 'Search for apps...');
-    search.style.color = 'white'
-    search.setAttribute('class', 'search');
-    search.addEventListener('input', function () {
+    search.setAttribute("type", "text");
+    search.setAttribute("placeholder", "Search for apps...");
+    search.style.color = "white";
+    search.setAttribute("class", "search");
+    search.addEventListener("input", function () {
         const searchQuery = this.value.toLowerCase();
         const appButtons = document.querySelectorAll(".app");
 
@@ -67,18 +70,18 @@ async function loadappListScreen(repo) {
     const appList = document.createElement("div");
     appList.id = "appList";
 
-    let apps = await repo.getApps()
-    let libs = await repo.getLibs()
+    let apps = await repo.getApps();
+    let libs = await repo.getLibs();
 
     apps.forEach(async (app) => {
-        const appElem = document.createElement('div')
-        const thumbnailContainer = document.createElement('div');
-        const thumbnail = document.createElement('img')
-        const infoContainer = document.createElement('div');
-        const itemText = document.createElement('span')
-        const itemDesc = document.createElement('p')
+        const appElem = document.createElement("div");
+        const thumbnailContainer = document.createElement("div");
+        const thumbnail = document.createElement("img");
+        const infoContainer = document.createElement("div");
+        const itemText = document.createElement("span");
+        const itemDesc = document.createElement("p");
 
-        const installButton = document.createElement('input');
+        const installButton = document.createElement("input");
 
         itemText.innerText = app.name;
         if (repo.version == "legacy") {
@@ -89,30 +92,35 @@ async function loadappListScreen(repo) {
             thumbnail.src = await repo.getAppThumb(app.package);
         }
 
-        appElem.className = 'app'
-        thumbnailContainer.className = 'thumbnailContainer'
-        infoContainer.className = 'infoContainer'
+        appElem.className = "app";
+        thumbnailContainer.className = "thumbnailContainer";
+        infoContainer.className = "infoContainer";
 
         let query;
         if (repo.version == "legacy") {
-            query = app.name
+            query = app.name;
         } else {
-            query = app.package
+            query = app.package;
         }
 
-        installButton.classList.add('overview-installButton');
-        installButton.classList.add('matter-button-contained');
-        installButton.type = 'button';
+        installButton.classList.add("overview-installButton");
+        installButton.classList.add("matter-button-contained");
+        installButton.type = "button";
 
-        if (anura.apps[app.package] || (repo.version == "legacy" && anura.apps[app.name])) {
-            installButton.value = 'Installed';
+        if (
+            anura.apps[app.package] ||
+            (repo.version == "legacy" && anura.apps[app.name])
+        ) {
+            installButton.style.backgroundColor = "#2a2a2a";
+            installButton.style.color = "#fff";
             installButton.disabled = true;
+            installButton.value = "Installed";
         } else {
-            installButton.classList.add('matter-success');
+            installButton.classList.add("matter-success");
             installButton.onclick = async () => {
                 await repo.installApp(query);
             };
-            installButton.value = 'Install';
+            installButton.value = "Install";
         }
 
         appElem.onclick = () => {
@@ -129,13 +137,13 @@ async function loadappListScreen(repo) {
     });
 
     libs.forEach(async (lib) => {
-        const libElem = document.createElement('div')
-        const thumbnailContainer = document.createElement('div');
-        const thumbnail = document.createElement('img')
-        const infoContainer = document.createElement('div');
-        const itemText = document.createElement('span')
-        const itemDesc = document.createElement('p')
-        const installButton = document.createElement('input');
+        const libElem = document.createElement("div");
+        const thumbnailContainer = document.createElement("div");
+        const thumbnail = document.createElement("img");
+        const infoContainer = document.createElement("div");
+        const itemText = document.createElement("span");
+        const itemDesc = document.createElement("p");
+        const installButton = document.createElement("input");
 
         itemText.innerText = lib.name;
         if (repo.version == "legacy") {
@@ -146,33 +154,36 @@ async function loadappListScreen(repo) {
             thumbnail.src = await repo.getLibThumb(lib.package);
         }
 
-        libElem.className = 'app'
-        thumbnailContainer.className = 'thumbnailContainer'
-        infoContainer.className = 'infoContainer'
-
+        libElem.className = "app";
+        thumbnailContainer.className = "thumbnailContainer";
+        infoContainer.className = "infoContainer";
 
         let query;
         if (repo.version == "legacy") {
-            query = lib.name
+            query = lib.name;
         } else {
-            query = lib.package
+            query = lib.package;
         }
 
+        installButton.classList.add("overview-installButton");
+        installButton.classList.add("matter-success");
+        installButton.classList.add("matter-button-contained");
+        installButton.type = "button";
 
-        installButton.classList.add('overview-installButton')
-        installButton.classList.add('matter-success');
-        installButton.classList.add('matter-button-contained');
-        installButton.type = 'button';
-    
-        if (anura.apps[lib.package] || (repo.version == "legacy" && anura.apps[lib.name])) {
-            installButton.value = 'Installed';
+        if (
+            anura.apps[lib.package] ||
+            (repo.version == "legacy" && anura.apps[lib.name])
+        ) {
+            installButton.style.backgroundColor = "#2a2a2a";
+            installButton.style.color = "#fff";
             installButton.disabled = true;
+            installButton.value = "Installed";
         } else {
-            installButton.classList.add('matter-success');
+            installButton.classList.add("matter-success");
             installButton.onclick = async () => {
                 await repo.installLib(query);
             };
-            installButton.value = 'Install';
+            installButton.value = "Install";
         }
 
         libElem.onclick = () => {
