@@ -85,3 +85,8 @@ footer {
     border-left: none;
     border-right: none;
 }
+
+body.blur-disable footer {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
