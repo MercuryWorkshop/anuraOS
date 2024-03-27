@@ -23,17 +23,19 @@ class AnuraBareClient {
         });
 
         const respheaders = {};
+
         //@ts-ignore
-        for (const [key, value] of payload.raw_headers) {
-            //@ts-ignore
-            if (!respheaders[key]) {
+        if (payload.raw_headers)
+            for (const [key, value] of payload.raw_headers) {
                 //@ts-ignore
-                respheaders[key] = [value];
-            } else {
-                //@ts-ignore
-                respheaders[key].push(value);
+                if (!respheaders[key]) {
+                    //@ts-ignore
+                    respheaders[key] = [value];
+                } else {
+                    //@ts-ignore
+                    respheaders[key].push(value);
+                }
             }
-        }
 
         return {
             body: payload.body!,
