@@ -7,16 +7,31 @@ const settingsCSS = css`
     }
     .container {
         display: flex;
+        height: calc(100% - 97px);
     }
     .settings-category {
         margin-left: 20px;
         margin-right: 10px;
         width: 100%;
     }
+
+    *::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: #000;
+        border-radius: 8px;
+    }
+
+    *::-webkit-scrollbar-button {
+        display: none;
+    }
+
     .settings-body {
         display: flex;
         width: 100%;
-        margin-right: 20px;
+        padding-right: 20px;
         flex-direction: column;
         overflow-x: hidden;
         overflow-y: auto;
@@ -694,7 +709,7 @@ class SettingsApp extends App {
             title: "",
             width: "910px",
             height: "720px",
-            resizable: false,
+            resizable: true,
         });
 
         win.content.appendChild(await this.page());
