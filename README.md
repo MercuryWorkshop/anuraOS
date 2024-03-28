@@ -30,18 +30,19 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 -   Run `bash codespace-basic-setup.sh`
 
 > [!NOTE]
-> - If you are not in a codespace skip to the regular installation steps.
-> - This does NOT build RootFS.
+>
+> -   If you are not in a codespace skip to the regular installation steps.
+> -   This does NOT build RootFS.
 
 ### Dependencies
 
-- Recent versions of `node.js` and `npm`
-- `wget`
-- A recent version of `java`
-- `inotifytools`
-- `rustup`
-- `make`
-- `gcc` (or any other C compiler)
+-   Recent versions of `node.js` and `npm`
+-   `wget`
+-   A recent version of `java`
+-   `inotifytools`
+-   `rustup`
+-   `make`
+-   `gcc` (or any other C compiler)
 
 > [!NOTE]
 > You will have to install the required Rust toolchain by running `rustup target add wasm32-unknown-unknown`.
@@ -75,6 +76,7 @@ Or, run authenticated with
 cd server
 npm start -- --auth
 ```
+
 Anura should now be running at `localhost:8000`.
 
 ## App Development

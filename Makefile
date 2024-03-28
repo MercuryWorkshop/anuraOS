@@ -78,7 +78,8 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 
 build/dreamland:
 	mkdir -p build/dreamland
-	git clone https://github.com/MercuryWorkshop/dreamlandjs.git dreamland.tmp --depth 1
+	git clone https://github.com/MercuryWorkshop/dreamlandjs.git dreamland.tmp
+	cd dreamland.tmp; git checkout 1b33b2a7008aa6052f7ae07dea7f1131cc29f21d
 	cd dreamland.tmp; npm i; npx rollup -c -f iife 
 	cp dreamland.tmp/dist/js.js build/dreamland/js.js
 	cp dreamland.tmp/dist/js.js.map build/dreamland/js.js.map
