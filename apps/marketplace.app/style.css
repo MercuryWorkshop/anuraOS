@@ -142,7 +142,6 @@ body {
     flex-direction: column;
     align-items: center;
     width: 75%;
-    overflow: scroll;
     margin-right: auto;
     margin-left: auto;
 }
