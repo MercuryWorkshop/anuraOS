@@ -20,7 +20,7 @@ const settingsCSS = css`
     }
 
     *::-webkit-scrollbar-thumb {
-        background-color: #000;
+        background-color: #2f2f2f;
         border-radius: 8px;
     }
 

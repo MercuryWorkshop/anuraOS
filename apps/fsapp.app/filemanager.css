@@ -11,6 +11,18 @@
 body {
     margin: 0;
 }
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #2f2f2f;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-button {
+    display: none;
+}
 .container {
     background-color: #202124;
     width: 100%;

@@ -30,6 +30,18 @@ const wallpaperCSS = css`
         border: 2px solid #4b4b4b;
         border-radius: 10px;
     }
+    *::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: #2f2f2f;
+        border-radius: 8px;
+    }
+
+    *::-webkit-scrollbar-button {
+        display: none;
+    }
     .wallpaper-list-container {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -37,7 +49,7 @@ const wallpaperCSS = css`
         margin-left: 20px;
         text-align: center;
         overflow-y: scroll;
-        height: 455px;
+        height: calc(100% - 370px);
     }
     .wallpaper-list-item {
         cursor: pointer;

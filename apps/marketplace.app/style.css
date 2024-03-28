@@ -135,6 +135,18 @@ body {
     border-radius: 4px;
     border-bottom: none;
 }
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #2f2f2f;
+    border-radius: 8px;
+}
+
+*::-webkit-scrollbar-button {
+    display: none;
+}
 
 #appList {
     margin-bottom: 2rem;
