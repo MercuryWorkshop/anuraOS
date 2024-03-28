@@ -6,8 +6,8 @@ async function loadOverviewScreen(repo, app) {
     repoList.style.display = "none";
     appListScreen.style.display = "none";
 
-    repoListButton.dataset.repo = repo.name;
-    repoListButton.value = repo.name;
+    back.dataset.repo = repo.name;
+    back.value = repo.name;
     let query;
     if (repo.version == "legacy") {
         query = app.name;
@@ -15,7 +15,8 @@ async function loadOverviewScreen(repo, app) {
         query = app.package;
     }
 
-    document.getElementById("head").innerHTML = app.name;
+    // document.getElementById("head").innerHTML = app.name;
+    instanceWindow.state.title = app.name;
 
     const infoSection = document.createElement("div");
     infoSection.className = "overview-infoSection";

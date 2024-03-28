@@ -14,20 +14,39 @@ const repoScreen = document.getElementById("repoScreen");
 const overviewScreen = document.getElementById("overviewScreen");
 const appListScreen = document.getElementById("appListScreen");
 const appInstallerScreen = document.getElementById("appInstallerScreen");
-const repoListButton = document.getElementById("repoListButton");
-const repoListButtonLabel = document.getElementById("repoListButtonLabel");
+// const repoListButton = document.getElementById("repoListButton");
+// const repoListButtonLabel = document.getElementById("repoListButtonLabel");
 
-repoListButton.addEventListener("click", async function (evt) {
-    if (evt.target.dataset.repo) {
+const back = document.createElement("button");
+back.classList.add("windowButton");
+back.style.width = "24px";
+back.style.height = "24px";
+back.style.display = "none";
+
+const backIcon = document.createElement("span");
+backIcon.classList.add("material-symbols-outlined");
+backIcon.innerText = "arrow_back";
+backIcon.style.fontSize = "16px";
+backIcon.style.lineHeight = "24px";
+
+back.appendChild(backIcon);
+
+back.addEventListener("mousedown", function (evt) {
+    evt.stopPropagation();
+});
+
+back.addEventListener("click", async function (evt) {
+    if (back.dataset.repo) {
         // We were on the overview screen, so load the app list
         const marketplaceRepo = await marketplace.getRepo(
-            repos[evt.target.dataset.repo],
-            evt.target.dataset.repo,
+            repos[back.dataset.repo],
+            back.dataset.repo,
         );
         loadappListScreen(marketplaceRepo);
         return;
+    } else {
+        loadMainScreen();
     }
-    loadMainScreen();
 });
 
 async function loadappListScreen(repo) {
@@ -35,11 +54,12 @@ async function loadappListScreen(repo) {
     appListScreen.innerHTML = "";
     repoList.style.display = "none";
     overviewScreen.style.display = "none";
-    repoListButtonLabel.style.display = "";
-    document.getElementById("head").innerHTML = repo.name;
+    back.style.display = "";
+    // document.getElementById("head").innerHTML = repo.name;
+    instanceWindow.state.title = repo.name;
 
-    delete repoListButton.dataset.repo;
-    repoListButton.value = "Repo List";
+    delete back.dataset.repo;
+    back.value = "Repo List";
 
     const search = document.createElement("input");
 

@@ -4,8 +4,32 @@ let marketplace;
 
 const libstoreCache = {};
 
+frameElement.parentNode.style.position = "absolute";
+frameElement.parentNode.style.height = "100%";
+const titlebar = Array
+    .from(frameElement.parentNode.parentNode.children)
+    .filter(e => e.classList.contains("title"))[0];
+
+titlebar.style.backgroundColor = "rgba(0, 0, 0, 0)"
+// titlebar.style.position = "absolute";
+// titlebar.style.left = "auto";
+// titlebar.style.right = "0";
+
+titlebar.insertBefore(back, titlebar.children[1]);
+
+// const innerTitleBar = document.getElementById("innerTitleBar");
+// // innerTitleBar.addEventListener("resize", (e) => {
+// //     titlebar.style.width = e.detail.width + 84 + "px";
+// // })
+// const observer = new ResizeObserver((entries) => {
+//     entries.forEach((entry) => {
+//        if (entry.target === innerTitleBar) titlebar.style.width = entry.contentRect.width - 88 + "px";
+//     });
+// });
+// observer.observe(innerTitleBar);
+
 async function loadMainScreen() {
-    document.getElementById("repoListButtonLabel").style.display = "none";
+    back.style.display = "none";
 
     libstoreCache["2.0.0"] ??= (await anura.import("anura.libstore@2.0.0"));
 
@@ -44,7 +68,8 @@ async function loadMainScreen() {
     appListScreen.style.display = 'none'
     overviewScreen.style.display = 'none'
     repoList.style.display = ''
-    document.getElementById("head").innerHTML = "Select a Repository";
+    // document.getElementById("head").innerHTML = "Select a Repository";
+    instanceWindow.state.title = "Select a Repository";
 
     for (const repo in repos) {
         const repoItem = document.createElement('div')

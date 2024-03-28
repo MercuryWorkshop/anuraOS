@@ -161,7 +161,7 @@ body {
 .app {
     height: 100px;
     width: 100%;
-    border-bottom: #333 solid 1px;
+    border-bottom: #444 solid 1px;
     background: rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
@@ -217,34 +217,20 @@ body {
     margin-right: 30px;
 }
 
-nav {
+#topbar {
     position: fixed;
     display: block;
-    width: 100vw;
-    height: 70px;
-    font-size: large;
+    width: 100%;
+    height: 24px;
     background-color: rgba(32,33,36,0.8);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: #bdbdbd;
     top: 0;
+    user-select: none;
     z-index: 1000; /* avoid firefox funkiness? */
 }
 
-#header {
-    float: left;
-    margin-left: 1vw;
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-}
-
-#head {
-    font-size: 22px;
-    font-weight: 600;
-    margin-left: 10px;
-}
 
 #repoListButton {
     border: none;
@@ -277,24 +263,22 @@ nav>div>input:hover {
     text-align: center;
     color: #eeeeee;
     font-weight: 500;
-    transition: 0.3s;
+    border-bottom: #444 solid 1px;
+    cursor: pointer;
 }
 
 .repoItem:first-of-type {
     border-radius: 4px 4px 0 0;
 }
 
-.repoItem:last-of-type {
-    border-radius: 0 0 4px 4px;
-}
 
-.repoItem:not(:last-of-type) {
-    border-bottom: 1px solid #333;
+.repoItem:nth-last-of-type(2) {
+    border-radius: 0 0 4px 4px;
+    border-bottom: none;
 }
 
 .repoItem:hover {
-    cursor: pointer;
-    transition: 0.2s;
+    transition: 0.3s;
     background-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -345,7 +329,7 @@ nav>div>input:hover {
 .search {
     appearance: none;
     background-color: transparent;
-    border: none; /* reset */
+    border: none;
     border-style: solid;
     border: 0px solid transparent;
     border-bottom: 3px solid #444;
@@ -358,12 +342,11 @@ nav>div>input:hover {
     display: flex;
     width: 40vw;
     height: 3vh;
-    transition: 0.2s;
     font-family: inherit;
+    transition: border-color 0.2s;
 }
 
 .search:focus {
     outline: none;
     border-bottom-color: #3ca1ff;
-    transition: 0.2s;
 }
