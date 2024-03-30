@@ -155,7 +155,7 @@ class Launcher {
     element = (
         <div class={this.css}>
             <div class="topSearchBar">
-                <img src="/assets/icons/googleg.png"></img>
+                <img src="/icon.png"></img>
                 <input
                     placeholder="Search your tabs, files, apps, and more..."
                     style="outline: none; color: white"
