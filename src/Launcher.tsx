@@ -1,6 +1,10 @@
 class Launcher {
     private search: HTMLInputElement | null;
 
+    private popupTransition = "all 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95)";
+
+    private gridTransition = "all 0.225s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+
     css = css`
         position: absolute;
         width: min(70%, 35em);
@@ -16,7 +20,7 @@ class Launcher {
         display: flex;
         flex-direction: column;
         display: block;
-        transition: all 0.1s ease-out;
+        transition: ${this.popupTransition};
         opacity: 0;
         z-index: -1;
         overflow-y: hidden;
@@ -77,6 +81,8 @@ class Launcher {
         }
 
         .appsView {
+            transition: ${this.gridTransition};
+            transition-delay: 0.075s;
             padding: 1em;
             font-size: 12px;
             flex-grow: 1;
@@ -85,6 +91,8 @@ class Launcher {
             grid-auto-rows: 8em;
             max-height: calc(5.9 * 8em);
             overflow-y: auto;
+            opacity: 0;
+            grid-row-gap: 30px;
         }
 
         .appsView .app {
@@ -108,8 +116,15 @@ class Launcher {
         opacity: 1;
         height: min(80%, 40em);
         z-index: 9999;
-        transition: all 0.1s ease-in;
+        transition: ${this.popupTransition};
         visibility: visible;
+
+        .appsView {
+            transition: ${this.gridTransition};
+            transition-delay: 0.075s;
+            opacity: 1;
+            grid-row-gap: 0px;
+        }
     `;
 
     clickoffCheckerCss = css`
