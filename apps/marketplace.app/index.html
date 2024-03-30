@@ -6,27 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="/assets/materialsymbols.css">
+    <style>
+        body {
+            color: #eeeeee;
+            scrollbar-width: none;
+            font-family: "Roboto", sans-serif;
+            padding-top: 70px;
+            margin: 0;
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        *::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background-color: #2f2f2f;
+            border-radius: 8px;
+        }
+
+        *::-webkit-scrollbar-button {
+            display: none;
+        }
+    </style>
+
+    <script src="/dreamland/js.js"></script>
+    <script src="/dreamland/css.js"></script>
+    <script src="/dreamland/html.js"></script>
+    <script src="index.mjs" type="module"></script>
 </head>
-
-<body>
-    <div id="topbar"></div>
-    <div id="repoScreen">
-        <div id="repoList">
-
-        </div>
-    </div>
-
-    <div id="appListScreen" style="display: none;">
-
-    </div>
-    <div id="overviewScreen" style="display: none;">
-
-    </div>
-    <script src="index.js"></script>
-    <script src="overview.js"></script>
-    <script src="repoManager.js"></script>
-</body>
 
 </html>
