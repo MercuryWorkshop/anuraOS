@@ -106,6 +106,88 @@ titlebar.style.backgroundColor = "rgba(0, 0, 0, 0)"
 
 titlebar.insertBefore(back, titlebar.children[1]);
 
+const url = new URL(window.location.href);
+let fullArgs = ExternalApp.deserializeArgs(url.searchParams.get("args"));
+
+if (fullArgs[0] == "URI") {
+    fullArgs.shift();
+    let newArgs = [];
+    for (let i = 0; i < fullArgs.length; i++) {
+        let current = fullArgs[i];
+        if (i == 0) {
+            current = current.replace("//", "");
+        }
+        if (current === "view") {
+            let capitalized = fullArgs[i + 1].charAt(0).toUpperCase() + fullArgs[i + 1].slice(1);
+            newArgs.push((current + capitalized));
+            i++;
+        } else {
+            newArgs.push(decodeURIComponent(current));
+        }
+    }
+    fullArgs = newArgs;
+} 
+
+if (fullArgs.length > 1) {
+    const [action, ...args] = fullArgs;
+    switch (action) {
+        case "add":
+            saved.repos.push(args);
+            state.currentRepo = [...args, await marketplace.getRepo(args[1])];
+            break;
+        case "remove":
+            saved.repos = saved.repos.filter(repo => repo[0] !== args[0]);
+            break;
+        case "viewRepo":
+            {
+                let [name, url] = saved.repos.find(repo => repo[0] === args[0]);
+                state.currentRepo = [name, url, await marketplace.getRepo(url)];
+                state.currentScreen = "itemList";
+            }
+            break;
+        case "viewApp":
+            {
+                let [name, url] = saved.repos.find(repo => repo[0] === args[0]);
+                state.currentRepo = [name, url, await marketplace.getRepo(url)];
+                state.currentItem = await state.currentRepo[2].getApp(args[1]);
+                state.currentItemType = "app";
+                state.currentScreen = "overview";   
+            }
+            break;
+        case "viewLib":
+            {
+                let [name, url] = saved.repos.find(repo => repo[0] === args[0]);
+                state.currentRepo = [name, url, await marketplace.getRepo(url)];
+                state.currentItem = await state.currentRepo[2].getLib(args[1]);
+                state.currentItemType = "lib";
+                state.currentScreen = "overview";
+            }
+            break;
+    }
+}
+
+// Example URIs:
+// marketplace://add:Anura%20App%20Repository:https%3A%2F%2Fraw.githubusercontent.com%2FMercuryWorkshop%2Fanura-repo%2Fmaster%2F
+// marketplace://remove:Anura%20App%20Repository
+// marketplace://view:repo:Anura%20App%20Repository
+// marketplace://view:app:Anura%20App%20Repository:games.run3
+// marketplace://view:lib:Anura%20App%20Repository:anura.flash.handler
+
+if (!anura.uri.has("marketplace")) {
+    anura.uri.set("marketplace", {
+        handler: {
+            tag: "app",
+            pkg: instance.package,
+            method: {
+                tag: "split",
+                separator: ":",
+            }
+        },
+        prefix: "URI"
+    });
+}
+
+
 function App() {
     this.mount = () => {
         handle(use(state.currentScreen), (screen) => {
