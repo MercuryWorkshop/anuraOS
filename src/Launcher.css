@@ -26,3 +26,8 @@
     height: 100%;
     width: 100%;
 }
+
+body.blur-disable #launcher {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}

@@ -242,6 +242,31 @@ class SettingsApp extends App {
                                         on:click={(event: any) => {
                                             if (event.target.checked) {
                                                 anura.settings.set(
+                                                    "blur-disable",
+                                                    true,
+                                                );
+                                            } else {
+                                                anura.settings.set(
+                                                    "blur-disable",
+                                                    false,
+                                                );
+                                            }
+                                        }}
+                                        id="blur-disable"
+                                        type="checkbox"
+                                        role="switch"
+                                    />
+                                    <span id="perf">
+                                        Performance mode (requires reload)
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="settings-item">
+                                <label class="matter-switch">
+                                    <input
+                                        on:click={(event: any) => {
+                                            if (event.target.checked) {
+                                                anura.settings.set(
                                                     "disable-animation",
                                                     true,
                                                 );
