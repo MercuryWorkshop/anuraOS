@@ -15,8 +15,8 @@ class Launcher {
 
         border-radius: 1em;
         bottom: 60px;
-        backdrop-filter: blur(5px);
-        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
         display: flex;
         flex-direction: column;
         display: block;
@@ -153,7 +153,7 @@ class Launcher {
     // `;
 
     element = (
-        <div class={this.css}>
+        <div id="launcher" class={this.css}>
             <div class="topSearchBar">
                 <img src="/icon.png"></img>
                 <input

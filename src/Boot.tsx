@@ -27,6 +27,7 @@ channel.addEventListener("message", (msg) => {
                 background: black;
                 color: white;
                 overflow: none;
+                margin: 0;
             }
             #wrapper {
               display: flex;
@@ -130,6 +131,10 @@ window.addEventListener("load", async () => {
         });
 
         return stateful(target);
+    }
+
+    if (anura.settings.get("blur-disable")) {
+        document.body.classList.add("blur-disable");
     }
 
     if (milestone) {
