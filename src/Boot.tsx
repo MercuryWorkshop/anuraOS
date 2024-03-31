@@ -27,6 +27,7 @@ channel.addEventListener("message", (msg) => {
                 background: black;
                 color: white;
                 overflow: none;
+                margin: 0;
             }
             #wrapper {
               display: flex;
