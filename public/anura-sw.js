@@ -1,5 +1,14 @@
 /* global workbox */
 
+// workaround for a firefox quirk where crossOriginIsolated
+// is not reported properly in a service worker
+if (navigator.userAgent.includes("Firefox")) {
+    Object.defineProperty(globalThis, "crossOriginIsolated", {
+        value: true,
+        writable: false,
+    });
+}
+
 // importScripts('/assets/libs/workbox/workbox-sw.js');
 
 importScripts("/nohost-sw.js");
