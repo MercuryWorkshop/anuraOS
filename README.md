@@ -10,10 +10,7 @@ The next-gen webOS and development environment with full Linux emulation.
 An entirely local browser-based "OS" and development environment with complete graphical Linux emulation, visually based on ChromiumOS. See a demo [here](https://anura.pro), fully in your browser.
 
 > [!WARNING]  
-> Due to numerous issues with its implementation of certain web standards, Firefox is not supported on Anura.
-> Please use a Chromium-based browser or you will have a significantly diminished user experience.
->
-> Safari is also fully compatible, as long as you have macOS Sonoma, or iOS/iPadOS 17 or later.
+> Anura OS has only been extensively tested on Chromium and Safari. Although nearly everything should work on Firefox, you may run into problems with instability.
 
 Anura uses the features of a PWA (Progressive Web App) to make its environment work fully offline, providing a virtual filesystem (synced with the Linux emulator), a code editor, and a modular and extensible app system. You can even edit Anura's code live while inside of it!
 
