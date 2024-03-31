@@ -7,6 +7,14 @@ window.Buffer = Filer.Buffer;
 let sh = new anura.fs.Shell();
 
 async function mountLocalFs() {
+    if (!window.showDirectoryPicker) {
+        anura.notifications.add({
+            title: "File Manager",
+            description: "Your browser does not support mounting local directories. Currently, this is only supported in Chromium v86 and higher.",
+            timeout: 5000,
+        });
+        return;
+    }
     let path = await anura.dialog.prompt(
         "Enter the path where you want to mount the local filesystem",
     );
