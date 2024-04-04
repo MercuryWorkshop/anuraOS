@@ -13,7 +13,7 @@
         "/apps/libpersist.lib"
     ],
     "defaultsettings": {
-        "use-sw-cache": true,
+        "use-sw-cache": false,
         "applist": ["anura.browser", "anura.settings", "anura.fsapp"],
         "clampWindows": true,
         "launcher-keybind": true,
