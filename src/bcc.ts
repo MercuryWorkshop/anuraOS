@@ -81,6 +81,7 @@ class AnuraBareClient {
         };
     }
 }
-
-bare.registerRemoteListener(navigator.serviceWorker.controller!);
-bare.SetSingletonTransport(new AnuraBareClient());
+navigator.serviceWorker.ready.then((isReady) => {
+    bare.registerRemoteListener(isReady.active);
+    bare.SetSingletonTransport(new AnuraBareClient());
+});
