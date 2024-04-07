@@ -36,15 +36,11 @@
     position: absolute;
     height: 70%;
 
-    /* border: 2px solid rgba(22, 22, 22, 0.6); */
-
-    background-color: rgba(255, 255, 255, 0.15);
-    aspect-ratio: 1/1;
+    background-color: rgba(128, 128, 128, 0.2);
     padding: 0.1em;
-    padding-left: 1.5em;
+    padding-left: 1em;
+    padding-right: 1em;
 
-    padding-right: 1.5em;
-    /* width: 5em; */
     right: 0.3em;
     top: 50%;
     transform: translateY(-50%);

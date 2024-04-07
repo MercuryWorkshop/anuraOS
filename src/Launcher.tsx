@@ -1,5 +1,11 @@
 class Launcher {
-    private search: HTMLInputElement | null;
+    state: Stateful<{
+        active: boolean;
+        appsView?: HTMLDivElement;
+        search?: HTMLInputElement;
+    }> = stateful({
+        active: false,
+    });
 
     private popupTransition = "all 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95)";
 
@@ -16,7 +22,6 @@ class Launcher {
         border-radius: 1em;
         bottom: 60px;
         backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
         display: flex;
         flex-direction: column;
         display: block;
@@ -127,17 +132,6 @@ class Launcher {
         }
     `;
 
-    clickoffCheckerCss = css`
-        display: none;
-    `;
-
-    clickoffActiveCss = css`
-        position: absolute;
-        width: 100%;
-        height: calc(100%);
-        display: block;
-    `;
-
     // self.active {
     //     position: absolute;
     //     width: 100%;
@@ -153,36 +147,40 @@ class Launcher {
     // `;
 
     element = (
-        <div id="launcher" class={this.css}>
+        <div
+            id="launcher"
+            class={[
+                this.css,
+                use(this.state.active, (active) => active && this.activeCss),
+            ]}
+        >
             <div class="topSearchBar">
                 <img src="/icon.png"></img>
                 <input
                     placeholder="Search your tabs, files, apps, and more..."
                     style="outline: none; color: white"
+                    bind:this={use(this.state.search)}
+                    on:input={this.handleSearch.bind(this)}
                 />
             </div>
 
-            <div id="appsView" class="appsView"></div>
+            <div
+                id="appsView"
+                class="appsView"
+                bind:this={use(this.state.appsView)}
+            ></div>
         </div>
     );
 
-    clickoffChecker = (
-        <div id="clickoffChecker" class={this.clickoffCheckerCss}></div>
-    );
-
-    constructor() {
-        this.search = this.element.querySelector(
-            ".topSearchBar input",
-        ) as HTMLInputElement;
-        this.search.addEventListener("input", this.handleSearch.bind(this));
-    }
+    clickoffChecker: HTMLDivElement;
+    updateClickoffChecker: (show: boolean) => void;
 
     handleSearch(event: Event) {
         const searchQuery = (
             event.target as HTMLInputElement
         ).value.toLowerCase();
-        const appsView = this.element.querySelector("#appsView") as HTMLElement;
-        const apps = appsView.querySelectorAll(".app");
+        if (!this.state.appsView) return;
+        const apps = this.state.appsView?.querySelectorAll(".app");
 
         apps.forEach((app: HTMLElement) => {
             const appNameElement = app.querySelector(".app-shortcut-name");
@@ -200,23 +198,25 @@ class Launcher {
     }
 
     toggleVisible() {
-        this.element.classList.toggle(this.activeCss);
-        this.clickoffChecker.classList.toggle(this.clickoffActiveCss);
+        this.state.active = !this.state.active;
         this.clearSearch();
     }
 
+    setActive(active: boolean) {
+        this.state.active = active;
+    }
+
     hide() {
-        this.element.classList.remove(this.activeCss);
-        this.clickoffChecker.classList.remove(this.clickoffActiveCss);
+        this.state.active = false;
         this.clearSearch();
     }
 
     clearSearch() {
-        if (this.search) {
-            this.search.value = "";
+        if (this.state.search) {
+            this.state.search.value = "";
         }
-        const appsView = this.element.querySelector("#appsView") as HTMLElement;
-        const apps = appsView.querySelectorAll(".app");
+        if (!this.state.appsView) return;
+        const apps = this.state.appsView?.querySelectorAll(".app");
         apps.forEach((app: HTMLElement) => {
             app.style.display = "";
         });
@@ -225,7 +225,7 @@ class Launcher {
     addShortcut(app: App) {
         if (app.hidden) return;
 
-        this.element.querySelector("#appsView")!.appendChild(
+        this.state.appsView?.appendChild(
             <LauncherShortcut
                 app={app}
                 onclick={() => {
@@ -234,6 +234,20 @@ class Launcher {
                 }}
             />,
         );
+    }
+
+    constructor(
+        clickoffChecker: HTMLDivElement,
+        updateClickoffChecker: (show: boolean) => void,
+    ) {
+        clickoffChecker.addEventListener("click", () => {
+            this.state.active = false;
+        });
+
+        this.clickoffChecker = clickoffChecker;
+        this.updateClickoffChecker = updateClickoffChecker;
+
+        handle(use(this.state.active), updateClickoffChecker);
     }
 }
 

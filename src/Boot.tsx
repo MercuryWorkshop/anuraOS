@@ -51,8 +51,42 @@ channel.addEventListener("message", (msg) => {
     }
 });
 
+const clickoffCheckerState = stateful({
+    active: false,
+});
+
+const clickoffChecker = (
+    <div
+        class={[
+            use(clickoffCheckerState.active, (active) =>
+                active
+                    ? css`
+                          position: absolute;
+                          width: 100%;
+                          height: 100%;
+                          display: block;
+                      `
+                    : css`
+                          display: none;
+                      `,
+            ),
+        ]}
+    />
+);
+
+const updateClickoffChecker = (show: boolean) => {
+    clickoffCheckerState.active = show;
+};
+
 const taskbar = new Taskbar();
-const launcher = new Launcher();
+const launcher = new Launcher(
+    clickoffChecker as HTMLDivElement,
+    updateClickoffChecker,
+);
+const quickSettings = new QuickSettings(
+    clickoffChecker as HTMLDivElement,
+    updateClickoffChecker,
+);
 const contextMenu = new ContextMenu();
 const oobeview = new OobeView();
 const alttab = new AltTabView();
@@ -424,6 +458,8 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
     document.body.appendChild(launcher.clickoffChecker);
+    document.body.appendChild(quickSettings.quickSettingsElement);
+    document.body.appendChild(quickSettings.notificationCenterElement);
     document.body.appendChild(taskbar.element);
     document.body.appendChild(alttab.element);
 
@@ -464,6 +500,7 @@ document.addEventListener("anura-login-completed", async () => {
             e.key.toLowerCase() === "meta" &&
             anura.settings.get("launcher-keybind")
         ) {
+            quickSettings.close();
             launcher.toggleVisible();
             return;
         }
@@ -476,10 +513,6 @@ document.addEventListener("anura-login-completed", async () => {
         }
     });
 
-    // This feels wrong but it works and makes TSC happy
-    launcher.clickoffChecker?.addEventListener("click", () => {
-        launcher.toggleVisible();
-    });
     anura.initComplete = true;
     taskbar.updateTaskbar();
     alttab.update();

@@ -1,7 +1,47 @@
 class NotificationService {
-    element = (<div class="notif-container"></div>);
+    state: Stateful<{
+        notifications: AnuraNotification[];
+        render: boolean;
+    }> = stateful({
+        notifications: [],
+        render: true,
+    });
 
-    notifications: AnuraNotification[] = [];
+    css = css`
+        position: absolute;
+        float: right;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        bottom: 60px;
+        right: 10px;
+        z-index: 9997;
+    `;
+
+    element = (
+        <div
+            class={this.css}
+            style={{
+                display: use(this.state.render, (render) =>
+                    render ? "flex" : "none",
+                ),
+            }}
+        >
+            {/* {use(this.state.notifications, (notifications) =>
+                notifications.map((notif) => notif.element),
+            )} */}
+        </div>
+    );
+
+    // For legacy reasons, this is a getter and setter for external use.
+    // Internally, you should use this.state.notifications instead.
+    get notifications() {
+        return this.state.notifications;
+    }
+
+    set notifications(value) {
+        this.state.notifications = value;
+    }
 
     constructor() {}
 
@@ -10,19 +50,45 @@ class NotificationService {
             this.remove(notif);
         });
 
+        handle(use(notif.state.timedOut), (timedOut) => {
+            console.log("timedOut", timedOut);
+            if (timedOut) this.remove(notif, true);
+        });
+
         this.element.appendChild(notif.element);
 
-        this.notifications.push(notif);
+        this.state.notifications = [...this.state.notifications, notif];
     }
-    remove(notification: AnuraNotification) {
-        this.notifications = this.notifications.filter(
-            (n) => n != notification,
-        );
+
+    remove(notification: AnuraNotification, rendererOnly = false) {
+        if (!rendererOnly) {
+            this.state.notifications = this.state.notifications.filter(
+                (n) => n != notification,
+            );
+        }
 
         notification.element.style.opacity = "0";
         setTimeout(() => {
             notification.element.remove();
         }, 360);
+    }
+
+    subscribe(callback: (notifications: AnuraNotification[]) => void) {
+        let active = true;
+
+        handle(use(this.state.notifications), () => {
+            if (!active) return;
+
+            callback(this.state.notifications);
+        });
+
+        return () => {
+            active = false;
+        };
+    }
+
+    setRender(render: boolean) {
+        this.state.render = render;
     }
 }
 
@@ -42,7 +108,7 @@ interface NotifParams {
     // icon?: string
 }
 
-class AnuraNotification {
+class AnuraNotification implements NotifParams {
     title = "Anura Notification";
     description = "Anura Description";
     timeout: number | "never" = 2000;
@@ -54,23 +120,81 @@ class AnuraNotification {
         callback: (notif: AnuraNotification) => void;
     }> = [];
     close: () => void;
+
+    state = stateful({
+        timedOut: false,
+    });
+
+    css = css`
+        background-color: rgba(22, 22, 22, 0.9);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border-radius: 1em;
+        color: white;
+        width: 360px;
+        cursor: pointer;
+        animation: slideIn 0.35s ease-in-out forwards;
+        opacity: 1;
+        transition: 250ms ease-in-out;
+        box-shadow: 0px 5px 5px 0px rgba(0, 0, 0, 0.5);
+
+        &:hover .nbody .ntitle-container .close-indicator {
+            opacity: 1;
+        }
+
+        .nbody {
+            display: flex;
+            flex-direction: column;
+            padding: 1em;
+            gap: 0.5em;
+
+            .ntitle-container {
+                display: flex;
+                flex-direction: row;
+
+                .ntitle {
+                    color: #e8eaed;
+                    font-size: 14px;
+                    font-weight: 700;
+                    flex-grow: 1;
+                }
+
+                .close-indicator {
+                    width: 16px;
+                    height: 16px;
+                    opacity: 0;
+
+                    span {
+                        font-size: 16px;
+                    }
+                }
+            }
+
+            .ndescription {
+                font-size: 12px;
+                color: #bdc1c6;
+            }
+
+            .nbutton-container {
+                display: flex;
+                gap: 6px;
+
+                .nbutton {
+                    flex-grow: 1;
+                }
+            }
+        }
+    `;
+
     element: HTMLElement;
     constructor(params: NotifParams, close: () => void) {
         Object.assign(this, params);
         this.close = close;
         this.buttons = params.buttons || [];
         this.element = (
-            <div class="notif">
+            <div class={this.css}>
                 <div
-                    class="notif-close-indicator"
-                    on:click={() => {
-                        this.close();
-                    }}
-                >
-                    <span class="material-symbols-outlined">close</span>
-                </div>
-                <div
-                    class="notif-body"
+                    class="nbody"
                     on:click={(e: PointerEvent) => {
                         if (
                             (e.target as HTMLElement).tagName.toLowerCase() !==
@@ -81,104 +205,59 @@ class AnuraNotification {
                         }
                     }}
                 >
-                    <div class="notif-title">{this.title}</div>
-                    <div class="notif-description">{this.description}</div>
-                    <div
-                        class={[
-                            this.buttons.length > 0 && "notif-button-container",
-                        ]}
-                    >
-                        {this.buttons.map(
-                            (value: {
-                                text: string;
-                                style?: "contained" | "outlined" | "text";
-                                close?: boolean;
-                                callback: (notif: AnuraNotification) => void;
-                            }) => (
-                                <button
-                                    class={[
-                                        "notif-button",
-                                        `matter-button-${value.style || "contained"}`,
-                                    ]}
-                                    on:click={() => {
-                                        value.callback(this);
-                                        if (
-                                            typeof value.close ===
-                                                "undefined" ||
-                                            value.close === true
-                                        ) {
-                                            this.close();
-                                        }
-                                    }}
-                                >
-                                    {value.text}
-                                </button>
-                            ),
-                        )}
+                    <div class="ntitle-container">
+                        <div class="ntitle">{this.title}</div>
+                        <div
+                            class="close-indicator"
+                            on:click={(e: PointerEvent) => {
+                                e.stopPropagation();
+                                this.close();
+                            }}
+                        >
+                            <span class="material-symbols-outlined">close</span>
+                        </div>
                     </div>
+                    <div class="ndescription">{this.description}</div>
+                    {$if(
+                        this.buttons.length > 0,
+                        <div class="nbutton-container">
+                            {this.buttons.map(
+                                (value: {
+                                    text: string;
+                                    style?: "contained" | "outlined" | "text";
+                                    close?: boolean;
+                                    callback: (
+                                        notif: AnuraNotification,
+                                    ) => void;
+                                }) => (
+                                    <button
+                                        class={[
+                                            "nbutton",
+                                            `matter-button-${value.style || "contained"}`,
+                                        ]}
+                                        on:click={() => {
+                                            value.callback(this);
+                                            if (
+                                                typeof value.close ===
+                                                    "undefined" ||
+                                                value.close
+                                            )
+                                                this.close();
+                                        }}
+                                    >
+                                        {value.text}
+                                    </button>
+                                ),
+                            )}
+                        </div>,
+                    )}
                 </div>
             </div>
         );
+        // Hide to notif center after period
         this.timeout !== "never" &&
             setTimeout(() => {
-                close();
+                this.state.timedOut = true;
             }, this.timeout);
-    }
-
-    async show() {
-        const id = crypto.randomUUID();
-        // initializing the elements
-        const notifContainer =
-            document.getElementsByClassName("notif-container")[0];
-        const notif = document.createElement("div");
-        notif.className = "notif";
-        const notifBody = document.createElement("div");
-        notifBody.className = "notif-body";
-        const notifTitle = document.createElement("div");
-        notifTitle.className = "notif-title";
-        const notifDesc = document.createElement("div");
-        notifDesc.className = "notif-description";
-        if (this.closeIndicator) {
-            const closeIndicator = document.createElement("div");
-            closeIndicator.className = "notif-close-indicator";
-            // temporary because im too lazy to make a span item properly, it's hardcoded so it's fine.
-            closeIndicator.innerHTML =
-                '<span class="material-symbols-outlined">close</span>';
-            notif.appendChild(closeIndicator);
-        }
-
-        // assign relevant values
-        notifTitle.innerText = this.title;
-        notifDesc.innerText = this.description;
-        notif.id = id;
-
-        const callback = this.callback;
-
-        notif.onclick = () => {
-            deleteNotif();
-            callback(this);
-        };
-
-        // adding the elements to the list
-        notifBody.appendChild(notifTitle);
-        notifBody.appendChild(notifDesc);
-        notif.appendChild(notifBody);
-        notifContainer?.appendChild(notif);
-
-        // remove after period
-        this.timeout !== "never" &&
-            setTimeout(() => {
-                deleteNotif();
-            }, this.timeout);
-
-        function deleteNotif() {
-            const oldNotif = document.getElementById(id)!;
-            // do nothing if the notification is already deleted
-            if (oldNotif == null) return;
-            oldNotif.style.opacity = "0";
-            setTimeout(() => {
-                notifContainer?.removeChild(oldNotif);
-            }, 360);
-        }
     }
 }

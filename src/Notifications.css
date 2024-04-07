@@ -1,31 +1,3 @@
-.notif-container {
-    position: absolute;
-    float: right;
-    bottom: 72px;
-    right: 10px;
-    z-index: 9997;
-}
-
-.notif {
-    position: relative;
-    font-family: "Roboto";
-    background-color: rgba(22, 22, 22, 0.8);
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border-radius: 20px;
-    color: white;
-    min-height: 115px;
-    width: 400px;
-    cursor: pointer;
-    margin: 10px;
-    left: 525px;
-    animation: slideIn 0.35s ease-in-out forwards;
-    opacity: 1;
-    transition: 250ms ease-in-out;
-    border: 1px solid #3e3e3e;
-    /* box-shadow: inset 0 0 0 1px #3e3e3e; */
-}
-
 @keyframes slideIn {
     from {
         left: 500px;
@@ -49,36 +21,4 @@
     to {
         transform: translateY(100%);
     }
-}
-.notif-body {
-    margin: 10px;
-    padding-top: 5px;
-}
-
-.notif-description {
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    font-size: 14px;
-}
-.notif-title {
-    font-size: 18px;
-    padding-left: 10px;
-    padding-top: 10px;
-    font-weight: 700px;
-}
-.notif-close-indicator {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-.notif-button-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 10px;
-    padding-top: 0px;
-}
-.notif-button {
-    flex-grow: 1;
 }

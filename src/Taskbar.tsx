@@ -1,21 +1,36 @@
 class Taskbar {
+    timeformat = new Intl.DateTimeFormat(navigator.language, {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+    });
+
+    dateformat = new Intl.DateTimeFormat(navigator.language, {
+        month: "short",
+        day: "numeric",
+    });
+
     state: {
         pinnedApps: App[];
         activeApps: App[];
         showBar: boolean;
         rounded: boolean;
         time: string;
+        date: string;
         bat_icon: string;
+        net_icon: string;
     } = stateful({
         pinnedApps: [],
         activeApps: [],
         showBar: false,
         rounded: true,
         time: "",
+        date: "",
         bat_icon: "battery_0_bar",
+        net_icon: "signal_wifi_4_bar",
     });
 
-    rounded = rule`
+    rounded = css`
         border-top-left-radius: 25px;
         border-top-right-radius: 25px;
         width: calc(100% - 2px);
@@ -37,6 +52,7 @@ class Taskbar {
                 <div
                     id="launcher-button"
                     on:click={() => {
+                        quickSettings.close();
                         launcher.toggleVisible();
                     }}
                 >
@@ -70,23 +86,25 @@ class Taskbar {
                     )}
                 </ul>
             </nav>
-            <div id="taskinfo-container">
-                <div class="flex flexcenter">
-                    <span
-                        id="settings-icn"
-                        on:click={() => {
-                            anura.apps["anura.settings"].open();
-                        }}
-                        class="material-symbols-outlined"
-                    >
-                        settings
-                    </span>
-
+            <div
+                id="taskinfo-container"
+                on:click={() => {
+                    launcher.hide();
+                    quickSettings.toggle();
+                }}
+            >
+                <div
+                    class="flex flexcenter"
+                    style={{
+                        gap: "4px",
+                    }}
+                >
+                    <span>{use(this.state.date)}</span>
+                    <span>{use(this.state.time)}</span>
                     <span class="material-symbols-outlined">
+                        {use(this.state.net_icon)}
                         {use(this.state.bat_icon)}
                     </span>
-
-                    <p>{use(this.state.time)}</p>
                 </div>
             </div>
         </footer>
@@ -225,14 +243,17 @@ class Taskbar {
     constructor() {
         setInterval(() => {
             const date = new Date();
-            this.state.time = date
-                .toLocaleTimeString(navigator.language, {
-                    hour: "numeric",
-                    minute: "numeric",
-                    hour12: true,
-                })
-                .slice(0, -3);
+            this.state.date = this.dateformat.format(date);
+            this.state.time = this.timeformat.format(date).slice(0, -3);
         }, 1000);
+
+        addEventListener("online", () => {
+            this.state.net_icon = "signal_wifi_4_bar";
+        });
+
+        addEventListener("offline", () => {
+            this.state.net_icon = "signal_wifi_off";
+        });
 
         // Battery Status API is deprecated, so Microsoft refuses to create type definitions. :(
 
