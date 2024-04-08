@@ -1035,7 +1035,8 @@ class WMSplitBar {
     }
 }
 
-const AliceWM = {
+// eslint-disable-next-line prefer-const
+let AliceWM = {
     create: function (givenWinInfo: string | WindowInformation) {
         // Default param
         let wininfo: WindowInformation = {
