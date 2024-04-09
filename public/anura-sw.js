@@ -35,8 +35,8 @@ addEventListener("message", (event) => {
         callback(event.data.value);
     }
     if (event.data.anura_target === "anura.cache") {
-        idbKeyval.set("cacheenabled", event.data.value);
         cacheenabled = event.data.value;
+        idbKeyval.set("cacheenabled", event.data.value);
     }
 });
 async function handleRequests({ url, request, event, params }) {

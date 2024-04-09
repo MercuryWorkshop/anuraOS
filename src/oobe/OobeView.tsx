@@ -123,6 +123,7 @@ class OobeView {
                     <button
                         on:click={() => {
                             anura.settings.set("x86-disabled", false);
+                            anura.settings.set("use-sw-cache", true);
                             anura.settings.set("x86-image", "alpine");
                             anura.settings.set("applist", [
                                 ...anura.settings.get("applist"),
@@ -137,6 +138,7 @@ class OobeView {
                     <button
                         on:click={() => {
                             anura.settings.set("x86-disabled", false);
+                            anura.settings.set("use-sw-cache", true);
                             anura.settings.set("x86-image", "debian");
                             anura.settings.set("applist", [
                                 ...anura.settings.get("applist"),
@@ -151,6 +153,7 @@ class OobeView {
                     <button
                         on:click={() => {
                             anura.settings.set("x86-disabled", false);
+                            anura.settings.set("use-sw-cache", true);
                             anura.settings.set("x86-image", "arch");
                             anura.settings.set("applist", [
                                 ...anura.settings.get("applist"),
@@ -165,6 +168,7 @@ class OobeView {
                     <button
                         on:click={() => {
                             anura.settings.set("x86-disabled", true);
+                            anura.settings.set("use-sw-cache", true);
                             anura.settings.set("applist", [
                                 ...anura.settings.get("applist"),
                                 "anura.ashell",
@@ -207,6 +211,10 @@ class OobeView {
                 </div>
             ),
             on: async () => {
+                await navigator.serviceWorker.controller!.postMessage({
+                    anura_target: "anura.cache",
+                    value: anura.settings.get("use-sw-cache"),
+                });
                 this.state.color = "var(--material-bg)";
                 this.state.text = "whitesmoke";
                 if (!anura.settings.get("x86-disabled")) {
