@@ -1,92 +1,31 @@
-const $ = document.querySelector.bind(document);
+const { create_shell } = await anura.import("anura.shell.phoenix")
 
+const config = anura.settings.get("anura-shell-config") || {}
 
+const terminal = document.getElementById("terminal")
 
-window.addEventListener("load", async () => {
+const process = {
+    exit: () => {
+        instanceWindow.close()
+    },
+}
 
-	/** @type {Anura} */
-	let anura = top.anura;
+const decorate = (ptt) => {
+    ptt.hterm.setBackgroundColor("#141516");
+    ptt.hterm.setCursorColor("#bbb");
+    if (anura.settings.get("transparent-ashell")) {
+        frameElement.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        frameElement.parentNode.parentNode.style.backgroundColor =
+          "rgba(0, 0, 0, 0)";
+        frameElement.parentNode.parentNode.style.backdropFilter = "blur(5px)";
+        document
+            .querySelector("iframe")
+            .contentDocument.querySelector("x-screen").style.backgroundColor = "rgba(20, 21, 22, 0.85)";
+        Array.from(frameElement.parentNode.parentNode.children).filter((e) =>
+          e.classList.contains("title"),
+        )[0].style.backgroundColor = "rgba(20, 21, 22, 0.85)";
+    }    
+}
 
-	const t = new hterm.Terminal();
-	top.t = t;
+const shell = create_shell(anura.settings.get("anura-shell-config") || {}, terminal, hterm, anura, process, decorate)
 
-	let htermNode = $("#terminal");
-
-
-
-
-	t.decorate(htermNode);
-
-
-	const decoder = new TextDecoder("UTF-8");
-	t.onTerminalReady = async () => {
-        let currentCol;
-        let currentRow;
-		let e = document.querySelector("iframe").contentDocument.querySelector("x-screen");
-		console.log(e);
-		e.style.overflow = "hidden"
-		let io = t.io.push();
-
-		t.setBackgroundColor("#141516");
-		t.setCursorColor("#bbb");
-        currentCol = t.screenSize.width;
-        currentRow = t.screenSize.height;
-
-
-		// if (anura.x86 == undefined) {
-		// 	io.print("\u001b[33mThe anura x86 subsystem is not enabled. Please enable it in the settings.\u001b[0m")
-		// 	return;
-		// }
-
-		// const pty = await anura.x86.openpty("TERM=xterm DISPLAY=:0 bash", t.screenSize.width, t.screenSize.height, (data) => {
-		// 	io.print(data);
-		// });
-
-
-		let buffer = "";
-		/**
-		 * 
-		 * @param {string} str 
-		 */
-		
-		function cd(arg) {
-
-		}
-		io.print("> ")
-		function writeData(str) {
-			if (str.charCodeAt(0) == 13) {
-				try {
-					eval(buffer)
-				} catch (e) {
-					io.print(e)
-				}
-				
-				buffer = ""
-				io.print("\r\n")
-				io.print(">")
-			} else {
-				buffer += str;
-			}
-			io.print(str)
-			
-		}
-
-		io.onVTKeystroke = writeData;
-		io.sendString = writeData;
-
-		io.onTerminalResize = (cols, rows) => {
-			// anura.x86.resizepty(pty, cols, rows);
-		}
-
-		t.installKeyboard();
-
-		console.log("hi")
-		htermNode.querySelector("iframe").style.position = "relative";
-		console.log("wtf")
-		console.log = (...data) => {
-			io.print("\r\n")
-			io.print(...data)
-		};
-
-	}
-});

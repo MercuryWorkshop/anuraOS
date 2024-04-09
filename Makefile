@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons build/libcurl.mjs build/lib/bare.js build/idb-keyval.js build/assets/matter.css build/dreamland 
+all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libcurl.mjs build/lib/bare.js build/idb-keyval.js build/assets/matter.css build/dreamland 
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -16,6 +16,12 @@ hooks: FORCE
 
 apps/libfileview.lib/icons:
 	cd apps/libfileview.lib; bash geticons.sh
+
+apps/libphoenix.lib:
+	rm -rf apps/libphoenix.lib
+	cd phoenix-anura; npm i
+	cd phoenix-anura; npx rollup -c rollup.config.js
+	cp -r phoenix-anura/dist apps/libphoenix.lib
 
 public/config.json:
 	cp config.default.json public/config.json

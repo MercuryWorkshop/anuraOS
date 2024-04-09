@@ -7,3 +7,6 @@
 [submodule "aboutproxy"]
 	path = aboutproxy
 	url = https://github.com/MercuryWorkshop/aboutproxy
+[submodule "phoenix-anura"]
+	path = phoenix-anura
+	url = https://github.com/Endercass/phoenix-anura

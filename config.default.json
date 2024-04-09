@@ -10,7 +10,8 @@
         "/apps/libfileview.lib",
         "/apps/libfilepicker.lib",
         "/apps/libstore.lib",
-        "/apps/libpersist.lib"
+        "/apps/libpersist.lib",
+        "/apps/libphoenix.lib"
     ],
     "defaultsettings": {
         "use-sw-cache": false,
