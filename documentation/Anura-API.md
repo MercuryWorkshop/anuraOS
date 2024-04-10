@@ -502,6 +502,41 @@ element.addEventListener("contextmenu", (e) => {
 });
 ```
 
+### anura.ContextMenu.addItem
+
+This adds an item to the context menu item with a callback thats executed on selection of that menu item.
+
+```js
+const contextmenu = new anura.ContextMenu();
+contextmenu.addItem("Log to console", function () {
+    console.log("hello world!");
+});
+```
+
+### anura.ContextMenu.show
+
+This makes the context menu visible to the user, it also takes arguments on where to place it on the page.
+
+```js
+const contextmenu = new anura.ContextMenu();
+contextmenu.addItem("Log to console", function () {
+    console.log("hello world!");
+});
+contextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y); // place context menu where the mouse is
+```
+
+### anura.ContextMenu.hide
+
+This hides the context menu from the user.
+
+```js
+const contextmenu = new anura.ContextMenu();
+contextmenu.addItem("Log to console", function () {
+    console.log("hello world!");
+});
+contextmenu.hide();
+```
+
 ## anura.dialog
 
 This API provides dialogs for Anura. For app developers, these should be used instead of using native browser dialogs to keep the user inside of the desktop environment and to make your app integrate better with Anura.
