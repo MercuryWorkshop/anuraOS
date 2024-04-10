@@ -373,6 +373,22 @@ class SettingsApp extends App {
                             </div>
                             <div class="settings-item">
                                 <span class="settings-item-name">
+                                    Custom Exit URL
+                                </span>
+                                <input
+                                    class="settings-item-text-input"
+                                    on:change={(event: any) => {
+                                        anura.settings.set(
+                                            "exitUrl",
+                                            event.target.value,
+                                        );
+                                    }}
+                                    placeholder={anura.settings.get("exitUrl")}
+                                    type="text"
+                                />
+                            </div>
+                            <div class="settings-item">
+                                <span class="settings-item-name">
                                     Custom Bare URL (deprecated)
                                 </span>
                                 <input

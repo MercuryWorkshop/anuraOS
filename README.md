@@ -73,7 +73,7 @@ Anura should now be running at `localhost:8000`.
 
 App development is highly encouraged! Good apps can even be added to the official app repositories after review by an AnuraOS maintainer. Apps are stored in .app files which are read by AnuraOS to provide you, well, an app!
 
-For more information about developing an AnuraOS app please visit [this page](./documentation/appdevt.md) and for using Anura API's in your code, please visit [this page](./documentation/Anura-API.md)..
+For more information about developing an AnuraOS app please visit [this page](./documentation/appdevt.md) and for using Anura API's in your code, please visit [this page](./documentation/Anura-API.md).
 
 ## Documentation
 
