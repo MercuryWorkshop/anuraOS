@@ -84,13 +84,9 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 
 build/dreamland: dreamlandjs/*
 	mkdir -p build/dreamland
-	cd dreamlandjs; npm i --no-package-lock; npx rollup -c -f iife 
-	cp dreamlandjs/dist/js.js build/dreamland/js.js
-	cp dreamlandjs/dist/js.js.map build/dreamland/js.js.map
-	cp dreamlandjs/dist/css.js build/dreamland/css.js
-	cp dreamlandjs/dist/css.js.map build/dreamland/css.js.map
-	cp dreamlandjs/dist/html.js build/dreamland/html.js
-	cp dreamlandjs/dist/html.js.map build/dreamland/html.js.map
+	cd dreamlandjs; npm i --no-package-lock; npm run build
+	cp dreamlandjs/dist/all.js build/dreamland/all.js
+	cp dreamlandjs/dist/all.js.map build/dreamland/all.js.map
 
 watch: bundle FORCE
 	which inotifywait || echo "INSTALL INOTIFYTOOLS"

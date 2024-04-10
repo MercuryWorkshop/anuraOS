@@ -5,7 +5,7 @@ class OobeView {
         step: 0,
     });
 
-    css = styled.new`
+    css = css`
         z-index: 9996;
         position: absolute;
         width: 100%;

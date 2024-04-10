@@ -35,9 +35,7 @@ dreamland.js is a reactive JSX-inspired rendering library with no virtual dom an
 AnuraOS itself uses dreamland for the desktop environment, and you can use it in your apps as well. To include dreamland in your app, you can add the following to the `head` section of your `index.html` file:
 
 ```html
-<script src="/dreamland/js.js"></script>
-<script src="/dreamland/css.js"></script>
-<script src="/dreamland/html.js"></script>
+<script src="/dreamland/all.js"></script>
 ```
 
 While dreamland itself includes a `$store` function for preserving state between page reloads, this function is not available by default. Instead, you can use the [`anura.persistence`](#libpersist) library to build a `$store` function bound to your app instance.
