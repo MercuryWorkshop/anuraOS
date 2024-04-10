@@ -10,3 +10,6 @@
 [submodule "phoenix-anura"]
 	path = phoenix-anura
 	url = https://github.com/Endercass/phoenix-anura
+[submodule "dreamlandjs"]
+	path = dreamlandjs
+	url = https://github.com/mercuryworkshop/dreamlandjs

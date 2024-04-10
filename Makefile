@@ -14,10 +14,10 @@ hooks: FORCE
 	echo -e "#!/bin/sh\nmake lint\ngit add -A" > .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 
-apps/libfileview.lib/icons:
+apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 	cd apps/libfileview.lib; bash geticons.sh
 
-apps/libphoenix.lib:
+apps/libphoenix.lib: phoenix-anura/*
 	rm -rf apps/libphoenix.lib
 	cd phoenix-anura; npm i
 	cd phoenix-anura; npx rollup -c rollup.config.js
@@ -51,6 +51,7 @@ build/assets/matter.css:
 
 clean:
 	rm -rf build
+	cd v86; true || make clean
 
 rootfs-debian: FORCE
 	cd x86_image_wizard/debian; sh build-debian-bin.sh
@@ -81,18 +82,15 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
-build/dreamland:
+build/dreamland: dreamlandjs/*
 	mkdir -p build/dreamland
-	git clone https://github.com/MercuryWorkshop/dreamlandjs.git dreamland.tmp
-	cd dreamland.tmp; git checkout f09cc91c45fd0ae14235ad2595b3a9d88537dfc5
-	cd dreamland.tmp; npm i; npx rollup -c -f iife 
-	cp dreamland.tmp/dist/js.js build/dreamland/js.js
-	cp dreamland.tmp/dist/js.js.map build/dreamland/js.js.map
-	cp dreamland.tmp/dist/css.js build/dreamland/css.js
-	cp dreamland.tmp/dist/css.js.map build/dreamland/css.js.map
-	cp dreamland.tmp/dist/html.js build/dreamland/html.js
-	cp dreamland.tmp/dist/html.js.map build/dreamland/html.js.map
-	rm -rf dreamland.tmp
+	cd dreamlandjs; npm i --no-package-lock; npx rollup -c -f iife 
+	cp dreamlandjs/dist/js.js build/dreamland/js.js
+	cp dreamlandjs/dist/js.js.map build/dreamland/js.js.map
+	cp dreamlandjs/dist/css.js build/dreamland/css.js
+	cp dreamlandjs/dist/css.js.map build/dreamland/css.js.map
+	cp dreamlandjs/dist/html.js build/dreamland/html.js
+	cp dreamlandjs/dist/html.js.map build/dreamland/html.js.map
 
 watch: bundle FORCE
 	which inotifywait || echo "INSTALL INOTIFYTOOLS"
