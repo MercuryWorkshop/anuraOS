@@ -14,13 +14,11 @@ This api allows you to get settings and change already defined settings values.
 
 ```js
 anura.settings.get("applist"); // Get pinned apps in anura's taskbar
-
-anura.settings.get("applist", ["anura.x86mgr", "anura.browser"]); // Set pinned apps in anura's taskbar in this order
 ```
 
 ### anura.settings.set
 
-This allows you to set a settings value in the api
+This allows you to set a settings value.
 
 **Usage:**
 
