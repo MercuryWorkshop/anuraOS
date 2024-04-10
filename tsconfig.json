@@ -34,7 +34,7 @@
 
         "jsx": "react",
         "jsxFactory": "h",
-        "jsxFragmentFactory": "YOU_CANT_USE_FRAGMENTS",
+        "jsxFragmentFactory": "Fragment",
         "types": ["dreamland", "@types/wicg-file-system-access"],
 
         // "reso"

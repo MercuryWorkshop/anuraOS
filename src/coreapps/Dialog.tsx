@@ -6,6 +6,15 @@ class Dialog extends App {
     icon = "/assets/icons/generic.png";
     source: string;
     hidden = true;
+    styling = css`
+        margin: 16px;
+        h2 {
+            font-size: 1.2rem;
+        }
+        .confirm {
+            margin-left: 5px;
+        }
+    `;
 
     constructor() {
         super();
@@ -15,24 +24,24 @@ class Dialog extends App {
         const dialog = this as object;
         (dialog as any).title = "";
         const win = anura.wm.create(this, dialog);
+
         // MARK: The DAMN CSS
         win.content.style.background = "var(--material-bg)";
         win.content.style.color = "white";
 
-        const wrapper = document.createElement("div");
-        wrapper.style.margin = "16px";
+        const wrapper = <div class={[this.styling]}></div>;
         win.content.appendChild(wrapper);
-        const messageElement = document.createElement("h2");
-        messageElement.style.fontSize = "1.2rem";
-        messageElement.textContent = message;
+        const messageElement = <h2>{message}</h2>;
         wrapper.appendChild(messageElement);
-        const closeButton = document.createElement("button");
+        const buttons = <div />;
+        const closeButton = (
+            <button class={["matter-button-contained"]}>OK</button>
+        );
         closeButton.addEventListener("click", (event) => {
             win.close();
         });
-        closeButton.textContent = "OK";
-        closeButton.classList.add("matter-button-contained");
-        wrapper.appendChild(closeButton);
+        buttons.appendChild(closeButton);
+        wrapper.appendChild(buttons);
     }
     async confirm(message: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
@@ -44,30 +53,30 @@ class Dialog extends App {
             win.content.style.background = "var(--material-bg)";
             win.content.style.color = "white";
 
-            const wrapper = document.createElement("div");
-            wrapper.style.margin = "16px";
+            const wrapper = <div class={[this.styling]}></div>;
             win.content.appendChild(wrapper);
-            const messageElement = document.createElement("h2");
-            messageElement.style.fontSize = "1.2rem";
-            messageElement.textContent = message;
+            const messageElement = <h2>{message}</h2>;
             wrapper.appendChild(messageElement);
-            const cancelButton = document.createElement("button");
-            cancelButton.classList.add("matter-button-outlined");
+            const buttons = <div />;
+            const cancelButton = (
+                <button class={["matter-button-outlined"]}>Cancel</button>
+            );
             cancelButton.addEventListener("click", (event) => {
                 resolve(false);
                 win.close();
             });
-            cancelButton.textContent = "Cancel";
-            wrapper.appendChild(cancelButton);
-            const confirmButton = document.createElement("button");
-            confirmButton.style.marginLeft = "5px";
-            confirmButton.classList.add("matter-button-contained");
+            buttons.appendChild(cancelButton);
+            const confirmButton = (
+                <button class={["matter-button-contained", "confirm"]}>
+                    OK
+                </button>
+            );
             confirmButton.addEventListener("click", (event) => {
                 resolve(true);
                 win.close();
             });
-            confirmButton.textContent = "OK";
-            wrapper.appendChild(confirmButton);
+            buttons.appendChild(confirmButton);
+            wrapper.appendChild(buttons);
         });
     }
     async prompt(message: string, defaultValue?: any): Promise<any> {
@@ -80,41 +89,35 @@ class Dialog extends App {
             win.content.style.background = "var(--material-bg)";
             win.content.style.color = "white";
 
-            const wrapper = document.createElement("div");
-            wrapper.style.margin = "16px";
+            const wrapper = <div class={[this.styling]}></div>;
             win.content.appendChild(wrapper);
-            const messageElement = document.createElement("h2");
-            messageElement.style.fontSize = "1.2rem";
-
-            messageElement.textContent = message;
+            const messageElement = <h2>{message}</h2>;
             wrapper.appendChild(messageElement);
 
             // FIXME: THIS TEXTFIELD SUCKS!!1
-            const textField = document.createElement("label");
-            textField.classList.add("matter-textfield-filled");
-            const inputElement = document.createElement("input");
-            inputElement.placeholder = " ";
-            // const label = document.createElement("span");
-            // label.innerText = "Enter text";
-            // textField.appendChild(label);
+            const textField = <label class={["matter-textfiled-filled"]} />;
+            const inputElement = <input placeholder=" " />;
             textField.appendChild(inputElement);
             wrapper.appendChild(textField);
 
-            const buttons = document.createElement("div");
+            const buttons = <div />;
 
-            const cancelButton = document.createElement("button");
+            const cancelButton = (
+                <button class={["matter-button-outlined"]}>Cancel</button>
+            );
             cancelButton.addEventListener("click", (event) => {
                 resolve(null);
                 win.close();
             });
-            cancelButton.textContent = "Cancel";
-            cancelButton.classList.add("matter-button-outlined");
             buttons.appendChild(cancelButton);
 
-            const confirmButton = document.createElement("button");
-            confirmButton.classList.add("matter-button-contained");
-            confirmButton.style.marginLeft = "5px";
+            const confirmButton = (
+                <button class={["matter-button-contained", "confirm"]}>
+                    OK
+                </button>
+            );
             confirmButton.addEventListener("click", (event) => {
+                //@ts-ignore
                 const value = inputElement.value;
                 if (value && value !== "") {
                     resolve(value);
@@ -125,9 +128,7 @@ class Dialog extends App {
                 }
                 win.close();
             });
-            confirmButton.textContent = "OK";
             buttons.appendChild(confirmButton);
-
             wrapper.appendChild(buttons);
         });
     }
