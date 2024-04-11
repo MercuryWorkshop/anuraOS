@@ -147,7 +147,7 @@ export default function ItemList() {
             margin-left: auto;
         }
 
-        & > input {
+        #searchBox {
             appearance: none;
             background-color: transparent;
             border: none;
@@ -168,7 +168,7 @@ export default function ItemList() {
             color: white;
         }
 
-        & > input:focus {
+        #searchBox:focus {
             outline: none;
             border-bottom-color: #3ca1ff;
         }
@@ -194,7 +194,8 @@ export default function ItemList() {
                     });
                 }}
                 bind:this=${use(this.search)}
-                type="text" />
+                type="text"
+                id="searchBox" />
             <div id="itemList" bind:this=${use(this.listElem)}></div>
         </div>
     `;
