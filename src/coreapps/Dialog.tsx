@@ -95,7 +95,7 @@ class Dialog extends App {
             wrapper.appendChild(messageElement);
 
             // FIXME: THIS TEXTFIELD SUCKS!!1
-            const textField = <label class={["matter-textfiled-filled"]} />;
+            const textField = <label class={["matter-textfield-filled"]} />;
             const inputElement = <input placeholder=" " />;
             textField.appendChild(inputElement);
             wrapper.appendChild(textField);
