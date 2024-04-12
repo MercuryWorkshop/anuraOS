@@ -102,6 +102,9 @@
 
 .aliceWMwin .titleContent {
     flex: 1;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 8px;
 }
 
 .aliceWMwin .content {
