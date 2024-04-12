@@ -319,6 +319,7 @@ class V86Backend {
             autostart: true,
             uart1: true,
             uart2: true,
+            virtio_console: true,
         });
 
         let s0data = "";
@@ -359,7 +360,19 @@ class V86Backend {
     netids: string[] = [];
 
     registered = false;
+    v86Wisp: WebSocket;
+
     termready = false;
+    async netdata_send(data: Uint8Array) {
+        console.log(data);
+        const sendData = new Uint8Array(data.length + 4);
+        const dataView = new DataView(sendData.buffer);
+        console.log("sending message of " + data.length);
+        dataView.setUint32(0, data.length);
+        sendData.set(data, 4);
+        this.emulator.bus.send("virtio-console1-input-bytes", sendData);
+    }
+
     async onboot() {
         if (this.registered) return;
         this.registered = true;
@@ -433,7 +446,50 @@ class V86Backend {
                 this.writepty(this.barepty, event.data.value.url + "\n");
             }
         });
+        // WISP networking
+        this.v86Wisp = new WebSocket(anura.wsproxyURL);
+        this.v86Wisp.binaryType = "arraybuffer";
+
+        this.v86Wisp.onmessage = (event) => {
+            this.netdata_send(new Uint8Array(event.data));
+        };
+
+        const netBuffer: Uint8Array[] = [];
+        let inTransit = false;
+        let currentRead = 0;
+        let currentPacketSize = 0;
+
+        this.emulator.add_listener(
+            "virtio-console1-output-bytes",
+            function (bytes: Uint8Array) {
+                console.log("got data");
+                console.log(bytes);
+                if (!inTransit) {
+                    const dataView = new DataView(bytes.buffer);
+                    const length = dataView.getUint32(0);
+                    if (bytes.length - 4 != length) {
+                        inTransit = true;
+                        currentRead += bytes.length - 4;
+                        currentPacketSize = length;
+                        netBuffer.push(bytes.slice(4, bytes.length - 1));
+                        inTransit = true;
+                    } else {
+                        anura.x86?.v86Wisp.send(
+                            bytes.slice(4, bytes.byteLength),
+                        );
+                    }
+                } else {
+                    netBuffer.push(bytes);
+                    currentRead += bytes.length;
+                    if (currentRead === currentPacketSize) {
+                        anura.x86?.v86Wisp.send(new Blob(netBuffer));
+                        inTransit = false;
+                    }
+                }
+            },
+        );
     }
+
     runcmd(cmd: string) {
         this.writepty(this.runpty, `( ${cmd} ) & \n`);
     }
