@@ -5,9 +5,12 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libcurl.mjs build/lib/bare.js build/idb-keyval.js build/assets/matter.css build/dreamland 
+all: submodules build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libcurl.mjs build/lib/bare.js build/idb-keyval.js build/assets/matter.css build/dreamland 
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
+
+submodules: .gitmodules
+	git submodule update
 
 hooks: FORCE
 	mkdir -p .git/hooks
