@@ -368,7 +368,7 @@ class V86Backend {
         const sendData = new Uint8Array(data.length + 4);
         const dataView = new DataView(sendData.buffer);
         console.log("sending message of " + data.length);
-        dataView.setUint32(0, data.length);
+        dataView.setUint32(0, data.length, true);
         sendData.set(data, 4);
         this.emulator.bus.send("virtio-console1-input-bytes", sendData);
     }
@@ -454,19 +454,17 @@ class V86Backend {
             this.netdata_send(new Uint8Array(event.data));
         };
 
-        const netBuffer: Uint8Array[] = [];
+        let netBuffer: Uint8Array[] = [];
         let inTransit = false;
         let currentRead = 0;
         let currentPacketSize = 0;
 
         this.emulator.add_listener(
             "virtio-console1-output-bytes",
-            function (bytes: Uint8Array) {
-                console.log("got data");
-                console.log(bytes);
+            async function (bytes: Uint8Array) {
                 if (!inTransit) {
                     const dataView = new DataView(bytes.buffer);
-                    const length = dataView.getUint32(0);
+                    const length = dataView.getUint32(0, true);
                     if (bytes.length - 4 != length) {
                         inTransit = true;
                         currentRead += bytes.length - 4;
@@ -477,15 +475,33 @@ class V86Backend {
                         anura.x86?.v86Wisp.send(
                             bytes.slice(4, bytes.byteLength),
                         );
+                        inTransit = false;
+                        currentRead = 0;
+                        currentPacketSize = 0;
+                        netBuffer = [];
                     }
                 } else {
                     netBuffer.push(bytes);
                     currentRead += bytes.length;
-                    if (currentRead === currentPacketSize) {
-                        anura.x86?.v86Wisp.send(new Blob(netBuffer));
+                    if (currentRead == currentPacketSize) {
+                        console.log("Sending netbuffer: ");
+                        console.log(new Blob(netBuffer));
+                        anura.x86?.v86Wisp.send(
+                            new Uint8Array(
+                                await new Blob(netBuffer).arrayBuffer(),
+                            ),
+                        );
                         inTransit = false;
+                        currentRead = 0;
+                        currentPacketSize = 0;
+                        netBuffer = [];
                     }
                 }
+                console.log("got data");
+                console.log(bytes);
+                console.log("stream transit: " + inTransit);
+                console.log("read: " + currentRead);
+                console.log("packetSize: " + currentPacketSize);
             },
         );
     }
