@@ -79,7 +79,7 @@ workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
 });
 
 workbox.routing.registerRoute(
-    /^(?!.*(\/uncached\/|\/config.json|\/MILESTONE|\/debian-rootfs.bin|\/images\/debian|\/service\/))/,
+    /^(?!.*(\/config.json|\/MILESTONE|\/images\/|\/service\/))/,
     ({ url }) => {
         if (!cacheenabled) return;
         if (url.pathname === "/") {

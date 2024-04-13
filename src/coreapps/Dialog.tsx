@@ -11,6 +11,9 @@ class Dialog extends App {
         h2 {
             font-size: 1.2rem;
         }
+        .buttons {
+            margin-top: 10px;
+        }
         .confirm {
             margin-left: 5px;
         }
@@ -33,7 +36,7 @@ class Dialog extends App {
         win.content.appendChild(wrapper);
         const messageElement = <h2>{message}</h2>;
         wrapper.appendChild(messageElement);
-        const buttons = <div />;
+        const buttons = <div class={["buttons"]} />;
         const closeButton = (
             <button class={["matter-button-contained"]}>OK</button>
         );
@@ -57,7 +60,7 @@ class Dialog extends App {
             win.content.appendChild(wrapper);
             const messageElement = <h2>{message}</h2>;
             wrapper.appendChild(messageElement);
-            const buttons = <div />;
+            const buttons = <div class={["buttons"]} />;
             const cancelButton = (
                 <button class={["matter-button-outlined"]}>Cancel</button>
             );
@@ -100,7 +103,7 @@ class Dialog extends App {
             textField.appendChild(inputElement);
             wrapper.appendChild(textField);
 
-            const buttons = <div />;
+            const buttons = <div class={["buttons"]} />;
 
             const cancelButton = (
                 <button class={["matter-button-outlined"]}>Cancel</button>
