@@ -93,8 +93,9 @@ class WMWindow {
             <div
                 class="aliceWMwin opacity0"
                 style={`
-                    width: ${wininfo.width};
-                    height: ${wininfo.height};
+                    width: ${anura.platform == "mobile" ? "calc(100vw - 10px)" : wininfo.width};
+                    height: ${anura.platform == "mobile" ? "calc(100vh - 58px)" : wininfo.height};
+                    ${anura.platform == "mobile" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
                 on:mouseover={() => {
                     this.mouseover = true;
@@ -123,11 +124,13 @@ class WMWindow {
                     on:mousedown={(evt: MouseEvent) => {
                         deactivateFrames();
 
-                        this.dragging = true;
-                        this.originalLeft = this.element.offsetLeft;
-                        this.originalTop = this.element.offsetTop;
-                        this.mouseLeft = evt.clientX;
-                        this.mouseTop = evt.clientY;
+                        if (anura.platform !== "mobile") {
+                            this.dragging = true;
+                            this.originalLeft = this.element.offsetLeft;
+                            this.originalTop = this.element.offsetTop;
+                            this.mouseLeft = evt.clientX;
+                            this.mouseTop = evt.clientY;
+                        }
                     }}
                     on:mouseup={(evt: MouseEvent) => {
                         reactivateFrames();
@@ -148,7 +151,7 @@ class WMWindow {
                     <div class="titleContent">{use(this.state.title)}</div>
 
                     <button
-                        class="windowButton"
+                        class="windowButton minimize"
                         on:click={() => {
                             this.minimizing = true;
                             this.minimize();
@@ -160,9 +163,8 @@ class WMWindow {
                             class="windowButtonIcon"
                         />
                     </button>
-
                     <button
-                        class="windowButton"
+                        class="windowButton maximize"
                         on:click={this.maximize.bind(this)}
                     >
                         {
@@ -176,7 +178,7 @@ class WMWindow {
                         }
                     </button>
                     <button
-                        class="windowButton"
+                        class="windowButton close"
                         on:click={this.close.bind(this)}
                     >
                         <img
@@ -1058,7 +1060,9 @@ let AliceWM = {
         const win = new WMWindow(wininfo);
         document.body.appendChild(win.element);
         win.focus();
-        center(win.element);
+        if (anura.platform != "mobile") {
+            center(win.element);
+        }
         return win;
     },
 };

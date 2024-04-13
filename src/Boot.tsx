@@ -79,10 +79,7 @@ const updateClickoffChecker = (show: boolean) => {
 };
 
 const taskbar = new Taskbar();
-const launcher = new Launcher(
-    clickoffChecker as HTMLDivElement,
-    updateClickoffChecker,
-);
+let launcher: Launcher;
 const quickSettings = new QuickSettings(
     clickoffChecker as HTMLDivElement,
     updateClickoffChecker,
@@ -114,6 +111,18 @@ window.addEventListener("load", async () => {
     }
 
     anura = await Anura.new(conf);
+
+    launcher = new Launcher(
+        clickoffChecker as HTMLDivElement,
+        updateClickoffChecker,
+    );
+
+    if (anura.platform == "mobile" || anura.platform == "tablet") {
+        bootsplash.remove();
+        document.body.appendChild(bootsplashMobile);
+    }
+
+    document.body.classList.add("platform-" + anura.platform);
 
     // TODO: Serialize state in a way that nested statefuls are preserved
     function $store<T>(
@@ -265,6 +274,7 @@ window.addEventListener("load", async () => {
     setTimeout(
         () => {
             bootsplash.remove();
+            bootsplashMobile.remove();
             anura.logger.debug("boot completed");
             document.dispatchEvent(new Event("anura-boot-completed"));
         },
