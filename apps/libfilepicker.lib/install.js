@@ -2,7 +2,6 @@
 export default async function install(_, filePickerLib) {
     const { selectFile, selectFolder } = await filePickerLib.getImport();
     top.navigator.serviceWorker.addEventListener("message", async (event) => {
-        console.log(event);
         if (event.data.anura_target === "anura.filepicker") {
             if (event.data.type === "folder") {
                 let folders;
