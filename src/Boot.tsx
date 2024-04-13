@@ -97,7 +97,8 @@ let anura: Anura;
 window.addEventListener("load", async () => {
     document.body.appendChild(bootsplash);
 
-    await navigator.serviceWorker.register("/anura-sw.js");
+    // Pass ?readwrite to allow readwrite access to the filesystem via filer.js
+    await navigator.serviceWorker.register("/anura-sw.js?readwrite");
     let conf, milestone, instancemilestone;
     try {
         conf = await (await fetch("/config.json")).json();
