@@ -934,27 +934,27 @@ document.addEventListener("click", (e) => {
     }
 });
 
-function newFolder(path) {
+async function newFolder(path) {
     if (path === undefined) {
         path =
             document
                 .querySelector(".breadcrumbs")
                 .getAttribute("data-current-path") +
             "/" +
-            prompt("Folder Name: ");
+            await anura.dialog.prompt("Folder Name: ");
     }
     fs.mkdir(path);
     reload();
 }
 
-function newFile(path) {
+async function newFile(path) {
     if (path === undefined) {
         path =
             document
                 .querySelector(".breadcrumbs")
                 .getAttribute("data-current-path") +
             "/" +
-            prompt("File Name: ");
+            await anura.dialog.prompt("File Name: ");
     }
     fs.writeFile(path, "");
     reload();
@@ -1147,7 +1147,7 @@ function paste() {
     }
 }
 
-function rename() {
+async function rename() {
     const path = document
         .querySelector(".breadcrumbs")
         .getAttribute("data-current-path");
@@ -1171,7 +1171,7 @@ function rename() {
     }
     fs.rename(
         currentlySelected[0].getAttribute("data-path"),
-        `${path}/${prompt("filename:")}`,
+        `${path}/${await anura.dialog.prompt("filename:")}`,
         function (err) {
             if (err) throw err;
             reload();
