@@ -72,22 +72,22 @@ class Anura {
             if (mobileRE.test(ua) && !notMobileRE.test(ua)) {
                 console.log("Mobile detected");
                 platform = "mobile";
+            }
 
-                if (tabletRE.test(ua)) {
-                    console.log("Tablet detected");
-                    platform = "tablet";
-                }
+            if (tabletRE.test(ua)) {
+                console.log("Tablet detected");
+                platform = "tablet";
             }
 
             if (
-                !mobileRE.test(ua) ||
-                (navigator &&
-                    navigator.maxTouchPoints > 1 &&
-                    ua.indexOf("Macintosh") !== -1 &&
-                    ua.indexOf("Safari") !== -1)
+                !mobileRE.test(ua) &&
+                navigator &&
+                navigator.maxTouchPoints > 1 &&
+                ua.indexOf("Macintosh") !== -1 &&
+                ua.indexOf("Safari") !== -1
             ) {
-                console.log("Desktop detected");
-                platform = "desktop";
+                console.log("Mobile detected");
+                platform = "mobile";
             }
         }
 
