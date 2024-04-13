@@ -27,6 +27,7 @@ workbox.routing.registerRoute(/\/x86\/(.*)/, (req) => {
 });
 
 const callbacks = {};
+const filepickerCallbacks = {};
 
 addEventListener("message", (event) => {
     if (event.data.anura_target === "anura.x86.proxy") {
@@ -37,6 +38,10 @@ addEventListener("message", (event) => {
     if (event.data.anura_target === "anura.cache") {
         cacheenabled = event.data.value;
         idbKeyval.set("cacheenabled", event.data.value);
+    }
+    if (event.data.anura_target === "anura.filepicker.result") {
+        let callback = filepickerCallbacks[event.data.id];
+        callback(event.data.value);
     }
 });
 async function handleRequests({ url, request, event, params }) {
@@ -66,7 +71,7 @@ async function handleRequests({ url, request, event, params }) {
         callbacks[uuid] = resolve;
     });
 
-    return new Response(resp.body);
+    return new Response(JSON.stringify(resp.files));
 }
 
 workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
@@ -77,6 +82,40 @@ workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
         return new Response("File not found bruh", { status: 404 });
     }
 });
+
+workbox.routing.registerRoute(
+    /\/showFilePicker/,
+    async ({ url }) => {
+        let id = crypto.randomUUID();
+        let clients = (await self.clients.matchAll()).filter(
+            (v) => new URL(v.url).pathname === "/",
+        );
+        if (clients.length < 1)
+            return new Response(
+                "no clients were available to take your request",
+            );
+        let client = clients[0];
+
+        let regex = url.searchParams.get("regex") || ".*";
+        let type = url.searchParams.get("type") || "file";
+
+        client.postMessage({
+            anura_target: "anura.filepicker",
+            regex,
+            id,
+            type,
+        });
+
+        const resp = await new Promise((resolve) => {
+            filepickerCallbacks[id] = resolve;
+        });
+
+        return new Response(JSON.stringify(resp), {
+            status: resp.cancelled ? 444 : 200,
+        });
+    },
+    "GET",
+);
 
 workbox.routing.registerRoute(
     /^(?!.*(\/config.json|\/MILESTONE|\/images\/|\/service\/))/,

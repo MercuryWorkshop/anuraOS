@@ -39,7 +39,7 @@ class ExternalLib extends Lib {
 
         if (manifest.installHook) {
             import(source + "/" + manifest.installHook).then((module) => {
-                module.default(anura);
+                module.default(anura, this);
             });
         }
     }
