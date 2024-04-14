@@ -46,7 +46,7 @@ RUN rm -rf /usr/lib/systemd/system-preset/*
 COPY 90-systemd.preset /usr/lib/systemd/system-preset
 COPY anurad.service /etc/systemd/system
 COPY mkinitcpio.conf /etc/
-RUN printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n" > /etc/resolv.conf.head
+RUN printf "nameserver 1.1.1.1\nnameserver 1.0.0.1\n" > /etc/resolv.conf.head
 
 RUN mkinitcpio -P   
 RUN systemctl enable anurad
