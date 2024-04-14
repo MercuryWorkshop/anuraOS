@@ -117,12 +117,12 @@ window.addEventListener("load", async () => {
         updateClickoffChecker,
     );
 
-    if (anura.platform == "mobile" || anura.platform == "tablet") {
+    if (anura.platform.type == "mobile" || anura.platform.type == "tablet") {
         bootsplash.remove();
         document.body.appendChild(bootsplashMobile);
     }
 
-    document.body.classList.add("platform-" + anura.platform);
+    document.body.classList.add("platform-" + anura.platform.type);
 
     // TODO: Serialize state in a way that nested statefuls are preserved
     function $store<T>(

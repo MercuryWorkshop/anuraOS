@@ -13,7 +13,7 @@ class Launcher {
 
     css = css`
         position: absolute;
-        width: ${anura.platform == "mobile"
+        width: ${anura.platform.type == "mobile"
             ? "calc(min(100%, 65em) - 20px)"
             : "min(70%, 35em)"};
         height: min(30%, 20em);
@@ -121,7 +121,7 @@ class Launcher {
     activeCss = css`
         display: block;
         opacity: 1;
-        height: ${anura.platform == "mobile"
+        height: ${anura.platform.type == "mobile"
             ? "min(50%, 25em)"
             : "min(80%, 40em)"};
         z-index: 9999;

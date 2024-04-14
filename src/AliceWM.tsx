@@ -93,9 +93,9 @@ class WMWindow {
             <div
                 class="aliceWMwin opacity0"
                 style={`
-                    width: ${anura.platform == "mobile" ? "calc(100vw - 10px)" : wininfo.width};
-                    height: ${anura.platform == "mobile" ? "calc(100vh - 58px)" : wininfo.height};
-                    ${anura.platform == "mobile" ? "top: 5px!important; left: 5px!important;" : ""}
+                    width: ${anura.platform.type == "mobile" ? "calc(100vw - 10px)" : wininfo.width};
+                    height: ${anura.platform.type == "mobile" ? "calc(100vh - 58px)" : wininfo.height};
+                    ${anura.platform.type == "mobile" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
                 on:mouseover={() => {
                     this.mouseover = true;
@@ -125,7 +125,7 @@ class WMWindow {
                     on:mousedown={(evt: MouseEvent) => {
                         deactivateFrames();
 
-                        if (anura.platform !== "mobile") {
+                        if (anura.platform.type !== "mobile") {
                             this.dragging = true;
                             this.originalLeft = this.element.offsetLeft;
                             this.originalTop = this.element.offsetTop;
@@ -137,7 +137,7 @@ class WMWindow {
                         console.log("touchstart");
                         deactivateFrames();
 
-                        if (anura.platform !== "mobile") {
+                        if (anura.platform.type !== "mobile") {
                             this.dragging = true;
                             this.originalLeft = this.element.offsetLeft;
                             this.originalTop = this.element.offsetTop;
@@ -1410,7 +1410,7 @@ let AliceWM = {
         const win = new WMWindow(wininfo);
         document.body.appendChild(win.element);
         win.focus();
-        if (anura.platform != "mobile") {
+        if (anura.platform.type != "mobile") {
             center(win.element);
         }
         return win;
