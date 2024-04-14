@@ -164,6 +164,11 @@ class WMWindow {
                             this.dragging = false;
                         }
                     }}
+                    on:dblclick={() => {
+                        console.log("doubleclick");
+
+                        this.maximize();
+                    }}
                     on:mousemove={(evt: MouseEvent) => {
                         // do the dragging during the mouse move
 
