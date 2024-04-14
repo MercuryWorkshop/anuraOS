@@ -34,7 +34,7 @@ RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anurad /etc/init.d/
 COPY anura-boot /etc/init.d/
 RUN chmod +x /etc/init.d/anurad /etc/init.d/anura-boot
-RUN printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n" > /etc/resolv.conf.head
+RUN printf "nameserver 1.1.1.1\nnameserver 1.0.0.1\n" > /etc/resolv.conf.head
 
 # setup init system
 RUN rc-update add devfs sysinit
