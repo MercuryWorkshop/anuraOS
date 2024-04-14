@@ -160,7 +160,7 @@ class WMWindow {
                         reactivateFrames();
 
                         if (this.dragging) {
-                            // this.handleDrag(evt);
+                            this.handleDrag(evt);
                             this.dragging = false;
                         }
                     }}
@@ -176,7 +176,7 @@ class WMWindow {
                         console.log("touchmove");
                         if (this.dragging) {
                             if (evt.touches.length > 0) {
-                                this.handleTouchDrag(evt);
+                                this.handleDrag(evt);
                             }
                         }
                     }}
@@ -250,7 +250,7 @@ class WMWindow {
 
         document.addEventListener("touchmove", (evt) => {
             if (this.dragging) {
-                this.handleTouchDrag(evt);
+                this.handleDrag(evt);
             }
         });
 
@@ -316,7 +316,7 @@ class WMWindow {
             evt = evt || window.event;
 
             if (this.dragging) {
-                this.handleTouchDrag(evt);
+                this.handleDrag(evt);
 
                 if (this.clampWindows) {
                     const forceX = this.dragForceX;
@@ -378,6 +378,7 @@ class WMWindow {
                 });
             });
 
+            // TODO: Somehow refractor this
             currentResizer.addEventListener("touchstart", (e: TouchEvent) => {
                 if (e.touches.length <= 0) {
                     return;
@@ -399,12 +400,12 @@ class WMWindow {
                 original_y = this.element.getBoundingClientRect().top;
                 original_mouse_x = e.touches[0]!.pageX;
                 original_mouse_y = e.touches[0]!.pageY;
-                window.addEventListener("touchmove", touchResize);
+                window.addEventListener("touchmove", resize);
 
                 window.addEventListener("touchend", () => {
                     console.log("touchend");
                     reactivateFrames();
-                    window.removeEventListener("touchmove", touchResize);
+                    window.removeEventListener("touchmove", resize);
                     if (!sentResize) {
                         this.onresize(this.width, this.height);
                         sentResize = true;
@@ -412,121 +413,8 @@ class WMWindow {
                 });
             });
 
-            const resize = (e: MouseEvent) => {
-                this.dragForceX = 0;
-                this.dragForceY = 0;
-
-                sentResize = false;
-                if (this.maximized) {
-                    this.unmaximize();
-                }
-                if (this.snapped) {
-                    if (splitBar) {
-                        return;
-                    }
-                    const direction = this.getSnapDirectionFromPosition(
-                        original_x,
-                        original_width,
-                    );
-                    if (
-                        (direction == "left" &&
-                            !currentResizer.classList.contains("right")) ||
-                        (direction == "right" &&
-                            !currentResizer.classList.contains("left"))
-                    ) {
-                        return;
-                    }
-                }
-                if (currentResizer.classList.contains("bottom-right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
-                    if (width > minimum_size) {
-                        this.element.style.width = width + "px";
-                    }
-                    if (height > minimum_size) {
-                        this.element.style.height = height + "px";
-                    }
-                } else if (currentResizer.classList.contains("bottom-left")) {
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
-                    const width = original_width - (e.pageX - original_mouse_x);
-                    if (height > minimum_size) {
-                        this.element.style.height = height + "px";
-                    }
-                    if (width > minimum_size) {
-                        this.element.style.width = width + "px";
-                        this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
-                    }
-                } else if (currentResizer.classList.contains("top-right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
-                    const height =
-                        original_height - (e.pageY - original_mouse_y);
-                    if (width > minimum_size) {
-                        this.element.style.width = width + "px";
-                    }
-                    if (height > minimum_size) {
-                        this.element.style.height = height + "px";
-                        this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
-                    }
-                } else if (currentResizer.classList.contains("top-left")) {
-                    const width = original_width - (e.pageX - original_mouse_x);
-                    const height =
-                        original_height - (e.pageY - original_mouse_y);
-                    if (width > minimum_size) {
-                        this.element.style.width = width + "px";
-                        this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
-                    }
-                    if (height > minimum_size) {
-                        this.element.style.height = height + "px";
-                        this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
-                    }
-                } else if (currentResizer.classList.contains("left")) {
-                    const width = original_width - (e.pageX - original_mouse_x);
-                    if (width > minimum_size) {
-                        this.element.style.width = width + "px";
-                        this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
-                    }
-                } else if (currentResizer.classList.contains("right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
-                    if (width > minimum_size) {
-                        this.element.style.width = width + "px";
-                    }
-                } else if (currentResizer.classList.contains("top")) {
-                    const width =
-                        original_height - (e.pageY - original_mouse_y);
-                    if (width > minimum_size) {
-                        this.element.style.height = width + "px";
-                        this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
-                    }
-                } else if (currentResizer.classList.contains("bottom")) {
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
-                    if (height > minimum_size) {
-                        this.element.style.height = height + "px";
-                    }
-                }
-                this.width = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("width")
-                        .replace("px", ""),
-                );
-                this.height = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("height")
-                        .replace("px", ""),
-                );
-            };
-
-            const touchResize = (e: TouchEvent) => {
-                console.log("touchmove");
-                if (e.touches.length <= 0) {
+            const resize = (e: MouseEvent | TouchEvent) => {
+                if (e instanceof TouchEvent && e.touches.length <= 0) {
                     console.warn("No touch event found");
                     return;
                 }
@@ -534,6 +422,11 @@ class WMWindow {
                 this.dragForceX = 0;
                 this.dragForceY = 0;
 
+                const pageX =
+                    e instanceof MouseEvent ? e.pageX : e.touches[0]!.pageX;
+                const pageY =
+                    e instanceof MouseEvent ? e.pageY : e.touches[0]!.pageY;
+
                 sentResize = false;
                 if (this.maximized) {
                     this.unmaximize();
@@ -556,12 +449,8 @@ class WMWindow {
                     }
                 }
                 if (currentResizer.classList.contains("bottom-right")) {
-                    const width =
-                        original_width +
-                        (e.touches[0]!.pageX - original_mouse_x);
-                    const height =
-                        original_height +
-                        (e.touches[0]!.pageY - original_mouse_y);
+                    const width = original_width + (pageX - original_mouse_x);
+                    const height = original_height + (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
@@ -569,93 +458,61 @@ class WMWindow {
                         this.element.style.height = height + "px";
                     }
                 } else if (currentResizer.classList.contains("bottom-left")) {
-                    const height =
-                        original_height +
-                        (e.touches[0]!.pageY - original_mouse_y);
-                    const width =
-                        original_width -
-                        (e.touches[0]!.pageX - original_mouse_x);
+                    const height = original_height + (pageY - original_mouse_y);
+                    const width = original_width - (pageX - original_mouse_x);
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                     }
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x +
-                            (e.touches[0]!.pageX - original_mouse_x) +
-                            "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                 } else if (currentResizer.classList.contains("top-right")) {
-                    const width =
-                        original_width +
-                        (e.touches[0]!.pageX - original_mouse_x);
-                    const height =
-                        original_height -
-                        (e.touches[0]!.pageY - original_mouse_y);
+                    const width = original_width + (pageX - original_mouse_x);
+                    const height = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                         this.element.style.top =
-                            original_y +
-                            (e.touches[0]!.pageY - original_mouse_y) +
-                            "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("top-left")) {
-                    const width =
-                        original_width -
-                        (e.touches[0]!.pageX - original_mouse_x);
-                    const height =
-                        original_height -
-                        (e.touches[0]!.pageY - original_mouse_y);
+                    const width = original_width - (pageX - original_mouse_x);
+                    const height = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x +
-                            (e.touches[0]!.pageX - original_mouse_x) +
-                            "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                         this.element.style.top =
-                            original_y +
-                            (e.touches[0]!.pageY - original_mouse_y) +
-                            "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("left")) {
-                    const width =
-                        original_width -
-                        (e.touches[0]!.pageX - original_mouse_x);
+                    const width = original_width - (pageX - original_mouse_x);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x +
-                            (e.touches[0]!.pageX - original_mouse_x) +
-                            "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                 } else if (currentResizer.classList.contains("right")) {
-                    const width =
-                        original_width +
-                        (e.touches[0]!.pageX - original_mouse_x);
+                    const width = original_width + (pageX - original_mouse_x);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
                 } else if (currentResizer.classList.contains("top")) {
-                    const width =
-                        original_height -
-                        (e.touches[0]!.pageY - original_mouse_y);
+                    const width = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.height = width + "px";
                         this.element.style.top =
-                            original_y +
-                            (e.touches[0]!.pageY - original_mouse_y) +
-                            "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("bottom")) {
-                    const height =
-                        original_height +
-                        (e.touches[0]!.pageY - original_mouse_y);
+                    const height = original_height + (pageY - original_mouse_y);
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                     }
@@ -679,82 +536,18 @@ class WMWindow {
         setTimeout(() => this.element.classList.remove("opacity0"), 10);
     }
 
-    handleTouchDrag(evt: TouchEvent) {
-        if (evt.touches.length <= 0) {
+    handleDrag(evt: MouseEvent | TouchEvent) {
+        if (evt instanceof TouchEvent && evt.touches.length <= 0) {
             console.warn("No touch event found");
             return;
         }
+        const clientX =
+            evt instanceof MouseEvent ? evt.clientX : evt.touches[0]!.clientX;
+        const clientY =
+            evt instanceof MouseEvent ? evt.clientY : evt.touches[0]!.clientY;
 
-        const offsetX =
-            this.originalLeft + evt.touches[0]!.clientX! - this.mouseLeft;
-        const offsetY =
-            this.originalTop + evt.touches[0]!.clientY! - this.mouseTop;
-
-        if (this.clampWindows) {
-            const newOffsetX = Math.min(
-                window.innerWidth - this.element.clientWidth,
-                Math.max(0, offsetX),
-            );
-
-            const newOffsetY = Math.min(
-                window.innerHeight - 49 - this.element.clientHeight,
-                Math.max(0, offsetY),
-            );
-
-            this.element.style.left = newOffsetX + "px";
-            this.element.style.top = newOffsetY + "px";
-
-            if (offsetX != newOffsetX || offsetY != newOffsetY) {
-                this.dragForceX = Math.abs(offsetX - newOffsetX);
-                this.dragForceY = Math.abs(offsetY - newOffsetY);
-                const snapDirection = this.getSnapDirection(
-                    this.dragForceX,
-                    this.dragForceY,
-                );
-                if (snapDirection) {
-                    const preview = document.getElementById("snapPreview");
-                    if (!preview) {
-                        document.body.appendChild(
-                            this.snapPreview(snapDirection),
-                        );
-                    } else {
-                        const direction = preview.classList[0]?.split("-")[1];
-                        if (direction != snapDirection) {
-                            preview.remove();
-                            document.body.appendChild(
-                                this.snapPreview(snapDirection),
-                            );
-                        }
-                    }
-                }
-            } else {
-                this.dragForceX = 0;
-                this.dragForceY = 0;
-                const preview = document.getElementById("snapPreview");
-                if (preview) {
-                    preview.style.opacity = "0";
-                    setTimeout(() => {
-                        preview.remove();
-                    }, 200);
-                }
-            }
-        } else {
-            this.element.style.left = offsetX + "px";
-            this.element.style.top = offsetY + "px";
-        }
-
-        if (this.maximized || this.snapped) {
-            this.unmaximize();
-            this.originalLeft = this.element.offsetLeft;
-            this.originalTop = this.element.offsetTop;
-            this.mouseLeft = evt.touches[0]!.clientX;
-            this.mouseTop = evt.touches[0]!.clientY;
-        }
-    }
-
-    handleDrag(evt: MouseEvent) {
-        const offsetX = this.originalLeft + evt.clientX! - this.mouseLeft;
-        const offsetY = this.originalTop + evt.clientY! - this.mouseTop;
+        const offsetX = this.originalLeft + clientX! - this.mouseLeft;
+        const offsetY = this.originalTop + clientY! - this.mouseTop;
 
         if (this.clampWindows) {
             const newOffsetX = Math.min(
@@ -813,8 +606,8 @@ class WMWindow {
             this.unmaximize();
             this.originalLeft = this.element.offsetLeft;
             this.originalTop = this.element.offsetTop;
-            this.mouseLeft = evt.clientX;
-            this.mouseTop = evt.clientY;
+            this.mouseLeft = clientX;
+            this.mouseTop = clientY;
         }
     }
 
@@ -1299,7 +1092,7 @@ class WMSplitBar {
                 reactivateFrames();
 
                 if (this.dragging) {
-                    this.handleTouchDrag(evt);
+                    this.handleDrag(evt);
                     this.dragging = false;
                 }
             }}
@@ -1337,18 +1130,17 @@ class WMSplitBar {
         });
     }
 
-    handleDrag(evt: MouseEvent) {
-        this.splitWindowsAround(
-            // Add 4 to account for the center of the bar
-            this.originalLeft + evt.clientX - this.mouseLeft + 4,
-        );
-    }
+    handleDrag(evt: MouseEvent | TouchEvent) {
+        if (evt instanceof TouchEvent && evt.touches.length <= 0) {
+            console.warn("No touch event found");
+            return;
+        }
 
-    handleTouchDrag(evt: TouchEvent) {
-        if (evt.touches.length != 1) return;
+        const clientX =
+            evt instanceof MouseEvent ? evt.clientX : evt.touches[0]!.clientX;
         this.splitWindowsAround(
             // Add 4 to account for the center of the bar
-            this.originalLeft + evt.touches[0]!.clientX - this.mouseLeft + 4,
+            this.originalLeft + clientX - this.mouseLeft + 4,
         );
     }
 
