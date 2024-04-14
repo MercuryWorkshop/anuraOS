@@ -48,7 +48,7 @@ RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/ptynet
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil
 RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anurad.service /etc/systemd/system
-RUN printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n" > /etc/resolv.conf.head
+RUN printf "nameserver 1.1.1.1\nnameserver 1.0.0.1\n" > /etc/resolv.conf.head
 
 RUN echo "RESUME=none" >> /etc/initramfs-tools/conf.d/resume
 RUN update-initramfs -u
