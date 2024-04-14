@@ -306,8 +306,12 @@ document.addEventListener("anura-login-completed", async () => {
             "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
     );
 
+    // Register built-in Node Polyfills
     anura.registerLib(new NodeFS());
     anura.registerLib(new NodePrelude());
+
+    // Register vendored NPM packages
+    anura.registerLib(new Comlink());
 
     for (const lib of anura.config.libs) {
         anura.registerExternalLib(lib);
