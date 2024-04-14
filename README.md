@@ -35,11 +35,15 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 
 -   Recent versions of `node.js` and `npm`
 -   `wget`
--   A recent version of `java`
+-   A recent version of `java` (11+)
 -   `inotifytools`
 -   `rustup`
 -   `make`
--   `gcc` (or any other C compiler)
+-   `gcc`
+-   `clang`
+-   `uuid-runtime`
+-   `jq`
+-   `docker`
 
 > [!NOTE]
 > You will have to install the required Rust toolchain by running `rustup target add wasm32-unknown-unknown`.
