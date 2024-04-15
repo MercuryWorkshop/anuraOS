@@ -419,7 +419,11 @@ class WMWindow {
             });
 
             const resize = (e: MouseEvent | TouchEvent) => {
-                if (e instanceof TouchEvent && e.touches.length <= 0) {
+                if (
+                    window.TouchEvent && // hacky workaround for ff support
+                    e instanceof TouchEvent &&
+                    e.touches.length <= 0
+                ) {
                     console.warn("No touch event found");
                     return;
                 }
@@ -542,10 +546,15 @@ class WMWindow {
     }
 
     handleDrag(evt: MouseEvent | TouchEvent) {
-        if (evt instanceof TouchEvent && evt.touches.length <= 0) {
+        if (
+            window.TouchEvent && // hacky workaround for ff support
+            evt instanceof TouchEvent &&
+            evt.touches.length <= 0
+        ) {
             console.warn("No touch event found");
             return;
         }
+
         const clientX =
             evt instanceof MouseEvent ? evt.clientX : evt.touches[0]!.clientX;
         const clientY =
@@ -1136,7 +1145,11 @@ class WMSplitBar {
     }
 
     handleDrag(evt: MouseEvent | TouchEvent) {
-        if (evt instanceof TouchEvent && evt.touches.length <= 0) {
+        if (
+            window.TouchEvent && // hacky workaround for ff support
+            evt instanceof TouchEvent &&
+            evt.touches.length <= 0
+        ) {
             console.warn("No touch event found");
             return;
         }
