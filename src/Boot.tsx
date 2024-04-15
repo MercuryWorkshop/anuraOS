@@ -80,12 +80,12 @@ const updateClickoffChecker = (show: boolean) => {
 
 const taskbar = new Taskbar();
 let launcher: Launcher;
+let oobeview: OobeView;
 const quickSettings = new QuickSettings(
     clickoffChecker as HTMLDivElement,
     updateClickoffChecker,
 );
 const contextMenu = new ContextMenu();
-const oobeview = new OobeView();
 const alttab = new AltTabView();
 
 let anura: Anura;
@@ -117,6 +117,8 @@ window.addEventListener("load", async () => {
         clickoffChecker as HTMLDivElement,
         updateClickoffChecker,
     );
+
+    oobeview = new OobeView();
 
     if (anura.platform.type == "mobile" || anura.platform.type == "tablet") {
         bootsplash.remove();
