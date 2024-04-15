@@ -97,14 +97,13 @@ class WMWindow {
                     height: ${anura.platform.type == "mobile" ? "calc(100vh - 58px)" : wininfo.height};
                     ${anura.platform.type == "mobile" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
-                on:mouseover={() => {
+                on:pointerover={() => {
                     this.mouseover = true;
                 }}
-                on:mouseout={() => {
+                on:pointerout={() => {
                     this.mouseover = false;
                 }}
-                on:mousedown={this.focus.bind(this)}
-                on:touchstart={this.focus.bind(this)}
+                on:pointerdown={this.focus.bind(this)}
             >
                 {(this.resizable && (
                     <div class="resizers">
@@ -122,7 +121,7 @@ class WMWindow {
                     ""}
                 <div
                     class="title"
-                    on:mousedown={(evt: MouseEvent) => {
+                    on:pointerdown={(evt: PointerEvent) => {
                         deactivateFrames();
 
                         if (anura.platform.type !== "mobile") {
@@ -133,30 +132,7 @@ class WMWindow {
                             this.mouseTop = evt.clientY;
                         }
                     }}
-                    on:touchstart={(evt: TouchEvent) => {
-                        console.log("touchstart");
-                        deactivateFrames();
-
-                        if (anura.platform.type !== "mobile") {
-                            this.dragging = true;
-                            this.originalLeft = this.element.offsetLeft;
-                            this.originalTop = this.element.offsetTop;
-                            if (evt.touches.length > 0) {
-                                this.mouseLeft = evt.touches[0]!.clientX;
-                                this.mouseTop = evt.touches[0]!.clientY;
-                            }
-                        }
-                    }}
-                    on:mouseup={(evt: MouseEvent) => {
-                        reactivateFrames();
-
-                        if (this.dragging) {
-                            this.handleDrag(evt);
-                            this.dragging = false;
-                        }
-                    }}
-                    on:touchend={(evt: TouchEvent) => {
-                        console.log("touchend");
+                    on:pointerup={(evt: PointerEvent) => {
                         reactivateFrames();
 
                         if (this.dragging) {
@@ -165,24 +141,13 @@ class WMWindow {
                         }
                     }}
                     on:dblclick={() => {
-                        console.log("doubleclick");
-
                         this.maximize();
                     }}
-                    on:mousemove={(evt: MouseEvent) => {
+                    on:pointermove={(evt: PointerEvent) => {
                         // do the dragging during the mouse move
 
                         if (this.dragging) {
                             this.handleDrag(evt);
-                        }
-                    }}
-                    on:touchmove={(evt: TouchEvent) => {
-                        // do the dragging during the touch point move
-                        console.log("touchmove");
-                        if (this.dragging) {
-                            if (evt.touches.length > 0) {
-                                this.handleDrag(evt);
-                            }
                         }
                     }}
                 >
@@ -247,13 +212,7 @@ class WMWindow {
                 .replace("px", ""),
         );
 
-        document.addEventListener("mousemove", (evt) => {
-            if (this.dragging) {
-                this.handleDrag(evt);
-            }
-        });
-
-        document.addEventListener("touchmove", (evt) => {
+        document.addEventListener("pointermove", (evt: PointerEvent) => {
             if (this.dragging) {
                 this.handleDrag(evt);
             }
@@ -273,40 +232,7 @@ class WMWindow {
         });
 
         // finish the dragging when release the mouse button
-        document.addEventListener("mouseup", (evt) => {
-            reactivateFrames();
-
-            const snapPreview = document.getElementById("snapPreview");
-
-            if (snapPreview) {
-                snapPreview.style.opacity = "0";
-                setTimeout(() => {
-                    snapPreview.remove();
-                }, 200);
-            }
-
-            evt = evt || window.event;
-
-            if (this.dragging) {
-                this.handleDrag(evt);
-
-                if (this.clampWindows) {
-                    const forceX = this.dragForceX;
-                    const forceY = this.dragForceY;
-                    this.dragForceX = 0;
-                    this.dragForceY = 0;
-                    const snapDirection = this.getSnapDirection(forceX, forceY);
-                    if (snapDirection) {
-                        this.snap(snapDirection);
-                    }
-                }
-
-                this.dragging = false;
-            }
-        });
-
-        // finish the dragging when release the mouse button
-        document.addEventListener("touchend", (evt) => {
+        document.addEventListener("pointerup", (evt: PointerEvent) => {
             reactivateFrames();
 
             const snapPreview = document.getElementById("snapPreview");
@@ -354,87 +280,45 @@ class WMWindow {
         let sentResize = false;
         for (let i = 0; i < resizers.length; i++) {
             const currentResizer = resizers[i];
-            currentResizer.addEventListener("mousedown", (e: MouseEvent) => {
-                e.preventDefault();
-                original_width = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("width")
-                        .replace("px", ""),
-                );
-                original_height = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("height")
-                        .replace("px", ""),
-                );
-                deactivateFrames();
-                original_x = this.element.getBoundingClientRect().left;
-                original_y = this.element.getBoundingClientRect().top;
-                original_mouse_x = e.pageX;
-                original_mouse_y = e.pageY;
-                window.addEventListener("mousemove", resize);
+            currentResizer.addEventListener(
+                "pointerdown",
+                (e: PointerEvent) => {
+                    e.preventDefault();
+                    if (anura.platform.type == "mobile") return;
+                    original_width = parseFloat(
+                        getComputedStyle(this.element, null)
+                            .getPropertyValue("width")
+                            .replace("px", ""),
+                    );
+                    original_height = parseFloat(
+                        getComputedStyle(this.element, null)
+                            .getPropertyValue("height")
+                            .replace("px", ""),
+                    );
+                    deactivateFrames();
+                    original_x = this.element.getBoundingClientRect().left;
+                    original_y = this.element.getBoundingClientRect().top;
+                    original_mouse_x = e.pageX;
+                    original_mouse_y = e.pageY;
+                    window.addEventListener("pointermove", resize);
 
-                window.addEventListener("mouseup", () => {
-                    reactivateFrames();
-                    window.removeEventListener("mousemove", resize);
-                    if (!sentResize) {
-                        this.onresize(this.width, this.height);
-                        sentResize = true;
-                    }
-                });
-            });
+                    window.addEventListener("pointerup", () => {
+                        reactivateFrames();
+                        window.removeEventListener("pointermove", resize);
+                        if (!sentResize) {
+                            this.onresize(this.width, this.height);
+                            sentResize = true;
+                        }
+                    });
+                },
+            );
 
-            // TODO: Somehow refractor this
-            currentResizer.addEventListener("touchstart", (e: TouchEvent) => {
-                if (e.touches.length <= 0) {
-                    return;
-                }
-                console.log("touchstart");
-                e.preventDefault();
-                original_width = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("width")
-                        .replace("px", ""),
-                );
-                original_height = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("height")
-                        .replace("px", ""),
-                );
-                deactivateFrames();
-                original_x = this.element.getBoundingClientRect().left;
-                original_y = this.element.getBoundingClientRect().top;
-                original_mouse_x = e.touches[0]!.pageX;
-                original_mouse_y = e.touches[0]!.pageY;
-                window.addEventListener("touchmove", resize);
-
-                window.addEventListener("touchend", () => {
-                    console.log("touchend");
-                    reactivateFrames();
-                    window.removeEventListener("touchmove", resize);
-                    if (!sentResize) {
-                        this.onresize(this.width, this.height);
-                        sentResize = true;
-                    }
-                });
-            });
-
-            const resize = (e: MouseEvent | TouchEvent) => {
-                if (
-                    window.TouchEvent && // hacky workaround for ff support
-                    e instanceof TouchEvent &&
-                    e.touches.length <= 0
-                ) {
-                    console.warn("No touch event found");
-                    return;
-                }
-
+            const resize = (e: PointerEvent) => {
                 this.dragForceX = 0;
                 this.dragForceY = 0;
 
-                const pageX =
-                    e instanceof MouseEvent ? e.pageX : e.touches[0]!.pageX;
-                const pageY =
-                    e instanceof MouseEvent ? e.pageY : e.touches[0]!.pageY;
+                const pageX = e.pageX;
+                const pageY = e.pageY;
 
                 sentResize = false;
                 if (this.maximized) {
@@ -545,20 +429,9 @@ class WMWindow {
         setTimeout(() => this.element.classList.remove("opacity0"), 10);
     }
 
-    handleDrag(evt: MouseEvent | TouchEvent) {
-        if (
-            window.TouchEvent && // hacky workaround for ff support
-            evt instanceof TouchEvent &&
-            evt.touches.length <= 0
-        ) {
-            console.warn("No touch event found");
-            return;
-        }
-
-        const clientX =
-            evt instanceof MouseEvent ? evt.clientX : evt.touches[0]!.clientX;
-        const clientY =
-            evt instanceof MouseEvent ? evt.clientY : evt.touches[0]!.clientY;
+    handleDrag(evt: PointerEvent) {
+        const clientX = evt.clientX;
+        const clientY = evt.clientY;
 
         const offsetX = this.originalLeft + clientX! - this.mouseLeft;
         const offsetY = this.originalTop + clientY! - this.mouseTop;
@@ -1080,29 +953,14 @@ class WMSplitBar {
             on:mouseout={() => {
                 this.fadeOut();
             }}
-            on:mousedown={(evt: MouseEvent) => {
+            on:pointerdown={(evt: PointerEvent) => {
                 deactivateFrames();
 
                 this.dragging = true;
                 this.mouseLeft = evt.clientX;
                 this.originalLeft = this.element.offsetLeft;
             }}
-            on:touchstart={(evt: TouchEvent) => {
-                deactivateFrames();
-                if (evt.touches.length != 1) return;
-                this.dragging = true;
-                this.mouseLeft = evt.touches[0]!.clientX;
-                this.originalLeft = this.element.offsetLeft;
-            }}
-            on:mouseup={(evt: MouseEvent) => {
-                reactivateFrames();
-
-                if (this.dragging) {
-                    this.handleDrag(evt);
-                    this.dragging = false;
-                }
-            }}
-            on:touchend={(evt: TouchEvent) => {
+            on:pointerup={(evt: PointerEvent) => {
                 reactivateFrames();
 
                 if (this.dragging) {
@@ -1137,28 +995,17 @@ class WMSplitBar {
         setTimeout(() => {
             this.element.style.removeProperty("background-color");
         }, 10);
-        document.addEventListener("mousemove", (evt) => {
+        document.addEventListener("pointermove", (evt) => {
             if (this.dragging) {
                 this.handleDrag(evt);
             }
         });
     }
 
-    handleDrag(evt: MouseEvent | TouchEvent) {
-        if (
-            window.TouchEvent && // hacky workaround for ff support
-            evt instanceof TouchEvent &&
-            evt.touches.length <= 0
-        ) {
-            console.warn("No touch event found");
-            return;
-        }
-
-        const clientX =
-            evt instanceof MouseEvent ? evt.clientX : evt.touches[0]!.clientX;
+    handleDrag(evt: PointerEvent) {
         this.splitWindowsAround(
             // Add 4 to account for the center of the bar
-            this.originalLeft + clientX - this.mouseLeft + 4,
+            this.originalLeft + evt.clientX - this.mouseLeft + 4,
         );
     }
 
