@@ -583,7 +583,7 @@ if (input) {
 }
 ```
 
-# anura.platform
+## anura.platform
 
 > [!IMPORTANT]
 > The platform API is still in development and is subject to change at any time.
