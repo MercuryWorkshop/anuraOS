@@ -1,4 +1,9 @@
 #!/bin/bash
+if [ -d "icons" ]; then
+  echo "Icons already saved, remove icons folder to download again"
+  exit 0
+fi
+
 git clone https://github.com/PapirusDevelopmentTeam/papirus-icon-theme.git papirus
 mkdir icons
 icon_paths=$(jq -r '.files[] | "\(.source) \(.icon)"' icons.json)

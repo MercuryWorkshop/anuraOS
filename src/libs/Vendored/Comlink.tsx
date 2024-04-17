@@ -4,14 +4,16 @@ class Comlink extends Lib {
     package = "npm:comlink";
     name = "Comlink";
 
-    src = "/comlink/comlink.min.mjs";
+    src = "/libs/comlink/comlink.min.mjs";
 
     versions: { [key: string]: any } = {};
     latestVersion = "0.0.0";
 
     async getImport(version?: string): Promise<any> {
         if (this.latestVersion === "0.0.0") {
-            this.latestVersion = await (await fetch("/comlink/version")).json();
+            this.latestVersion = await (
+                await fetch("/libs/comlink/version")
+            ).json();
             this.versions[this.latestVersion] = await import(this.src);
         }
         if (!version) {

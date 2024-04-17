@@ -1,5 +1,7 @@
 class Networking {
     libcurl: any;
+    libcurl_src = "/libs/libcurl/libcurl.mjs";
+    libcurl_wasm = "/libs/libcurl/libcurl.wasm";
     external = {
         fetch: window.fetch, // Default until another thing is registered ig
     };
@@ -8,9 +10,9 @@ class Networking {
     TLSSocket: any;
     constructor(wisp_server: string) {
         //@ts-ignore
-        import("/libcurl.mjs").then((m) => {
+        import(this.libcurl_src).then((m) => {
             this.libcurl = m.libcurl;
-            this.libcurl.load_wasm("libcurl.wasm");
+            this.libcurl.load_wasm(this.libcurl_wasm);
         });
         document.addEventListener("libcurl_load", () => {
             this.libcurl.set_websocket(wisp_server);

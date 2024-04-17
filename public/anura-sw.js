@@ -15,7 +15,7 @@ if (navigator.userAgent.includes("Firefox")) {
 importScripts("/libs/filer/filer.min.js");
 
 // Importing mime
-importScripts("/mime/mime.iife.js");
+importScripts("/libs/mime/mime.iife.js");
 
 // self.fs = new Filer.FileSystem({
 //     name: "anura-mainContext",
@@ -71,18 +71,18 @@ async function currentFs() {
 
 self.Buffer = Filer.Buffer;
 
-importScripts("/comlink/comlink.min.umd.js");
+importScripts("/libs/comlink/comlink.min.umd.js");
 
-importScripts("/workbox/workbox-v7.0.0/workbox-sw.js");
+importScripts("/libs/workbox/workbox-v7.0.0/workbox-sw.js");
 workbox.setConfig({
     debug: false,
-    modulePathPrefix: "/workbox/workbox-v7.0.0",
+    modulePathPrefix: "/libs/workbox/workbox-v7.0.0",
 });
 
 workbox.core.skipWaiting();
 workbox.core.clientsClaim();
 
-importScripts("/idb-keyval.js");
+importScripts("/libs/idb-keyval/idb-keyval.js");
 
 var cacheenabled = false;
 idbKeyval.get("cacheenabled").then((result) => {

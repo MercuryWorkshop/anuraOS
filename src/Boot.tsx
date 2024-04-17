@@ -102,7 +102,7 @@ window.addEventListener("load", async () => {
 
     (window as any).swShared = swShared;
 
-    const comlinksrc = "/comlink/comlink.min.mjs";
+    const comlinksrc = "/libs/comlink/comlink.min.mjs";
     const comlink = await import(comlinksrc);
 
     async function initComlink() {
