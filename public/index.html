@@ -31,7 +31,7 @@
         />
         <link rel="icon" type="image/x-icon" href="/icon.png" />
 
-        <script type="text/javascript" src="dreamland/all.js"></script>
+        <script type="text/javascript" src="/libs/dreamland/all.js"></script>
         <!-- Store is replaced internally -->
         <!-- <script type="text/javascript" src="dreamland/store.js"></script> -->
         <script type="text/javascript" src="lib/api/Filesystem.js"></script>
@@ -39,7 +39,7 @@
         <script type="text/javascript" src="lib/api/LocalFS.js"></script>
         <script type="text/javascript" src="lib/api/Platform.js"></script>
         <script type="text/javascript" src="lib/libv86.js"></script>
-        <script src="assets/libs/filer.min.js" crossorigin></script>
+        <script src="libs/filer/filer.min.js" crossorigin></script>
 
         <script type="text/javascript" src="lib/libs/Lib.js"></script>
         <script type="text/javascript" src="lib/libs/ExternalLib.js"></script>
@@ -85,6 +85,11 @@
             type="text/javascript"
             src="lib/libs/NodePolyfills/NodePrelude.js"
         ></script>
+        <script
+            type="text/javascript"
+            src="lib/libs/Vendored/Comlink.js"
+        ></script>
+        <script type="text/javascript" src="lib/libs/Vendored/Mime.js"></script>
         <script type="text/javascript" src="lib/v86.js"></script>
         <script type="text/javascript" src="lib/api/WmApi.js"></script>
         <script type="text/javascript" src="lib/AliceWM.js"></script>
@@ -107,7 +112,7 @@
             src="lib/api/NotificationService.js"
         ></script>
         <script type="text/javascript" src="lib/AltTabView.js"></script>
-        <script type="text/javascript" src="lib/bare.js"></script>
+        <script type="text/javascript" src="libs/bare-mux/bare.cjs"></script>
         <script type="text/javascript" src="lib/Boot.js"></script>
         <script type="module" src="lib/bcc.js"></script>
 

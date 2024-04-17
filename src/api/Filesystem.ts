@@ -1163,9 +1163,12 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).readFile(path, callback);
     }
 
-    writeFile(path: string, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processPath(path).writeFile(path, ...rest);
+    writeFile(path: string, data: Uint8Array | string, ...rest: any[]) {
+        if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
+            data = Filer.Buffer.from(data);
+        }
+
+        this.processPath(path).writeFile(path, data, ...rest);
     }
 
     appendFile(
@@ -1173,6 +1176,10 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         data: Uint8Array,
         callback?: (err: Error | null) => void,
     ) {
+        if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
+            data = Filer.Buffer.from(data);
+        }
+
         this.processPath(path).appendFile(path, data, callback);
     }
 
@@ -1217,7 +1224,17 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
             path: string,
             data: Uint8Array,
             options: { encoding: string; mode: number; flag: string },
-        ) => this.processPath(path).promises.appendFile(path, data, options),
+        ) => {
+            if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
+                data = Filer.Buffer.from(data);
+            }
+
+            return this.processPath(path).promises.appendFile(
+                path,
+                data,
+                options,
+            );
+        },
         access: (path: string, mode?: number) =>
             this.processPath(path).promises.access(path, mode),
         chown: (path: string, uid: number, gid: number) =>
@@ -1271,6 +1288,12 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
             path: string,
             data: Uint8Array | string,
             options?: { encoding: string; mode: number; flag: string },
-        ) => this.processPath(path).promises.writeFile(path, data, options),
+        ) => {
+            if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
+                data = Filer.Buffer.from(data);
+            }
+
+            this.processPath(path).promises.writeFile(path, data, options);
+        },
     };
 }

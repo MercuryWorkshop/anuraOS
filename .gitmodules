@@ -1,6 +1,3 @@
-[submodule "nohost"]
-	path = nohost
-	url = https://github.com/MercuryWorkshop/nohost
 [submodule "v86"]
 	path = v86
 	url = https://github.com/MercuryWorkshop/v86

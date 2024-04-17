@@ -93,10 +93,36 @@ let anura: Anura;
 
 window.addEventListener("load", async () => {
     document.body.appendChild(bootsplash);
+    const swShared: any = {
+        test: true,
+    };
 
-    // Pass ?readwrite to allow readwrite access to the filesystem via filer.js
-    await navigator.serviceWorker.register("/anura-sw.js?readwrite");
+    (window as any).swShared = swShared;
+
+    const comlinksrc = "/libs/comlink/comlink.min.mjs";
+    const comlink = await import(comlinksrc);
+
+    async function initComlink() {
+        const { port1, port2 } = new MessageChannel();
+
+        const msg = {
+            anura_target: "anura.comlink.init",
+            value: port2,
+        };
+
+        comlink.expose(swShared, port1);
+
+        navigator.serviceWorker.controller!.postMessage(msg, [port2]);
+    }
+
+    if (navigator.serviceWorker.controller) {
+        await initComlink();
+    }
+
+    navigator.serviceWorker.addEventListener("controllerchange", initComlink);
+
     let conf, milestone, instancemilestone;
+    await navigator.serviceWorker.register("/anura-sw.js");
     try {
         conf = await (await fetch("/config.json")).json();
         milestone = await (await fetch("/MILESTONE")).text();
@@ -112,6 +138,27 @@ window.addEventListener("load", async () => {
     }
 
     anura = await Anura.new(conf);
+
+    swShared.anura = anura;
+    swShared.sh = new anura.fs.Shell();
+
+    if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            anura_target: "anura.nohost.set",
+        });
+    }
+
+    // Register built-in Node Polyfills
+    anura.registerLib(new NodeFS());
+    anura.registerLib(new NodePrelude());
+
+    // Register vendored NPM packages
+    anura.registerLib(new Comlink());
+    anura.registerLib(new Mime());
+
+    // console.log("comlink proxy", swProxy);
+    // console.log(await swProxy.test);
+    // console.log(await swProxy.testfn());
 
     launcher = new Launcher(
         clickoffChecker as HTMLDivElement,
@@ -317,9 +364,6 @@ document.addEventListener("anura-login-completed", async () => {
         anura.settings.get("wallpaper") ||
             "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
     );
-
-    anura.registerLib(new NodeFS());
-    anura.registerLib(new NodePrelude());
 
     for (const lib of anura.config.libs) {
         anura.registerExternalLib(lib);
