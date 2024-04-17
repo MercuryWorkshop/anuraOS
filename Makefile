@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/comlink build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libcurl.mjs build/lib/bare.js build/idb-keyval.js build/assets/matter.css build/dreamland 
+all: submodules build/bootstrap v86dirty v86 build/mime build/libs/filer build/comlink build/workbox bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libcurl.mjs build/lib/bare.js build/idb-keyval.js build/assets/matter.css build/dreamland 
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -36,11 +36,20 @@ build/bootstrap: package.json server/package.json
 	make hooks
 	>build/bootstrap
 
-build/nohost-sw.js:
-	cd nohost; npm i; npm run build; cp -r dist/* ../build/
-
 build/libcurl.mjs: build/bootstrap
 	cp node_modules/libcurl.js/libcurl.mjs build/; cp node_modules/libcurl.js/libcurl.wasm build/
+
+# TODO: Refactor all external dependencies to be in build/libs
+# Each dependency should have a similar structure to the following:
+#   build/libs/<libname>/<bundle>.min.js
+#   build/libs/<libname>/<bundle>.min.js.map
+#   build/libs/<libname>/version (contains version number as JSON string, e.g. "1.2.3")
+
+build/libs/filer: build/bootstrap
+	mkdir -p build/libs/filer
+	cp node_modules/filer/dist/filer.min.js build/libs/filer/filer.min.js
+	cp node_modules/filer/dist/filer.min.js.map build/libs/filer/filer.min.js.map
+	jq '.version' node_modules/filer/package.json > build/libs/filer/version
 
 build/comlink: build/bootstrap
 	mkdir -p build/comlink
@@ -50,6 +59,16 @@ build/comlink: build/bootstrap
 	cp node_modules/comlink/dist/umd/comlink.min.js.map build/comlink/comlink.min.umd.js.map
 	sed -i build/comlink/comlink.min.umd.js -e 's|//# sourceMappingURL=comlink.min.js.map|//# sourceMappingURL=comlink.min.umd.js.map|'
 	jq '.version' node_modules/comlink/package.json > build/comlink/version
+
+build/workbox: build/bootstrap
+	mkdir -p build/workbox
+	npx workbox-cli copyLibraries build/workbox/
+
+build/mime: build/bootstrap
+	mkdir -p build/mime
+	cp -r node_modules/mime/dist/* build/mime 
+	npx rollup -f iife build/mime/src/index.js -o build/mime/mime.iife.js -n mime --exports named
+	jq '.version' node_modules/mime/package.json > build/mime/version
 
 build/idb-keyval.js: build/bootstrap
 	cp node_modules/idb-keyval/dist/umd.js build/idb-keyval.js

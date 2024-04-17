@@ -1,4 +1,52 @@
-class LocalFS extends AFSProvider<any> {
+class LocalFSStats {
+    name: string;
+    size: number;
+    atime: Date;
+    mtime: Date;
+    ctime: Date;
+    atimeMs: number;
+    mtimeMs: number;
+    ctimeMs: number;
+    node: string;
+    nlinks: number;
+    mode: number;
+    type: "FILE" | "DIRECTORY";
+    uid: number;
+    gid: number;
+    dev: string;
+
+    isFile() {
+        return this.type === "FILE";
+    }
+
+    isDirectory() {
+        return this.type === "DIRECTORY";
+    }
+
+    isSymbolicLink() {
+        return false;
+    }
+
+    constructor(data: Partial<LocalFSStats>) {
+        this.name = data.name!;
+        this.size = data.size || 0;
+        this.atime = data.atime || new Date();
+        this.mtime = data.mtime || new Date();
+        this.ctime = data.ctime || new Date();
+        this.atimeMs = data.atimeMs || Date.now();
+        this.mtimeMs = data.mtimeMs || Date.now();
+        this.ctimeMs = data.ctimeMs || Date.now();
+        this.node = data.node || crypto.randomUUID();
+        this.nlinks = data.nlinks || 1;
+        this.mode = data.mode || 0o100777;
+        this.type = data.type || "FILE";
+        this.uid = data.uid || 0;
+        this.gid = data.gid || 0;
+        this.dev = data.dev || "localfs";
+    }
+}
+
+class LocalFS extends AFSProvider<LocalFSStats> {
     dirHandle: FileSystemDirectoryHandle;
     domain: string;
     name = "LocalFS";
@@ -16,17 +64,6 @@ class LocalFS extends AFSProvider<any> {
 
     relativizePath(path: string) {
         return path.replace(this.domain, "").replace(/^\/+/, "");
-    }
-
-    randomId() {
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-            /[xy]/g,
-            function (c) {
-                const r = (Math.random() * 16) | 0,
-                    v = c == "x" ? r : (r & 0x3) | 0x8;
-                return v.toString(16).toUpperCase();
-            },
-        );
     }
 
     async getChildDirHandle(path: string) {
@@ -298,29 +335,11 @@ class LocalFS extends AFSProvider<any> {
             } catch (e) {
                 try {
                     const handle = await this.getChildDirHandle(path);
-                    return {
-                        name:
-                            path === ""
-                                ? this.domain.split("/").pop()
-                                : handle.name,
-                        size: 0,
-                        atime: new Date(Date.now()),
-                        mtime: new Date(Date.now()),
-                        ctime: new Date(Date.now()),
-                        atimeMs: Date.now(),
-                        mtimeMs: Date.now(),
-                        ctimeMs: Date.now(),
-                        node: this.randomId(),
-                        nlinks: 1,
-                        mode: 16877,
+                    return new LocalFSStats({
+                        name: handle.name,
+                        mode: 0o40777,
                         type: "DIRECTORY",
-                        uid: 0,
-                        gid: 0,
-                        isFile: () => false,
-                        isDirectory: () => true,
-                        isSymbolicLink: () => false,
-                        dev: "localfs",
-                    };
+                    });
                 } catch (e) {
                     throw {
                         name: "ENOENT",
@@ -333,27 +352,10 @@ class LocalFS extends AFSProvider<any> {
                 }
             }
             const file = await handle.getFile();
-            return {
+            return new LocalFSStats({
                 name: file.name,
                 size: file.size,
-                // Best we can do for now is to use the last modified time for all times
-                atime: new Date(file.lastModified),
-                mtime: new Date(file.lastModified),
-                ctime: new Date(file.lastModified),
-                atimeMs: file.lastModified,
-                mtimeMs: file.lastModified,
-                ctimeMs: file.lastModified,
-                node: this.randomId(),
-                nlinks: 1,
-                mode: 33188,
-                type: "FILE",
-                uid: 0,
-                gid: 0,
-                isFile: () => true,
-                isDirectory: () => false,
-                isSymbolicLink: () => false,
-                dev: "localfs",
-            };
+            });
         },
         truncate: async (path: string, len: number) => {
             const data = await this.promises.readFile(path);
@@ -458,26 +460,10 @@ class LocalFS extends AFSProvider<any> {
 
         if (handle.kind === "file") {
             (handle as FileSystemFileHandle).getFile().then((file) => {
-                callback(null, {
-                    name: file.name,
-                    size: file.size,
-                    atime: new Date(file.lastModified),
-                    mtime: new Date(file.lastModified),
-                    ctime: new Date(file.lastModified),
-                    atimeMs: file.lastModified,
-                    mtimeMs: file.lastModified,
-                    ctimeMs: file.lastModified,
-                    node: this.randomId(),
-                    nlinks: 1,
-                    mode: 33188,
-                    type: "FILE",
-                    uid: 0,
-                    gid: 0,
-                    isFile: () => true,
-                    isDirectory: () => false,
-                    isSymbolicLink: () => false,
-                    dev: "localfs",
-                });
+                callback(
+                    null,
+                    new LocalFSStats({ name: file.name, size: file.size }),
+                );
             });
         } else {
             callback(
