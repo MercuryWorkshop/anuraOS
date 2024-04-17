@@ -124,9 +124,8 @@ window.addEventListener("load", async () => {
 
     navigator.serviceWorker.addEventListener("controllerchange", initComlink);
 
-    // Pass ?readwrite to allow readwrite access to the filesystem via filer.js
     let conf, milestone, instancemilestone;
-    await navigator.serviceWorker.register("/anura-sw.js?readwrite");
+    await navigator.serviceWorker.register("/anura-sw.js");
     try {
         conf = await (await fetch("/config.json")).json();
         milestone = await (await fetch("/MILESTONE")).text();
