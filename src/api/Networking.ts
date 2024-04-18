@@ -73,7 +73,9 @@ class Networking {
                                             "base64",
                                         );
 
-                                        const stringData = atob(buffer);
+                                        const stringData = new TextDecoder(
+                                            "utf-8",
+                                        ).decode(binaryData);
 
                                         const infoPortion =
                                             stringData.split("\r\n\r\n")[0];
@@ -81,13 +83,9 @@ class Networking {
                                         const data = binaryData.subarray(
                                             infoPortion!.length + 4,
                                         );
-                                        console.log("data: ");
-                                        console.log(data);
 
                                         const splitInfo =
                                             infoPortion?.split("\r\n");
-                                        console.log("Final Buffer: ");
-                                        console.log({ buf: [buffer] });
 
                                         const status = Number(
                                             splitInfo![0]!.split(" ")[1],
@@ -102,17 +100,11 @@ class Networking {
                                         }
 
                                         anura.x86!.closepty(await pty);
-                                        console.log("Closed, resolving");
-                                        const res = new Response(
-                                            Filer.Buffer.from(data).buffer,
-                                            {
-                                                status: status,
-                                                statusText: "OK",
-                                                headers: new Headers(
-                                                    raw_headers,
-                                                ),
-                                            },
-                                        );
+                                        const res = new Response(data, {
+                                            status: status,
+                                            statusText: "OK",
+                                            headers: new Headers(raw_headers),
+                                        });
                                         // @ts-expect-error
                                         res.raw_headers = raw_headers;
 
