@@ -54,6 +54,32 @@ class Networking {
             if (this.loopback.addressMap.has(port))
                 return this.loopback.call(port, requestObj);
             else {
+                if (anura.x86?.termready) {
+                    return await new Promise((resolve) => {
+                        let buffer = "";
+                        const pty = anura.x86!.openpty(
+                            `TERM=xterm curl http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} && printf '\\0'`,
+                            0,
+                            0,
+                            async (data) => {
+                                buffer += data;
+                                console.log("got data " + data);
+                                if (data.endsWith("\0")) {
+                                    anura.x86!.closepty(await pty);
+                                    console.log("Closed, resolving");
+                                    const res = new Response(buffer, {
+                                        status: 200,
+                                        statusText: "OK",
+                                        headers: { host: "localhost" },
+                                    });
+                                    // @ts-expect-error
+                                    res.raw_headers = [["host", "localhost"]];
+                                    resolve(res);
+                                }
+                            },
+                        );
+                    });
+                }
                 anura.notifications.add({
                     title: "Anura Networking Error",
                     description: "fetch requested to non binded localhost port",
