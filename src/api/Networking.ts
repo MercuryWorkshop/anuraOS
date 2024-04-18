@@ -39,7 +39,7 @@ class Networking {
     };
     fetch = async (url: any, methods: any) => {
         // these are any because they can be multiple things and I dont feel like typing them
-        let requestObj;
+        let requestObj: Request;
         if (url instanceof Request) {
             requestObj = url;
         } else {
@@ -57,23 +57,49 @@ class Networking {
                 if (anura.x86?.termready) {
                     return await new Promise((resolve) => {
                         let buffer = "";
+                        const endMarker = crypto.randomUUID();
                         const pty = anura.x86!.openpty(
-                            `TERM=xterm curl http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} && printf '\\0'`,
+                            `curl -s -i -X ${requestObj.method} http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} | cat && echo -n ${endMarker}`,
                             0,
                             0,
                             async (data) => {
                                 buffer += data;
-                                console.log("got data " + data);
-                                if (data.endsWith("\0")) {
+                                // console.log("got data " + data);
+                                if (buffer.endsWith(endMarker)) {
+                                    buffer = buffer.replace(endMarker, ""); // Get rid of endmarker from buffer
+
+                                    const infoPortion =
+                                        buffer.split("\r\r\n\r\r\n")[0]; // wtf? curl is delimiting headers by \r\r\n
+                                    const data = buffer.slice(
+                                        infoPortion!.length + 6,
+                                    );
+
+                                    const splitInfo =
+                                        infoPortion?.split("\r\r\n");
+                                    console.log("Final Buffer: ");
+                                    console.log({ buf: [buffer] });
+
+                                    const status = Number(
+                                        splitInfo![0]!.split(" ")[1],
+                                    );
+
+                                    const raw_headers: any[] = [];
+                                    splitInfo?.shift(); // remove the HTTP/1.1 <status>
+                                    for (const header of splitInfo!) {
+                                        raw_headers.push(header.split(": "));
+                                    }
+
                                     anura.x86!.closepty(await pty);
                                     console.log("Closed, resolving");
-                                    const res = new Response(buffer, {
-                                        status: 200,
+                                    const res = new Response(data, {
+                                        status: status,
                                         statusText: "OK",
-                                        headers: { host: "localhost" },
+                                        headers: new Headers(raw_headers),
                                     });
                                     // @ts-expect-error
-                                    res.raw_headers = [["host", "localhost"]];
+                                    res.raw_headers = raw_headers;
+
+                                    console.log(raw_headers);
                                     resolve(res);
                                 }
                             },
