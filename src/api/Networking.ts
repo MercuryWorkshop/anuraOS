@@ -63,55 +63,70 @@ class Networking {
                             0,
                             0,
                             async (data) => {
-                                buffer += data;
-                                // console.log("got data " + data);
-                                if (buffer.endsWith(endMarker)) {
-                                    buffer = buffer.replace(endMarker, ""); // Get rid of endmarker from buffer
-                                    const binaryData = Filer.Buffer.from(
-                                        buffer,
-                                        "base64",
-                                    );
+                                try {
+                                    buffer += data;
+                                    // console.log("got data " + data);
+                                    if (buffer.endsWith(endMarker)) {
+                                        buffer = buffer.replace(endMarker, ""); // Get rid of endmarker from buffer
+                                        const binaryData = Filer.Buffer.from(
+                                            buffer,
+                                            "base64",
+                                        );
 
-                                    const stringData = atob(buffer);
+                                        const stringData = atob(buffer);
 
-                                    const infoPortion =
-                                        stringData.split("\r\n\r\n")[0];
+                                        const infoPortion =
+                                            stringData.split("\r\n\r\n")[0];
 
-                                    const data = binaryData.subarray(
-                                        infoPortion!.length + 4,
-                                    );
-                                    console.log("data: ");
-                                    console.log(data);
+                                        const data = binaryData.subarray(
+                                            infoPortion!.length + 4,
+                                        );
+                                        console.log("data: ");
+                                        console.log(data);
 
-                                    const splitInfo =
-                                        infoPortion?.split("\r\n");
-                                    console.log("Final Buffer: ");
-                                    console.log({ buf: [buffer] });
+                                        const splitInfo =
+                                            infoPortion?.split("\r\n");
+                                        console.log("Final Buffer: ");
+                                        console.log({ buf: [buffer] });
 
-                                    const status = Number(
-                                        splitInfo![0]!.split(" ")[1],
-                                    );
+                                        const status = Number(
+                                            splitInfo![0]!.split(" ")[1],
+                                        );
 
-                                    const raw_headers: any[] = [];
-                                    splitInfo?.shift(); // remove the HTTP/1.1 <status>
-                                    for (const header of splitInfo!) {
-                                        raw_headers.push(header.split(": "));
+                                        const raw_headers: any[] = [];
+                                        splitInfo?.shift(); // remove the HTTP/1.1 <status>
+                                        for (const header of splitInfo!) {
+                                            raw_headers.push(
+                                                header.split(": "),
+                                            );
+                                        }
+
+                                        anura.x86!.closepty(await pty);
+                                        console.log("Closed, resolving");
+                                        const res = new Response(
+                                            Filer.Buffer.from(data).buffer,
+                                            {
+                                                status: status,
+                                                statusText: "OK",
+                                                headers: new Headers(
+                                                    raw_headers,
+                                                ),
+                                            },
+                                        );
+                                        // @ts-expect-error
+                                        res.raw_headers = raw_headers;
+
+                                        resolve(res);
                                     }
-
-                                    anura.x86!.closepty(await pty);
-                                    console.log("Closed, resolving");
-                                    const res = new Response(
-                                        Filer.Buffer.from(data).buffer,
-                                        {
-                                            status: status,
-                                            statusText: "OK",
-                                            headers: new Headers(raw_headers),
-                                        },
-                                    );
-                                    // @ts-expect-error
-                                    res.raw_headers = raw_headers;
-
-                                    resolve(res);
+                                } catch (e) {
+                                    // This should only really error if theres nothing in v86, so I'll give the user an error that might be wrong
+                                    anura.notifications.add({
+                                        title: "Anura Networking Error",
+                                        description:
+                                            "fetch requested to non binded localhost port",
+                                        timeout: 5000,
+                                    });
+                                    resolve(new Response(e));
                                 }
                             },
                         );
