@@ -21,6 +21,7 @@ class Anura {
     x86hdd: FakeFile;
     net: Networking;
     ui = new AnuraUI();
+    theme: Theme;
     dialog: Dialog;
 
     private constructor(

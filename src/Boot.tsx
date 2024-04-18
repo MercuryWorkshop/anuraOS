@@ -141,6 +141,7 @@ window.addEventListener("load", async () => {
     }
 
     anura = await Anura.new(conf);
+    anura.theme = Theme.new(anura.settings.get("theme"));
 
     swShared.anura = anura;
     swShared.sh = new anura.fs.Shell();
@@ -343,6 +344,9 @@ document.addEventListener("anura-login-completed", async () => {
 
     const wallpaper = new WallpaperSelector();
     anura.registerApp(wallpaper);
+
+    const themeEditor = new ThemeEditor();
+    anura.registerApp(themeEditor);
 
     const dialog = new Dialog();
     const dialogApp = await anura.registerApp(dialog);

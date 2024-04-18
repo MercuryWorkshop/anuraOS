@@ -43,6 +43,10 @@ class Settings {
             alert("figure this out later");
         }
 
+        if (!initial["theme"]) {
+            initial["theme"] = new Theme();
+        }
+
         try {
             const raw = await fs.promises.readFile("/anura_settings.json");
             // JSON.parse supports Uint8Array, but for some reason typescript doesn't know that???
@@ -60,8 +64,23 @@ class Settings {
     has(prop: string): boolean {
         return prop in this.cache;
     }
-    async set(prop: string, val: any) {
-        this.cache[prop] = val;
+    async set(prop: string, val: any, subprop?: string) {
+        if (subprop) {
+            this.cache[prop][subprop] = val;
+        } else {
+            this.cache[prop] = val;
+        }
+        await this.fs.promises.writeFile(
+            "/anura_settings.json",
+            JSON.stringify(this.cache),
+        );
+    }
+    async remove(prop: string, subprop?: string) {
+        if (subprop) {
+            delete this.cache[prop][subprop];
+        } else {
+            delete this.cache[prop];
+        }
         await this.fs.promises.writeFile(
             "/anura_settings.json",
             JSON.stringify(this.cache),
