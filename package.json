@@ -27,6 +27,7 @@
         "eslint-plugin-jsdoc": "^46.4.3",
         "express": "^4.18.2",
         "express-basic-auth": "^1.2.1",
+        "fflate": "^0.8.2",
         "filer": "^1.4.1",
         "fs-readdir-recursive": "^1.1.0",
         "idb-keyval": "^6.2.1",
@@ -41,7 +42,7 @@
     "devDependencies": {
         "@types/node": "^20.5.9",
         "@types/wicg-file-system-access": "^2023.10.4",
-        "dreamland": "^0.0.5",
+        "dreamland": "^0.0.10",
         "prettier": "3.2.4",
         "rollup": "^2.79.1",
         "workbox-cli": "^7.0.0"

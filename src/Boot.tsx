@@ -155,6 +155,7 @@ window.addEventListener("load", async () => {
     // Register vendored NPM packages
     anura.registerLib(new Comlink());
     anura.registerLib(new Mime());
+    anura.registerLib(new Fflate());
 
     // console.log("comlink proxy", swProxy);
     // console.log(await swProxy.test);
