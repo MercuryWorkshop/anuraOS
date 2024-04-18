@@ -59,7 +59,7 @@ class Networking {
                         let buffer = "";
                         const endMarker = crypto.randomUUID();
                         const pty = anura.x86!.openpty(
-                            `curl -s -i -X ${requestObj.method} http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} | cat && echo -n ${endMarker}`,
+                            `curl -o - -s -i -X ${requestObj.method} http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} | cat | base64 && echo -n ${endMarker}`,
                             0,
                             0,
                             async (data) => {
@@ -67,15 +67,24 @@ class Networking {
                                 // console.log("got data " + data);
                                 if (buffer.endsWith(endMarker)) {
                                     buffer = buffer.replace(endMarker, ""); // Get rid of endmarker from buffer
-
-                                    const infoPortion =
-                                        buffer.split("\r\r\n\r\r\n")[0]; // wtf? curl is delimiting headers by \r\r\n
-                                    const data = buffer.slice(
-                                        infoPortion!.length + 6,
+                                    const binaryData = Filer.Buffer.from(
+                                        buffer,
+                                        "base64",
                                     );
 
+                                    const stringData = atob(buffer);
+
+                                    const infoPortion =
+                                        stringData.split("\r\n\r\n")[0];
+
+                                    const data = binaryData.subarray(
+                                        infoPortion!.length + 4,
+                                    );
+                                    console.log("data: ");
+                                    console.log(data);
+
                                     const splitInfo =
-                                        infoPortion?.split("\r\r\n");
+                                        infoPortion?.split("\r\n");
                                     console.log("Final Buffer: ");
                                     console.log({ buf: [buffer] });
 
@@ -91,15 +100,17 @@ class Networking {
 
                                     anura.x86!.closepty(await pty);
                                     console.log("Closed, resolving");
-                                    const res = new Response(data, {
-                                        status: status,
-                                        statusText: "OK",
-                                        headers: new Headers(raw_headers),
-                                    });
+                                    const res = new Response(
+                                        Filer.Buffer.from(data).buffer,
+                                        {
+                                            status: status,
+                                            statusText: "OK",
+                                            headers: new Headers(raw_headers),
+                                        },
+                                    );
                                     // @ts-expect-error
                                     res.raw_headers = raw_headers;
 
-                                    console.log(raw_headers);
                                     resolve(res);
                                 }
                             },
