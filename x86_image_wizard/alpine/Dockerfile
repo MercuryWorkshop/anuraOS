@@ -3,7 +3,7 @@ FROM i386/alpine:edge
 RUN  apk add --update \
         alpine-base bash shadow curl \
         linux-lts linux-firmware-none linux-headers \
-        gcc make gcompat musl-dev libx11-dev \
+        gcc make gcompat musl-dev libx11-dev xinit \
         dhcpcd \
         htop vim nano \
     && \
