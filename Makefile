@@ -102,11 +102,11 @@ clean:
 rootfs-debian: FORCE
 	cd x86_image_wizard/debian; sh build-debian-bin.sh
 
-rootfs-arch: FORCE
-	cd x86_image_wizard/arch; sh build-arch-bin.sh
+# rootfs-arch: FORCE
+# 	cd x86_image_wizard/arch; sh build-arch-bin.sh
 
-rootfs-alpine: FORCE
-	cd x86_image_wizard/alpine; sh build-alpine-bin.sh
+# rootfs-alpine: FORCE
+# 	cd x86_image_wizard/alpine; sh build-alpine-bin.sh
 
 rootfs: FORCE
 	cd x86_image_wizard; sh x86_image_wizard.sh

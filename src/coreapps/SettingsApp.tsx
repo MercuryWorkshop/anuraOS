@@ -415,14 +415,10 @@ class SettingsApp extends App {
                                             this.state.x86_installing = true;
                                             const chosenRootFS =
                                                 await anura.dialog.prompt(
-                                                    'Enter the name of the rootfs you want to install ("alpine", "debian", "arch")',
+                                                    'Enter the name of the rootfs you want to install ("alpine")',
                                                 );
                                             console.log(chosenRootFS);
-                                            if (
-                                                chosenRootFS == "debian" ||
-                                                chosenRootFS == "arch" ||
-                                                chosenRootFS == "alpine"
-                                            ) {
+                                            if (chosenRootFS == "alpine") {
                                                 anura.settings.set(
                                                     "x86-image",
                                                     chosenRootFS,
@@ -455,7 +451,7 @@ class SettingsApp extends App {
                                                 }
                                             } else {
                                                 anura.dialog.alert(
-                                                    "Invalid rootfs name! Valid names are: alpine, debian, arch",
+                                                    "Invalid rootfs name! Valid names are: alpine",
                                                 );
                                             }
                                         }}

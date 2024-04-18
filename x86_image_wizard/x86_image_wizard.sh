@@ -21,9 +21,6 @@ build_arch() {
 display_menu() {
     echo "Choose a rootfs image to build:"
     echo "1. Alpine"
-    echo "2. Debian"
-    echo "3. Arch"
-    echo "4. All"
     echo "0. Exit"
 }
 
@@ -31,18 +28,6 @@ process_choice() {
     case "$1" in
         1)
             build_alpine
-            ;;
-        2)
-            build_debian
-            ;;
-        3)
-            build_arch
-            ;;
-        4)
-            echo "Building all rootfs images..."
-            build_alpine
-            build_debian
-            build_arch
             ;;
         0)
             echo "Exiting..."

@@ -137,36 +137,6 @@ class OobeView {
                     <br />
                     <button
                         on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("use-sw-cache", true);
-                            anura.settings.set("x86-image", "debian");
-                            anura.settings.set("applist", [
-                                ...anura.settings.get("applist"),
-                                "anura.term",
-                            ]);
-                            this.nextStep();
-                        }}
-                    >
-                        Debian Linux - 2.1GB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("use-sw-cache", true);
-                            anura.settings.set("x86-image", "arch");
-                            anura.settings.set("applist", [
-                                ...anura.settings.get("applist"),
-                                "anura.term",
-                            ]);
-                            this.nextStep();
-                        }}
-                    >
-                        Arch Linux - 2.1GB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
                             anura.settings.set("x86-disabled", true);
                             anura.settings.set("use-sw-cache", true);
                             anura.settings.set("applist", [
