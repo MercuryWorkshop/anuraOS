@@ -13,6 +13,7 @@ start() {
   modprobe ne2k-pci
   dhcpcd &
   eend $?
+  ip link set lo up
 }
 
 stop() {

@@ -141,6 +141,7 @@ class Taskbar {
                     class="showDialog"
                     on:click={(e: MouseEvent) => {
                         if (app.windows.length == 1) {
+                            app.windows[0]!.unminimize();
                             app.windows[0]!.focus();
                         } else {
                             this.showcontext(app, e);
