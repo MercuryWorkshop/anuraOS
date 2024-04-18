@@ -13,8 +13,10 @@ class Launcher {
 
     css = css`
         position: absolute;
-        width: min(70%, 35em);
-        height: min(60%, 30em);
+        width: ${anura.platform.type == "mobile"
+            ? "calc(min(100%, 65em) - 20px)"
+            : "min(70%, 35em)"};
+        height: min(30%, 20em);
         background-color: rgba(22, 22, 22, 0.9);
         border: 1px solid rgba(0, 0, 0, 1);
         box-shadow: inset 0 0 0 1px #3e3e3e;
@@ -119,7 +121,9 @@ class Launcher {
     activeCss = css`
         display: block;
         opacity: 1;
-        height: min(80%, 40em);
+        height: ${anura.platform.type == "mobile"
+            ? "min(50%, 25em)"
+            : "min(80%, 40em)"};
         z-index: 9999;
         transition: ${this.popupTransition};
         visibility: visible;

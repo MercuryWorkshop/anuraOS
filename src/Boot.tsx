@@ -79,16 +79,13 @@ const updateClickoffChecker = (show: boolean) => {
 };
 
 const taskbar = new Taskbar();
-const launcher = new Launcher(
-    clickoffChecker as HTMLDivElement,
-    updateClickoffChecker,
-);
+let launcher: Launcher;
+let oobeview: OobeView;
 const quickSettings = new QuickSettings(
     clickoffChecker as HTMLDivElement,
     updateClickoffChecker,
 );
 const contextMenu = new ContextMenu();
-const oobeview = new OobeView();
 const alttab = new AltTabView();
 
 let anura: Anura;
@@ -162,6 +159,20 @@ window.addEventListener("load", async () => {
     // console.log("comlink proxy", swProxy);
     // console.log(await swProxy.test);
     // console.log(await swProxy.testfn());
+
+    launcher = new Launcher(
+        clickoffChecker as HTMLDivElement,
+        updateClickoffChecker,
+    );
+
+    oobeview = new OobeView();
+
+    if (anura.platform.type == "mobile" || anura.platform.type == "tablet") {
+        bootsplash.remove();
+        document.body.appendChild(bootsplashMobile);
+    }
+
+    document.body.classList.add("platform-" + anura.platform.type);
 
     // TODO: Serialize state in a way that nested statefuls are preserved
     function $store<T>(
@@ -313,6 +324,7 @@ window.addEventListener("load", async () => {
     setTimeout(
         () => {
             bootsplash.remove();
+            bootsplashMobile.remove();
             anura.logger.debug("boot completed");
             document.dispatchEvent(new Event("anura-boot-completed"));
         },
