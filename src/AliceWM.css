@@ -91,9 +91,9 @@
 
 .aliceWMwin .title {
     display: flex;
-    background-color: var(--material-bg);
+    background-color: var(--theme-bg);
     font-weight: bold;
-    color: white;
+    color: var(--theme-fg);
     height: 24px;
     padding: 2px;
     align-items: center;
@@ -118,7 +118,7 @@
 
 .aliceWMwin .windowButton {
     background-color: transparent;
-    color: white;
+    color: var(--theme-fg);
     border: none;
     border-radius: 100%;
     margin: 2px;

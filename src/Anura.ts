@@ -21,7 +21,7 @@ class Anura {
     x86hdd: FakeFile;
     net: Networking;
     ui = new AnuraUI();
-    theme: Theme;
+    theme: Theme; // TODO: Move this into UI
     dialog: Dialog;
 
     private constructor(

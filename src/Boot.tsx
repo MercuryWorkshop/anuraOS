@@ -512,6 +512,8 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(taskbar.element);
     document.body.appendChild(alttab.element);
 
+    anura.theme.apply();
+
     (window as any).taskbar = taskbar;
 
     if (anura.settings.get("kiosk-mode")) {

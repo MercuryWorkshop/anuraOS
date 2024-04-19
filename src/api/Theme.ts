@@ -22,10 +22,10 @@ class Theme {
     constructor(
         foreground = "#FFFFFF",
         secondaryForeground = "#C1C1C1",
-        border = "#202124",
+        border = "#444444",
         background = "#202124",
         secondaryBackground = "#383838",
-        darkBackground = "#1A1A1C",
+        darkBackground = "#161616",
         accent = "#4285F4",
     ) {
         this.foreground = foreground;
@@ -42,7 +42,7 @@ class Theme {
         // backwards compat with matter
         document.body.style.setProperty("--material-bg", this.background);
         document.body.style.setProperty("--material-border", this.border);
-        document.body.style.setProperty("--matter-primary-rgb", this.accent);
+        document.body.style.setProperty("--matter-helper-theme", this.accent);
 
         document.body.style.setProperty("--theme-bg", this.background);
         document.body.style.setProperty("--theme-border", this.border);
@@ -57,5 +57,30 @@ class Theme {
         );
         document.body.style.setProperty("--theme-dark-bg", this.darkBackground);
         document.body.style.setProperty("--theme-accent", this.accent);
+
+        // special elements
+        if (document.querySelector("footer")) {
+            document.querySelector("footer")!.style.background =
+                anura.theme.darkBackground + "e6";
+        }
+
+        if (document.getElementById("launcher")) {
+            document.getElementById("launcher")!.style.background =
+                anura.theme.darkBackground + "e6";
+        }
+    }
+
+    css(): string {
+        return `
+:root {
+  --theme-bg: ${this.background};
+  --theme-border: ${this.border};
+  --theme-fg: ${this.foreground};
+  --theme-secondary-bg: ${this.secondaryBackground};
+  --theme-secondary-fg: ${this.secondaryForeground};
+  --theme-dark-bg: ${this.darkBackground};
+  --theme-accent: ${this.accent};
+}
+        `;
     }
 }

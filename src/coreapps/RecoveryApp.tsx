@@ -48,7 +48,7 @@ class RecoveryApp extends App {
         }
 
         /* .recovery-app-content button {
-            background: var(--material-bg);
+            background: #202124;
             color: white;
             border: none;
             padding: 0.5rem 1rem;
