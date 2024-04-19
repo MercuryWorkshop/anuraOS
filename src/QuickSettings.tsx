@@ -16,10 +16,12 @@ class QuickSettings {
             value: any;
         }>;
         date: string;
+        isFullscreen: boolean;
     }> = stateful({
         showQuickSettings: false,
         pinnedSettings: [],
         date: new Date().toLocaleString(),
+        isFullscreen: document.fullscreenElement !== null, // in case user has already entered fullscreen somehow
     });
 
     subscribed = false;
@@ -198,6 +200,24 @@ class QuickSettings {
                     >
                         <span class={["material-symbols-outlined"]}>
                             settings
+                        </span>
+                    </button>
+                    <button
+                        class={["matter-button-contained", "symbolButton"]}
+                        on:click={() => {
+                            if (!document.fullscreenElement) {
+                                document.documentElement.requestFullscreen();
+                                this.state.isFullscreen = true;
+                            } else if (document.exitFullscreen) {
+                                document.exitFullscreen();
+                                this.state.isFullscreen = false;
+                            }
+                        }}
+                    >
+                        <span class={["material-symbols-outlined"]}>
+                            {use(this.state.isFullscreen, (fullscreen) =>
+                                fullscreen ? "fullscreen_exit" : "fullscreen",
+                            )}
                         </span>
                     </button>
                 </div>
