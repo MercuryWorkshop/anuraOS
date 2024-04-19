@@ -124,6 +124,7 @@ body.platform-tablet .aliceWMwin .title {
 .aliceWMwin .windowButton {
     background-color: transparent;
     color: var(--theme-fg);
+    fill: var(--theme-fg);
     border: none;
     border-radius: 100%;
     margin: 2px;
@@ -148,11 +149,11 @@ body.platform-tablet .aliceWMwin .windowButton > span {
 }
 
 .aliceWMwin .windowButton:hover {
-    background-color: darkgray;
+    background-color: var(--theme-secondary-bg);
 }
 
 .aliceWMwin .windowButton:active {
-    background-color: gray;
+    background-color: color-mix(var(--theme-secondary-bg) var(--theme-bg) 50%);
 }
 
 .resize-corner {

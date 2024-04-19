@@ -45,7 +45,7 @@ class ExternalApp extends App {
 
             const iframe = document.createElement("iframe");
             // CSS injection here but it's no big deal
-            const bg = this.manifest.background || "#202124";
+            const bg = this.manifest.background || "var(--theme-bg)";
             iframe.setAttribute(
                 "style",
                 "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +

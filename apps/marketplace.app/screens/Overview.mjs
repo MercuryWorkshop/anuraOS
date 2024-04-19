@@ -42,7 +42,7 @@ export default function Overview() {
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #1a1a1c;
+            background-color: var(--theme-dark-bg);
             width: 100%;
             height: 150px;
         }
@@ -70,7 +70,7 @@ export default function Overview() {
             margin: 0;
             font-size: 35px;
             font-weight: bolder;
-            color: white;
+            color: var(--theme-fg);
             text-align: left;
         }
 
@@ -79,7 +79,7 @@ export default function Overview() {
             position: relative;
             font-size: 16px;
             text-align: left;
-            color: #aaaaaa;
+            color: var(--theme-secondary-fg);
             width: 100%;
         }
 
@@ -96,7 +96,7 @@ export default function Overview() {
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #1a1a1c;
+            background-color: var(--theme-dark-bg);
             width: 100%;
         }
 
@@ -121,9 +121,9 @@ export default function Overview() {
             text-align: left;
             width: 70%;
         }
-        
+
         .aboutDesc {
-            color: #aaaaaa;
+            color: var(--theme-secondary-fg);
         }
     `
 

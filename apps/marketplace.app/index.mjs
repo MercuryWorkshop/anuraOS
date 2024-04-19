@@ -11,7 +11,7 @@ const branding = anura.settings.get("marketplace-branding") || {
 
 window.saved = stateful({
     repos: Object.entries(
-        anura.settings.get("workstore-repos") || { 
+        anura.settings.get("workstore-repos") || {
             "Anura App Repository": "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
             "Anura Games": "https://anura.games/",
             "Kxtz's Emulators": "https://anura.kxtz.dev/emulators/",
@@ -65,11 +65,11 @@ window.marketplace = new Store(anura.net, {
 });
 
 const back = html`
-<button 
-    class=${["windowButton"]} 
+<button
+    class=${["windowButton"]}
     style=${{
-        width: "24px", 
-        height: "24px", 
+        width: "24px",
+        height: "24px",
         display: use(state.showBackButton)
     }}
     on:mousedown=${(evt) => {
@@ -85,7 +85,7 @@ const back = html`
                 break;
         }
     }}>
-    <span 
+    <span
         class=${["material-symbols-outlined"]}
         style=${{
             fontSize: "16px",
@@ -126,7 +126,7 @@ if (fullArgs[0] == "URI") {
         }
     }
     fullArgs = newArgs;
-} 
+}
 
 if (fullArgs.length > 1) {
     const [action, ...args] = fullArgs;
@@ -151,7 +151,7 @@ if (fullArgs.length > 1) {
                 state.currentRepo = [name, url, await marketplace.getRepo(url)];
                 state.currentItem = await state.currentRepo[2].getApp(args[1]);
                 state.currentItemType = "app";
-                state.currentScreen = "overview";   
+                state.currentScreen = "overview";
             }
             break;
         case "viewLib":
@@ -218,8 +218,8 @@ function App() {
             display: block;
             width: 100%;
             height: 28px;
-            background-color: rgba(32,33,36,0.8);
-            backdrop-filter: blur(8px);
+            background-color: var(--theme-bg);
+            /*backdrop-filter: blur(8px);*/
             border-bottom: #bdbdbd;
             top: 0;
             user-select: none;

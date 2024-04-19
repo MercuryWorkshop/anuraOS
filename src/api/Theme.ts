@@ -58,7 +58,8 @@ class Theme {
         document.body.style.setProperty("--theme-dark-bg", this.darkBackground);
         document.body.style.setProperty("--theme-accent", this.accent);
 
-        // special elements
+        // special elements (transparency)
+        // YES I KNOW IT'S JANK
         if (document.querySelector("footer")) {
             document.querySelector("footer")!.style.background =
                 anura.theme.darkBackground + "e6";
