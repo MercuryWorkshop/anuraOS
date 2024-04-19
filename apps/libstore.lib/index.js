@@ -1,10 +1,4 @@
-// This is a workaround for the fact that JSZip doesn't support ESM
-// There exists a fork of JSZip that does, but unfortunately performance is
-// significantly worse than the original
-import * as _ from "./jszip.js"
-let JSZip = window.JSZip;
-// Delete the global JSZip object to prevent pollution
-delete window.JSZip;
+const fflate = await anura.import("npm:fflate")
 
 const fs = Filer.fs;
 const Buffer = Filer.Buffer;
@@ -197,9 +191,10 @@ export class StoreRepo {
             }
         }
 
-        const zipFile = await (await this.client.fetch(encodeURI(app.baseUrl + app.data))).blob();
-        let zip = await JSZip.loadAsync(zipFile);
+        const zipFile = new Uint8Array(await (await this.client.fetch(encodeURI(app.baseUrl + app.data))).arrayBuffer())
+        let zip = fflate.unzipSync(zipFile);
         console.log(zip);
+        
 
         const path = `${this.directories["apps"]}/${appName}.app`;
 
@@ -216,14 +211,14 @@ export class StoreRepo {
         }
 
         try {
-            for (const [_, zipEntry] of Object.entries(
-                zip.files,
+            for (const [relativePath, content] of Object.entries(
+                zip,
             )) {
-                if (zipEntry.dir) {
-                    fs.mkdir(`${path}/${zipEntry.name}`);
+                if (relativePath.endsWith("/")) {
+                    fs.mkdir(`${path}/${relativePath}`);
                 } else {
-                    if (zipEntry.name == "manifest.json") {
-                        let manifest = await zipEntry.async("string");
+                    if (relativePath == "manifest.json") {
+                        let manifest = new TextDecoder().decode(content)
                         manifest = JSON.parse(manifest);
                         manifest.marketplace = {};
                         if (app.version) {
@@ -234,15 +229,15 @@ export class StoreRepo {
                             manifest.marketplace.dependencies = app.dependencies
                         }
                         fs.writeFile(
-                            `${path}/${zipEntry.name}`,
+                            `${path}/${relativePath}`,
                             JSON.stringify(manifest),
                         );
                         continue;
                     }
                     fs.writeFile(
-                        `${path}/${zipEntry.name}`,
+                        `${path}/${relativePath}`,
                         await Buffer.from(
-                            await zipEntry.async("arraybuffer"),
+                            content,
                         ),
                     );
                 }
@@ -262,8 +257,8 @@ export class StoreRepo {
             throw new Error("Lib not found");
         }
         this.hooks.onDownloadStart(lib.name);
-        const zipFile = await (await this.client.fetch(lib.baseUrl + lib.data)).blob();
-        let zip = await JSZip.loadAsync(zipFile);
+        const zipFile = new Uint8Array(await (await this.client.fetch(lib.baseUrl + lib.data)).arrayBuffer());
+        let zip = fflate.unzipSync(zipFile);
         console.log(zip);
 
         const path = `${this.directories["libs"]}/${libName}.lib`;
@@ -275,14 +270,14 @@ export class StoreRepo {
         );
 
         try {
-            for (const [_, zipEntry] of Object.entries(
-                zip.files,
+            for (const [relativePath, content] of Object.entries(
+                zip,
             )) {
-                if (zipEntry.dir) {
-                    fs.mkdir(`${path}/${zipEntry.name}`);
+                if (relativePath.endsWith("/")) {
+                    fs.mkdir(`${path}/${relativePath}`);
                 } else {
-                    if (zipEntry.name == "manifest.json") {
-                        let manifest = await zipEntry.async("string");
+                    if (relativePath == "manifest.json") {
+                        let manifest = new TextDecoder().decode(content);
                         manifest = JSON.parse(manifest);
                         manifest.marketplace = {};
                         if (lib.version) {
@@ -293,15 +288,15 @@ export class StoreRepo {
                             manifest.marketplace.dependencies = lib.dependencies
                         }
                         fs.writeFile(
-                            `${path}/${zipEntry.name}`,
+                            `${path}/${relativePath}`,
                             JSON.stringify(manifest),
                         );
                         continue;
                     }
                     fs.writeFile(
-                        `${path}/${zipEntry.name}`,
+                        `${path}/${relativePath}`,
                         await Buffer.from(
-                            await zipEntry.async("arraybuffer"),
+                            content,
                         ),
                     );
                 }
@@ -422,8 +417,8 @@ export class StoreRepoLegacy {
             }
         }
 
-        const zipFile = await (await this.client.fetch(encodeURI(this.baseUrl + app.data))).blob();
-        let zip = await JSZip.loadAsync(zipFile);
+        const zipFile = new Uint8Array(await (await this.client.fetch(encodeURI(this.baseUrl + app.data))).arrayBuffer());
+        let zip = fflate.unzipSync(zipFile);
         console.log(zip);
 
         const path = `${this.directories["apps"]}/${appName}.app`;
@@ -437,21 +432,21 @@ export class StoreRepoLegacy {
         let postInstallScript;
 
         try {
-            for (const [_, zipEntry] of Object.entries(
-                zip.files,
+            for (const [relativePath, content] of Object.entries(
+                zip,
             )) {
-                if (zipEntry.dir) {
-                    fs.mkdir(`${path}/${zipEntry.name}`);
+                if (relativePath.endsWith("/")) {
+                    fs.mkdir(`${path}/${relativePath}`);
                 } else {
-                    if (zipEntry.name == "post_install.js") {
-                        let script = await zipEntry.async("string");
+                    if (relativePath == "post_install.js") {
+                        let script = new TextDecoder().decode(content);
                         postInstallScript = script;
                         continue;
                     }
                     fs.writeFile(
-                        `${path}/${zipEntry.name}`,
+                        `${path}/${relativePath}`,
                         await Buffer.from(
-                            await zipEntry.async("arraybuffer"),
+                            content,
                         ),
                     );
                 }
@@ -471,7 +466,7 @@ export class StoreRepoLegacy {
             throw new Error("Lib not found");
         }
         this.hooks.onDownloadStart(libName);
-        const zipFile = await (await this.client.fetch(encodeURI(this.baseUrl + lib.data))).blob();
+        const zipFile = new Uint8Array(await (await this.client.fetch(encodeURI(this.baseUrl + app.data))).arrayBuffer());
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
@@ -484,16 +479,16 @@ export class StoreRepoLegacy {
         );
 
         try {
-            for (const [_, zipEntry] of Object.entries(
-                zip.files,
+            for (const [relativePath, content] of Object.entries(
+                zip,
             )) {
-                if (zipEntry.dir) {
-                    fs.mkdir(`${path}/${zipEntry.name}`);
+                if (relativePath.endsWith("/")) {
+                    fs.mkdir(`${path}/${relativePath}`);
                 } else {
                     fs.writeFile(
-                        `${path}/${zipEntry.name}`,
+                        `${path}/${relativePath}`,
                         await Buffer.from(
-                            await zipEntry.async("arraybuffer"),
+                            content,
                         ),
                     );
                 }
@@ -507,5 +502,5 @@ export class StoreRepoLegacy {
     }
 
 }
-// Re-export JSZip for convenience
-export { JSZip };
+// Re-export fflate for convenience
+export { fflate };

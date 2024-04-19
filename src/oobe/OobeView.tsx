@@ -19,8 +19,8 @@ class OobeView {
 
         #content {
             padding: 79.6px 40px 23.8px 40px;
-            width: 1040px;
-            height: 680px;
+            width: ${anura.platform.type == "mobile" ? "100vw;" : "1040px;"}
+            height: ${anura.platform.type == "mobile" ? "100vh;" : "680px;"}
             box-sizing: border-box;
         }
 
@@ -90,7 +90,9 @@ class OobeView {
             grid-column: 2 / span 1;
             grid-row: 1 / span 2;
             margin-left: auto;
+            display: ${anura.platform.type == "mobile" ? "none;" : "inherit;"}
         }
+
     `;
 
     steps = [
@@ -133,36 +135,6 @@ class OobeView {
                         }}
                     >
                         Alpine Linux - 1GB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("use-sw-cache", true);
-                            anura.settings.set("x86-image", "debian");
-                            anura.settings.set("applist", [
-                                ...anura.settings.get("applist"),
-                                "anura.term",
-                            ]);
-                            this.nextStep();
-                        }}
-                    >
-                        Debian Linux - 2.1GB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("use-sw-cache", true);
-                            anura.settings.set("x86-image", "arch");
-                            anura.settings.set("applist", [
-                                ...anura.settings.get("applist"),
-                                "anura.term",
-                            ]);
-                            this.nextStep();
-                        }}
-                    >
-                        Arch Linux - 2.1GB download
                     </button>
                     <br />
                     <button

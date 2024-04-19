@@ -1,6 +1,0 @@
-! $XConsortium: Xmessage.ad,v 1.3 94/07/26 20:23:17 gildea Exp $
-*baseTranslations: 		#override :<Key>Return: default-exit()
-*message.scrollVertical:	Always
-*message.scrollHorizontal:	Never
-*Command.shapeStyle:		oval
-*Command.highlightThickness:	1

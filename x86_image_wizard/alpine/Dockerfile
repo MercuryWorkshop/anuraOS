@@ -3,7 +3,7 @@ FROM i386/alpine:edge
 RUN  apk add --update \
         alpine-base bash shadow curl \
         linux-lts linux-firmware-none linux-headers \
-        gcc make gcompat musl-dev libx11-dev \
+        gcc make gcompat musl-dev libx11-dev xinit \
         dhcpcd \
         htop vim nano \
     && \
@@ -22,13 +22,12 @@ COPY X11/* /etc/X11/
 
 COPY xfrog.sh /bin/xfrog
 COPY xsetrandr.sh /bin/xsetrandr
-COPY ptynet.sh /bin/ptynet
 
 
 COPY anurad.c /etc/
 COPY anuramouse/* /etc/anuramouse/
 
-RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/ptynet
+RUN chmod u+x /bin/xfrog /bin/xsetrandr
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil 
 RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anurad /etc/init.d/

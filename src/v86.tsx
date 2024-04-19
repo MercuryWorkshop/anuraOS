@@ -271,8 +271,6 @@ class V86Backend {
 
     virt_hda: FakeFile;
 
-    barepty: number;
-
     xpty: number;
 
     runpty: number;
@@ -386,29 +384,6 @@ class V86Backend {
         });
         this.termready = true;
 
-        let buffer = "";
-
-        this.barepty = await this.openpty("/bin/ptynet", 1, 1, (data) => {
-            console.log("BARE: " + data);
-            data = data.replaceAll("\r\n", "\n");
-
-            const split = data.split("\x03");
-            if (split[1]) {
-                buffer += split[0];
-                console.log("recieved" + buffer);
-                navigator.serviceWorker.controller?.postMessage({
-                    anura_target: "anura.x86.proxy",
-                    id: this.netids.shift(),
-                    value: {
-                        body: buffer,
-                        status: 200,
-                    },
-                });
-                buffer = split[1];
-            } else {
-                buffer += split[0];
-            }
-        });
         // await sleep(1000); // to be safe
 
         this.xpty = await this.openpty(
@@ -438,14 +413,6 @@ class V86Backend {
         // await sleep(200);
         anura.apps["anura.term"].open();
 
-        navigator.serviceWorker.addEventListener("message", async (event) => {
-            if (event.data?.anura_target == "anura.x86.proxy") {
-                const id = event.data.id;
-                console.log(event);
-                this.netids.push(id);
-                this.writepty(this.barepty, event.data.value.url + "\n");
-            }
-        });
         // WISP networking
         this.v86Wisp = new WebSocket(anura.wsproxyURL);
         this.v86Wisp.binaryType = "arraybuffer";

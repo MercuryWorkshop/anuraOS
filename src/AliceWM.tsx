@@ -93,16 +93,17 @@ class WMWindow {
             <div
                 class="aliceWMwin opacity0"
                 style={`
-                    width: ${wininfo.width};
-                    height: ${wininfo.height};
+                    width: ${anura.platform.type == "mobile" ? "calc(100vw - 10px)" : wininfo.width};
+                    height: ${anura.platform.type == "mobile" ? "calc(100vh - 58px)" : wininfo.height};
+                    ${anura.platform.type == "mobile" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
-                on:mouseover={() => {
+                on:pointerover={() => {
                     this.mouseover = true;
                 }}
-                on:mouseout={() => {
+                on:pointerout={() => {
                     this.mouseover = false;
                 }}
-                on:mousedown={this.focus.bind(this)}
+                on:pointerdown={this.focus.bind(this)}
             >
                 {(this.resizable && (
                     <div class="resizers">
@@ -120,16 +121,18 @@ class WMWindow {
                     ""}
                 <div
                     class="title"
-                    on:mousedown={(evt: MouseEvent) => {
+                    on:pointerdown={(evt: PointerEvent) => {
                         deactivateFrames();
 
-                        this.dragging = true;
-                        this.originalLeft = this.element.offsetLeft;
-                        this.originalTop = this.element.offsetTop;
-                        this.mouseLeft = evt.clientX;
-                        this.mouseTop = evt.clientY;
+                        if (anura.platform.type !== "mobile") {
+                            this.dragging = true;
+                            this.originalLeft = this.element.offsetLeft;
+                            this.originalTop = this.element.offsetTop;
+                            this.mouseLeft = evt.clientX;
+                            this.mouseTop = evt.clientY;
+                        }
                     }}
-                    on:mouseup={(evt: MouseEvent) => {
+                    on:pointerup={(evt: PointerEvent) => {
                         reactivateFrames();
 
                         if (this.dragging) {
@@ -138,11 +141,9 @@ class WMWindow {
                         }
                     }}
                     on:dblclick={() => {
-                        console.log("doubleclick");
-
                         this.maximize();
                     }}
-                    on:mousemove={(evt: MouseEvent) => {
+                    on:pointermove={(evt: PointerEvent) => {
                         // do the dragging during the mouse move
 
                         if (this.dragging) {
@@ -153,7 +154,7 @@ class WMWindow {
                     <div class="titleContent">{use(this.state.title)}</div>
 
                     <button
-                        class="windowButton"
+                        class="windowButton minimize"
                         on:click={() => {
                             this.minimizing = true;
                             this.minimize();
@@ -165,9 +166,8 @@ class WMWindow {
                             class="windowButtonIcon"
                         />
                     </button>
-
                     <button
-                        class="windowButton"
+                        class="windowButton maximize"
                         on:click={this.maximize.bind(this)}
                     >
                         {
@@ -181,7 +181,7 @@ class WMWindow {
                         }
                     </button>
                     <button
-                        class="windowButton"
+                        class="windowButton close"
                         on:click={this.close.bind(this)}
                     >
                         <img
@@ -212,7 +212,7 @@ class WMWindow {
                 .replace("px", ""),
         );
 
-        document.addEventListener("mousemove", (evt) => {
+        document.addEventListener("pointermove", (evt: PointerEvent) => {
             if (this.dragging) {
                 this.handleDrag(evt);
             }
@@ -232,7 +232,7 @@ class WMWindow {
         });
 
         // finish the dragging when release the mouse button
-        document.addEventListener("mouseup", (evt) => {
+        document.addEventListener("pointerup", (evt: PointerEvent) => {
             reactivateFrames();
 
             const snapPreview = document.getElementById("snapPreview");
@@ -280,38 +280,45 @@ class WMWindow {
         let sentResize = false;
         for (let i = 0; i < resizers.length; i++) {
             const currentResizer = resizers[i];
-            currentResizer.addEventListener("mousedown", (e: MouseEvent) => {
-                e.preventDefault();
-                original_width = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("width")
-                        .replace("px", ""),
-                );
-                original_height = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("height")
-                        .replace("px", ""),
-                );
-                deactivateFrames();
-                original_x = this.element.getBoundingClientRect().left;
-                original_y = this.element.getBoundingClientRect().top;
-                original_mouse_x = e.pageX;
-                original_mouse_y = e.pageY;
-                window.addEventListener("mousemove", resize);
+            currentResizer.addEventListener(
+                "pointerdown",
+                (e: PointerEvent) => {
+                    e.preventDefault();
+                    if (anura.platform.type == "mobile") return;
+                    original_width = parseFloat(
+                        getComputedStyle(this.element, null)
+                            .getPropertyValue("width")
+                            .replace("px", ""),
+                    );
+                    original_height = parseFloat(
+                        getComputedStyle(this.element, null)
+                            .getPropertyValue("height")
+                            .replace("px", ""),
+                    );
+                    deactivateFrames();
+                    original_x = this.element.getBoundingClientRect().left;
+                    original_y = this.element.getBoundingClientRect().top;
+                    original_mouse_x = e.pageX;
+                    original_mouse_y = e.pageY;
+                    window.addEventListener("pointermove", resize);
 
-                window.addEventListener("mouseup", () => {
-                    reactivateFrames();
-                    window.removeEventListener("mousemove", resize);
-                    if (!sentResize) {
-                        this.onresize(this.width, this.height);
-                        sentResize = true;
-                    }
-                });
-            });
+                    window.addEventListener("pointerup", () => {
+                        reactivateFrames();
+                        window.removeEventListener("pointermove", resize);
+                        if (!sentResize) {
+                            this.onresize(this.width, this.height);
+                            sentResize = true;
+                        }
+                    });
+                },
+            );
 
-            const resize = (e: MouseEvent) => {
+            const resize = (e: PointerEvent) => {
                 this.dragForceX = 0;
                 this.dragForceY = 0;
+
+                const pageX = e.pageX;
+                const pageY = e.pageY;
 
                 sentResize = false;
                 if (this.maximized) {
@@ -335,9 +342,8 @@ class WMWindow {
                     }
                 }
                 if (currentResizer.classList.contains("bottom-right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
+                    const width = original_width + (pageX - original_mouse_x);
+                    const height = original_height + (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
@@ -345,66 +351,61 @@ class WMWindow {
                         this.element.style.height = height + "px";
                     }
                 } else if (currentResizer.classList.contains("bottom-left")) {
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
-                    const width = original_width - (e.pageX - original_mouse_x);
+                    const height = original_height + (pageY - original_mouse_y);
+                    const width = original_width - (pageX - original_mouse_x);
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                     }
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                 } else if (currentResizer.classList.contains("top-right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
-                    const height =
-                        original_height - (e.pageY - original_mouse_y);
+                    const width = original_width + (pageX - original_mouse_x);
+                    const height = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                         this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("top-left")) {
-                    const width = original_width - (e.pageX - original_mouse_x);
-                    const height =
-                        original_height - (e.pageY - original_mouse_y);
+                    const width = original_width - (pageX - original_mouse_x);
+                    const height = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                         this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("left")) {
-                    const width = original_width - (e.pageX - original_mouse_x);
+                    const width = original_width - (pageX - original_mouse_x);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                 } else if (currentResizer.classList.contains("right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
+                    const width = original_width + (pageX - original_mouse_x);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
                 } else if (currentResizer.classList.contains("top")) {
-                    const width =
-                        original_height - (e.pageY - original_mouse_y);
+                    const width = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.height = width + "px";
                         this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("bottom")) {
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
+                    const height = original_height + (pageY - original_mouse_y);
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                     }
@@ -428,9 +429,12 @@ class WMWindow {
         setTimeout(() => this.element.classList.remove("opacity0"), 10);
     }
 
-    handleDrag(evt: MouseEvent) {
-        const offsetX = this.originalLeft + evt.clientX! - this.mouseLeft;
-        const offsetY = this.originalTop + evt.clientY! - this.mouseTop;
+    handleDrag(evt: PointerEvent) {
+        const clientX = evt.clientX;
+        const clientY = evt.clientY;
+
+        const offsetX = this.originalLeft + clientX! - this.mouseLeft;
+        const offsetY = this.originalTop + clientY! - this.mouseTop;
 
         if (this.clampWindows) {
             const newOffsetX = Math.min(
@@ -489,8 +493,8 @@ class WMWindow {
             this.unmaximize();
             this.originalLeft = this.element.offsetLeft;
             this.originalTop = this.element.offsetTop;
-            this.mouseLeft = evt.clientX;
-            this.mouseTop = evt.clientY;
+            this.mouseLeft = clientX;
+            this.mouseTop = clientY;
         }
     }
 
@@ -949,14 +953,14 @@ class WMSplitBar {
             on:mouseout={() => {
                 this.fadeOut();
             }}
-            on:mousedown={(evt: MouseEvent) => {
+            on:pointerdown={(evt: PointerEvent) => {
                 deactivateFrames();
 
                 this.dragging = true;
                 this.mouseLeft = evt.clientX;
                 this.originalLeft = this.element.offsetLeft;
             }}
-            on:mouseup={(evt: MouseEvent) => {
+            on:pointerup={(evt: PointerEvent) => {
                 reactivateFrames();
 
                 if (this.dragging) {
@@ -991,14 +995,14 @@ class WMSplitBar {
         setTimeout(() => {
             this.element.style.removeProperty("background-color");
         }, 10);
-        document.addEventListener("mousemove", (evt) => {
+        document.addEventListener("pointermove", (evt) => {
             if (this.dragging) {
                 this.handleDrag(evt);
             }
         });
     }
 
-    handleDrag(evt: MouseEvent) {
+    handleDrag(evt: PointerEvent) {
         this.splitWindowsAround(
             // Add 4 to account for the center of the bar
             this.originalLeft + evt.clientX - this.mouseLeft + 4,
@@ -1063,7 +1067,9 @@ let AliceWM = {
         const win = new WMWindow(wininfo);
         document.body.appendChild(win.element);
         win.focus();
-        center(win.element);
+        if (anura.platform.type != "mobile") {
+            center(win.element);
+        }
         return win;
     },
 };

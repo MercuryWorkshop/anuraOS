@@ -23,7 +23,6 @@ rm -rf $OUT_ROOTFS_BIN || :
 cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
-cp ../ptynet.sh .
 cp -r ../anuramouse .
 
 mkdir -p "$IMAGES"
@@ -51,7 +50,6 @@ rm -rf "$OUT_ROOTFS_MNT"
 rm anurad.c
 rm xfrog.sh
 rm xsetrandr.sh
-rm ptynet.sh
 rm -rf anuramouse
 
 echo "done! created"

@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/mime build/libs/filer build/libs/comlink build/libs/workbox bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libs/libcurl build/libs/bare-mux build/libs/idb-keyval build/assets/matter.css build/libs/dreamland 
+all: submodules build/bootstrap v86dirty v86 build/libs/mime build/libs/filer build/libs/comlink build/libs/workbox build/libs/fflate bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libs/libcurl build/libs/bare-mux build/libs/idb-keyval build/assets/matter.css build/libs/dreamland 
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -84,6 +84,11 @@ build/libs/bare-mux: build/bootstrap
 	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs.map build/libs/bare-mux/bare.cjs.map
 	jq '.version' node_modules/@mercuryworkshop/bare-mux/package.json > build/libs/bare-mux/version
 
+build/libs/fflate: build/bootstrap
+	mkdir -p build/libs/fflate
+	cp node_modules/fflate/esm/browser.js build/libs/fflate/browser.js
+	jq '.version' node_modules/fflate/package.json > build/libs/fflate/version
+
 build/libs/dreamland: dreamlandjs/*
 	mkdir -p build/libs/dreamland
 	cd dreamlandjs; npm i --no-package-lock; npm run build
@@ -99,11 +104,11 @@ clean:
 	rm -rf build
 	cd v86; true || make clean
 
-rootfs-debian: FORCE
-	cd x86_image_wizard/debian; sh build-debian-bin.sh
+# rootfs-debian: FORCE
+#	cd x86_image_wizard/debian; sh build-debian-bin.sh
 
-rootfs-arch: FORCE
-	cd x86_image_wizard/arch; sh build-arch-bin.sh
+# rootfs-arch: FORCE
+# 	cd x86_image_wizard/arch; sh build-arch-bin.sh
 
 rootfs-alpine: FORCE
 	cd x86_image_wizard/alpine; sh build-alpine-bin.sh

@@ -100,6 +100,11 @@
     z-index: 1;
 }
 
+body.platform-mobile .aliceWMwin .title,
+body.platform-tablet .aliceWMwin .title {
+    height: 32px;
+}
+
 .aliceWMwin .titleContent {
     flex: 1;
     font-size: 13px;
@@ -128,8 +133,18 @@
     z-index: 2;
 }
 
+body.platform-mobile .aliceWMwin .windowButton.maximize {
+    display: none;
+}
+
 .aliceWMwin .windowButton > span {
     font-size: 16px;
+}
+
+body.platform-mobile .aliceWMwin .windowButton > span,
+body.platform-tablet .aliceWMwin .windowButton > span {
+    font-size: 18px;
+    padding: 2px;
 }
 
 .aliceWMwin .windowButton:hover {

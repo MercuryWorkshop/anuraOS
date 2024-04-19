@@ -582,3 +582,22 @@ if (input) {
     console.log(input);
 }
 ```
+
+## anura.platform
+
+> [!IMPORTANT]
+> This API is still in development and is subject to change at any time.
+
+This API provides information about the platform that Anura is running on.
+
+### anura.platform.type: `string`
+
+This property returns the type of platform that Anura is running on. This can be one of the following values:
+
+-   `desktop` - Anura is running on a desktop.
+-   `mobile` - Anura is running on a mobile phone.
+-   `tablet` - Anura is running on a tablet.
+
+### anura.platform.touchInput: `boolean`
+
+This property returns a boolean indicating whether the platform supports touch input.
