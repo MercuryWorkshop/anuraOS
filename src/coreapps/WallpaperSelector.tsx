@@ -1,5 +1,5 @@
 const wallpaperCSS = css`
-    color: white;
+    color: var(--theme-fg);
 
     .header {
         margin-left: 20px;

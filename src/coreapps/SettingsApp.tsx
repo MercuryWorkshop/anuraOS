@@ -1,5 +1,5 @@
 const settingsCSS = css`
-    color: white;
+    color: var(--theme-fg);
 
     .header {
         margin-left: 20px;
@@ -103,7 +103,7 @@ const settingsCSS = css`
         border: none;
         border-radius: 5px;
         padding: 5px;
-        color: white;
+        color: var(--theme-fg);
     }
     .settings-item-text-input:focus {
         outline: none;
@@ -153,7 +153,7 @@ class SettingsApp extends App {
             class={`background ${settingsCSS}`}
         >
             <div class="header">
-                <h2 color="white">Anura Settings</h2>
+                <h2>Anura Settings</h2>
             </div>
 
             <div css={this.state} class="container">

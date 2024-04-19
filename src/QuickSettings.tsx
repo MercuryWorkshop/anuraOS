@@ -41,7 +41,7 @@ class QuickSettings {
     panelCss = css`
         position: absolute;
         background-color: rgba(22, 22, 22, 0.9);
-        border: 1px solid rgba(0, 0, 0, 1);
+        border: 1px solid var(--theme-border);
         box-shadow: inset 0 0 0 1px #3e3e3e;
         border-radius: 1em;
         backdrop-filter: blur(40px);
@@ -77,7 +77,7 @@ class QuickSettings {
 
                 .symbolButton {
                     border-radius: 28px;
-                    background-color: #3c4043;
+                    background-color: var(--theme-secondary-bg);
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -114,18 +114,18 @@ class QuickSettings {
                         min-height: 0;
                         min-width: 0;
                         border-radius: 50%;
-                        background-color: #3c4043;
+                        background-color: var(--theme-secondary-bg);
 
                         span {
-                            color: #e8eaed;
+                            color: var(--theme-fg);
                             font-size: 24px;
                         }
 
                         &.enabled {
-                            background-color: #8ab4f8;
+                            background-color: var(--theme-accent);
 
                             span {
-                                color: #3c4043;
+                                color: var(--theme-fg);
                             }
                         }
                     }
@@ -135,7 +135,7 @@ class QuickSettings {
                         justify-content: center;
                         align-items: center;
                         font-size: 12px;
-                        color: #e8eaed;
+                        color: var(--theme-fg);
                         text-align: center;
                     }
                 }
@@ -154,7 +154,7 @@ class QuickSettings {
                 flex-direction: row;
 
                 span {
-                    color: #e8eaed;
+                    color: var(--theme-fg);
                     font-size: 12px;
                 }
             }

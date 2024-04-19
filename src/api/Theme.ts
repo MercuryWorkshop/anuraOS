@@ -68,6 +68,11 @@ class Theme {
             document.getElementById("launcher")!.style.background =
                 anura.theme.darkBackground + "e6";
         }
+
+        if (document.getElementById("quickSettings")) {
+            document.getElementById("quickSettings")!.style.background =
+                anura.theme.darkBackground + "e6";
+        }
     }
 
     css(): string {
