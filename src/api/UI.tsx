@@ -9,6 +9,8 @@ class AnuraUI {
      */
     components = new Map<string, { lib: string; name: string }>();
 
+    theme: Theme;
+
     /**
      * This function allows you to register a component to the built-in components registry.
      * @param component - The name of the component to register.

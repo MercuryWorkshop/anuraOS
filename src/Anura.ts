@@ -22,7 +22,7 @@ class Anura {
     net: Networking;
     platform: Platform;
     ui = new AnuraUI();
-    theme: Theme; // TODO: Move this into UI
+    // theme: Theme; // TODO: Move this into UI
     dialog: Dialog;
 
     private constructor(

@@ -62,17 +62,17 @@ class Theme {
         // YES I KNOW IT'S JANK
         if (document.querySelector("footer")) {
             document.querySelector("footer")!.style.background =
-                anura.theme.darkBackground + "e6";
+                anura.ui.theme.darkBackground + "e6";
         }
 
         if (document.getElementById("launcher")) {
             document.getElementById("launcher")!.style.background =
-                anura.theme.darkBackground + "e6";
+                anura.ui.theme.darkBackground + "e6";
         }
 
         if (document.getElementById("quickSettings")) {
             document.getElementById("quickSettings")!.style.background =
-                anura.theme.darkBackground + "e6";
+                anura.ui.theme.darkBackground + "e6";
         }
     }
 

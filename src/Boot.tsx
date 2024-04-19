@@ -138,7 +138,6 @@ window.addEventListener("load", async () => {
     }
 
     anura = await Anura.new(conf);
-    anura.theme = Theme.new(anura.settings.get("theme"));
 
     swShared.anura = anura;
     swShared.sh = new anura.fs.Shell();
@@ -286,6 +285,9 @@ window.addEventListener("load", async () => {
     });
 
     anura.ui.init();
+
+    anura.ui.theme = Theme.new(anura.settings.get("theme"));
+    anura.ui.theme.apply();
 
     if (!anura.settings.get("oobe-complete")) {
         // This is a new install, so an old version containing the old extension
@@ -525,7 +527,7 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(taskbar.element);
     document.body.appendChild(alttab.element);
 
-    anura.theme.apply();
+    anura.ui.theme.apply();
 
     (window as any).taskbar = taskbar;
 
