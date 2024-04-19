@@ -74,6 +74,19 @@ class Theme {
             document.getElementById("quickSettings")!.style.background =
                 anura.ui.theme.darkBackground + "e6";
         }
+
+        if (document.getElementById("notificationCenter")) {
+            document.getElementById("notificationCenter")!.style.background =
+                anura.ui.theme.darkBackground + "e6";
+        }
+
+        // the jank gets jankier
+        document
+            .querySelectorAll(".notification")
+            .forEach((el: HTMLElement) => {
+                // this is sooo bad code bro
+                el.style.background = anura.ui.theme.darkBackground + "e6";
+            });
     }
 
     css(): string {

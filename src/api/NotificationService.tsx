@@ -192,7 +192,10 @@ class AnuraNotification implements NotifParams {
         this.close = close;
         this.buttons = params.buttons || [];
         this.element = (
-            <div class={this.css}>
+            <div
+                class={`${this.css} notification`}
+                style={`${anura.ui.theme ? `background-color: ${anura.ui.theme.darkBackground}e6` : ""}`}
+            >
                 <div
                     class="nbody"
                     on:click={(e: PointerEvent) => {
