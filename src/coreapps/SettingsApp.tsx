@@ -413,46 +413,33 @@ class SettingsApp extends App {
                                     <button
                                         on:click={async () => {
                                             this.state.x86_installing = true;
-                                            const chosenRootFS =
-                                                await anura.dialog.prompt(
-                                                    'Enter the name of the rootfs you want to install ("alpine")',
-                                                );
-                                            console.log(chosenRootFS);
-                                            if (chosenRootFS == "alpine") {
-                                                anura.settings.set(
-                                                    "x86-image",
-                                                    chosenRootFS,
-                                                );
-                                                await installx86();
-                                                anura.settings.set(
-                                                    "x86-disabled",
-                                                    false,
-                                                );
-                                                anura.notifications.add({
-                                                    title: "x86 Subsystem Installed",
-                                                    description:
-                                                        "x86 OS has sucessfully installed. Reload the page to use it!",
-                                                    timeout: 5000,
-                                                });
+                                            anura.settings.set(
+                                                "x86-image",
+                                                "alpine",
+                                            );
+                                            await installx86();
+                                            anura.settings.set(
+                                                "x86-disabled",
+                                                false,
+                                            );
+                                            anura.notifications.add({
+                                                title: "x86 Subsystem Installed",
+                                                description:
+                                                    "x86 OS has sucessfully installed. Reload the page to use it!",
+                                                timeout: 5000,
+                                            });
 
-                                                this.state.x86_installing =
-                                                    false;
-                                                this.state.show_x86_install =
-                                                    true;
+                                            this.state.x86_installing = false;
+                                            this.state.show_x86_install = true;
 
-                                                if (
-                                                    document.getElementById(
-                                                        "tracker",
-                                                    )
-                                                ) {
-                                                    document.getElementById(
-                                                        "tracker",
-                                                    )!.innerText = "Installed!";
-                                                }
-                                            } else {
-                                                anura.dialog.alert(
-                                                    "Invalid rootfs name! Valid names are: alpine",
-                                                );
+                                            if (
+                                                document.getElementById(
+                                                    "tracker",
+                                                )
+                                            ) {
+                                                document.getElementById(
+                                                    "tracker",
+                                                )!.innerText = "Installed!";
                                             }
                                         }}
                                         class="matter-button-contained"
