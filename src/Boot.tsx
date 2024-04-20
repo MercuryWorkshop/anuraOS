@@ -286,9 +286,6 @@ window.addEventListener("load", async () => {
 
     anura.ui.init();
 
-    anura.ui.theme = Theme.new(anura.settings.get("theme"));
-    anura.ui.theme.apply();
-
     if (!anura.settings.get("oobe-complete")) {
         // This is a new install, so an old version containing the old extension
         // handler system can't be installed. We can skip the migration.
@@ -345,6 +342,9 @@ document.addEventListener("anura-boot-completed", async () => {
 });
 
 document.addEventListener("anura-login-completed", async () => {
+    anura.ui.theme = Theme.new(anura.settings.get("theme"));
+    anura.ui.theme.apply();
+
     const generic = new GenericApp();
     anura.registerApp(generic);
 

@@ -2,6 +2,7 @@ class Theme {
     foreground: string;
     secondaryForeground: string;
     border: string;
+    darkBorder: string;
     background: string;
     secondaryBackground: string;
     darkBackground: string;
@@ -12,6 +13,7 @@ class Theme {
             json["foreground"],
             json["secondaryForeground"],
             json["border"],
+            json["darkBorder"],
             json["background"],
             json["secondaryBackground"],
             json["darkBackground"],
@@ -23,6 +25,7 @@ class Theme {
         foreground = "#FFFFFF",
         secondaryForeground = "#C1C1C1",
         border = "#444444",
+        darkBorder = "#000000",
         background = "#202124",
         secondaryBackground = "#383838",
         darkBackground = "#161616",
@@ -31,6 +34,7 @@ class Theme {
         this.foreground = foreground;
         this.secondaryForeground = secondaryForeground;
         this.border = border;
+        this.darkBorder = darkBorder;
         this.background = background;
         this.secondaryBackground = secondaryBackground;
         this.darkBackground = darkBackground;
@@ -46,6 +50,7 @@ class Theme {
 
         document.body.style.setProperty("--theme-bg", this.background);
         document.body.style.setProperty("--theme-border", this.border);
+        document.body.style.setProperty("--theme-dark-border", this.darkBorder);
         document.body.style.setProperty("--theme-fg", this.foreground);
         document.body.style.setProperty(
             "--theme-secondary-bg",
@@ -94,6 +99,7 @@ class Theme {
 :root {
   --theme-bg: ${this.background};
   --theme-border: ${this.border};
+  --theme-dark-border: ${this.darkBorder};
   --theme-fg: ${this.foreground};
   --theme-secondary-bg: ${this.secondaryBackground};
   --theme-secondary-fg: ${this.secondaryForeground};

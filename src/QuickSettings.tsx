@@ -43,11 +43,11 @@ class QuickSettings {
     panelCss = css`
         position: absolute;
         background-color: rgba(22, 22, 22, 0.9);
-        border: 1px solid var(--theme-border);
-        box-shadow: inset 0 0 0 1px #3e3e3e;
+        border: 1px solid var(--theme-dark-border);
+        box-shadow: inset 0 0 0 1px var(--theme-secondary-bg);
         border-radius: 1em;
         backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);bg
         display: flex;
         flex-grow: 1;
         flex-direction: column;

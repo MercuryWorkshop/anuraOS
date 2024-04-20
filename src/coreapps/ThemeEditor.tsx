@@ -95,7 +95,7 @@ class ThemeEditor extends App {
                     Dark Background
                     <input
                         type="color"
-                        value={anura.ui.theme.secondaryBackground}
+                        value={anura.ui.theme.darkBackground}
                         on:input={(e: InputEvent) => {
                             const val = (e.target! as HTMLInputElement).value;
                             anura.ui.theme.darkBackground = val;
@@ -165,6 +165,20 @@ class ThemeEditor extends App {
 
                             anura.ui.theme.apply();
                             anura.settings.set("theme", val, "border");
+                        }}
+                    />
+                </div>
+                <div>
+                    Border
+                    <input
+                        type="color"
+                        value={use(anura.ui.theme.darkBorder)}
+                        on:input={(e: InputEvent) => {
+                            const val = (e.target! as HTMLInputElement).value;
+                            anura.ui.theme.darkBorder = val;
+
+                            anura.ui.theme.apply();
+                            anura.settings.set("theme", val, "darkBorder");
                         }}
                     />
                 </div>
