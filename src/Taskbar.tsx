@@ -86,26 +86,31 @@ class Taskbar {
                     )}
                 </ul>
             </nav>
-            <div
-                id="taskinfo-container"
-                on:click={() => {
-                    launcher.hide();
-                    quickSettings.toggle();
-                }}
-            >
-                <div
-                    class="flex flexcenter"
-                    style={{
-                        gap: "4px",
+            <div id="taskbar-right">
+                {/* TODO: Calendar */}
+                <span id="date-container">
+                    <span>{use(this.state.date)}</span>
+                </span>
+                <span
+                    id="taskinfo-container"
+                    on:click={() => {
+                        launcher.hide();
+                        quickSettings.toggle();
                     }}
                 >
-                    <span>{use(this.state.date)}</span>
-                    <span>{use(this.state.time)}</span>
-                    <span class="material-symbols-outlined">
-                        {use(this.state.net_icon)}
-                        {use(this.state.bat_icon)}
-                    </span>
-                </div>
+                    <div
+                        class="flex flexcenter"
+                        style={{
+                            gap: "4px",
+                        }}
+                    >
+                        <span>{use(this.state.time)}</span>
+                        <span class="material-symbols-outlined">
+                            {use(this.state.net_icon)}
+                            {use(this.state.bat_icon)}
+                        </span>
+                    </div>
+                </span>
             </div>
         </footer>
     );

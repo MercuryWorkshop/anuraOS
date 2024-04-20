@@ -32,20 +32,23 @@
     filter: drop-shadow(0px 3px 7px #111);
 }
 
-#taskinfo-container {
+#taskbar-right {
+    right: 0.3em;
+
+    top: 50%;
+    transform: translateY(-50%);
     position: absolute;
     height: 70%;
+    display: flex;
+    gap: 5px;
+}
 
+#taskinfo-container,
+#date-container {
     background-color: rgba(128, 128, 128, 0.2);
     padding: 0.1em;
     padding-left: 1em;
     padding-right: 1em;
-
-    right: 0.3em;
-    top: 50%;
-    transform: translateY(-50%);
-
-    border-radius: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -53,11 +56,20 @@
     font-size: 0.9rem;
 }
 
+#taskinfo-container {
+    border-radius: 5px 25px 25px 5px;
+}
+
+#date-container {
+    border-radius: 25px 5px 5px 25px;
+}
+
 #taskinfo-container .material-symbols-outlined {
     font-size: 1rem;
 }
 
-#taskinfo-container > * {
+#taskinfo-container > *,
+#date-container > * {
     color: whitesmoke;
     cursor: pointer;
 }
