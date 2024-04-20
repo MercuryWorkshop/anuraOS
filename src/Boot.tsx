@@ -566,6 +566,7 @@ document.addEventListener("anura-login-completed", async () => {
             anura.settings.get("launcher-keybind")
         ) {
             quickSettings.close();
+            calendar.close();
             launcher.toggleVisible();
             return;
         }

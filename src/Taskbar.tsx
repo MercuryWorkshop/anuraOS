@@ -242,6 +242,7 @@ class Taskbar {
                         id="launcher-button"
                         on:click={() => {
                             quickSettings.close();
+                            calendar.close();
                             launcher.toggleVisible();
                         }}
                     >
