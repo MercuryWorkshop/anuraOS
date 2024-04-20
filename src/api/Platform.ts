@@ -1,6 +1,14 @@
 class Platform {
     type: string;
     touchInput: boolean;
+
+    // Provides a stateful object that can be used to track any platform features and information that are expected to change during the lifecycle of anura.
+    state: Stateful<{
+        fullscreen: boolean;
+    }> = stateful({
+        fullscreen: false,
+    });
+
     constructor() {
         let platform = "desktop";
 
@@ -39,5 +47,9 @@ class Platform {
             platform === "mobile" ||
             platform === "tablet" ||
             navigator.maxTouchPoints > 1;
+
+        document.documentElement.addEventListener("fullscreenchange", () => {
+            this.state.fullscreen = !!document.fullscreenElement;
+        });
     }
 }

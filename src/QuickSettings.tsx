@@ -16,12 +16,10 @@ class QuickSettings {
             value: any;
         }>;
         date: string;
-        isFullscreen: boolean;
     }> = stateful({
         showQuickSettings: false,
         pinnedSettings: [],
         date: new Date().toLocaleString(),
-        isFullscreen: document.fullscreenElement !== null, // in case user has already entered fullscreen somehow
     });
 
     transition = css`
@@ -290,20 +288,24 @@ class QuickSettings {
                         <button
                             class={["matter-button-contained", "symbolButton"]}
                             on:click={() => {
-                                if (!document.fullscreenElement) {
-                                    document.documentElement.requestFullscreen();
-                                    this.state.isFullscreen = true;
-                                } else if (document.exitFullscreen) {
-                                    document.exitFullscreen();
-                                    this.state.isFullscreen = false;
+                                try {
+                                    if (anura.platform.state.fullscreen) {
+                                        document.exitFullscreen();
+                                    } else {
+                                        document.documentElement.requestFullscreen();
+                                    }
+                                } catch {
+                                    // Prevent throwing here
                                 }
                             }}
                         >
                             <span class={["material-symbols-outlined"]}>
-                                {use(this.state.isFullscreen, (fullscreen) =>
-                                    fullscreen
-                                        ? "fullscreen_exit"
-                                        : "fullscreen",
+                                {use(
+                                    anura.platform.state.fullscreen,
+                                    (fullscreen) =>
+                                        fullscreen
+                                            ? "fullscreen_exit"
+                                            : "fullscreen",
                                 )}
                             </span>
                         </button>
