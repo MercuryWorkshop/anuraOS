@@ -1,6 +1,7 @@
 class Launcher {
     state: Stateful<{
         active: boolean;
+        apps?: App[];
         appsView?: HTMLDivElement;
         search?: HTMLInputElement;
     }> = stateful({
@@ -172,15 +173,7 @@ class Launcher {
     addShortcut(app: App) {
         if (app.hidden) return;
 
-        this.state.appsView?.appendChild(
-            <LauncherShortcut
-                app={app}
-                onclick={() => {
-                    this.hide();
-                    app.open();
-                }}
-            />,
-        );
+        this.state.apps = [...(this.state.apps || []), app];
     }
 
     constructor(
@@ -248,7 +241,19 @@ class Launcher {
                     id="appsView"
                     class="appsView"
                     bind:this={use(this.state.appsView)}
-                ></div>
+                >
+                    {use(this.state.apps, (apps) =>
+                        (apps || []).map((app: App) => (
+                            <LauncherShortcut
+                                app={app}
+                                onclick={() => {
+                                    this.hide();
+                                    app.open();
+                                }}
+                            />
+                        )),
+                    )}
+                </div>
             </Panel>
         );
     }
