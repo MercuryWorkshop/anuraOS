@@ -47,7 +47,7 @@ class QuickSettings {
         box-shadow: inset 0 0 0 1px var(--theme-secondary-bg);
         border-radius: 1em;
         backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);bg
+        -webkit-backdrop-filter: blur(40px);
         display: flex;
         flex-grow: 1;
         flex-direction: column;

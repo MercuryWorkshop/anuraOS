@@ -1,4 +1,4 @@
-class Theme {
+interface ThemeProps {
     foreground: string;
     secondaryForeground: string;
     border: string;
@@ -7,6 +7,100 @@ class Theme {
     secondaryBackground: string;
     darkBackground: string;
     accent: string;
+}
+
+class Theme implements ThemeProps {
+    // foreground: string;
+    // secondaryForeground: string;
+    // border: string;
+    // background: string;
+    // secondaryBackground: string;
+    // darkBackground: string;
+    // accent: string;
+    get foreground() {
+        return this.state.foreground;
+    }
+
+    set foreground(value) {
+        this.state.foreground = value;
+        this.apply();
+    }
+
+    get secondaryForeground() {
+        return this.state.secondaryForeground;
+    }
+
+    set secondaryForeground(value) {
+        this.state.secondaryForeground = value;
+        this.apply();
+    }
+
+    get border() {
+        return this.state.border;
+    }
+
+    set border(value) {
+        this.state.border = value;
+        this.apply();
+    }
+
+    get darkBorder() {
+        return this.state.darkBorder;
+    }
+
+    set darkBorder(value) {
+        this.state.darkBorder = value;
+        this.apply();
+    }
+
+    get background() {
+        return this.state.background;
+    }
+
+    set background(value) {
+        this.state.background = value;
+        this.apply();
+    }
+
+    get secondaryBackground() {
+        return this.state.secondaryBackground;
+    }
+
+    set secondaryBackground(value) {
+        this.state.secondaryBackground = value;
+        this.apply();
+    }
+
+    get darkBackground() {
+        return this.state.darkBackground;
+    }
+
+    set darkBackground(value) {
+        this.state.darkBackground = value;
+        this.apply();
+    }
+
+    get accent() {
+        return this.state.accent;
+    }
+
+    set accent(value) {
+        this.state.accent = value;
+        this.apply();
+    }
+
+    state: Stateful<ThemeProps>;
+
+    cssPropMap: Record<keyof ThemeProps, string[]> = {
+        background: ["--theme-bg", "--material-bg"],
+        border: ["--theme-border", "--material-border"],
+        darkBorder: ["--theme-dark-border"],
+        foreground: ["--theme-fg"],
+        secondaryBackground: ["--theme-secondary-bg"],
+        secondaryForeground: ["--theme-secondary-fg"],
+        darkBackground: ["--theme-dark-bg"],
+        accent: ["--theme-accent", "--matter-helper-theme"],
+    };
 
     static new(json: { [key: string]: string }) {
         return new Theme(
@@ -31,81 +125,78 @@ class Theme {
         darkBackground = "#161616",
         accent = "#4285F4",
     ) {
-        this.foreground = foreground;
-        this.secondaryForeground = secondaryForeground;
-        this.border = border;
-        this.darkBorder = darkBorder;
-        this.background = background;
-        this.secondaryBackground = secondaryBackground;
-        this.darkBackground = darkBackground;
-        this.accent = accent;
+        this.state = stateful<ThemeProps>({
+            foreground,
+            secondaryForeground,
+            border,
+            darkBorder,
+            background,
+            secondaryBackground,
+            darkBackground,
+            accent,
+        });
+
+        for (const key in this.state) {
+            handle(use(this.state[key as keyof ThemeProps]), (value) => {
+                for (const prop of this.cssPropMap[key as keyof ThemeProps]) {
+                    document.body.style.setProperty(prop, value);
+                }
+            });
+        }
+
         this.apply();
     }
 
+    reset() {
+        this.state.foreground = "#FFFFFF";
+        this.state.secondaryForeground = "#C1C1C1";
+        this.state.border = "#444444";
+        this.state.darkBorder = "#000000";
+        this.state.background = "#202124";
+        this.state.secondaryBackground = "#383838";
+        this.state.darkBackground = "#161616";
+        this.state.accent = "#4285F4";
+
+        this.apply();
+    }
+
+    // This applies the theme to special elements that need to be updated manually
+
     apply() {
-        // backwards compat with matter
-        document.body.style.setProperty("--material-bg", this.background);
-        document.body.style.setProperty("--material-border", this.border);
-        document.body.style.setProperty("--matter-helper-theme", this.accent);
+        const darkBackground = this.state.darkBackground;
 
-        document.body.style.setProperty("--theme-bg", this.background);
-        document.body.style.setProperty("--theme-border", this.border);
-        document.body.style.setProperty("--theme-dark-border", this.darkBorder);
-        document.body.style.setProperty("--theme-fg", this.foreground);
-        document.body.style.setProperty(
-            "--theme-secondary-bg",
-            this.secondaryBackground,
-        );
-        document.body.style.setProperty(
-            "--theme-secondary-fg",
-            this.secondaryForeground,
-        );
-        document.body.style.setProperty("--theme-dark-bg", this.darkBackground);
-        document.body.style.setProperty("--theme-accent", this.accent);
-
-        // special elements (transparency)
-        // YES I KNOW IT'S JANK
-        if (document.querySelector("footer")) {
-            document.querySelector("footer")!.style.background =
-                anura.ui.theme.darkBackground + "e6";
+        if (taskbar) {
+            taskbar.element.style.background = darkBackground + "e6";
+        }
+        if (launcher) {
+            launcher.element.style.background = darkBackground + "e6";
+        }
+        if (quickSettings) {
+            quickSettings.quickSettingsElement.style.background =
+                darkBackground + "e6";
+            quickSettings.notificationCenterElement.style.background =
+                darkBackground + "e6";
         }
 
-        if (document.getElementById("launcher")) {
-            document.getElementById("launcher")!.style.background =
-                anura.ui.theme.darkBackground + "e6";
-        }
-
-        if (document.getElementById("quickSettings")) {
-            document.getElementById("quickSettings")!.style.background =
-                anura.ui.theme.darkBackground + "e6";
-        }
-
-        if (document.getElementById("notificationCenter")) {
-            document.getElementById("notificationCenter")!.style.background =
-                anura.ui.theme.darkBackground + "e6";
-        }
-
-        // the jank gets jankier
         document
             .querySelectorAll(".notification")
             .forEach((el: HTMLElement) => {
                 // this is sooo bad code bro
-                el.style.background = anura.ui.theme.darkBackground + "e6";
+                el.style.background = darkBackground + "e6";
             });
     }
 
     css(): string {
-        return `
-:root {
-  --theme-bg: ${this.background};
-  --theme-border: ${this.border};
-  --theme-dark-border: ${this.darkBorder};
-  --theme-fg: ${this.foreground};
-  --theme-secondary-bg: ${this.secondaryBackground};
-  --theme-secondary-fg: ${this.secondaryForeground};
-  --theme-dark-bg: ${this.darkBackground};
-  --theme-accent: ${this.accent};
-}
-        `;
+        const lines = [];
+        lines.push(":root {");
+        for (const key in this.state) {
+            for (const prop of this.cssPropMap[key as keyof ThemeProps]) {
+                lines.push(
+                    `  ${prop}: ${this.state[key as keyof ThemeProps]};`,
+                );
+            }
+        }
+        lines.push("}");
+        return lines.join("\n");
     }
 }

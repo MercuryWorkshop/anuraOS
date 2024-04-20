@@ -1,43 +1,78 @@
-const themeCSS = css`
-    background: var(--theme-bg);
-    color: var(--theme-fg);
-
-    input[type="color"] {
-        appearance: none;
-        background: none;
-        padding: 0;
-        border: 0;
-        border-radius: 100%;
-        width: 20px;
-        height: 20px;
-    }
-
-    input[type="color" i]::-webkit-color-swatch-wrapper {
-        padding: 0;
-        border: 0;
-    }
-
-    input[type="color" i]::-webkit-color-swatch {
-        border-radius: 50%;
-        padding: 0;
-    }
-
-    div > * {
-        display: flex;
-        align-items: center;
-
-        margin: 10px 0;
-    }
-
-    div > input {
-        margin: 0 10px;
-    }
-`;
-
 class ThemeEditor extends App {
     state = stateful({
         resizing: false,
     });
+
+    css = css`
+        input[type="color"] {
+            appearance: none;
+            background: none;
+            padding: 0;
+            border: 0;
+            border-radius: 100%;
+            width: 20px;
+            height: 20px;
+        }
+
+        input[type="color" i]::-webkit-color-swatch-wrapper {
+            padding: 0;
+            border: 0;
+        }
+
+        input[type="color" i]::-webkit-color-swatch {
+            border-radius: 50%;
+            padding: 0;
+        }
+
+        div > * {
+            display: flex;
+            align-items: center;
+
+            margin: 10px 0;
+        }
+
+        div > input {
+            margin: 0 10px;
+        }
+    `;
+
+    colorEditors: {
+        prop: keyof ThemeProps;
+        name: string;
+    }[] = [
+        {
+            prop: "background",
+            name: "Background",
+        },
+        {
+            prop: "secondaryBackground",
+            name: "Secondary Background",
+        },
+        {
+            prop: "darkBackground",
+            name: "Dark Background",
+        },
+        {
+            prop: "accent",
+            name: "Accent",
+        },
+        {
+            prop: "foreground",
+            name: "Foreground",
+        },
+        {
+            prop: "secondaryForeground",
+            name: "Secondary Foreground",
+        },
+        {
+            prop: "border",
+            name: "Border",
+        },
+        {
+            prop: "darkBorder",
+            name: "Dark Border",
+        },
+    ];
 
     constructor() {
         super();
@@ -48,15 +83,37 @@ class ThemeEditor extends App {
 
     page = async () => (
         <div
-            style={`padding: 2%;height:100%;width:100%;position:absolute;background: ${anura.ui.theme.background};color: ${anura.ui.theme.foreground}`}
-            class={`background ${themeCSS}`}
+            style={{
+                padding: "2%",
+                height: "100%",
+                width: "100%",
+                position: "absolute",
+                color: use(anura.ui.theme.state.foreground),
+                background: use(anura.ui.theme.state.background),
+            }}
+            class={`background ${this.css}`}
             id="theme-editor"
         >
             {/* TODO: WTF IS THIS UI */}
             <h1>Theme Editor</h1>
 
             <div>
-                <div>
+                {this.colorEditors.map((color) => (
+                    <div>
+                        {color.name}
+                        <input
+                            type="color"
+                            bind:value={use(anura.ui.theme.state[color.prop])}
+                            on:input={(e: InputEvent) => {
+                                const val = (e.target! as HTMLInputElement)
+                                    .value;
+                                anura.ui.theme[color.prop] = val;
+                                anura.settings.set("theme", val, color.prop);
+                            }}
+                        />
+                    </div>
+                ))}
+                {/* <div>
                     Background
                     <input
                         type="color"
@@ -67,8 +124,6 @@ class ThemeEditor extends App {
                                 "theme-editor",
                             )!.style.background = val;
                             anura.ui.theme.background = val;
-
-                            anura.ui.theme.apply();
                             anura.settings.set("theme", val, "background");
                         }}
                     />
@@ -81,8 +136,6 @@ class ThemeEditor extends App {
                         on:input={(e: InputEvent) => {
                             const val = (e.target! as HTMLInputElement).value;
                             anura.ui.theme.secondaryBackground = val;
-
-                            anura.ui.theme.apply();
                             anura.settings.set(
                                 "theme",
                                 val,
@@ -99,8 +152,6 @@ class ThemeEditor extends App {
                         on:input={(e: InputEvent) => {
                             const val = (e.target! as HTMLInputElement).value;
                             anura.ui.theme.darkBackground = val;
-
-                            anura.ui.theme.apply();
                             anura.settings.set("theme", val, "darkBackground");
                         }}
                     />
@@ -113,8 +164,6 @@ class ThemeEditor extends App {
                         on:input={(e: InputEvent) => {
                             const val = (e.target! as HTMLInputElement).value;
                             anura.ui.theme.accent = val;
-
-                            anura.ui.theme.apply();
                             anura.settings.set("theme", val, "accent");
                         }}
                     />
@@ -130,8 +179,6 @@ class ThemeEditor extends App {
                                 "theme-editor",
                             )!.style.color = val;
                             anura.ui.theme.border = val;
-
-                            anura.ui.theme.apply();
                             anura.settings.set("theme", val, "foreground");
                         }}
                     />
@@ -144,8 +191,6 @@ class ThemeEditor extends App {
                         on:input={(e: InputEvent) => {
                             const val = (e.target! as HTMLInputElement).value;
                             anura.ui.theme.secondaryForeground = val;
-
-                            anura.ui.theme.apply();
                             anura.settings.set(
                                 "theme",
                                 val,
@@ -162,35 +207,20 @@ class ThemeEditor extends App {
                         on:input={(e: InputEvent) => {
                             const val = (e.target! as HTMLInputElement).value;
                             anura.ui.theme.border = val;
-
-                            anura.ui.theme.apply();
                             anura.settings.set("theme", val, "border");
                         }}
                     />
-                </div>
-                <div>
-                    Border
-                    <input
-                        type="color"
-                        value={use(anura.ui.theme.darkBorder)}
-                        on:input={(e: InputEvent) => {
-                            const val = (e.target! as HTMLInputElement).value;
-                            anura.ui.theme.darkBorder = val;
-
-                            anura.ui.theme.apply();
-                            anura.settings.set("theme", val, "darkBorder");
-                        }}
-                    />
-                </div>
+                </div> */}
                 <button
                     class="matter-button-contained"
                     on:click={() => {
-                        anura.ui.theme = new Theme();
-                        document.getElementById(
-                            "theme-editor",
-                        )!.style.background = anura.ui.theme.background;
-                        document.getElementById("theme-editor")!.style.color =
-                            anura.ui.theme.foreground;
+                        // anura.ui.theme = new Theme();
+                        // document.getElementById(
+                        //     "theme-editor",
+                        // )!.style.background = anura.ui.theme.background;
+                        // document.getElementById("theme-editor")!.style.color =
+                        //     anura.ui.theme.foreground;
+                        anura.ui.theme.reset();
                         anura.settings.set("theme", anura.ui.theme);
                     }}
                 >
