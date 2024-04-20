@@ -89,7 +89,6 @@ class Anura {
         }
 
         launcher.addShortcut(app);
-        taskbar.addShortcut(app);
 
         this.apps[app.package] = app;
 

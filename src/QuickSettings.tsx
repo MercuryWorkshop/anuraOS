@@ -24,8 +24,6 @@ class QuickSettings {
         isFullscreen: document.fullscreenElement !== null, // in case user has already entered fullscreen somehow
     });
 
-    subscribed = false;
-
     transition = css`
         transition: opacity 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95);
     `;
@@ -40,23 +38,7 @@ class QuickSettings {
         z-index: -1;
     `;
 
-    panelCss = css`
-        position: absolute;
-        background-color: rgba(22, 22, 22, 0.9);
-        border: 1px solid var(--theme-dark-border);
-        box-shadow: inset 0 0 0 1px var(--theme-secondary-bg);
-        border-radius: 1em;
-        backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
-        display: flex;
-        flex-grow: 1;
-        flex-direction: column;
-    `;
-
     quickSettingsCss = css`
-        max-height: 40vh;
-        width: 360px;
-        height: 40%;
         bottom: 60px;
         right: 10px;
 
@@ -163,109 +145,11 @@ class QuickSettings {
         }
     `;
 
-    quickSettingsElement = (
-        <div
-            class={[
-                this.panelCss,
-                this.transition,
-                use(this.state.showQuickSettings, (open) =>
-                    open ? this.show : this.hide,
-                ),
-                this.quickSettingsCss,
-            ]}
-            id="quickSettings"
-        >
-            <div class={["quickSettingsContent"]}>
-                <div class={["topButtons"]}>
-                    <button
-                        class={["matter-button-contained", "symbolButton"]}
-                        title="Exit anuraOS"
-                        on:click={() => {
-                            window.location.replace(
-                                anura.settings.get("exitUrl") ||
-                                    "https://google.com/",
-                            );
-                        }}
-                    >
-                        <span class="material-symbols-outlined">
-                            power_settings_new
-                        </span>
-                    </button>
-                    <button
-                        class={["matter-button-contained", "symbolButton"]}
-                        on:click={() => {
-                            anura.apps["anura.settings"].open();
-                            this.close();
-                        }}
-                    >
-                        <span class={["material-symbols-outlined"]}>
-                            settings
-                        </span>
-                    </button>
-                    <button
-                        class={["matter-button-contained", "symbolButton"]}
-                        on:click={() => {
-                            if (!document.fullscreenElement) {
-                                document.documentElement.requestFullscreen();
-                                this.state.isFullscreen = true;
-                            } else if (document.exitFullscreen) {
-                                document.exitFullscreen();
-                                this.state.isFullscreen = false;
-                            }
-                        }}
-                    >
-                        <span class={["material-symbols-outlined"]}>
-                            {use(this.state.isFullscreen, (fullscreen) =>
-                                fullscreen ? "fullscreen_exit" : "fullscreen",
-                            )}
-                        </span>
-                    </button>
-                </div>
-                <div class={["quickSettingsPinned"]}>
-                    {use(this.state.pinnedSettings, (pinnedSettings) =>
-                        pinnedSettings
-                            .filter((setting) => setting.type === "boolean")
-                            .map((setting) => (
-                                <div
-                                    class="pinnedSetting"
-                                    title={setting.description}
-                                    on:click={() => {
-                                        setting.value = !setting.value;
-                                        this.state.pinnedSettings =
-                                            pinnedSettings;
-                                        console.log(setting);
-                                    }}
-                                >
-                                    <button
-                                        class={[
-                                            "matter-button-contained",
-                                            "settingsIcon",
-                                            setting.value && "enabled",
-                                        ]}
-                                    >
-                                        <span class="material-symbols-outlined">
-                                            {setting.icon || "settings"}
-                                        </span>
-                                    </button>
-                                    <div class="settingTitle">
-                                        <span>{setting.name}</span>
-                                    </div>
-                                </div>
-                            )),
-                    )}
-                </div>
-                <div class={["sliderContainer"]}></div>
-                <div class={["dateContainer"]}>
-                    <span>{use(this.state.date)}</span>
-                </div>
-            </div>
-        </div>
-    );
+    quickSettingsElement: HTMLElement = (<div>Not Initialized</div>);
 
     notificationCenterCss = css`
         max-height: calc(60% - 80px);
         min-height: 20px;
-        width: 360px;
         bottom: calc(70px + 40%);
         right: 10px;
         overflow: hidden;
@@ -311,19 +195,7 @@ class QuickSettings {
         }
     `;
 
-    notificationCenterElement = (
-        <div
-            class={[
-                this.panelCss,
-                this.transition,
-                use(this.state.showQuickSettings, (open) =>
-                    open ? this.show : this.hide,
-                ),
-                this.notificationCenterCss,
-            ]}
-            id="notificationCenter"
-        ></div>
-    );
+    notificationCenterElement = (<div>Not Initialized</div>);
 
     clickoffChecker: HTMLDivElement;
     updateClickoffChecker: (show: boolean) => void;
@@ -358,87 +230,206 @@ class QuickSettings {
 
         this.clickoffChecker = clickoffChecker;
         this.updateClickoffChecker = updateClickoffChecker;
+    }
+
+    async init() {
+        const Panel: Component<
+            {
+                width?: string;
+                height?: string;
+                margin?: string;
+                grow?: boolean;
+                style?: any;
+                class?: string | (string | DLPointer<any>)[];
+                id?: string;
+            },
+            { children: HTMLElement[] }
+        > = await anura.ui.get("Panel");
+
+        this.quickSettingsElement = (
+            <Panel
+                class={[
+                    this.transition,
+                    use(this.state.showQuickSettings, (open) =>
+                        open ? this.show : this.hide,
+                    ),
+                    this.quickSettingsCss,
+                ]}
+                width="360px"
+                height="40%"
+                grow
+                id="quickSettings"
+            >
+                <div class={["quickSettingsContent"]}>
+                    <div class={["topButtons"]}>
+                        <button
+                            class={["matter-button-contained", "symbolButton"]}
+                            title="Exit anuraOS"
+                            on:click={() => {
+                                window.location.replace(
+                                    anura.settings.get("exitUrl") ||
+                                        "https://google.com/",
+                                );
+                            }}
+                        >
+                            <span class="material-symbols-outlined">
+                                power_settings_new
+                            </span>
+                        </button>
+                        <button
+                            class={["matter-button-contained", "symbolButton"]}
+                            on:click={() => {
+                                anura.apps["anura.settings"].open();
+                                this.close();
+                            }}
+                        >
+                            <span class={["material-symbols-outlined"]}>
+                                settings
+                            </span>
+                        </button>
+                        <button
+                            class={["matter-button-contained", "symbolButton"]}
+                            on:click={() => {
+                                if (!document.fullscreenElement) {
+                                    document.documentElement.requestFullscreen();
+                                    this.state.isFullscreen = true;
+                                } else if (document.exitFullscreen) {
+                                    document.exitFullscreen();
+                                    this.state.isFullscreen = false;
+                                }
+                            }}
+                        >
+                            <span class={["material-symbols-outlined"]}>
+                                {use(this.state.isFullscreen, (fullscreen) =>
+                                    fullscreen
+                                        ? "fullscreen_exit"
+                                        : "fullscreen",
+                                )}
+                            </span>
+                        </button>
+                    </div>
+                    <div class={["quickSettingsPinned"]}>
+                        {use(this.state.pinnedSettings, (pinnedSettings) =>
+                            pinnedSettings
+                                .filter((setting) => setting.type === "boolean")
+                                .map((setting) => (
+                                    <div
+                                        class="pinnedSetting"
+                                        title={setting.description}
+                                        on:click={() => {
+                                            setting.value = !setting.value;
+                                            this.state.pinnedSettings =
+                                                pinnedSettings;
+                                            console.log(setting);
+                                        }}
+                                    >
+                                        <button
+                                            class={[
+                                                "matter-button-contained",
+                                                "settingsIcon",
+                                                setting.value && "enabled",
+                                            ]}
+                                        >
+                                            <span class="material-symbols-outlined">
+                                                {setting.icon || "settings"}
+                                            </span>
+                                        </button>
+                                        <div class="settingTitle">
+                                            <span>{setting.name}</span>
+                                        </div>
+                                    </div>
+                                )),
+                        )}
+                    </div>
+                    <div class={["sliderContainer"]}></div>
+                    <div class={["dateContainer"]}>
+                        <span>{use(this.state.date)}</span>
+                    </div>
+                </div>
+            </Panel>
+        );
+
+        this.notificationCenterElement = (
+            <Panel
+                class={[
+                    this.transition,
+                    use(this.state.showQuickSettings, (open) =>
+                        open ? this.show : this.hide,
+                    ),
+                    this.notificationCenterCss,
+                ]}
+                width="360px"
+                // height="calc(60% - 80px);"
+                id="notificationCenter"
+            >
+                <div class={["notificationContainer"]}>
+                    {use(
+                        anura.notifications.state.notifications,
+                        (notifications) =>
+                            notifications.map((notif) => {
+                                const notification =
+                                    new QuickSettingsNotification(notif);
+                                return notification.element;
+                            }),
+                    )}
+                </div>
+                <div class={["clearButtonContainer"]}>
+                    <button
+                        class={["matter-button-text", "clearButton"]}
+                        on:click={() => {
+                            anura.notifications.state.notifications.forEach(
+                                (n) => {
+                                    n.close();
+                                },
+                            );
+                            anura.notifications.state.notifications = [];
+                        }}
+                    >
+                        Clear all
+                    </button>
+                </div>
+            </Panel>
+        );
+
+        (this.state.pinnedSettings = anura.settings.get("pinnedSettings") || [
+            {
+                registry: "disable-animation",
+                type: "boolean",
+                name: "Accessibility",
+                icon: "accessibility_new",
+                description: "Reduced motion",
+                value: false,
+            },
+            {
+                registry: "launcher-keybind",
+                type: "boolean",
+                name: "Launcher Keybind",
+                icon: "keyboard_command_key",
+                description: "Enable the launcher keybind",
+                value: true,
+            },
+        ]),
+            handle(
+                use(
+                    anura.notifications.state.notifications,
+                    (notifications) => notifications.length > 0,
+                ),
+                (show) => {
+                    this.notificationCenterElement.style.display = show
+                        ? "flex"
+                        : "none";
+                },
+            );
+        handle(use(this.state.pinnedSettings), (pinnedSettings) => {
+            anura.settings.set("pinnedSettings", pinnedSettings);
+            pinnedSettings.forEach((setting) => {
+                anura.settings.set(setting.registry, setting.value);
+            });
+        });
 
         handle(use(this.state.showQuickSettings), (show: boolean) => {
-            // Update clickoff checker
             this.updateClickoffChecker(show);
-            if ("anura" in window) {
-                // Take over as renderer for notifications
-                anura.notifications.setRender(!show);
-                // Subscribe to notifications
-                if (!this.subscribed) {
-                    (this.state.pinnedSettings = anura.settings.get(
-                        "pinnedSettings",
-                    ) || [
-                        {
-                            registry: "disable-animation",
-                            type: "boolean",
-                            name: "Accessibility",
-                            icon: "accessibility_new",
-                            description: "Reduced motion",
-                            value: false,
-                        },
-                        {
-                            registry: "launcher-keybind",
-                            type: "boolean",
-                            name: "Launcher Keybind",
-                            icon: "keyboard_command_key",
-                            description: "Enable the launcher keybind",
-                            value: true,
-                        },
-                    ]),
-                        handle(
-                            use(
-                                anura.notifications.state.notifications,
-                                (notifications) => notifications.length > 0,
-                            ),
-                            (show) => {
-                                this.notificationCenterElement.style.display =
-                                    show ? "flex" : "none";
-                            },
-                        );
-                    handle(use(this.state.pinnedSettings), (pinnedSettings) => {
-                        anura.settings.set("pinnedSettings", pinnedSettings);
-                        pinnedSettings.forEach((setting) => {
-                            anura.settings.set(setting.registry, setting.value);
-                        });
-                    });
-                    this.notificationCenterElement.appendChild(
-                        <div class={["notificationContainer"]}>
-                            {use(
-                                anura.notifications.state.notifications,
-                                (notifications) =>
-                                    notifications.map((notif) => {
-                                        const notification =
-                                            new QuickSettingsNotification(
-                                                notif,
-                                            );
-                                        return notification.element;
-                                    }),
-                            )}
-                        </div>,
-                    );
-                    this.notificationCenterElement.appendChild(
-                        <div class={["clearButtonContainer"]}>
-                            <button
-                                class={["matter-button-text", "clearButton"]}
-                                on:click={() => {
-                                    anura.notifications.state.notifications.forEach(
-                                        (n) => {
-                                            n.close();
-                                        },
-                                    );
-                                    anura.notifications.state.notifications =
-                                        [];
-                                }}
-                            >
-                                Clear all
-                            </button>
-                        </div>,
-                    );
-                    this.subscribed = true;
-                }
-            }
+            anura.notifications.setRender(!show);
         });
     }
 }

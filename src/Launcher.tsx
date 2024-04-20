@@ -13,26 +13,13 @@ class Launcher {
 
     css = css`
         position: absolute;
-        width: ${anura.platform.type == "mobile"
-            ? "calc(min(100%, 65em) - 20px)"
-            : "min(70%, 35em)"};
-        height: min(30%, 20em);
-        background-color: rgba(22, 22, 22, 0.9);
-        border: 1px solid var(--theme-dark-border);
-        box-shadow: inset 0 0 0 1px var(--theme-secondary-bg);
-
-        border-radius: 1em;
         bottom: 60px;
-        backdrop-filter: blur(40px);
-        display: flex;
-        flex-direction: column;
-        display: block;
-        transition: ${this.popupTransition};
-        opacity: 0;
-        z-index: -1;
+        left: 10px;
         overflow-y: hidden;
         visibility: hidden;
-        left: 10px;
+        z-index: -1;
+        opacity: 0;
+        transition: ${this.popupTransition};
 
         .topSearchBar {
             display: flex;
@@ -121,60 +108,16 @@ class Launcher {
     activeCss = css`
         display: block;
         opacity: 1;
-        height: ${anura.platform.type == "mobile"
-            ? "min(50%, 25em)"
-            : "min(80%, 40em)"};
         z-index: 9999;
-        transition: ${this.popupTransition};
         visibility: visible;
 
         .appsView {
-            transition: ${this.gridTransition};
-            transition-delay: 0.075s;
             opacity: 1;
             grid-row-gap: 0px;
         }
     `;
 
-    // self.active {
-    //     position: absolute;
-    //     width: 100%;
-    //     /* TODO: make this not be a magic number later with css variables */
-    //     height: calc(100% - 51px);
-    //     z-index: 9998;
-    //     opacity: 0;
-    //     top: 0;
-    //     left: 0;
-    //     bottom: 49px;
-    //     display: block;
-    // }
-    // `;
-
-    element = (
-        <div
-            id="launcher"
-            class={[
-                this.css,
-                use(this.state.active, (active) => active && this.activeCss),
-            ]}
-        >
-            <div class="topSearchBar">
-                <img src="/icon.png"></img>
-                <input
-                    placeholder="Search your tabs, files, apps, and more..."
-                    style="outline: none; color: white"
-                    bind:this={use(this.state.search)}
-                    on:input={this.handleSearch.bind(this)}
-                />
-            </div>
-
-            <div
-                id="appsView"
-                class="appsView"
-                bind:this={use(this.state.appsView)}
-            ></div>
-        </div>
-    );
+    element = (<div>Not Initialized</div>);
 
     clickoffChecker: HTMLDivElement;
     updateClickoffChecker: (show: boolean) => void;
@@ -252,6 +195,62 @@ class Launcher {
         this.updateClickoffChecker = updateClickoffChecker;
 
         handle(use(this.state.active), updateClickoffChecker);
+    }
+
+    async init() {
+        const Panel: Component<
+            {
+                width?: string | DLPointer<any>;
+                height?: string | DLPointer<any>;
+                margin?: string | DLPointer<any>;
+                grow?: boolean;
+                style?: any;
+                class?: string | (string | DLPointer<any>)[];
+                id?: string;
+            },
+            { children: HTMLElement[] }
+        > = await anura.ui.get("Panel");
+
+        this.element = (
+            <Panel
+                id="launcher"
+                width={
+                    anura.platform.type == "mobile"
+                        ? "calc(min(100%, 65em) - 20px)"
+                        : "min(70%, 35em)"
+                }
+                height={use(this.state.active, (active) =>
+                    active
+                        ? anura.platform.type == "mobile"
+                            ? "min(50%, 25em)"
+                            : "min(80%, 40em)"
+                        : "min(30%, 20em)",
+                )}
+                class={[
+                    this.css,
+                    use(
+                        this.state.active,
+                        (active) => active && this.activeCss,
+                    ),
+                ]}
+            >
+                <div class="topSearchBar">
+                    <img src="/icon.png"></img>
+                    <input
+                        placeholder="Search your tabs, files, apps, and more..."
+                        style="outline: none; color: white"
+                        bind:this={use(this.state.search)}
+                        on:input={this.handleSearch.bind(this)}
+                    />
+                </div>
+
+                <div
+                    id="appsView"
+                    class="appsView"
+                    bind:this={use(this.state.appsView)}
+                ></div>
+            </Panel>
+        );
     }
 }
 

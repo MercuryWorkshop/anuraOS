@@ -345,6 +345,10 @@ document.addEventListener("anura-login-completed", async () => {
     anura.ui.theme = Theme.new(anura.settings.get("theme"));
     anura.ui.theme.apply();
 
+    await quickSettings.init();
+    await launcher.init();
+    await taskbar.init();
+
     const generic = new GenericApp();
     anura.registerApp(generic);
 

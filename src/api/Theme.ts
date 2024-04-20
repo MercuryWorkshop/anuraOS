@@ -161,23 +161,13 @@ class Theme implements ThemeProps {
     }
 
     // This applies the theme to special elements that need to be updated manually
+    // Ideally, this should be done automatically and if it is possible to do so
+    // outside of this function, it should be done there instead. However, this
+    // function should always remain here for the cases where it is not possible,
+    // even if this function is empty.
 
     apply() {
         const darkBackground = this.state.darkBackground;
-
-        if (taskbar) {
-            taskbar.element.style.background = darkBackground + "e6";
-        }
-        if (launcher) {
-            launcher.element.style.background = darkBackground + "e6";
-        }
-        if (quickSettings) {
-            quickSettings.quickSettingsElement.style.background =
-                darkBackground + "e6";
-            quickSettings.notificationCenterElement.style.background =
-                darkBackground + "e6";
-        }
-
         document
             .querySelectorAll(".notification")
             .forEach((el: HTMLElement) => {

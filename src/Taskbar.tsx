@@ -42,78 +42,7 @@ class Taskbar {
     dragged = null;
     insidedrag = false;
 
-    element = (
-        <footer
-            class={[
-                use(this.state.rounded, (rounded) => rounded && this.rounded),
-            ]}
-        >
-            <div id="launcher-button-container">
-                <div
-                    id="launcher-button"
-                    on:click={() => {
-                        quickSettings.close();
-                        launcher.toggleVisible();
-                    }}
-                >
-                    <img
-                        src="/assets/icons/launcher.svg"
-                        style="height:100%;width:100%"
-                    ></img>
-                </div>
-            </div>
-            <nav
-                id="taskbar-bar"
-                on:dragover={(e: DragEvent) => {
-                    e.preventDefault();
-                }}
-                on:drop={(e: DragEvent) => {
-                    this.insidedrag = true;
-                    e.preventDefault();
-                }}
-            >
-                <ul>
-                    {use(this.state.pinnedApps, (apps: App[]) =>
-                        apps.map(this.shortcut.bind(this)),
-                    )}
-                </ul>
-
-                {$if(use(this.state.showBar), <div class="splitBar"></div>)}
-
-                <ul>
-                    {use(this.state.activeApps, (apps: App[]) =>
-                        apps.map(this.shortcut.bind(this)),
-                    )}
-                </ul>
-            </nav>
-            <div id="taskbar-right">
-                {/* TODO: Calendar */}
-                <span id="date-container">
-                    <span>{use(this.state.date)}</span>
-                </span>
-                <span
-                    id="taskinfo-container"
-                    on:click={() => {
-                        launcher.hide();
-                        quickSettings.toggle();
-                    }}
-                >
-                    <div
-                        class="flex flexcenter"
-                        style={{
-                            gap: "4px",
-                        }}
-                    >
-                        <span>{use(this.state.time)}</span>
-                        <span class="material-symbols-outlined">
-                            {use(this.state.net_icon)}
-                            {use(this.state.bat_icon)}
-                        </span>
-                    </div>
-                </span>
-            </div>
-        </footer>
-    );
+    element = (<div>Not Initialized</div>);
 
     shortcut(app: App) {
         if (!app) return;
@@ -292,14 +221,90 @@ class Taskbar {
             });
         }
     }
-    addShortcut(app: App) {
-        // const shortcut = new Shortcut(app);
-        // this.shortcuts[app.package] = shortcut;
-        // return shortcut;
+    async init() {
+        this.element = (
+            <footer
+                style={{
+                    backgroundColor: use(
+                        anura.ui.theme.state.darkBackground,
+                        (color) => color + "e6",
+                    ),
+                }}
+                class={[
+                    use(
+                        this.state.rounded,
+                        (rounded) => rounded && this.rounded,
+                    ),
+                ]}
+            >
+                <div id="launcher-button-container">
+                    <div
+                        id="launcher-button"
+                        on:click={() => {
+                            quickSettings.close();
+                            launcher.toggleVisible();
+                        }}
+                    >
+                        <img
+                            src="/assets/icons/launcher.svg"
+                            style="height:100%;width:100%"
+                        ></img>
+                    </div>
+                </div>
+                <nav
+                    id="taskbar-bar"
+                    on:dragover={(e: DragEvent) => {
+                        e.preventDefault();
+                    }}
+                    on:drop={(e: DragEvent) => {
+                        this.insidedrag = true;
+                        e.preventDefault();
+                    }}
+                >
+                    <ul>
+                        {use(this.state.pinnedApps, (apps: App[]) =>
+                            apps.map(this.shortcut.bind(this)),
+                        )}
+                    </ul>
+
+                    {$if(use(this.state.showBar), <div class="splitBar"></div>)}
+
+                    <ul>
+                        {use(this.state.activeApps, (apps: App[]) =>
+                            apps.map(this.shortcut.bind(this)),
+                        )}
+                    </ul>
+                </nav>
+                <div id="taskbar-right">
+                    {/* TODO: Calendar */}
+                    <span id="date-container">
+                        <span>{use(this.state.date)}</span>
+                    </span>
+                    <span
+                        id="taskinfo-container"
+                        on:click={() => {
+                            launcher.hide();
+                            quickSettings.toggle();
+                        }}
+                    >
+                        <div
+                            class="flex flexcenter"
+                            style={{
+                                gap: "4px",
+                            }}
+                        >
+                            <span>{use(this.state.time)}</span>
+                            <span class="material-symbols-outlined">
+                                {use(this.state.net_icon)}
+                                {use(this.state.bat_icon)}
+                            </span>
+                        </div>
+                    </span>
+                </div>
+            </footer>
+        );
     }
-    killself() {
-        this.element.remove();
-    }
+
     updateTaskbar() {
         const pinned = anura.settings
             .get("applist")
