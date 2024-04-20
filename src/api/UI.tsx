@@ -1,3 +1,6 @@
+// Use this type instead of {} for empty types, to suppress eslint errors.
+type Empty = Record<string, never>;
+
 class AnuraUI {
     /**
      * This map contains all the built-in components that have been registered.
@@ -162,14 +165,15 @@ class AnuraUI {
             }
         }
 
-        const AnuraVersion: Component<{ product: string }, {}> = function () {
-            this.product ||= "Anura";
-            return (
-                <span>
-                    {this.product} version: {anura.version.pretty}
-                </span>
-            );
-        };
+        const AnuraVersion: Component<{ product: string }, Empty> =
+            function () {
+                this.product ||= "Anura";
+                return (
+                    <span>
+                        {this.product} version: {anura.version.pretty}
+                    </span>
+                );
+            };
 
         const Panel: Component<
             {
