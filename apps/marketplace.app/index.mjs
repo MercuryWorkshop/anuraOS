@@ -9,6 +9,9 @@ const branding = anura.settings.get("marketplace-branding") || {
     overview: "Marketplace | %0/%1",
 }
 
+// Wrapped in a fragment because for some reason html`<style />` doesn't work
+document.head.appendChild(html`<><style>${anura.ui.theme.css()}</style></>`);
+
 window.saved = stateful({
     repos: Object.entries(
         anura.settings.get("workstore-repos") || {
@@ -218,18 +221,24 @@ function App() {
             display: block;
             width: 100%;
             height: 28px;
-            background-color: var(--theme-bg);
-            /*backdrop-filter: blur(8px);*/
+            backdrop-filter: blur(8px);
             border-bottom: #bdbdbd;
             top: 0;
             user-select: none;
             z-index: 1000;
         }
+
+        .matter-button-contained {
+            background-color: var(--theme-accent);
+            color: var(--theme-fg);
+        }
     `;
 
     return html`
         <div>
-            <div id="topbar"></div>
+            <div id="topbar" style=${{
+                backgroundColor: anura.ui.theme.background + "cc",
+            }}></div>
             <div bind:this=${use(this.screen)}></div>
         </div>
     `;

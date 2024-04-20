@@ -113,113 +113,13 @@ class ThemeEditor extends App {
                         />
                     </div>
                 ))}
-                {/* <div>
-                    Background
-                    <input
-                        type="color"
-                        value={anura.ui.theme.background}
-                        on:input={(e: InputEvent) => {
-                            const val = (e.target! as HTMLInputElement).value;
-                            document.getElementById(
-                                "theme-editor",
-                            )!.style.background = val;
-                            anura.ui.theme.background = val;
-                            anura.settings.set("theme", val, "background");
-                        }}
-                    />
-                </div>
-                <div>
-                    Secondary Background
-                    <input
-                        type="color"
-                        value={anura.ui.theme.secondaryBackground}
-                        on:input={(e: InputEvent) => {
-                            const val = (e.target! as HTMLInputElement).value;
-                            anura.ui.theme.secondaryBackground = val;
-                            anura.settings.set(
-                                "theme",
-                                val,
-                                "secondaryBackground",
-                            );
-                        }}
-                    />
-                </div>
-                <div>
-                    Dark Background
-                    <input
-                        type="color"
-                        value={anura.ui.theme.darkBackground}
-                        on:input={(e: InputEvent) => {
-                            const val = (e.target! as HTMLInputElement).value;
-                            anura.ui.theme.darkBackground = val;
-                            anura.settings.set("theme", val, "darkBackground");
-                        }}
-                    />
-                </div>
-                <div>
-                    Accent
-                    <input
-                        type="color"
-                        value={anura.ui.theme.accent}
-                        on:input={(e: InputEvent) => {
-                            const val = (e.target! as HTMLInputElement).value;
-                            anura.ui.theme.accent = val;
-                            anura.settings.set("theme", val, "accent");
-                        }}
-                    />
-                </div>
-                <div>
-                    Foreground
-                    <input
-                        type="color"
-                        value={anura.ui.theme.foreground}
-                        on:input={(e: InputEvent) => {
-                            const val = (e.target! as HTMLInputElement).value;
-                            document.getElementById(
-                                "theme-editor",
-                            )!.style.color = val;
-                            anura.ui.theme.border = val;
-                            anura.settings.set("theme", val, "foreground");
-                        }}
-                    />
-                </div>
-                <div>
-                    Secondary Foreground
-                    <input
-                        type="color"
-                        value={anura.ui.theme.secondaryForeground}
-                        on:input={(e: InputEvent) => {
-                            const val = (e.target! as HTMLInputElement).value;
-                            anura.ui.theme.secondaryForeground = val;
-                            anura.settings.set(
-                                "theme",
-                                val,
-                                "secondaryForeground",
-                            );
-                        }}
-                    />
-                </div>
-                <div>
-                    Border
-                    <input
-                        type="color"
-                        value={use(anura.ui.theme.border)}
-                        on:input={(e: InputEvent) => {
-                            const val = (e.target! as HTMLInputElement).value;
-                            anura.ui.theme.border = val;
-                            anura.settings.set("theme", val, "border");
-                        }}
-                    />
-                </div> */}
                 <button
                     class="matter-button-contained"
+                    style={{
+                        backgroundColor: use(anura.ui.theme.state.accent),
+                        color: use(anura.ui.theme.state.foreground),
+                    }}
                     on:click={() => {
-                        // anura.ui.theme = new Theme();
-                        // document.getElementById(
-                        //     "theme-editor",
-                        // )!.style.background = anura.ui.theme.background;
-                        // document.getElementById("theme-editor")!.style.color =
-                        //     anura.ui.theme.foreground;
                         anura.ui.theme.reset();
                         anura.settings.set("theme", anura.ui.theme);
                     }}

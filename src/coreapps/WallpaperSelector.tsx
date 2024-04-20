@@ -68,6 +68,11 @@ const wallpaperCSS = css`
         margin-left: 20px;
         margin-bottom: 20px;
     }
+
+    .matter-button-contained {
+        background-color: var(--theme-accent);
+        color: var(--theme-fg);
+    }
 `;
 
 type WallpaperObject = {
@@ -143,7 +148,7 @@ class WallpaperSelector extends App {
                     id="custom-wallpaper-btn"
                     class="matter-button-contained"
                 >
-                    Upload
+                    Load Custom Wallpaper
                 </button>
             </div>
 

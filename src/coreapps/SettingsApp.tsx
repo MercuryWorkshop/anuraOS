@@ -134,6 +134,11 @@ const settingsCSS = css`
     .matter-switch {
         width: 100%;
     }
+
+    .matter-button-contained {
+        background-color: var(--theme-accent);
+        color: var(--theme-fg);
+    }
 `;
 
 class SettingsApp extends App {

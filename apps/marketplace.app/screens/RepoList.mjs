@@ -123,7 +123,7 @@ export default function RepoList() {
             }
 
             & > input[type="submit"] {
-                background: var(--theme-dark-bg);
+                background: var(--theme-secondary-bg);
                 color: var(--theme-fg);
                 padding: 6px;
                 border-radius: 6px;

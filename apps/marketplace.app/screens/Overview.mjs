@@ -14,12 +14,11 @@ export default function Overview() {
 
         if (installed) {
             this.installButton.value = "Installed";
-            this.installButton.style.backgroundColor = "#2a2a2a";
+            this.installButton.style.backgroundColor = "var(--theme-secondary-bg)";
             this.installButton.style.color = "#fff";
             this.installButton.disabled = true;
         } else {
             this.installButton.value = "Install";
-            this.installButton.classList.add("matter-success");
             this.installButton.addEventListener("click", async (e) => {
                 e.stopPropagation();
                 if (state.currentItemType === "app") {
