@@ -277,13 +277,21 @@ class Taskbar {
                 </nav>
                 <div id="taskbar-right">
                     {/* TODO: Calendar */}
-                    <span id="date-container">
+                    <span
+                        id="date-container"
+                        on:click={() => {
+                            launcher.hide();
+                            quickSettings.close();
+                            calendar.toggle();
+                        }}
+                    >
                         <span>{use(this.state.date)}</span>
                     </span>
                     <span
                         id="taskinfo-container"
                         on:click={() => {
                             launcher.hide();
+                            calendar.close();
                             quickSettings.toggle();
                         }}
                     >

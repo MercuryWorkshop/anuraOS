@@ -85,6 +85,10 @@ const quickSettings = new QuickSettings(
     clickoffChecker as HTMLDivElement,
     updateClickoffChecker,
 );
+const calendar = new Calendar(
+    clickoffChecker as HTMLDivElement,
+    updateClickoffChecker,
+);
 const contextMenu = new ContextMenu();
 const alttab = new AltTabView();
 
@@ -509,6 +513,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     // Initialize static UI components that utilize anura.ui after loading apps, scripts, libs, so that external apps and libraries can apply overrides.
     await quickSettings.init();
+    await calendar.init();
     await launcher.init();
     await taskbar.init();
 
@@ -516,6 +521,7 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(launcher.element);
     document.body.appendChild(launcher.clickoffChecker);
     document.body.appendChild(quickSettings.quickSettingsElement);
+    document.body.appendChild(calendar.element);
     document.body.appendChild(quickSettings.notificationCenterElement);
     document.body.appendChild(taskbar.element);
     document.body.appendChild(alttab.element);
