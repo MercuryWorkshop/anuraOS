@@ -271,6 +271,8 @@ class V86Backend {
 
     virt_hda: FakeFile;
 
+    netpty: number;
+
     xpty: number;
 
     runpty: number;
@@ -405,6 +407,37 @@ class V86Backend {
             },
         );
 
+        this.netpty = await this.openpty(
+            "/bin/whisper --tun tun0 --pty /dev/hvc1",
+            1,
+            1,
+            async (data) => {
+                console.debug("WHISPER: " + data);
+                if (data.includes("Whisper ready!")) {
+                    this.runcmd("ip addr add 10.0.0.1/24 dev tun0");
+                    this.runcmd("sysctl -w net.ipv4.ip_forward=1");
+                    this.runcmd("ip route add default via 10.0.0.1 dev tun0");
+
+                    anura.notifications.add({
+                        title: "x86 Subsystem",
+                        description: "Started Networking Stack",
+                        timeout: 5000,
+                    });
+                } else if (data.includes("/dev/hvc1")) {
+                    this.v86Wisp = new WebSocket(anura.wsproxyURL);
+                    this.v86Wisp.binaryType = "arraybuffer";
+
+                    this.v86Wisp.onmessage = (event) => {
+                        this.netdata_send(new Uint8Array(event.data));
+                    };
+
+                    this.v86Wisp.onclose = (event) => {
+                        this.v86Wisp = new WebSocket(anura.wsproxyURL);
+                        this.v86Wisp.binaryType = "arraybuffer";
+                    };
+                }
+            },
+        );
         // await sleep(200);
 
         this.runpty = await this.openpty("DISPLAY=:0 bash", 1, 1, (data) => {
@@ -413,13 +446,6 @@ class V86Backend {
         // await sleep(200);
 
         // WISP networking
-        this.v86Wisp = new WebSocket(anura.wsproxyURL);
-        this.v86Wisp.binaryType = "arraybuffer";
-
-        this.v86Wisp.onmessage = (event) => {
-            this.netdata_send(new Uint8Array(event.data));
-        };
-
         let netBuffer: Uint8Array[] = [];
         let inTransit = false;
         let currentRead = 0;
