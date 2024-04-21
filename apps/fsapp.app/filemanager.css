@@ -134,7 +134,7 @@ tr > * {
 }
 
 .selected > * {
-    background-color: color-mix(var(--theme-bg), var(--theme-secondary-bg), 0.5);
+    background-color: color-mix(in srgb, var(--theme-bg) 50%, var(--theme-accent) 50%) !important;
 }
 
 .hover > * {
