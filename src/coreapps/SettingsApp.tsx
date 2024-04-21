@@ -150,6 +150,7 @@ class SettingsApp extends App {
         show_x86_install: anura.settings.get("x86-disabled"),
         x86_installing: false,
         resizing: false,
+        settingsBody: undefined as unknown as HTMLDivElement,
     });
 
     page = async () => (
@@ -163,30 +164,57 @@ class SettingsApp extends App {
 
             <div css={this.state} class="container">
                 <div class="sidebar">
-                    <div class="sidebar-settings-item">
+                    <div
+                        class="sidebar-settings-item"
+                        on:click={() => {
+                            this.state.settingsBody.scrollTo({
+                                top: 0,
+                                behavior: "smooth",
+                            });
+                        }}
+                    >
                         <span class="sidebar-settings-item-name">
                             <span class="material-symbols-outlined">build</span>
-                            <a href="#general">General</a>
+                            <a>General</a>
                         </span>
                     </div>
-                    <div class="sidebar-settings-item">
+                    <div
+                        class="sidebar-settings-item"
+                        on:click={() => {
+                            this.state.settingsBody.scrollTo({
+                                top: 100000,
+                                behavior: "smooth",
+                            });
+                        }}
+                    >
                         <span class="sidebar-settings-item-name">
                             <span class="material-symbols-outlined">
                                 memory
                             </span>
-                            <a href="#v86">x86</a>
+                            <a>x86</a>
                         </span>
                     </div>
-                    <div class="sidebar-settings-item">
+                    <div
+                        class="sidebar-settings-item"
+                        on:click={() => {
+                            this.state.settingsBody.scrollTo({
+                                top: 100000,
+                                behavior: "smooth",
+                            });
+                        }}
+                    >
                         <span class="sidebar-settings-item-name">
                             <span class="material-symbols-outlined">
                                 device_reset
                             </span>
-                            <a href="#reset">Reset</a>
+                            <a>Reset</a>
                         </span>
                     </div>
                 </div>
-                <div class="settings-body">
+                <div
+                    bind:this={use(this.state.settingsBody)}
+                    class="settings-body"
+                >
                     <div id="general" class="general settings-category">
                         <h3 class="settings-category-name">General</h3>
                         <div class="settings-group">
