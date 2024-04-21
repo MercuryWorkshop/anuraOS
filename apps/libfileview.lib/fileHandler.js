@@ -85,15 +85,27 @@ export function openFile (path) {
     
     function openText(path) {
         fs.readFile(path, function(err, data)  {
-            let fileView = anura.wm.createGeneric("Text Viewer");
+            let fileView = anura.wm.createGeneric("Simple Text Editor");
             fileView.content.style.overflow = 'auto'
             fileView.content.style.backgroundColor = "var(--material-bg)"
             fileView.content.style.color = "white"
-            const text = document.createElement("pre")
+            const text = document.createElement("textarea")
             text.style.fontFamily = '"Roboto Mono", monospace'
-            text.style.margin = "8px"
+            text.style.top = 0
+            text.style.left = 0
+            text.style.width = "calc( 100% - 20px )"
+            text.style.height = "calc( 100% - 24px )"
+            text.style.backgroundColor = "var(--material-bg)"
+            text.style.color = "white"
+            text.style.border = "none"
+            text.style.resize = "none"
+            text.style.outline = "none"
             text.style.userSelect = "text"
-            text.innerText = data;
+            text.style.margin = "8px"
+            text.value = data;
+            text.onchange = () => {
+                fs.writeFile(path, text.value)
+            }
             fileView.content.appendChild(text)
         })
     }
