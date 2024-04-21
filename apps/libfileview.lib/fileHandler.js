@@ -92,6 +92,7 @@ export function openFile (path) {
             const text = document.createElement("div")
             text.style.fontFamily = '"Roboto Mono", monospace'
             text.style.margin = "8px"
+            text.style.userSelect = "text"
             text.innerText = data;
             fileView.content.appendChild(text)
         })
