@@ -411,7 +411,6 @@ class V86Backend {
             console.debug("RUNPTY" + data);
         });
         // await sleep(200);
-        anura.apps["anura.term"].open();
 
         // WISP networking
         this.v86Wisp = new WebSocket(anura.wsproxyURL);
@@ -548,7 +547,7 @@ class V86Backend {
         this.runcmd(
             `stty -F /dev/pts/${TTYn} cols ${cols} && stty -F /dev/pts/${TTYn} rows ${rows}`,
         );
-        /* 
+        /*
         if (TTYn == -1) {
             return;
         }
