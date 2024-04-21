@@ -10,3 +10,6 @@
 [submodule "dreamlandjs"]
 	path = dreamlandjs
 	url = https://github.com/mercuryworkshop/dreamlandjs
+[submodule "x86_image_wizard/whisper"]
+	path = x86_image_wizard/whisper
+	url = https://github.com/MercuryWorkshop/whisper

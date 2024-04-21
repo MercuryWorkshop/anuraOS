@@ -23,11 +23,11 @@ COPY X11/* /etc/X11/
 COPY xfrog.sh /bin/xfrog
 COPY xsetrandr.sh /bin/xsetrandr
 
-
 COPY anurad.c /etc/
 COPY anuramouse/* /etc/anuramouse/
+COPY whisper /bin/whisper
 
-RUN chmod u+x /bin/xfrog /bin/xsetrandr
+RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/whisper
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil 
 RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anurad /etc/init.d/
