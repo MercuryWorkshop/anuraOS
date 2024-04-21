@@ -34,6 +34,33 @@ function RepoItem() {
         }
     }
 
+    this.css = css`
+        margin-right: auto;
+        margin-left: auto;
+        height: 38px;
+        line-height: 38px;
+        width: auto;
+        text-align: left;
+        padding-left: 10px;
+        color: var(--theme-fg);
+        font-weight: 500;
+        cursor: pointer;
+
+        &:first-of-type {
+            border-radius: 4px 4px 0 0;
+        }
+
+        &:nth-last-of-type(2) {
+            border-radius: 0 0 4px 4px;
+            border-bottom: none;
+        }
+
+        &:hover {
+            transition: 0.3s;
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+    `;
+
     return html`
         <div class="repoItem ${use(state.currentRepo, repo => repo.includes(this.repourl) ? "selected" : "inactive")}" on:contextmenu=${(e) => {
             e.preventDefault();
@@ -73,33 +100,6 @@ export default function RepoList() {
         top: 28px;
         width: 30%;
         border-right: 1px solid var(--theme-border);
-
-        .repoItem {
-            margin-right: auto;
-        margin-left: auto;
-        height: 38px;
-        line-height: 38px;
-        width: auto;
-        text-align: left;
-        padding-left: 10px;
-        color: var(--theme-fg);
-        font-weight: 500;
-        cursor: pointer;
-
-        &:first-of-type {
-            border-radius: 4px 4px 0 0;
-        }
-
-        &:nth-last-of-type(2) {
-            border-radius: 0 0 4px 4px;
-            border-bottom: none;
-        }
-
-        &:hover {
-            transition: 0.3s;
-            background-color: rgba(255, 255, 255, 0.08);
-        }
-        }
 
         .repoItem.selected {
             background-color: var(--theme-secondary-bg);
