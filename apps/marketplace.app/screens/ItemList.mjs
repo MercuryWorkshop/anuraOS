@@ -38,8 +38,45 @@ function Item() {
         }
     };
 
+    return html` <div
+        on:click=${() => {
+            state.currentItem = this.data;
+            state.currentItemType = this.type;
+            state.currentScreen = "overview";
+        }}
+        class="item"
+    >
+        <img class="thumbnail" bind:this=${use(this.thumbnail)} />
+        <div class="infoContainer">
+            <span>${this.data.name}</span>
+            <p>${desc}</p>
+        </div>
+        <input
+            class="matter-button-contained"
+            bind:this=${use(this.installButton)}
+            type="button"
+        />
+    </div>`;
+}
+
+export default function ItemList() {
+    this.mount = async () => {
+        console.log(state.currentRepo);
+        const apps = await state.currentRepo[2].getApps();
+        const libs = await state.currentRepo[2].getLibs();
+
+        apps.forEach(async (app) => {
+            this.listElem.appendChild(html`<${Item} type="app" data=${app} />`);
+        });
+
+        libs.forEach(async (lib) => {
+            this.listElem.appendChild(html`<${Item} type="lib" data=${lib} />`);
+        });
+    };
+
     this.css = css`
-        height: 100px;
+        .item {
+            height: 100px;
         width: 100%;
         background: var(--theme-dark-bg);
         border-bottom: 1px solid var(--theme-border);
@@ -104,44 +141,8 @@ function Item() {
                 padding: 0;
             }
         }
-    `;
+        }
 
-    return html` <div
-        on:click=${() => {
-            state.currentItem = this.data;
-            state.currentItemType = this.type;
-            state.currentScreen = "overview";
-        }}
-    >
-        <img class="thumbnail" bind:this=${use(this.thumbnail)} />
-        <div class="infoContainer">
-            <span>${this.data.name}</span>
-            <p>${desc}</p>
-        </div>
-        <input
-            class="matter-button-contained"
-            bind:this=${use(this.installButton)}
-            type="button"
-        />
-    </div>`;
-}
-
-export default function ItemList() {
-    this.mount = async () => {
-        console.log(state.currentRepo);
-        const apps = await state.currentRepo[2].getApps();
-        const libs = await state.currentRepo[2].getLibs();
-
-        apps.forEach(async (app) => {
-            this.listElem.appendChild(html`<${Item} type="app" data=${app} />`);
-        });
-
-        libs.forEach(async (lib) => {
-            this.listElem.appendChild(html`<${Item} type="lib" data=${lib} />`);
-        });
-    };
-
-    this.css = css`
         #itemList {
             margin-bottom: 2rem;
             display: flex;
