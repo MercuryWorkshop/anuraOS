@@ -125,7 +125,7 @@ class ThemeEditor extends App {
                     }}
                     on:click={() => {
                         anura.ui.theme.reset();
-                        anura.settings.set("theme", anura.ui.theme);
+                        anura.settings.set("theme", anura.ui.theme.state);
                     }}
                 >
                     Reset
@@ -179,10 +179,9 @@ class ThemeEditor extends App {
         console.log("got the baller ass theme");
         try {
             const data = await anura.fs.promises.readFile(file);
-            const themejson = JSON.parse(new TextDecoder().decode(data));
-            console.log(themejson);
-            Object.assign(anura.ui.theme.state, themejson);
+            Object.assign(anura.ui.theme.state, JSON.parse(data as any));
             anura.ui.theme.apply();
+            await anura.settings.set("theme", anura.ui.theme.state);
         } catch (e) {
             anura.notifications.add({
                 title: "Theme editor",
