@@ -1,5 +1,5 @@
 class OobeView {
-    state = stateful({
+    state = $state({
         color: "var(--oobe-bg)",
         text: "#202124",
         step: 0,

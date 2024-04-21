@@ -49,7 +49,7 @@ class Settings {
 
         try {
             const raw = await fs.promises.readFile("/anura_settings.json");
-            // JSON.parse supports Uint8Array, but for some reason typescript doesn't know that???
+            // This Uint8Array is actuallly a buffer, so JSON.parse can handle it
             Object.assign(initial, JSON.parse(raw as any));
         } catch (e) {
             fs.writeFile("/anura_settings.json", JSON.stringify(initial));

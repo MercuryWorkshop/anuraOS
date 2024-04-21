@@ -94,7 +94,7 @@ class WallpaperSelector extends App {
         return await this.loadWallpaperManifest();
     };
 
-    state = stateful({
+    state = $state({
         resizing: false,
     });
 

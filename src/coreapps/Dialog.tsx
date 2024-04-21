@@ -114,6 +114,8 @@ class Dialog extends App {
             win.content.style.background = "var(--material-bg)";
             win.content.style.color = "white";
 
+            let input: HTMLInputElement;
+
             win.content.appendChild(
                 <div class={[this.css]}>
                     <h2>{message}</h2>
@@ -122,7 +124,11 @@ class Dialog extends App {
                         so I am relaying the previous comment
                     */}
                     <label class="matter-textfield-filled">
-                        <input placeholder=" " />
+                        {
+                            (input = (
+                                <input placeholder=" " />
+                            ) as HTMLInputElement)
+                        }
                     </label>
 
                     <div class="buttons">
@@ -137,10 +143,8 @@ class Dialog extends App {
                         </button>
                         <button
                             class={["matter-button-contained", "confirm"]}
-                            on:click={(evt: InputEvent) => {
-                                const inputElement =
-                                    evt.target as HTMLInputElement;
-                                const value = inputElement.value;
+                            on:click={() => {
+                                const value = input.value;
                                 if (value && value !== "") {
                                     resolve(value);
                                 } else if (defaultValue) {

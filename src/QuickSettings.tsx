@@ -16,7 +16,7 @@ class QuickSettings {
             value: any;
         }>;
         date: string;
-    }> = stateful({
+    }> = $state({
         showQuickSettings: false,
         pinnedSettings: [],
         date: new Date().toLocaleString(),
@@ -448,7 +448,7 @@ class QuickSettingsNotification {
             callback: (notif: AnuraNotification) => void;
             close?: boolean;
         }>;
-    }> = stateful({
+    }> = $state({
         title: "",
         description: "",
         timeout: 2000,

@@ -146,7 +146,7 @@ class SettingsApp extends App {
     package = "anura.settings";
     icon = "/assets/icons/settings.png";
 
-    state = stateful({
+    state = $state({
         show_x86_install: anura.settings.get("x86-disabled"),
         x86_installing: false,
         resizing: false,

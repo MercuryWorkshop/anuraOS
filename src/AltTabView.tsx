@@ -70,7 +70,7 @@ class AltTabView {
     }
 
     constructor() {
-        this.state = stateful<AltTabViewState>({
+        this.state = $state<AltTabViewState>({
             windows: [],
             index: 0,
             active: false,
