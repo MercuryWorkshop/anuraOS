@@ -62,7 +62,7 @@ function RepoItem() {
     `;
 
     return html`
-        <div class="repoItem ${use(state.currentRepo, repo => repo.includes(this.repourl) ? "selected" : "inactive")}" on:contextmenu=${(e) => {
+        <div class="repoItem" on:contextmenu=${(e) => {
             e.preventDefault();
 
             openedMenus.forEach(m => m.hide());
