@@ -89,7 +89,7 @@ export function openFile (path) {
             fileView.content.style.overflow = 'auto'
             fileView.content.style.backgroundColor = "var(--material-bg)"
             fileView.content.style.color = "white"
-            const text = document.createElement("div")
+            const text = document.createElement("pre")
             text.style.fontFamily = '"Roboto Mono", monospace'
             text.style.margin = "8px"
             text.innerText = data;
