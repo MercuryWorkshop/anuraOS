@@ -3,6 +3,8 @@ class ThemeEditor extends App {
         resizing: false,
     });
 
+    picker: any;
+
     css = css`
         input[type="color"] {
             appearance: none;
@@ -94,7 +96,9 @@ class ThemeEditor extends App {
             class={`background ${this.css}`}
             id="theme-editor"
         >
-            {/* TODO: WTF IS THIS UI */}
+            {/* TODO: WTF IS THIS UI 
+            
+            peak is what it is */}
             <h1>Theme Editor</h1>
 
             <div>
@@ -126,6 +130,32 @@ class ThemeEditor extends App {
                 >
                     Reset
                 </button>
+
+                <button
+                    class="matter-button-contained"
+                    style={{
+                        backgroundColor: use(anura.ui.theme.state.accent),
+                        color: use(anura.ui.theme.state.foreground),
+                    }}
+                    on:click={() => {
+                        this.exportTheme(JSON.stringify(anura.ui.theme.state));
+                    }}
+                >
+                    Export
+                </button>
+
+                <button
+                    class="matter-button-contained"
+                    style={{
+                        backgroundColor: use(anura.ui.theme.state.accent),
+                        color: use(anura.ui.theme.state.foreground),
+                    }}
+                    on:click={() => {
+                        this.importTheme();
+                    }}
+                >
+                    Import
+                </button>
             </div>
         </div>
     );
@@ -136,8 +166,39 @@ class ThemeEditor extends App {
             width: "910px",
             height: "720px",
         });
+        this.picker = await anura.import("anura.filepicker");
         win.content.appendChild(await this.page());
 
         return win;
+    }
+
+    async importTheme() {
+        // Here be dragons
+        console.log("importing baller ass theme");
+        const file = await (await this.picker).selectFile("(json|txt)");
+        console.log("got the baller ass theme");
+        try {
+            const data = await anura.fs.promises.readFile(file);
+            const themejson = JSON.parse(new TextDecoder().decode(data));
+            console.log(themejson);
+            Object.assign(anura.ui.theme.state, themejson);
+            anura.ui.theme.apply();
+        } catch (e) {
+            anura.notifications.add({
+                title: "Theme editor",
+                description: `Theme could not be loaded: ${e}`,
+                timeout: 5000,
+            });
+        }
+    }
+
+    exportTheme(theme: string) {
+        const filePath = `/theme-${Math.floor(Math.random() * 1e10)}.json`;
+        anura.fs.writeFile(filePath, theme);
+        anura.notifications.add({
+            title: "Theme editor",
+            description: `Theme saved to ${filePath}`,
+            timeout: 5000,
+        });
     }
 }
