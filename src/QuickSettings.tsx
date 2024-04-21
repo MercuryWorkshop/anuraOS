@@ -23,7 +23,7 @@ class QuickSettings {
     });
 
     transition = css`
-        transition: opacity 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+        transition: opacity 0.08s cubic-bezier(0.445, 0.05, 0.55, 0.95);
     `;
 
     show = css`
