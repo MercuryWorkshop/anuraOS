@@ -20,7 +20,7 @@ class Calendar {
     `;
 
     transition = css`
-        transition: opacity 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+        transition: opacity 0.08s cubic-bezier(0.445, 0.05, 0.55, 0.95);
     `;
 
     show = css`
@@ -161,9 +161,13 @@ class Calendar {
                       background: var(--theme-secondary-bg);
                   }
 
-                  header .calendar-current-date {
+                  header #calendar-date {
                       font-weight: 500;
                       font-size: 1.45rem;
+                  }
+
+                  header .calendar-current-year {
+                      color: var(--theme-secondary-fg);
                   }
 
                   .calendar-body {
@@ -236,7 +240,10 @@ class Calendar {
                   <body>
 	<div class="calendar-container">
 		<header class="calendar-header">
-			<p class="calendar-current-date"></p>
+		  <div id="calendar-date">
+			<span class="calendar-current-month"></span>
+			<span class="calendar-current-year"></span>
+			</div>
 			<div class="calendar-navigation">
 				<span id="calendar-prev"
 					class="material-symbols-outlined">
@@ -269,8 +276,10 @@ let month = date.getMonth();
 
 const day = document.querySelector(".calendar-dates");
 
-const currdate = document
-    .querySelector(".calendar-current-date");
+const currMonth = document.querySelector(".calendar-current-month");
+
+const currYear = document
+    .querySelector(".calendar-current-year");
 
 const prenexIcons = document
     .querySelectorAll(".calendar-navigation span");
@@ -334,7 +343,8 @@ const manipulate = () => {
 
     // Update the text of the current date element
     // with the formatted current month and year
-    currdate.innerText = \`\${months[month]} \${year}\`;
+    currMonth.innerText = months[month];
+    currYear.innerText = year;
 
     // update the HTML of the dates element
     // with the generated calendar
