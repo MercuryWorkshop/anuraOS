@@ -91,9 +91,9 @@ const back = html`
     <span
         class=${["material-symbols-outlined"]}
         style=${{
-            fontSize: "16px",
-            lineHeight: "24px"
-        }}>
+        fontSize: "16px",
+        lineHeight: "24px"
+    }}>
         arrow_back
     </span>
 </button>
@@ -192,6 +192,37 @@ if (!anura.uri.has("marketplace")) {
 
 
 function App() {
+    const welcomeCSS = css`
+    display: grid;
+    place-items: center;
+    height: 100%;
+
+    img {
+        width: 5rem;
+        height: 5rem;
+        display: inline;
+        margin-right: 1.5rem;
+    }
+
+    h1 {
+        margin-bottom: 2px;
+    }
+    `
+
+
+    const welcomeMsg = html`
+    <div class=${welcomeCSS}>
+        <div style="display: flex; align-items: center; justify-content: center;margin-bottom:28px;">
+            <img src="./playstore.webp"/>
+            <span>
+                <h1>Welcome to Marketplace</h1>
+                <p>Click a repository to view its contents.</p> 
+            </span>
+        </div>
+    </div>
+    `;
+
+
     this.mount = () => {
         handle(use(state.currentScreen), (screen) => {
             this.screen.innerHTML = "";
@@ -199,17 +230,7 @@ function App() {
                 case "repoList":
                     instanceWindow.state.title = "Marketplace";
                     back.style.display = "none";
-                    this.screen.appendChild(html`
-                      <div style="display: grid; place-items: center;height:100%">
-                      <div style="display: flex; align-items: center; justify-content: center;margin-bottom:28px;">
-                      <img src="./playstore.webp" style="width: 5rem; height: 5rem; display: inline; margin-right: 1.5rem;"/>
-                      <span>
-                      <h1 style="margin-bottom: 2px;">Welcome to Marketplace</h1>
-                      <p>Click a repository to view its contents.</p> 
-                      </span>
-                      </div>
-                      </div>
-                      `);
+                    this.screen.appendChild(welcomeMsg);
                     break;
                 case "itemList":
                     instanceWindow.state.title = branding.itemList.replace("%0", state.currentRepo[0]);
@@ -231,11 +252,15 @@ function App() {
             display: block;
             width: 100%;
             height: 28px;
-            backdrop-filter: blur(8px);
             border-bottom: #bdbdbd;
             top: 0;
             user-select: none;
             z-index: 1000;
+            background-color: var(--theme-bg);
+        }
+
+        :webkit-scrollbar {
+            z-index: 900; /* TODO: figure out why the scrollbar clips through the titlebar (?!) */
         }
 
         .matter-button-contained {
@@ -244,13 +269,20 @@ function App() {
         }
     `;
 
+    const sidebarCSS = css`
+    position: absolute; 
+    width: 30%; 
+    height: calc(100% - 28px); 
+    top: 28px; 
+    left: 0;
+    border-right: 1px solid var(--theme-border);
+    `
+
     return html`
         <div>
-            <div id="topbar" style=${{
-                backgroundColor: anura.ui.theme.background + "cc",
-            }}></div>
+            <div id="topbar"></div>
             <div id="content">
-            <div style="position: absolute; width: 30%; height: calc(100% - 28px); top: 28px; left: 0;"><${RepoList}/></div>
+            <div class=${sidebarCSS}><${RepoList}/></div>
             <div style="position: absolute; width: 70%; height: calc(100% - 28px); top: 28px; right: 0;" bind:this=${use(this.screen)}></div>
             </div>
         </div>
