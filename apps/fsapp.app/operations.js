@@ -3,12 +3,23 @@ var clipboard = [];
 var removeAfterPaste = false;
 let fflate;
 let mime;
+let filePicker = null;
 anura.import("npm:fflate").then(lib => {
     fflate = lib
 })
 anura.import("npm:mime").then(lib => {
     mime = lib
 })
+const url = new URL(window.location.href);
+if (url.searchParams.get("picker")) {
+    const picker = ExternalApp.deserializeArgs(url.searchParams.get("picker"))
+    if (picker) {
+        document.getElementById("selector").style.display = "";
+        filePicker = {}
+        filePicker.regex = new RegExp(picker[0])
+        filePicker.type = picker[1]
+    }
+}
 window.fs = anura.fs;
 window.Buffer = Filer.Buffer;
 let sh = new anura.fs.Shell();
@@ -62,6 +73,7 @@ async function loadPath(path) {
         const stats = await fs.promises.stat(`${path}/${file}`);
 
         if (stats.isDirectory()) {
+            console.log("FOLDER!!!")
             name.innerText = `${file}/`;
             description.innerText = "Folder";
             date.innerText = new Date(stats.mtime).toLocaleString();
@@ -97,31 +109,64 @@ async function loadPath(path) {
             row.setAttribute("data-type", "dir");
             row.setAttribute("data-path", `${path}/${file}`);
         } else {
-            name.innerText = `${file}`;
-            description.innerText = "Anura File";
-            anura.files.getFileType(`${path}/${file}`).then((type) => {
-                description.innerText = type;
-            });
-            date.innerText = new Date(stats.mtime).toLocaleString();
-            size.innerText = stats.size;
+            if (filePicker) {
+                if (filePicker.type !== "dir") {
+                let ext = file.split("/").pop().split(".").pop();
+                if (filePicker.regex.test(ext)) {
+                    name.innerText = `${file}`;
+                    description.innerText = "Anura File";
+                    anura.files.getFileType(`${path}/${file}`).then((type) => {
+                        description.innerText = type;
+                    });
+                    date.innerText = new Date(stats.mtime).toLocaleString();
+                    size.innerText = stats.size;
 
-            try {
-                const iconURL = await anura.files.getIcon(`${path}/${file}`);
-                icon.src = iconURL;
-            } catch (e) {
-                icon.src = anura.files.fallbackIcon;
-                console.error(e);
+                    try {
+                        const iconURL = await anura.files.getIcon(`${path}/${file}`);
+                        icon.src = iconURL;
+                    } catch (e) {
+                        icon.src = anura.files.fallbackIcon;
+                        console.error(e);
+                    }
+
+                    iconContainer.appendChild(icon);
+                    row.appendChild(iconContainer);
+                    row.appendChild(name);
+                    row.appendChild(size);
+                    row.appendChild(description);
+                    row.appendChild(date);
+
+                    row.setAttribute("data-type", "file");
+                    row.setAttribute("data-path", `${path}/${file}`);
+                }
             }
+        } else {
+                name.innerText = `${file}`;
+                description.innerText = "Anura File";
+                anura.files.getFileType(`${path}/${file}`).then((type) => {
+                    description.innerText = type;
+                });
+                date.innerText = new Date(stats.mtime).toLocaleString();
+                size.innerText = stats.size;
 
-            iconContainer.appendChild(icon);
-            row.appendChild(iconContainer);
-            row.appendChild(name);
-            row.appendChild(size);
-            row.appendChild(description);
-            row.appendChild(date);
+                try {
+                    const iconURL = await anura.files.getIcon(`${path}/${file}`);
+                    icon.src = iconURL;
+                } catch (e) {
+                    icon.src = anura.files.fallbackIcon;
+                    console.error(e);
+                }
 
-            row.setAttribute("data-type", "file");
-            row.setAttribute("data-path", `${path}/${file}`);
+                iconContainer.appendChild(icon);
+                row.appendChild(iconContainer);
+                row.appendChild(name);
+                row.appendChild(size);
+                row.appendChild(description);
+                row.appendChild(date);
+
+                row.setAttribute("data-type", "file");
+                row.setAttribute("data-path", `${path}/${file}`);
+            }
         }
         console.debug("appending");
         table.appendChild(row);
@@ -131,6 +176,51 @@ async function loadPath(path) {
             reloadListeners();
         }
     });
+}
+
+async function selectAction(selected) {
+    currentlySelected.forEach((row) => {
+        row.classList.remove("selected");
+    });
+    currentlySelected = [];
+    if (selected.length == 1) {
+        var fileSelected = selected[0];
+        if (fileSelected.getAttribute("data-type") == filePicker.type) {
+            let fileData = {
+                message: 'FileSelected',
+                filePath: fileSelected.getAttribute("data-path").replace(/(\/)\1+/g, "$1")
+            };
+
+            window.parent.postMessage(fileData, '*');
+        }
+    } else if (selected.length > 1) {
+        let dataPaths = [];
+        for (var i = 0; i < selected.length; i++) {
+            var dataType = selected[i].getAttribute("data-type");
+            var dataPath = selected[i].getAttribute("data-path");
+            if (dataType !== filePicker.type ) {
+                return;
+            }
+            if (dataPath !== null) {
+              dataPaths.push(dataPath.replace(/(\/)\1+/g, "$1"));
+            }
+        }
+        let fileData = {
+            message: 'FileSelected',
+            filePath: dataPaths
+        };
+    
+        window.parent.postMessage(fileData, '*');
+    } else if (selected.length == 0) {
+        if (filePicker.type == "dir") {
+            let fileData = {
+                message: 'FileSelected',
+                filePath: document.querySelector(".breadcrumbs").getAttribute("data-current-path")
+              };
+        
+              window.parent.postMessage(fileData, '*');
+        }
+    }
 }
 
 function reloadListeners() {

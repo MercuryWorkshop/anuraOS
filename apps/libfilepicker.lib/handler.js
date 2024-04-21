@@ -9,7 +9,10 @@ export function selectFile(regex = ".*", app = anura.apps["anura.fsapp"]) {
         let iframe = document.createElement("iframe");
         iframe.style =
             "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
-            iframe.setAttribute("src", `/apps/libfilepicker.lib/file.html?regex=${encodeURIComponent(regex)}`);
+        iframe.setAttribute("src", `/apps/fsapp.app/filemanager.html?picker=` + ExternalApp.serializeArgs([
+            regex,
+            "file",
+        ]));
         function handleMessage(event) {
             if (typeof event.data === 'object' && event.data.message === 'FileSelected') {
                 let receivedData = event.data;
@@ -23,6 +26,14 @@ export function selectFile(regex = ".*", app = anura.apps["anura.fsapp"]) {
         }
         parent.addEventListener('message', handleMessage);
         picker.content.appendChild(iframe);
+        Object.assign(iframe.contentWindow, {
+            anura,
+            AliceWM,
+            ExternalApp,
+            LocalFS,
+            instance: app,
+            instanceWindow: picker,
+        });
     });
 }
 
@@ -37,7 +48,10 @@ export function selectFolder(regex = "", app = anura.apps["anura.fsapp"]) {
         let iframe = document.createElement("iframe");
         iframe.style =
             "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
-        iframe.setAttribute("src", `/apps/libfilepicker.lib/folder.html?regex=${encodeURIComponent(regex)}`);
+        iframe.setAttribute("src", `/apps/fsapp.app/filemanager.html?picker=` + ExternalApp.serializeArgs([
+            regex,
+            "dir",
+        ]));
         function handleMessage(event) {
             if (typeof event.data === 'object' && event.data.message === 'FileSelected') {
                 let receivedData = event.data;
@@ -49,7 +63,15 @@ export function selectFolder(regex = "", app = anura.apps["anura.fsapp"]) {
                 resolve(filePath)
             }
         }
-        picker.content.appendChild(iframe);
         parent.addEventListener('message', handleMessage);
+        picker.content.appendChild(iframe);
+        Object.assign(iframe.contentWindow, {
+            anura,
+            AliceWM,
+            ExternalApp,
+            LocalFS,
+            instance: app,
+            instanceWindow: picker,
+        });
     });
 }
