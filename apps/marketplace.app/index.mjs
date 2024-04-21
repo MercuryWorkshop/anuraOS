@@ -199,7 +199,17 @@ function App() {
                 case "repoList":
                     instanceWindow.state.title = "Marketplace";
                     back.style.display = "none";
-                    this.screen.appendChild(html`<${RepoList}/>`);
+                    this.screen.appendChild(html`
+                      <div id="shit">
+                      <h1>new slave store ui</h1>
+                      <p>made at 11pm during racism vc (real)</p>
+                      <h2>TODO:</h2>
+                      <ul>
+                        <li>make it look good</li>
+                        <li>make it work hopefully</li>
+                      </ul>
+                      </div>
+                      `);
                     break;
                 case "itemList":
                     instanceWindow.state.title = branding.itemList.replace("%0", state.currentRepo[0]);
@@ -239,7 +249,10 @@ function App() {
             <div id="topbar" style=${{
                 backgroundColor: anura.ui.theme.background + "cc",
             }}></div>
-            <div bind:this=${use(this.screen)}></div>
+            <div id="content">
+            <div style="position: absolute; width: 30%; height: calc(100% - 28px); top: 28px; left: 0;"><${RepoList}/></div>
+            <div style="position: absolute; width: 70%; height: calc(100% - 28px); top: 28px; right: 0;" bind:this=${use(this.screen)}></div>
+            </div>
         </div>
     `;
 

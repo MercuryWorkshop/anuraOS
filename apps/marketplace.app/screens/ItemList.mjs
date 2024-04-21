@@ -147,7 +147,7 @@ export default function ItemList() {
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 75%;
+            width: 90%;
             margin-right: auto;
             margin-left: auto;
         }

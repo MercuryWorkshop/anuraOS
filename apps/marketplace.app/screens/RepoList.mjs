@@ -29,10 +29,10 @@ function RepoItem() {
         background: rgba(255, 255, 255, 0.05);
         margin-right: auto;
         margin-left: auto;
-        height: 65px;
-        line-height: 65px;
-        width: 60vw;
-        text-align: center;
+        height: 38px;
+        line-height: 38px;
+        width: 100%;
+        text-align: left;
         color: var(--theme-fg);
         background-color: var(--theme-secondary-bg);
         font-weight: 500;
@@ -89,11 +89,15 @@ export default function RepoList() {
     );
 
     this.css = css`
+        position: fixed;
+        top: 28px;
+        width: 30%;
         .repoAdd {
             margin-left: auto;
             margin-right: auto;
             display: table;
-            position: relative;
+            position: fixed;
+            bottom: 0;
             margin-top: 20px;
 
             & > input {
@@ -145,8 +149,8 @@ export default function RepoList() {
                 <div id="repoList">
                     ${use(this.repos)}
                     <div class="repoAdd">
-                        <input type="text" placeholder="My Repo" bind:this=${use(this.newRepoName)} />
-                        <input type="text" placeholder="https://anura.repo/" bind:this=${use(this.newRepoURL)} />
+                        <input type="text" placeholder="My Repo" bind:this=${use(this.newRepoName)} /><br>
+                        <input type="text" placeholder="https://anura.repo/" bind:this=${use(this.newRepoURL)} /><br>
                         <input type="submit" value="Add Repository" on:click=${() => {
                             if (!this.newRepoURL.value.endsWith("/")) {
                                 anura.notifications.add({
