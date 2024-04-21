@@ -5,7 +5,7 @@ class Platform {
     // Provides a stateful object that can be used to track any platform features and information that are expected to change during the lifecycle of anura.
     state: Stateful<{
         fullscreen: boolean;
-    }> = stateful({
+    }> = $state({
         fullscreen: false,
     });
 

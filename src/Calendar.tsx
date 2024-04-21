@@ -1,7 +1,7 @@
 class Calendar {
     state: Stateful<{
         show?: boolean;
-    }> = stateful({
+    }> = $state({
         show: false,
     });
 

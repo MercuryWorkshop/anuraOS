@@ -4,7 +4,7 @@ class Launcher {
         apps?: App[];
         appsView?: HTMLDivElement;
         search?: HTMLInputElement;
-    }> = stateful({
+    }> = $state({
         active: false,
     });
 

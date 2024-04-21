@@ -19,7 +19,7 @@ class Taskbar {
         date: string;
         bat_icon: string;
         net_icon: string;
-    } = stateful({
+    } = $state({
         pinnedApps: [],
         activeApps: [],
         showBar: false,

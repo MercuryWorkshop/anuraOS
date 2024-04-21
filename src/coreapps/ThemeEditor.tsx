@@ -1,5 +1,5 @@
 class ThemeEditor extends App {
-    state = stateful({
+    state = $state({
         resizing: false,
     });
 

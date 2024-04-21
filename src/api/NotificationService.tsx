@@ -2,7 +2,7 @@ class NotificationService {
     state: Stateful<{
         notifications: AnuraNotification[];
         render: boolean;
-    }> = stateful({
+    }> = $state({
         notifications: [],
         render: true,
     });
@@ -121,7 +121,7 @@ class AnuraNotification implements NotifParams {
     }> = [];
     close: () => void;
 
-    state = stateful({
+    state = $state({
         timedOut: false,
     });
 

@@ -125,7 +125,7 @@ class Theme implements ThemeProps {
         darkBackground = "#161616",
         accent = "#4285F4",
     ) {
-        this.state = stateful<ThemeProps>({
+        this.state = $state<ThemeProps>({
             foreground,
             secondaryForeground,
             border,

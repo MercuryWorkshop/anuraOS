@@ -80,7 +80,7 @@ class WMWindow {
     maximizeImg: HTMLImageElement;
     constructor(wininfo: WindowInformation) {
         this.wininfo = wininfo;
-        this.state = stateful({
+        this.state = $state({
             title: wininfo.title,
         });
         this.resizable = wininfo.resizable;
