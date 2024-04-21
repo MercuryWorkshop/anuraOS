@@ -200,14 +200,14 @@ function App() {
                     instanceWindow.state.title = "Marketplace";
                     back.style.display = "none";
                     this.screen.appendChild(html`
-                      <div id="shit">
-                      <h1>new slave store ui</h1>
-                      <p>made at 11pm during racism vc (real)</p>
-                      <h2>TODO:</h2>
-                      <ul>
-                        <li>make it look good</li>
-                        <li>make it work hopefully</li>
-                      </ul>
+                      <div style="display: grid; place-items: center;height:100%">
+                      <div style="display: flex; align-items: center; justify-content: center;margin-bottom:28px;">
+                      <img src="./playstore.webp" style="width: 5rem; height: 5rem; display: inline; margin-right: 1.5rem;"/>
+                      <span>
+                      <h1 style="margin-bottom: 2px;">Welcome to Marketplace</h1>
+                      <p>Click a repository to view its contents.</p> 
+                      </span>
+                      </div>
                       </div>
                       `);
                     break;
