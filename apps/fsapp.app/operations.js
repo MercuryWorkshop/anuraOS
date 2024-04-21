@@ -903,10 +903,8 @@ async function newFile(path) {
             "/" + fileName
         }
     }
-    if (fileName) {
-        fs.writeFile(path, "");
-        reload();
-    }
+    await fs.promises.writeFile(path, "");
+    reload();
 }
 
 function reload() {
