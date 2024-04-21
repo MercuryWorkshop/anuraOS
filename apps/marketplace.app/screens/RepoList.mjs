@@ -8,9 +8,18 @@ function RepoItem() {
             const repo = await marketplace.getRepo(this.repourl, this.reponame);
             console.log(repo);
             this.repoItem.onclick = async () => {
+                // DIRTY HACK
+                document.querySelectorAll(".repoItem").forEach(e => {
+                    console.warn(e);
+                    e.classList.remove("selected");
+                    e.classList.add("inactive");
+                });
                 console.log(repo);
                 state.currentRepo = [this.reponame, this.repourl, repo];
                 state.currentScreen = "itemList";
+
+                this.repoItem.classList.remove("inactive");
+                this.repoItem.classList.add("selected");
             };
         } catch (e) {
             this.repoItem.innerText += " (Error)";
@@ -26,17 +35,15 @@ function RepoItem() {
     }
 
     this.css = css`
-        background: rgba(255, 255, 255, 0.05);
         margin-right: auto;
         margin-left: auto;
         height: 38px;
         line-height: 38px;
-        width: 100%;
+        width: auto;
         text-align: left;
+        padding-left: 10px;
         color: var(--theme-fg);
-        background-color: var(--theme-secondary-bg);
         font-weight: 500;
-        border-bottom: 1px solid var(--theme-border);
         cursor: pointer;
 
         &:first-of-type {
@@ -55,7 +62,7 @@ function RepoItem() {
     `;
 
     return html`
-        <div class="repoItem" on:contextmenu=${(e) => {
+        <div class="repoItem ${use(state.currentRepo, repo => repo.includes(this.repourl) ? "selected" : "inactive")}" on:contextmenu=${(e) => {
             e.preventDefault();
 
             openedMenus.forEach(m => m.hide());
@@ -92,6 +99,17 @@ export default function RepoList() {
         position: fixed;
         top: 28px;
         width: 30%;
+        border-right: 1px solid var(--theme-border);
+
+        .repoItem.selected {
+            background-color: var(--theme-secondary-bg);
+        }
+
+        .repoAdd > * {
+            margin-left: .4rem;
+            margin-bottom: .7rem;
+        }
+
         .repoAdd {
             margin-left: auto;
             margin-right: auto;
