@@ -8,3 +8,16 @@
 .background {
     background-color: var(--material-bg);
 }
+
+.matter-switch {
+    color: var(--theme-fg);
+}
+
+.matter-button-contained {
+    background-color: var(--theme-accent);
+    /* color: var(--theme-fg); */
+}
+
+.matter-button-outlined {
+    color: var(--theme-accent);
+}

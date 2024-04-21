@@ -22,12 +22,11 @@ function Item() {
 
         if (installed) {
             this.installButton.value = "Installed";
-            this.installButton.style.backgroundColor = "#2a2a2a";
+            this.installButton.style.backgroundColor = "var(--theme-secondary-bg)";
             this.installButton.style.color = "#fff";
             this.installButton.disabled = true;
         } else {
             this.installButton.value = "Install";
-            this.installButton.classList.add("matter-success");
             this.installButton.addEventListener("click", async (e) => {
                 e.stopPropagation();
                 if (this.type === "app") {
@@ -37,12 +36,13 @@ function Item() {
                 }
             });
         }
-    }
+    };
 
     this.css = css`
         height: 100px;
         width: 100%;
-        border-bottom: #444 solid 1px;
+        background: var(--theme-dark-bg);
+        border-bottom: 1px solid var(--theme-border);
         background: rgba(255, 255, 255, 0.05);
         display: flex;
         align-items: center;
@@ -91,7 +91,7 @@ function Item() {
                 position: relative;
                 font-size: 16px;
                 text-align: left;
-                color: #fafafa;
+                color: var(--theme-fg);
             }
 
             p {
@@ -99,26 +99,31 @@ function Item() {
                 position: relative;
                 font-size: 14px;
                 text-align: left;
-                color: #757575;
+                color: var(--theme-secondary-fg);
                 margin: 0;
                 padding: 0;
             }
         }
     `;
 
-    return html`
-        <div on:click=${() => {
+    return html` <div
+        on:click=${() => {
             state.currentItem = this.data;
             state.currentItemType = this.type;
             state.currentScreen = "overview";
-        }}>
-            <img class="thumbnail" bind:this=${use(this.thumbnail)} />
-            <div class="infoContainer">
-                <span>${this.data.name}</span>
-                <p>${desc}</p>
-            </div>
-            <input class="matter-button-contained" bind:this=${use(this.installButton)} type="button" />
-        </div>`;
+        }}
+    >
+        <img class="thumbnail" bind:this=${use(this.thumbnail)} />
+        <div class="infoContainer">
+            <span>${this.data.name}</span>
+            <p>${desc}</p>
+        </div>
+        <input
+            class="matter-button-contained"
+            bind:this=${use(this.installButton)}
+            type="button"
+        />
+    </div>`;
 }
 
 export default function ItemList() {
@@ -134,7 +139,7 @@ export default function ItemList() {
         libs.forEach(async (lib) => {
             this.listElem.appendChild(html`<${Item} type="lib" data=${lib} />`);
         });
-    }
+    };
 
     this.css = css`
         #itemList {
@@ -153,7 +158,7 @@ export default function ItemList() {
             border: none;
             border-style: solid;
             border: 0px solid transparent;
-            border-bottom: 3px solid #444;
+            border-bottom: 2px solid var(--theme-secondary-bg);
             box-shadow: none !important;
             border-style: solid !important;
             margin-right: auto;
@@ -165,18 +170,22 @@ export default function ItemList() {
             height: 3vh;
             font-family: inherit;
             transition: border-color 0.2s;
-            color: white;
+            color: var(--theme-fg);
+        }
+
+        ::-webkit-input-placeholder {
+            color: var(--theme-secondary-fg);
         }
 
         #searchBox:focus {
             outline: none;
-            border-bottom-color: #3ca1ff;
+            border-bottom-color: var(--theme-accent);
         }
-    `
+    `;
 
     return html`
         <div>
-            <input 
+            <input
                 placeholder="Search for items..."
                 on:input=${() => {
                     const searchQuery = this.search.value.toLowerCase();
@@ -195,7 +204,8 @@ export default function ItemList() {
                 }}
                 bind:this=${use(this.search)}
                 type="text"
-                id="searchBox" />
+                id="searchBox"
+            />
             <div id="itemList" bind:this=${use(this.listElem)}></div>
         </div>
     `;

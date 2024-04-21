@@ -22,6 +22,7 @@ class Anura {
     net: Networking;
     platform: Platform;
     ui = new AnuraUI();
+    // theme: Theme; // TODO: Move this into UI
     dialog: Dialog;
 
     private constructor(
@@ -88,7 +89,6 @@ class Anura {
         }
 
         launcher.addShortcut(app);
-        taskbar.addShortcut(app);
 
         this.apps[app.package] = app;
 

@@ -85,6 +85,10 @@ const quickSettings = new QuickSettings(
     clickoffChecker as HTMLDivElement,
     updateClickoffChecker,
 );
+const calendar = new Calendar(
+    clickoffChecker as HTMLDivElement,
+    updateClickoffChecker,
+);
 const contextMenu = new ContextMenu();
 const alttab = new AltTabView();
 
@@ -342,6 +346,9 @@ document.addEventListener("anura-boot-completed", async () => {
 });
 
 document.addEventListener("anura-login-completed", async () => {
+    anura.ui.theme = Theme.new(anura.settings.get("theme"));
+    anura.ui.theme.apply();
+
     const generic = new GenericApp();
     anura.registerApp(generic);
 
@@ -357,6 +364,9 @@ document.addEventListener("anura-login-completed", async () => {
     const wallpaper = new WallpaperSelector();
     anura.registerApp(wallpaper);
 
+    const themeEditor = new ThemeEditor();
+    anura.registerApp(themeEditor);
+
     const dialog = new Dialog();
     const dialogApp = await anura.registerApp(dialog);
     (anura.dialog as any) = dialogApp;
@@ -367,11 +377,11 @@ document.addEventListener("anura-login-completed", async () => {
     );
 
     for (const lib of anura.config.libs) {
-        anura.registerExternalLib(lib);
+        await anura.registerExternalLib(lib);
     }
 
     for (const app of anura.config.apps) {
-        anura.registerExternalApp(app);
+        await anura.registerExternalApp(app);
     }
 
     /**
@@ -383,7 +393,7 @@ document.addEventListener("anura-login-completed", async () => {
     let directories = anura.settings.get("directories");
 
     if (!directories) {
-        anura.settings.set(
+        await anura.settings.set(
             "directories",
             (directories = {
                 apps: "/userApps",
@@ -407,38 +417,22 @@ document.addEventListener("anura-login-completed", async () => {
     let requiredDirectories = anura.settings.get("requiredDirectories");
 
     if (!requiredDirectories) {
-        anura.settings.set(
+        await anura.settings.set(
             "requiredDirectories",
             (requiredDirectories = ["apps", "libs", "init", "opt"]),
         );
     }
 
-    requiredDirectories.forEach((k: string) => {
-        anura.fs.exists(directories[k], (exists: boolean) => {
-            if (!exists) {
-                anura.fs.mkdir(directories[k]);
+    requiredDirectories.forEach(async (k: string) => {
+        try {
+            await anura.fs.promises.mkdir(directories[k]);
+        } catch (e) {
+            if (e.code !== "EEXIST") {
+                console.error(e);
             }
-        });
+        }
     });
 
-    // Load all persistent sideloaded libs
-    try {
-        anura.fs.readdir(directories["libs"], (err: Error, files: string[]) => {
-            if (files == undefined) return;
-            console.log(files);
-            files.forEach((file) => {
-                try {
-                    anura.registerExternalLib(
-                        `/fs/${directories["libs"]}/${file}/`,
-                    );
-                } catch (e) {
-                    anura.logger.error("Anura failed to load a lib " + e);
-                }
-            });
-        });
-    } catch (e) {
-        anura.logger.error(e);
-    }
     if ((await fetch("/fs/")).status === 404) {
         // Safe mode
         // Register recovery helper app
@@ -455,56 +449,60 @@ document.addEventListener("anura-login-completed", async () => {
         // Not in safe mode
         // Load all user provided init scripts
         try {
-            anura.fs.readdir(
-                directories["init"],
-                (err: Error, files: string[]) => {
-                    // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
-                    if (files == undefined) return;
-                    files.forEach((file) => {
+            const files = await anura.fs.promises.readdir(directories["init"]);
+            // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
+            if (files) {
+                for (const file of files) {
+                    try {
+                        const data = await anura.fs.promises.readFile(
+                            directories["init"] + "/" + file,
+                        );
                         try {
-                            anura.fs.readFile(
-                                directories["init"] + "/" + file,
-                                function (err: Error, data: Uint8Array) {
-                                    if (err) throw "Failed to read file";
-                                    try {
-                                        eval(
-                                            new TextDecoder("utf-8").decode(
-                                                data,
-                                            ),
-                                        );
-                                    } catch (e) {
-                                        console.error(e);
-                                    }
-                                },
-                            );
+                            eval(new TextDecoder("utf-8").decode(data));
                         } catch (e) {
-                            anura.logger.error(
-                                "Anura failed to load an app " + e,
-                            );
+                            console.error(e);
                         }
-                    });
-                },
-            );
+                    } catch (e) {
+                        anura.logger.error("Anura failed to load an app " + e);
+                    }
+                }
+            }
         } catch (e) {
             anura.logger.error(e);
         }
     }
 
+    // Load all persistent sideloaded libs
+    try {
+        const files = await anura.fs.promises.readdir(directories["libs"]);
+        if (files == undefined) return;
+        for (const file of files) {
+            try {
+                await anura.registerExternalLib(
+                    `/fs/${directories["libs"]}/${file}/`,
+                );
+            } catch (e) {
+                anura.logger.error("Anura failed to load a lib", e);
+            }
+        }
+    } catch (e) {
+        anura.logger.error(e);
+    }
+
     // Load all persistent sideloaded apps
     try {
-        anura.fs.readdir(directories["apps"], (err: Error, files: string[]) => {
-            // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
-            if (files == undefined) return;
-            files.forEach((file) => {
+        const files = await anura.fs.promises.readdir(directories["apps"]);
+        if (files) {
+            for (const file of files) {
                 try {
-                    anura.registerExternalApp(
-                        `/fs/${directories["apps"]}/${file}`,
+                    await anura.registerExternalApp(
+                        `/fs/${directories["apps"]}/${file}/`,
                     );
                 } catch (e) {
-                    anura.logger.error("Anura failed to load an app " + e);
+                    anura.logger.error("Anura failed to load an app", e);
                 }
-            });
-        });
+            }
+        }
     } catch (e) {
         anura.logger.error(e);
     }
@@ -513,13 +511,22 @@ document.addEventListener("anura-login-completed", async () => {
         await bootx86();
     }
 
+    // Initialize static UI components that utilize anura.ui after loading apps, scripts, libs, so that external apps and libraries can apply overrides.
+    await quickSettings.init();
+    await calendar.init();
+    await launcher.init();
+    await taskbar.init();
+
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
     document.body.appendChild(launcher.clickoffChecker);
     document.body.appendChild(quickSettings.quickSettingsElement);
+    document.body.appendChild(calendar.element);
     document.body.appendChild(quickSettings.notificationCenterElement);
     document.body.appendChild(taskbar.element);
     document.body.appendChild(alttab.element);
+
+    anura.ui.theme.apply();
 
     (window as any).taskbar = taskbar;
 
@@ -559,6 +566,7 @@ document.addEventListener("anura-login-completed", async () => {
             anura.settings.get("launcher-keybind")
         ) {
             quickSettings.close();
+            calendar.close();
             launcher.toggleVisible();
             return;
         }

@@ -3,6 +3,12 @@
         <link rel="stylesheet" href="filemanager.css" />
         <link rel="stylesheet" href="/assets/materialsymbols.css" />
         <script src="/libs/filer/filer.min.js"></script>
+        <script>
+            var css = anura.ui.theme.css();
+            let style = document.createElement("style");
+            style.innerHTML = css;
+            document.head.appendChild(style);
+        </script>
         <!-- in any sane case this wouldn't be required. This isn't a sane case, Buffer doesn't work without importing this -->
     </head>
 
@@ -14,10 +20,12 @@
                 </button>
                 <hr />
                 <button onclick="loadPath('/')">
-                    <i class="material-symbols-outlined">laptop_chromebook</i>My files
+                    <i class="material-symbols-outlined">laptop_chromebook</i>My
+                    files
                 </button>
                 <button onclick="mountLocalFs()">
-                    <i class="material-symbols-outlined">usb</i>Mount local drive
+                    <i class="material-symbols-outlined">usb</i>Mount local
+                    drive
                 </button>
             </div>
             <div class="fileView">

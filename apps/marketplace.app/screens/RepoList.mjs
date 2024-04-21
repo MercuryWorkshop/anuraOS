@@ -33,9 +33,10 @@ function RepoItem() {
         line-height: 65px;
         width: 60vw;
         text-align: center;
-        color: #eeeeee;
+        color: var(--theme-fg);
+        background-color: var(--theme-secondary-bg);
         font-weight: 500;
-        border-bottom: #444 solid 1px;
+        border-bottom: 1px solid var(--theme-border);
         cursor: pointer;
 
         &:first-of-type {
@@ -59,17 +60,17 @@ function RepoItem() {
 
             openedMenus.forEach(m => m.hide());
             openedMenus = [];
-            
+
             const menu = new anura.ContextMenu();
             openedMenus.push(menu);
-            
+
             menu.addItem("Remove", () => {
                 saved.repos = saved.repos.filter(([name]) => name != this.reponame);
             });
-            
+
             const rect = frameElement.getBoundingClientRect();
             menu.show(e.pageX + rect.x, e.pageY + rect.y);
-            
+
             addEventListener("click", (e) => {
                 e.preventDefault();
                 menu.hide();
@@ -101,25 +102,29 @@ export default function RepoList() {
                 border: none; /* reset */
                 border-style: solid;
                 border: 0px solid transparent;
-                border-bottom: 4px solid #444;
+                border-bottom: 2px solid var(--theme-secondary-fg);
                 box-shadow: none !important;
                 border-style: solid !important;
                 margin-right: 5px;
                 margin-left: 5px;
                 box-shadow: none;
                 outline: none;
-                color: #bdbdbd;
+                color: var(--theme-fg);
+            }
+
+            ::-webkit-input-placeholder {
+                color: var(--theme-secondary-fg);
             }
 
             & > input:focus {
                 outline: none;
-                border-bottom-color: #3ca1ff;
+                border-bottom-color: var(--theme-accent);
                 transition: 0.2s;
             }
 
             & > input[type="submit"] {
-                background: rgb(42,42,42);
-                color: #fff;
+                background: var(--theme-secondary-bg);
+                color: var(--theme-fg);
                 padding: 6px;
                 border-radius: 6px;
                 border: none!important;
@@ -129,7 +134,7 @@ export default function RepoList() {
             & > p {
                 margin: 0;
                 font-size: 10px;
-                color: #bdbdbd;
+                color: var(--theme-secondary-fg);
             }
         }
     `

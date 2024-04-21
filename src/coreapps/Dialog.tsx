@@ -6,13 +6,18 @@ class Dialog extends App {
     icon = "/assets/icons/generic.png";
     source: string;
     hidden = true;
-    styling = css`
+    css = css`
         margin: 16px;
         h2 {
             font-size: 1.2rem;
         }
         .buttons {
             margin-top: 10px;
+
+            .matter-button-contained {
+                background-color: var(--theme-accent);
+                color: var(--theme-fg);
+            }
         }
         .confirm {
             margin-left: 5px;
@@ -32,19 +37,21 @@ class Dialog extends App {
         win.content.style.background = "var(--material-bg)";
         win.content.style.color = "white";
 
-        const wrapper = <div class={[this.styling]}></div>;
-        win.content.appendChild(wrapper);
-        const messageElement = <h2>{message}</h2>;
-        wrapper.appendChild(messageElement);
-        const buttons = <div class={["buttons"]} />;
-        const closeButton = (
-            <button class={["matter-button-contained"]}>OK</button>
+        win.content.appendChild(
+            <div class={[this.css]}>
+                <h2>{message}</h2>
+                <div class={["buttons"]}>
+                    <button
+                        class={["matter-button-contained"]}
+                        on:click={() => {
+                            win.close();
+                        }}
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>,
         );
-        closeButton.addEventListener("click", (event) => {
-            win.close();
-        });
-        buttons.appendChild(closeButton);
-        wrapper.appendChild(buttons);
     }
     async confirm(message: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
@@ -52,34 +59,42 @@ class Dialog extends App {
             (dialog as any).title = "";
             const win = anura.wm.create(this, dialog);
 
-            // MARK: The DAMN CSS
+            const oldOnClose = win.onclose;
+            win.onclose = () => {
+                if (oldOnClose) {
+                    oldOnClose();
+                }
+                resolve(false);
+            };
+
             win.content.style.background = "var(--material-bg)";
             win.content.style.color = "white";
 
-            const wrapper = <div class={[this.styling]}></div>;
-            win.content.appendChild(wrapper);
-            const messageElement = <h2>{message}</h2>;
-            wrapper.appendChild(messageElement);
-            const buttons = <div class={["buttons"]} />;
-            const cancelButton = (
-                <button class={["matter-button-outlined"]}>Cancel</button>
+            win.content.appendChild(
+                <div class={[this.css]}>
+                    <h2>{message}</h2>
+                    <div class="buttons">
+                        <button
+                            class="matter-button-outlined"
+                            on:click={() => {
+                                resolve(false);
+                                win.close();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            class={["matter-button-contained", "confirm"]}
+                            on:click={() => {
+                                resolve(true);
+                                win.close();
+                            }}
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>,
             );
-            cancelButton.addEventListener("click", (event) => {
-                resolve(false);
-                win.close();
-            });
-            buttons.appendChild(cancelButton);
-            const confirmButton = (
-                <button class={["matter-button-contained", "confirm"]}>
-                    OK
-                </button>
-            );
-            confirmButton.addEventListener("click", (event) => {
-                resolve(true);
-                win.close();
-            });
-            buttons.appendChild(confirmButton);
-            wrapper.appendChild(buttons);
         });
     }
     async prompt(message: string, defaultValue?: any): Promise<any> {
@@ -88,51 +103,59 @@ class Dialog extends App {
             (dialog as any).title = "";
             const win = anura.wm.create(this, dialog);
 
-            // MARK: The DAMN CSS
+            const oldOnClose = win.onclose;
+            win.onclose = () => {
+                if (oldOnClose) {
+                    oldOnClose();
+                }
+                resolve(null);
+            };
+
             win.content.style.background = "var(--material-bg)";
             win.content.style.color = "white";
 
-            const wrapper = <div class={[this.styling]}></div>;
-            win.content.appendChild(wrapper);
-            const messageElement = <h2>{message}</h2>;
-            wrapper.appendChild(messageElement);
+            win.content.appendChild(
+                <div class={[this.css]}>
+                    <h2>{message}</h2>
+                    {/* FIXME: THIS TEXTFIELD SUCKS!!1
+                        idrk if it still does, im just refactoring this code
+                        so I am relaying the previous comment
+                    */}
+                    <label class="matter-textfield-filled">
+                        <input placeholder=" " />
+                    </label>
 
-            // FIXME: THIS TEXTFIELD SUCKS!!1
-            const textField = <label class={["matter-textfield-filled"]} />;
-            const inputElement = <input placeholder=" " />;
-            textField.appendChild(inputElement);
-            wrapper.appendChild(textField);
-
-            const buttons = <div class={["buttons"]} />;
-
-            const cancelButton = (
-                <button class={["matter-button-outlined"]}>Cancel</button>
+                    <div class="buttons">
+                        <button
+                            class="matter-button-outlined"
+                            on:click={() => {
+                                resolve(null);
+                                win.close();
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            class={["matter-button-contained", "confirm"]}
+                            on:click={(evt: InputEvent) => {
+                                const inputElement =
+                                    evt.target as HTMLInputElement;
+                                const value = inputElement.value;
+                                if (value && value !== "") {
+                                    resolve(value);
+                                } else if (defaultValue) {
+                                    resolve(defaultValue);
+                                } else {
+                                    resolve(null);
+                                }
+                                win.close();
+                            }}
+                        >
+                            OK
+                        </button>
+                    </div>
+                </div>,
             );
-            cancelButton.addEventListener("click", (event) => {
-                resolve(null);
-                win.close();
-            });
-            buttons.appendChild(cancelButton);
-
-            const confirmButton = (
-                <button class={["matter-button-contained", "confirm"]}>
-                    OK
-                </button>
-            );
-            confirmButton.addEventListener("click", (event) => {
-                //@ts-ignore
-                const value = inputElement.value;
-                if (value && value !== "") {
-                    resolve(value);
-                } else if (defaultValue) {
-                    resolve(defaultValue);
-                } else {
-                    resolve(null);
-                }
-                win.close();
-            });
-            buttons.appendChild(confirmButton);
-            wrapper.appendChild(buttons);
         });
     }
 }

@@ -46,14 +46,14 @@
 #taskinfo-container,
 #date-container {
     background-color: rgba(128, 128, 128, 0.2);
-    padding: 0.1em;
     padding-left: 1em;
     padding-right: 1em;
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1rem;
 }
 
 #taskinfo-container {

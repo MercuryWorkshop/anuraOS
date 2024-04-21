@@ -1,3 +1,6 @@
+// Use this type instead of {} for empty types, to suppress eslint errors.
+type Empty = Record<string, never>;
+
 class AnuraUI {
     /**
      * This map contains all the built-in components that have been registered.
@@ -8,6 +11,8 @@ class AnuraUI {
      * This map contains all the components that have been registered from external libraries.
      */
     components = new Map<string, { lib: string; name: string }>();
+
+    theme: Theme;
 
     /**
      * This function allows you to register a component to the built-in components registry.
@@ -160,16 +165,76 @@ class AnuraUI {
             }
         }
 
-        this.registerComponent(
-            "AnuraVersion",
-            function (this: { product: string }) {
+        const AnuraVersion: Component<{ product: string }, Empty> =
+            function () {
                 this.product ||= "Anura";
                 return (
                     <span>
                         {this.product} version: {anura.version.pretty}
                     </span>
                 );
+            };
+
+        const Panel: Component<
+            {
+                width?: string;
+                height?: string;
+                margin?: string;
+                grow?: boolean;
+                style?: any;
+                class?: string | (string | DLPointer<any>)[];
+                id?: string;
             },
-        );
+            { children: HTMLElement[] }
+        > = function () {
+            this.style ||= {};
+            this.class ||= [];
+            if (typeof this.class === "string") this.class = [this.class];
+
+            const dynamicStyle: any = {
+                backgroundColor: use(
+                    anura.ui.theme.state.darkBackground,
+                    (color) => color + "E6",
+                ),
+            };
+
+            if (this.width) dynamicStyle.width = this.width;
+            if (this.height) dynamicStyle.height = this.height;
+            if (this.margin) dynamicStyle.margin = this.margin;
+
+            this.css = css`
+                display: flex;
+                position: absolute;
+
+                border: 1px solid var(--theme-dark-border);
+                box-shadow: inset 0 0 0 1px var(--theme-secondary-bg);
+                border-radius: 1em;
+
+                backdrop-filter: blur(40px);
+                -webkit-backdrop-filter: blur(40px);
+
+                flex-grow: ${this.grow ? 1 : 0};
+                flex-direction: column;
+            `;
+
+            this.mount = () => {
+                if (this.id) this.root.id = this.id;
+            };
+
+            return (
+                <div
+                    style={{
+                        ...dynamicStyle,
+                        ...this.style,
+                    }}
+                    class={this.class}
+                >
+                    {this.children}
+                </div>
+            );
+        };
+
+        this.registerComponent("AnuraVersion", AnuraVersion);
+        this.registerComponent("Panel", Panel);
     }
 }

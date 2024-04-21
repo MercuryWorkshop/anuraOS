@@ -1,5 +1,5 @@
 const settingsCSS = css`
-    color: white;
+    color: var(--theme-fg);
 
     .header {
         margin-left: 20px;
@@ -53,18 +53,18 @@ const settingsCSS = css`
     .sidebar-settings-item-name {
         display: flex;
         align-items: center;
-        color: #c1c1c1;
+        color: var(--theme-secondary-fg);
     }
     .sidebar-settings-item-name > a:hover {
-        color: #b9b9b9;
+        color: var(--theme-fg);
     }
     .settings-category-name {
-        color: rgb(225 225 225);
+        color: var(--theme-secondary-fg);
         margin-bottom: 15px;
     }
 
     .settings-group {
-        background-color: rgb(26 26 28);
+        background-color: var(--theme-dark-bg);
         padding: 10px;
         border-radius: 10px;
         width: calc(100% - 40px);
@@ -81,7 +81,7 @@ const settingsCSS = css`
     }
 
     .settings-group .settings-item:not(:last-of-type) {
-        border-bottom: 1px solid #444;
+        border-bottom: 1px solid var(--theme-border);
     }
 
     .settings-item-name,
@@ -103,7 +103,7 @@ const settingsCSS = css`
         border: none;
         border-radius: 5px;
         padding: 5px;
-        color: white;
+        color: var(--theme-fg);
     }
     .settings-item-text-input:focus {
         outline: none;
@@ -134,6 +134,11 @@ const settingsCSS = css`
     .matter-switch {
         width: 100%;
     }
+
+    .matter-button-contained {
+        background-color: var(--theme-accent);
+        color: var(--theme-fg);
+    }
 `;
 
 class SettingsApp extends App {
@@ -153,7 +158,7 @@ class SettingsApp extends App {
             class={`background ${settingsCSS}`}
         >
             <div class="header">
-                <h2 color="white">Anura Settings</h2>
+                <h2>Anura Settings</h2>
             </div>
 
             <div css={this.state} class="container">

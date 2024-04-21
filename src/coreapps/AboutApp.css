@@ -44,7 +44,7 @@
 }
 
 .aboutapp-content {
-    color: white;
+    color: var(--theme-fg);
 }
 
 .aboutapp-content p {
