@@ -975,122 +975,59 @@ function cut() {
     removeAfterPaste = true;
 }
 
-function paste() {
+async function paste() {
     const path = document
         .querySelector(".breadcrumbs")
         .getAttribute("data-current-path");
     if (!removeAfterPaste) {
-        // copy
-        destination = path;
-        clipboard.forEach((item) => {
-            origin = item.getAttribute("data-path");
-            fs.stat(origin, function (err, data) {
-                if (data.isDirectory()) {
-                    // Ok so you are about to be in for a ride
-                    sh.ls(
-                        origin,
-                        {
-                            recursive: true,
-                        },
-                        async function (err, entries) {
-                            if (err) throw err;
-                            let items = [];
-                            let dirs = [];
-                            entries.forEach((entry) => {
-                                function recurse(dirnode, path) {
-                                    dirnode.contents.forEach((entry) => {
-                                        if (entry.type === "DIRECTORY") {
-                                            recurse(
-                                                entry,
-                                                path + "/" + entry.name,
-                                            );
-                                            dirs.push(path + "/" + entry.name);
-                                        } else {
-                                            items.push(path + "/" + entry.name);
-                                        }
-                                    });
-                                }
+        for (item of clipboard) {
+            if (item.attributes["data-type"].value == "dir") {
+                //INPUT
+                let newPath = path
+                let oldPath = item.attributes["data-path"].value
 
-                                const topLevelFolder = origin;
-                                dirs.push(origin);
-                                if (entry.type === "DIRECTORY") {
-                                    recurse(entry, origin + "/" + entry.name);
-                                    dirs.push(origin + "/" + entry.name);
-                                } else {
-                                    items.push(origin + "/" + entry.name);
-                                }
-                            });
-                            destItems = [];
-                            destDirs = [];
-                            numberToSubBy =
-                                origin.length - origin.split("/").pop().length;
+                // Normalize (remove trailing slash, replace // with /)
+                if (oldPath.endsWith("/"))
+                    oldPath = oldPath.slice(0, -1)
+                if (newPath.endsWith("/"))
+                    newPath = newPath.slice(0, -1)
+                newPath = newPath.replace("//", "/")
+                oldPath = oldPath.replace("//", "/")
+                
+                const oldFolderName = oldPath.split("/").pop();
+                // Search
+                const files = await sh.promises.ls(oldPath, { recursive: true });
+                console.log(files)
+                // Apply
+                for (file of files) {
+                    // Creating the relative path string
+                    let path = file.split("/");
+                    const filename = path.pop();
+                    path = path.join("/");
+                    path = path.substring(oldPath.length)
 
-                            for (item in items) {
-                                destItems.push(
-                                    destination +
-                                        "/" +
-                                        items[item].slice(numberToSubBy),
-                                );
-                            }
-                            for (dir in dirs) {
-                                destDirs.push(
-                                    destination +
-                                        "/" +
-                                        dirs[dir].slice(numberToSubBy),
-                                );
-                            }
-                            console.log("initials");
-                            console.log(items);
-                            console.log("destinations");
-                            console.log(destItems);
-                            console.log("directories to mkdir -p ");
-                            console.log(destDirs);
-                            for (dir in destDirs) {
-                                await new Promise((resolve, reject) => {
-                                    sh.mkdirp(destDirs[dir], function (err) {
-                                        if (err) {
-                                            reject(err);
-                                            console.error(err);
-                                        }
-                                        resolve();
-                                    });
-                                });
-                            }
-
-                            for (item in items) {
-                                fs.readFile(items[item], function (err, data) {
-                                    fs.writeFile(destItems[item], data);
-                                });
-                            }
-                            reload();
-                        },
-                    );
-                } else {
-                    fs.readFile(origin, function (err, data) {
-                        if (err) throw err;
-                        fs.writeFile(
-                            `${path}/${origin.split("/").slice("-1")[0]}`,
-                            data,
-                        );
-                        reload();
-                    });
+                    await sh.promises.mkdirp(`${newPath}/${oldFolderName}${path}`);
+                    const data = await fs.promises.readFile(`${oldPath}${path}/${filename}`)
+                    await fs.promises.writeFile(`${newPath}/${oldFolderName}${path}/${filename}`, data);
                 }
-            });
-        });
+            } else {
+                let origin = item.attributes["data-path"].value;
+                fs.promises.writeFile(`${path}/${origin.split("/").slice("-1")[0]}`, await fs.promises.readFile(origin))
+            }
+            
+        }
+        clipboard = []
+        reload();
+        
     }
     if (removeAfterPaste) {
         // cut
-        clipboard.forEach((item) => {
+        for (const item of clipboard) {
             itemName = item.getAttribute("data-path");
-            fs.rename(
-                itemName,
-                `${path}/${itemName.split("/").slice("-1")[0]}`,
-                function (err) {
-                    if (err) throw err;
-                    reload();
-                },
-            );
-        });
+            await fs.promises.rename(itemName, `${path}/${itemName.split("/").slice("-1")[0]}`);
+            reload();
+        };
+        clipboard = []
     }
 }
 
