@@ -450,12 +450,40 @@ class V86Backend {
         let inTransit = false;
         let currentRead = 0;
         let currentPacketSize = 0;
+        let mfingBuffer: Uint8Array[] = []; // I call it mfing buffer because I only have to do this because mf'ing whisper is screwing up
 
         this.emulator.add_listener(
             "virtio-console1-output-bytes",
-            async function (bytes: Uint8Array) {
+            function (bytes: Uint8Array) {
+                console.log(bytes);
                 if (!inTransit) {
+                    if (bytes.length < 4 && mfingBuffer.length < 4) {
+                        mfingBuffer.push(bytes); // bytes? more like just one byte
+                        console.log("motherfucker mode activated");
+                        console.log("mf steps: " + mfingBuffer.length);
+                        if (mfingBuffer.length == 4) {
+                            let totalSize = 0;
+                            for (const array of mfingBuffer) {
+                                totalSize += array.length;
+                            }
+                            const newBytes = new Uint8Array(totalSize);
+                            let offset = 0;
+                            for (const array of mfingBuffer) {
+                                newBytes.set(array, offset);
+                                offset += array.length;
+                            }
+                            bytes = newBytes;
+
+                            console.log("mfing redemption time");
+                            console.log(bytes);
+                            mfingBuffer = [];
+                        } else {
+                            return;
+                        }
+                    }
+
                     const dataView = new DataView(bytes.buffer);
+
                     const length = dataView.getUint32(0, true);
                     if (bytes.length - 4 != length) {
                         inTransit = true;
@@ -475,14 +503,12 @@ class V86Backend {
                 } else {
                     netBuffer.push(bytes);
                     currentRead += bytes.length;
-                    if (currentRead == currentPacketSize) {
+                    if (currentRead >= currentPacketSize) {
                         console.log("Sending netbuffer: ");
                         console.log(new Blob(netBuffer));
-                        anura.x86?.v86Wisp.send(
-                            new Uint8Array(
-                                await new Blob(netBuffer).arrayBuffer(),
-                            ),
-                        );
+
+                        anura.x86?.v86Wisp.send(new Blob(netBuffer));
+
                         inTransit = false;
                         currentRead = 0;
                         currentPacketSize = 0;
