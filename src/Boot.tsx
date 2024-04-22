@@ -78,18 +78,12 @@ const updateClickoffChecker = (show: boolean) => {
     clickoffCheckerState.active = show;
 };
 
-const taskbar = new Taskbar();
+const contextMenu = new ContextMenu();
+let taskbar: Taskbar;
 let launcher: Launcher;
 let oobeview: OobeView;
-const quickSettings = new QuickSettings(
-    clickoffChecker as HTMLDivElement,
-    updateClickoffChecker,
-);
-const calendar = new Calendar(
-    clickoffChecker as HTMLDivElement,
-    updateClickoffChecker,
-);
-const contextMenu = new ContextMenu();
+let quickSettings: QuickSettings;
+let calendar: Calendar;
 const alttab = new AltTabView();
 
 let anura: Anura;
@@ -169,6 +163,18 @@ window.addEventListener("load", async () => {
         clickoffChecker as HTMLDivElement,
         updateClickoffChecker,
     );
+
+    quickSettings = new QuickSettings(
+        clickoffChecker as HTMLDivElement,
+        updateClickoffChecker,
+    );
+
+    calendar = new Calendar(
+        clickoffChecker as HTMLDivElement,
+        updateClickoffChecker,
+    );
+
+    taskbar = new Taskbar();
 
     oobeview = new OobeView();
 
