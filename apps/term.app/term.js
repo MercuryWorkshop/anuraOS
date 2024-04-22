@@ -34,12 +34,12 @@ window.addEventListener("load", async () => {
 
 
 		if (anura.x86 == undefined) {
-			io.print("\u001b[33mThe anura x86 subsystem is not enabled. Please enable it in the settings.\u001b[0m")
+			io.print("\u001b[33mThe Anura x86 subsystem is not enabled. Please enable it in Settings.\u001b[0m")
 			return;
 		}
 
 		if (!anura.x86.termready) {
-			io.print("\u001b[33mThe anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m")
+			io.print("\u001b[33mThe Anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m")
 			return;
 		}
 
@@ -48,9 +48,6 @@ window.addEventListener("load", async () => {
 		const pty = await anura.x86.openpty("TERM=xterm DISPLAY=:0 bash", t.screenSize.width, t.screenSize.height, (data) => {
 			io.print(data);
 		});
-
-
-
 
 		function writeData(str) {
 			anura.x86.writepty(pty, str)
