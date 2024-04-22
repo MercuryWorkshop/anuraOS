@@ -247,16 +247,41 @@ function App() {
     }
 
     this.css = css`
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+
         #topbar {
-            position: fixed;
             display: block;
             width: 100%;
             height: 28px;
-            border-bottom: #bdbdbd;
-            top: 0;
+            border-bottom: 1px solid var(--theme-border);
             user-select: none;
             z-index: 1000;
             background-color: var(--theme-bg);
+            flex: 0 0 auto;
+        }
+
+        #content {
+            position: relative;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            height: calc(100% - 28px);
+            flex-grow: 1;
+
+            #sidebar {
+                width: 30%;
+                flex-shrink: 0;
+                flex-grow: 0;
+                border-right: 1px solid var(--theme-border);
+            }
+
+            #screen { 
+                flex-grow: 1;
+                overflow-y: auto;
+            }
         }
 
         :webkit-scrollbar {
@@ -269,21 +294,12 @@ function App() {
         }
     `;
 
-    const sidebarCSS = css`
-    position: absolute; 
-    width: 30%; 
-    height: calc(100% - 28px); 
-    top: 28px; 
-    left: 0;
-    border-right: 1px solid var(--theme-border);
-    `
-
     return html`
-        <div>
+        <div id="app">
             <div id="topbar"></div>
             <div id="content">
-            <div class=${sidebarCSS}><${RepoList}/></div>
-            <div style="position: absolute; width: 70%; height: calc(100% - 28px); top: 28px; right: 0;" bind:this=${use(this.screen)}></div>
+                <div id="sidebar"><${RepoList}/></div>
+                <div id="screen" bind:this=${use(this.screen)}></div>
             </div>
         </div>
     `;
