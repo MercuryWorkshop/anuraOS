@@ -82,9 +82,13 @@ nav li {
     align-items: center;
 }
 
+.material-symbols-outlined {
+    font-family: "Material Symbols Outlined", sans-serif;
+}
+
 .custom-menu {
     position: absolute;
-    background-color: rgba(20, 20, 20, 0.8);
+    background-color: var(--theme-dark-bg);
     padding: 5px 0;
     width: 150px;
     box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
@@ -92,29 +96,25 @@ nav li {
     z-index: 10000;
     overflow: hidden;
 
-    backdrop-filter: blur(20px);
+    /* backdrop-filter: blur(20px); */
     padding: 0;
-    border-radius: 10px;
+    border-radius: 6px;
 }
 
 .custom-menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transition: 0.3s;
-}
-
-.material-symbols-outlined {
-    font-family: "Material Symbols Outlined", sans-serif;
+    background-color: var(--theme-bg);
+    transition: 0.05s;
 }
 
 .custom-menu-item {
     display: flex;
     align-items: center;
-    padding: 10px 14px;
-    font-size: 14px;
-    color: #ffffff;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--theme-fg);
     cursor: pointer;
     user-select: none;
-    transition: 0.3s;
+    transition: 0.1s;
 }
 
 .custom-menu-item .material-symbols-outlined {
