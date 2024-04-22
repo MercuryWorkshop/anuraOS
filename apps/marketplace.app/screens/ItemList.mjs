@@ -41,30 +41,10 @@ function Item() {
     this.css = css`
         height: 100px;
         width: 100%;
-        background: var(--theme-dark-bg);
-        border-bottom: 1px solid var(--theme-border);
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--theme-secondary-bg);
         display: flex;
         align-items: center;
         transition: 0.2s;
-
-        &:first-of-type {
-            border-radius: 4px 4px 0 0;
-        }
-
-        &:last-of-type {
-            border-radius: 0 0 4px 4px;
-            border-bottom: none;
-        }
-
-        &:only-of-type {
-            border-radius: 4px;
-            border-bottom: none;
-        }
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
 
         input {
             margin-left: auto;
@@ -106,7 +86,8 @@ function Item() {
         }
     `;
 
-    return html` <div
+    return html`<div 
+        class="item"
         on:click=${() => {
             state.currentItem = this.data;
             state.currentItemType = this.type;
@@ -142,15 +123,11 @@ export default function ItemList() {
     };
 
     this.css = css`
-        #itemList {
-            margin-bottom: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 90%;
-            margin-right: auto;
-            margin-left: auto;
-        }
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 2em 0;
+        gap: 1em;
 
         #searchBox {
             appearance: none;
@@ -161,16 +138,28 @@ export default function ItemList() {
             border-bottom: 2px solid var(--theme-secondary-bg);
             box-shadow: none !important;
             border-style: solid !important;
-            margin-right: auto;
-            margin-bottom: 50px;
             padding-bottom: 2px;
-            margin-left: auto;
             display: flex;
-            width: 40vw;
+            width: 40%;
             height: 3vh;
             font-family: inherit;
             transition: border-color 0.2s;
             color: var(--theme-fg);
+        }
+
+        #itemList {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--theme-border);
+            gap: 1px;
+            width: 90%;
+        }
+
+        // For some reason the & selector is not working right inside Item, so instead we are applying some Item styles here
+
+        .item:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         ::-webkit-input-placeholder {

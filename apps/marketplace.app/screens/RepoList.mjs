@@ -1,30 +1,16 @@
-let openedMenus = [];
 function RepoItem() {
     this.mount = async () => {
-        console.log(this.reponame);
-        console.log(this.repourl);
         console.log("Mounting RepoItem")
         try {
             const repo = await marketplace.getRepo(this.repourl, this.reponame);
-            console.log(repo);
-            this.repoItem.onclick = async () => {
-                // DIRTY HACK
-                document.querySelectorAll(".repoItem").forEach(e => {
-                    console.warn(e);
-                    e.classList.remove("selected");
-                    e.classList.add("inactive");
-                });
-                console.log(repo);
+            this.root.onclick = () => {
                 state.currentRepo = [this.reponame, this.repourl, repo];
                 state.currentScreen = "itemList";
-
-                this.repoItem.classList.remove("inactive");
-                this.repoItem.classList.add("selected");
             };
         } catch (e) {
-            this.repoItem.innerText += " (Error)";
-            this.repoItem.style.color = "red";
-            this.repoItem.onclick = async () => {
+            this.root.innerText += " (Error)";
+            this.root.style.color = "red";
+            this.root.onclick = () => {
                 anura.notifications.add({
                     title: "Marketplace",
                     description: "The repository " + this.reponame + " encountered an error: " + e,
@@ -45,45 +31,32 @@ function RepoItem() {
         color: var(--theme-fg);
         font-weight: 500;
         cursor: pointer;
-
-        &:first-of-type {
-            border-radius: 4px 4px 0 0;
-        }
-
-        &:nth-last-of-type(2) {
-            border-radius: 0 0 4px 4px;
-            border-bottom: none;
-        }
-
-        &:hover {
-            transition: 0.3s;
-            background-color: rgba(255, 255, 255, 0.08);
-        }
+        transition: background-color 0.3s;
     `;
 
+    const contextMenu = new anura.ContextMenu();
+    contextMenu.addItem("Remove", () => {
+        saved.repos = saved.repos.filter(([name]) => name != this.reponame);
+    });
+
+
     return html`
-        <div class="repoItem" on:contextmenu=${(e) => {
-            e.preventDefault();
-
-            openedMenus.forEach(m => m.hide());
-            openedMenus = [];
-
-            const menu = new anura.ContextMenu();
-            openedMenus.push(menu);
-
-            menu.addItem("Remove", () => {
-                saved.repos = saved.repos.filter(([name]) => name != this.reponame);
-            });
-
-            const rect = frameElement.getBoundingClientRect();
-            menu.show(e.pageX + rect.x, e.pageY + rect.y);
-
-            addEventListener("click", (e) => {
+        <div 
+            class=${[
+                "repoItem",
+                use(state.currentRepo, (repo) => (repo || Array(3))[0] == this.reponame ? "selected" : "inactive")
+            ]} 
+            on:contextmenu=${(e) => {
                 e.preventDefault();
-                menu.hide();
-                openedMenus = openedMenus.filter(m => m != menu);
-            }, { once: true });
-        }} bind:this=${use(this.repoItem)}>${this.reponame}</div>
+
+                const rect = frameElement.getBoundingClientRect();
+                contextMenu.show(e.pageX + rect.x, e.pageY + rect.y);
+
+                addEventListener("click", (e) => {
+                    e.preventDefault();
+                    contextMenu.hide();
+                }, { once: true });
+            }}>${use(this.reponame)}</div>
     `;
 }
 
@@ -97,12 +70,17 @@ export default function RepoList() {
 
     this.css = css`
         position: fixed;
-        top: 28px;
         width: 30%;
         border-right: 1px solid var(--theme-border);
 
-        .repoItem.selected {
+        // For some reason the & selector is not working right inside RepoItem, so instead we are applying some repoItem styles here
+
+        .repoItem:hover {
             background-color: var(--theme-secondary-bg);
+        }
+        
+        .repoItem.selected {
+            background-color: color-mix(in srgb, var(--theme-bg) 50%, var(--theme-accent) 50%);
         }
 
         .repoAdd > * {
