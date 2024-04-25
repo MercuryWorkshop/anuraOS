@@ -364,13 +364,14 @@ class V86Backend {
 
     termready = false;
     async netdata_send(data: Uint8Array) {
-        console.log(data);
-        const sendData = new Uint8Array(data.length + 4);
+        const sendData = new Uint8Array(data.length + 5);
         const dataView = new DataView(sendData.buffer);
         console.log("sending message of " + data.length);
         dataView.setUint32(0, data.length, true);
         sendData.set(data, 4);
-        this.emulator.bus.send("virtio-console1-input-bytes", sendData);
+        dataView.setUint8(sendData.length - 1, 10);
+        console.log(sendData);
+        this.emulator.bus.send("virtio-console0-input-bytes", sendData);
     }
 
     async onboot() {
@@ -408,7 +409,7 @@ class V86Backend {
         );
 
         this.netpty = await this.openpty(
-            "/bin/whisper --tun tun0 --pty /dev/hvc1",
+            "modprobe tun && /bin/whisper --tun tun0 --pty /dev/hvc0 --pty /dev/hvc1",
             1,
             1,
             async (data) => {
@@ -423,7 +424,7 @@ class V86Backend {
                         description: "Started Networking Stack",
                         timeout: 5000,
                     });
-                } else if (data.includes("/dev/hvc1")) {
+                } else if (data.includes("/dev/hvc")) {
                     this.v86Wisp = new WebSocket(anura.wsproxyURL);
                     this.v86Wisp.binaryType = "arraybuffer";
 
