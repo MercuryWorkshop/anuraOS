@@ -158,8 +158,8 @@ class ExploreApp extends App {
     async open(args: string[] = []): Promise<WMWindow | undefined> {
         const win = anura.wm.create(this, {
             title: "Explore AnuraOS",
-            width: "910px",
-            height: "720px",
+            width: "650px",
+            height: "800px",
         });
         win.content.style.overflowY = "auto";
         win.content.style.backgroundColor = "var(--theme-bg)";
