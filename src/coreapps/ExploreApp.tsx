@@ -22,7 +22,7 @@ class ExploreApp extends App {
             padding: 1rem;
 
             p {
-                margin-block: 0.5rem 0.8rem;
+                margin-block: 0.5rem;
             }
 
             p img {
@@ -46,7 +46,11 @@ class ExploreApp extends App {
             }
 
             h2 {
-                margin-block: 1.25rem 0;
+                margin-block: 1.5rem 0;
+            }
+
+            h2:first-of-type {
+                margin-block-start: 0.25rem;
             }
         }
 
@@ -149,7 +153,7 @@ class ExploreApp extends App {
                 </p>
                 <p>
                     For advanced users, Anura will execute any files in the
-                    /init folder as JavaScript code on boot.
+                    /userInit folder as JavaScript code on boot.
                 </p>
             </div>
         </div>
@@ -158,8 +162,8 @@ class ExploreApp extends App {
     async open(args: string[] = []): Promise<WMWindow | undefined> {
         const win = anura.wm.create(this, {
             title: "Explore AnuraOS",
-            width: "910px",
-            height: "720px",
+            width: "650px",
+            height: "800px",
         });
         win.content.style.overflowY = "auto";
         win.content.style.backgroundColor = "var(--theme-bg)";
