@@ -268,28 +268,20 @@ const LauncherShortcut: Component<
 > = function () {
     const app = this.app;
 
-    console.log("Rendering LauncherShortcut");
     const contextmenu = new anura.ContextMenu();
-    console.log("ctx", contextmenu);
     const action = this.onclick;
     contextmenu.addItem("Open", function () {
-        console.log("Opening app");
         action();
     });
     contextmenu.addItem("Delete", function () {
         (async () => {
-            console.log("Deleting app");
-            const apps = await anura.fs.promises.readdir("/userApps/");
-            console.log(apps);
-            console.log(app);
-            console.log(app.package + ".app");
-            if (apps.includes(app.package + ".app")) {
-                console.log("Deleting app");
+            if (anura.apps[app.package].source.includes("/fs")) {
                 try {
                     const sh = new anura.fs.Shell();
-                    const path = `/userApps/${app.package}.app`;
-                    console.log("Deleting", path);
-                    // MARK: FIX: PLEASE WORK
+                    const path = (app as ExternalApp).source.replace(
+                        /^\/fs\//,
+                        "",
+                    );
                     await sh.rm(
                         path,
                         {
@@ -299,7 +291,8 @@ const LauncherShortcut: Component<
                             if (err) throw err;
                         },
                     );
-                    window.location.reload();
+                    // FIXME: it doesnt get removed from the launcher
+                    delete anura.apps[app.package];
                 } catch (e) {
                     console.error(e);
                     anura.dialog.alert(
@@ -314,7 +307,6 @@ const LauncherShortcut: Component<
             }
         })();
     });
-    console.log("ctx", contextmenu);
 
     return (
         <div
