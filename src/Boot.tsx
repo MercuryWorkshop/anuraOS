@@ -321,6 +321,9 @@ document.addEventListener("anura-login-completed", async () => {
     const themeEditor = new ThemeEditor();
     anura.registerApp(themeEditor);
 
+    const exploreApp = new ExploreApp();
+    anura.registerApp(exploreApp);
+
     const dialog = new Dialog();
     const dialogApp = await anura.registerApp(dialog);
     (anura.dialog as any) = dialogApp;
