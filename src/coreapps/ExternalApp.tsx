@@ -65,6 +65,10 @@ class ExternalApp extends App {
                 LocalFS,
                 instance: this,
                 instanceWindow: win,
+                open: async (url: string | URL) => {
+                    const browser = await anura.import("anura.libbrowser");
+                    browser.openTab(url);
+                },
             });
 
             const matter = document.createElement("link");
