@@ -1,4 +1,5 @@
 // FIXME: This is not what God wanted (someone pls redo)
+// its good enough, its just a replacement for browser dialogs stfu
 
 class Dialog extends App {
     name = "Anura Dialog";
