@@ -266,8 +266,74 @@ const LauncherShortcut: Component<
     },
     Record<string, never>
 > = function () {
+    const app = this.app;
+
+    console.log("Rendering LauncherShortcut");
+    const contextmenu = new anura.ContextMenu();
+    console.log("ctx", contextmenu);
+    const action = this.onclick;
+    contextmenu.addItem("Open", function () {
+        console.log("Opening app");
+        action();
+    });
+    contextmenu.addItem("Delete", function () {
+        (async () => {
+            console.log("Deleting app");
+            const apps = await anura.fs.promises.readdir("/userApps/");
+            console.log(apps);
+            console.log(app);
+            console.log(app.package + ".app");
+            if (apps.includes(app.package + ".app")) {
+                console.log("Deleting app");
+                try {
+                    const sh = new anura.fs.Shell();
+                    const path = `/userApps/${app.package}.app`;
+                    console.log("Deleting", path);
+                    // MARK: FIX: PLEASE WORK
+                    await sh.rm(
+                        path,
+                        {
+                            recursive: true,
+                        },
+                        function (err) {
+                            if (err) throw err;
+                        },
+                    );
+                    window.location.reload();
+                } catch (e) {
+                    console.error(e);
+                    anura.dialog.alert(
+                        "Could not delete app. Please try again later: " + e,
+                    );
+                }
+            } else {
+                console.error("App not found");
+                anura.dialog.alert(
+                    "App not found. Either it's a system app or something has gone terribly wrong.",
+                );
+            }
+        })();
+    });
+    console.log("ctx", contextmenu);
+
     return (
-        <div class="app" on:click={this.onclick}>
+        <div
+            class="app"
+            on:click={this.onclick}
+            on:contextmenu={(e: PointerEvent) => {
+                console.log("ctx event fired");
+                e.preventDefault();
+
+                const rect = document.body.getBoundingClientRect();
+                contextmenu.show(e.pageX + rect.x, e.pageY + rect.y);
+
+                document.onclick = (e) => {
+                    document.onclick = null;
+                    contextmenu.hide();
+                    e.preventDefault();
+                };
+            }}
+        >
             <input
                 class="app-shortcut-image showDialog"
                 style="width: 40px; height: 40px"
