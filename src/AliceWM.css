@@ -110,6 +110,9 @@ body.platform-tablet .aliceWMwin .title {
     font-size: 13px;
     font-weight: 400;
     padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .aliceWMwin .content {
