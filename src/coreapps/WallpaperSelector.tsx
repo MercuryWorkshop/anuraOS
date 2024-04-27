@@ -70,9 +70,16 @@ const wallpaperCSS = css`
         height: 100px;
 
         border-radius: 10px;
+        transition: border 0.2s;
+        border: 3px solid transparent; /* another shit workaround :frcoal: */
     }
     .wallpaper-list-item-name {
         margin: 10px;
+    }
+
+    .wallpaper-list-item.selected img {
+        border-color: var(--theme-accent);
+        transition: border 0.2s;
     }
 
     .custom-wallpaper {
@@ -288,7 +295,8 @@ class WallpaperSelector extends App {
                                 on:click={() => {
                                     this.setNewWallpaper(wallpaper);
                                 }}
-                                class="wallpaper-list-item"
+                                class={`wallpaper-list-item ${this.getCurrentWallpaper().name == wallpaper.name ? "selected" : ""}`}
+                                id={`wallpaper-${wallpaper.name.replace(" ", "-")}`}
                             >
                                 <img
                                     class="wallpaper-list-item-image"
@@ -312,6 +320,7 @@ class WallpaperSelector extends App {
     setNewWallpaper(wallpaperObj: WallpaperObject) {
         anura.settings.set("wallpaper", wallpaperObj.url);
         anura.settings.set("wallpaper-name", wallpaperObj.name);
+
         this.updateCurrentWallpaperElements();
         this.setWallpaper(wallpaperObj.url);
     }
@@ -353,11 +362,22 @@ class WallpaperSelector extends App {
         const currWallpaperName = document.getElementsByClassName(
             "curr-wallpaper-name",
         )[0];
+
         if (currWallpaperImage == undefined || currWallpaperName == undefined)
             return;
         currWallpaperImage.setAttribute("src", currWallpaper.url);
         (currWallpaperName as HTMLHeadingElement).innerText =
             currWallpaper.name;
+
+        // this is where it gets way jankier
+        Array.from(document.getElementsByClassName("wallpaper-list-item")) // woah that is jank
+            .forEach((item) => {
+                item.classList.remove("selected");
+            });
+
+        document
+            .getElementById("wallpaper-" + currWallpaper.name.replace(" ", "-"))
+            ?.classList.add("selected");
     }
 
     setWallpaper(url: string) {
