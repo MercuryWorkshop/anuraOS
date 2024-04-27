@@ -8,6 +8,7 @@ class Calendar {
     element: HTMLElement = (<div>Ceci n'est pas un calendrier</div>);
 
     calCSS = css`
+        min-height: 355px;
         bottom: 60px;
         right: 10px;
 
@@ -87,14 +88,18 @@ class Calendar {
                     this.show,
                     this.calCSS,
                 ]}
-                width="360px"
-                height="40%"
+                width="380px"
+                height="30%"
                 grow
                 id="calendar"
             >
-                <div class={["calContent"]}>
+                <div
+                    class={["calContent"]}
+                    on:contextmenu={(e: PointerEvent) => e.preventDefault()}
+                >
                     <iframe
                         style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;background: transparent;"
+                        on:contextmenu={(e: PointerEvent) => e.preventDefault()}
                         srcdoc={`
                   <!DOCTYPE html>
                   <html lang="en" dir="ltr">
@@ -116,7 +121,7 @@ class Calendar {
 
                   body {
                       display: flex;
-                      min-height: 100vh;
+                      height: 100%;
                       align-items: top;
                       justify-content: center;
                       overflow: hidden;
