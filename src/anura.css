@@ -25,10 +25,10 @@ body {
     overflow: hidden;
     background: url(/assets/wallpaper/bundled_wallpapers/Nocturne.jpg) no-repeat
         center center fixed;
-    -webkit-background-size: cover !important;
-    -moz-background-size: cover !important;
-    -o-background-size: cover !important;
-    background-size: cover !important;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
     user-select: none;
     font-family: "Roboto", sans-serif;
 }
