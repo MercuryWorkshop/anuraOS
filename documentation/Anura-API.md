@@ -618,14 +618,14 @@ document.head.appendChild(html`<><style>${anura.ui.theme.css()}</style></>`);
 
 You now have the following CSS variables to use, corresponding to the properties listed below.
 
--   --theme-fg
--   --theme-secondary-fg
--   --theme-border
--   --theme-dark-border
--   --theme-bg
--   --theme-secondary-bg
--   --theme-dark-bg
--   --theme-accent
+-   `--theme-fg`
+-   `--theme-secondary-fg`
+-   `--theme-border`
+-   `--theme-dark-border`
+-   `--theme-bg`
+-   `--theme-secondary-bg`
+-   `--theme-dark-bg`
+-   `--theme-accent`
 
 ### Properties
 
