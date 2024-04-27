@@ -52,7 +52,7 @@ class Taskbar {
                     type="image"
                     draggable="true"
                     src={app?.icon || ""}
-                    on:dragend={() => {
+                    on:dragend={(e: DragEvent) => {
                         if (!this.insidedrag) {
                             for (const i of app.windows) {
                                 i.close();
@@ -63,6 +63,59 @@ class Taskbar {
                                     .get("applist")
                                     .filter((p: string) => p != app.package),
                             );
+                            this.updateTaskbar();
+                        } else {
+                            console.log("skibidi dop dop");
+
+                            const dropX = e.clientX;
+                            console.log("dropX", dropX);
+
+                            const icons = document.querySelectorAll(
+                                ".taskbar-button .showDialog",
+                            );
+
+                            let closestIndex =
+                                anura.settings.get("applist").length - 1;
+
+                            const rects: DOMRect[] = [];
+
+                            icons.forEach((icn) => {
+                                const rect = icn.getBoundingClientRect();
+                                console.log(rect.left, rect.right);
+                                rects.push(rect);
+                            });
+
+                            rects.forEach((rect, index) => {
+                                if (
+                                    dropX > rect.left &&
+                                    dropX < (rects[index + 1]?.left || 0)
+                                ) {
+                                    closestIndex = index;
+                                }
+                            });
+
+                            console.log("closestIndex", closestIndex);
+
+                            if (
+                                anura.settings
+                                    .get("applist")
+                                    .includes(app.package)
+                            ) {
+                                anura.settings.set("applist", [
+                                    ...anura.settings
+                                        .get("applist")
+                                        .filter(
+                                            (p: string) => p != app.package,
+                                        ),
+                                ]);
+                            }
+
+                            const order = [...anura.settings.get("applist")];
+                            console.log(order);
+                            order.splice(closestIndex, 0, app.package);
+                            console.log(order);
+                            anura.settings.set("applist", order);
+
                             this.updateTaskbar();
                         }
                         this.dragged = null;
