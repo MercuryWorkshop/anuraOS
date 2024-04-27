@@ -84,6 +84,7 @@ class OobeView {
             padding-left: 1em;
             padding-right: 1em;
             cursor: pointer;
+            font-family: "Roboto", sans-serif;
         }
 
         #welcome.screen #animation {
