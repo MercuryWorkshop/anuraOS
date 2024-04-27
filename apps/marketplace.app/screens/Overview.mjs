@@ -1,6 +1,9 @@
 export default function Overview() {
     const repo = state.currentRepo[2];
-    let id = repo.version === "legacy" ? state.currentItem.name : state.currentItem.package;
+    let id =
+        repo.version === "legacy"
+            ? state.currentItem.name
+            : state.currentItem.package;
 
     this.mount = async () => {
         let installed;
@@ -14,7 +17,8 @@ export default function Overview() {
 
         if (installed) {
             this.installButton.value = "Installed";
-            this.installButton.style.backgroundColor = "var(--theme-secondary-bg)";
+            this.installButton.style.backgroundColor =
+                "var(--theme-secondary-bg)";
             this.installButton.style.color = "#fff";
             this.installButton.disabled = true;
         } else {
@@ -28,7 +32,7 @@ export default function Overview() {
                 }
             });
         }
-    }
+    };
 
     this.css = css`
         display: flex;
@@ -124,30 +128,35 @@ export default function Overview() {
         .aboutDesc {
             color: var(--theme-secondary-fg);
         }
-    `
+    `;
 
-    return html`
-        <div>
-            <div class="infoSection">
-                <div class="infoContainer">
-                    <div class="thumbnailContainer">
-                        <img class="thumbnail" bind:this=${use(this.thumbnail)} />
-                    </div>
-                    <div class="appInfoContainer">
-                        <h1 class="appTitle">${state.currentItem.name}</h1>
-                        <span class="appCategory">${state.currentItem.category || "Uncategorized"}</span>
-                    </div>
-                    <input class="matter-button-contained" bind:this=${use(this.installButton)} type="button" />
+    return html` <div>
+        <div class="infoSection">
+            <div class="infoContainer">
+                <div class="thumbnailContainer">
+                    <img class="thumbnail" bind:this=${use(this.thumbnail)} />
                 </div>
-            </div>
-            <div class="screenshotSection" style=${{display: "none"}}>
-                Unimplemented
-            </div>
-            <div class="aboutSection">
-                <div class="aboutContainer">
-                    <h2 class="aboutTitle">${state.currentItem.summary || ""}</h2>
-                    <p class="aboutDesc">${state.currentItem.desc}</p>
+                <div class="appInfoContainer">
+                    <h1 class="appTitle">${state.currentItem.name}</h1>
+                    <span class="appCategory"
+                        >${state.currentItem.category || "Uncategorized"}</span
+                    >
                 </div>
+                <input
+                    class="matter-button-contained"
+                    bind:this=${use(this.installButton)}
+                    type="button"
+                />
             </div>
-        </div>`
+        </div>
+        <div class="screenshotSection" style=${{ display: "none" }}>
+            Unimplemented
+        </div>
+        <div class="aboutSection">
+            <div class="aboutContainer">
+                <h2 class="aboutTitle">${state.currentItem.summary || ""}</h2>
+                <p class="aboutDesc">${state.currentItem.desc}</p>
+            </div>
+        </div>
+    </div>`;
 }

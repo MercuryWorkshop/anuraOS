@@ -1,70 +1,73 @@
 const $ = document.querySelector.bind(document);
 
-
-
 window.addEventListener("load", async () => {
+    /** @type {Anura} */
+    let anura = top.anura;
 
-	/** @type {Anura} */
-	let anura = top.anura;
+    const t = new hterm.Terminal();
+    top.t = t;
 
-	const t = new hterm.Terminal();
-	top.t = t;
+    let htermNode = $("#terminal");
 
-	let htermNode = $("#terminal");
+    t.decorate(htermNode);
 
-
-
-
-	t.decorate(htermNode);
-
-
-	const decoder = new TextDecoder("UTF-8");
-	t.onTerminalReady = async () => {
+    const decoder = new TextDecoder("UTF-8");
+    t.onTerminalReady = async () => {
         let currentCol;
         let currentRow;
-		let e = document.querySelector("iframe").contentDocument.querySelector("x-screen");
-		console.log(e);
-		e.style.overflow = "hidden"
-		let io = t.io.push();
+        let e = document
+            .querySelector("iframe")
+            .contentDocument.querySelector("x-screen");
+        console.log(e);
+        e.style.overflow = "hidden";
+        let io = t.io.push();
 
-		t.setBackgroundColor("#141516");
-		t.setCursorColor("#bbb");
+        t.setBackgroundColor("#141516");
+        t.setCursorColor("#bbb");
         currentCol = t.screenSize.width;
         currentRow = t.screenSize.height;
 
+        if (anura.x86 == undefined) {
+            io.print(
+                "\u001b[33mThe Anura x86 subsystem is not enabled. Please enable it in Settings.\u001b[0m",
+            );
+            return;
+        }
 
-		if (anura.x86 == undefined) {
-			io.print("\u001b[33mThe Anura x86 subsystem is not enabled. Please enable it in Settings.\u001b[0m")
-			return;
-		}
+        if (!anura.x86.termready) {
+            io.print(
+                "\u001b[33mThe Anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m",
+            );
+            return;
+        }
 
-		if (!anura.x86.termready) {
-			io.print("\u001b[33mThe Anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m")
-			return;
-		}
+        await io.print(
+            "Welcome to the Anura x86 subsystem.\r\nTo access your Anura files within Linux, use the /root directory.\r\n",
+        );
 
-		await io.print("Welcome to the Anura x86 subsystem.\r\nTo access your Anura files within Linux, use the /root directory.\r\n")
+        const pty = await anura.x86.openpty(
+            "TERM=xterm DISPLAY=:0 bash",
+            t.screenSize.width,
+            t.screenSize.height,
+            (data) => {
+                io.print(data);
+            },
+        );
 
-		const pty = await anura.x86.openpty("TERM=xterm DISPLAY=:0 bash", t.screenSize.width, t.screenSize.height, (data) => {
-			io.print(data);
-		});
+        function writeData(str) {
+            anura.x86.writepty(pty, str);
+        }
 
-		function writeData(str) {
-			anura.x86.writepty(pty, str)
-		}
+        io.onVTKeystroke = writeData;
+        io.sendString = writeData;
 
-		io.onVTKeystroke = writeData;
-		io.sendString = writeData;
+        io.onTerminalResize = (cols, rows) => {
+            anura.x86.resizepty(pty, cols, rows);
+        };
 
-		io.onTerminalResize = (cols, rows) => {
-			anura.x86.resizepty(pty, cols, rows);
-		}
+        t.installKeyboard();
 
-		t.installKeyboard();
-
-
-		htermNode.querySelector("iframe").style.position = "relative";
-		console.log("wtf")
-
-	}
+        htermNode.querySelector("iframe").style.position = "relative";
+        console.log("wtf");
+    };
 });

@@ -22,7 +22,8 @@ function Item() {
 
         if (installed) {
             this.installButton.value = "Installed";
-            this.installButton.style.backgroundColor = "var(--theme-secondary-bg)";
+            this.installButton.style.backgroundColor =
+                "var(--theme-secondary-bg)";
             this.installButton.style.color = "#fff";
             this.installButton.disabled = true;
         } else {
@@ -86,7 +87,7 @@ function Item() {
         }
     `;
 
-    return html`<div 
+    return html`<div
         class="item"
         on:click=${() => {
             state.currentItem = this.data;

@@ -57,7 +57,7 @@ emptycontextmenu.addItem("New folder", function () {
 });
 emptycontextmenu.addItem("New file", function () {
     newFile();
-})
+});
 emptycontextmenu.addItem("Paste", function () {
     paste();
 });

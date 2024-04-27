@@ -1,4 +1,4 @@
-const fflate = await anura.import("npm:fflate")
+const fflate = await anura.import("npm:fflate");
 
 const fs = Filer.fs;
 const Buffer = Filer.Buffer;
@@ -7,7 +7,7 @@ export class Store {
     client;
     cache;
     hooks;
-    
+
     constructor(client, hooks) {
         this.client = client;
         this.cache = {};
@@ -30,7 +30,7 @@ export class Store {
     refresh(repos = []) {
         if (repos.length === 0) {
             this.cache = {};
-            return
+            return;
         }
         repos.forEach((repo) => {
             this.cache[repo] = null;
@@ -72,38 +72,43 @@ export class StoreRepo {
         this.baseUrl = baseUrl;
         this.name = name;
     }
-    
+
     setHook(name, fn) {
         this.hooks[name] = fn;
     }
-    
+
     async refreshRepoCache() {
         try {
-            let list = await (await this.client.fetch(this.baseUrl + "list.json")).json();
+            let list = await (
+                await this.client.fetch(this.baseUrl + "list.json")
+            ).json();
             let repoCache = {};
-            console.log(list)
+            console.log(list);
             for (const category in list) {
                 repoCache[`${category}`] = [];
-                await Promise.all(list[category].map(async (app) => {
-                    app.baseUrl = this.baseUrl + category + '/' + app.package + '/'
-                    app.repo = this.baseUrl
-                    repoCache[`${category}`].push(app);
-                }));
+                await Promise.all(
+                    list[category].map(async (app) => {
+                        app.baseUrl =
+                            this.baseUrl + category + "/" + app.package + "/";
+                        app.repo = this.baseUrl;
+                        repoCache[`${category}`].push(app);
+                    }),
+                );
             }
-    
+
             this.repoCache = repoCache;
         } catch (error) {
-            console.log(error)
+            console.log(error);
             throw error;
         }
     }
 
     async getRepoManifest() {
-        let manifest = await (
-            await this.client.fetch(this.baseUrl + "manifest.json")
-        )
+        let manifest = await await this.client.fetch(
+            this.baseUrl + "manifest.json",
+        );
         if (manifest.ok) {
-            this.manifest = await manifest.json()
+            this.manifest = await manifest.json();
             return this.manifest.version;
         } else {
             return "legacy";
@@ -122,7 +127,11 @@ export class StoreRepo {
         if (!app) {
             throw new Error("App not found");
         }
-        let thumb = URL.createObjectURL(await (await this.client.fetch(encodeURI(app.baseUrl + app.icon))).blob());
+        let thumb = URL.createObjectURL(
+            await (
+                await this.client.fetch(encodeURI(app.baseUrl + app.icon))
+            ).blob(),
+        );
         this.thumbCache.apps[appName] = thumb;
         return thumb;
     }
@@ -135,7 +144,11 @@ export class StoreRepo {
         if (!lib) {
             throw new Error("Lib not found");
         }
-        let thumb = URL.createObjectURL(await (await this.client.fetch(encodeURI(lib.baseUrl + lib.icon))).blob());
+        let thumb = URL.createObjectURL(
+            await (
+                await this.client.fetch(encodeURI(lib.baseUrl + lib.icon))
+            ).blob(),
+        );
         this.thumbCache.libs[libName] = thumb;
         return thumb;
     }
@@ -152,8 +165,8 @@ export class StoreRepo {
             await this.refreshRepoCache();
         }
         let app = this.repoCache.apps.find((app) => app.package === appName);
-        console.log(app)
-        return app
+        console.log(app);
+        return app;
     }
 
     async getLibs() {
@@ -168,8 +181,8 @@ export class StoreRepo {
             await this.refreshRepoCache();
         }
         let lib = this.repoCache.libs.find((lib) => lib.package === libName);
-        console.log(lib)
-        return lib
+        console.log(lib);
+        return lib;
     }
 
     async installApp(appName) {
@@ -191,10 +204,13 @@ export class StoreRepo {
             }
         }
 
-        const zipFile = new Uint8Array(await (await this.client.fetch(encodeURI(app.baseUrl + app.data))).arrayBuffer())
+        const zipFile = new Uint8Array(
+            await (
+                await this.client.fetch(encodeURI(app.baseUrl + app.data))
+            ).arrayBuffer(),
+        );
         let zip = fflate.unzipSync(zipFile);
         console.log(zip);
-        
 
         const path = `${this.directories["apps"]}/${appName}.app`;
 
@@ -206,27 +222,28 @@ export class StoreRepo {
 
         let installHook = null;
         if (app.InstallHook) {
-          const installHookText = await (await this.client.fetch(app.baseUrl + app.installHook)).text()
-          installHook = installHookText
+            const installHookText = await (
+                await this.client.fetch(app.baseUrl + app.installHook)
+            ).text();
+            installHook = installHookText;
         }
 
         try {
-            for (const [relativePath, content] of Object.entries(
-                zip,
-            )) {
+            for (const [relativePath, content] of Object.entries(zip)) {
                 if (relativePath.endsWith("/")) {
                     fs.mkdir(`${path}/${relativePath}`);
                 } else {
                     if (relativePath == "manifest.json") {
-                        let manifest = new TextDecoder().decode(content)
+                        let manifest = new TextDecoder().decode(content);
                         manifest = JSON.parse(manifest);
                         manifest.marketplace = {};
                         if (app.version) {
-                            manifest.marketplace.version = app.version
+                            manifest.marketplace.version = app.version;
                         }
-                        manifest.marketplace.repo = app.repo
+                        manifest.marketplace.repo = app.repo;
                         if (app.dependencies) {
-                            manifest.marketplace.dependencies = app.dependencies
+                            manifest.marketplace.dependencies =
+                                app.dependencies;
                         }
                         fs.writeFile(
                             `${path}/${relativePath}`,
@@ -236,13 +253,11 @@ export class StoreRepo {
                     }
                     fs.writeFile(
                         `${path}/${relativePath}`,
-                        await Buffer.from(
-                            content,
-                        ),
+                        await Buffer.from(content),
                     );
                 }
             }
-            await sleep(500) // race condition because of manifest.json
+            await sleep(500); // race condition because of manifest.json
             await anura.registerExternalApp("/fs" + path);
             if (installHook) window.top.eval(installHook);
             this.hooks.onComplete(app.name);
@@ -257,7 +272,11 @@ export class StoreRepo {
             throw new Error("Lib not found");
         }
         this.hooks.onDownloadStart(lib.name);
-        const zipFile = new Uint8Array(await (await this.client.fetch(lib.baseUrl + lib.data)).arrayBuffer());
+        const zipFile = new Uint8Array(
+            await (
+                await this.client.fetch(lib.baseUrl + lib.data)
+            ).arrayBuffer(),
+        );
         let zip = fflate.unzipSync(zipFile);
         console.log(zip);
 
@@ -270,9 +289,7 @@ export class StoreRepo {
         );
 
         try {
-            for (const [relativePath, content] of Object.entries(
-                zip,
-            )) {
+            for (const [relativePath, content] of Object.entries(zip)) {
                 if (relativePath.endsWith("/")) {
                     fs.mkdir(`${path}/${relativePath}`);
                 } else {
@@ -281,11 +298,12 @@ export class StoreRepo {
                         manifest = JSON.parse(manifest);
                         manifest.marketplace = {};
                         if (lib.version) {
-                            manifest.marketplace.version = lib.version
+                            manifest.marketplace.version = lib.version;
                         }
-                        manifest.marketplace.repo = lib.repo
+                        manifest.marketplace.repo = lib.repo;
                         if (lib.dependencies) {
-                            manifest.marketplace.dependencies = lib.dependencies
+                            manifest.marketplace.dependencies =
+                                lib.dependencies;
                         }
                         fs.writeFile(
                             `${path}/${relativePath}`,
@@ -295,20 +313,17 @@ export class StoreRepo {
                     }
                     fs.writeFile(
                         `${path}/${relativePath}`,
-                        await Buffer.from(
-                            content,
-                        ),
+                        await Buffer.from(content),
                     );
                 }
             }
-            await sleep(500) // race condition because of manifest.json
+            await sleep(500); // race condition because of manifest.json
             await anura.registerExternalLib("/fs" + path);
             this.hooks.onComplete(lib.name);
         } catch (error) {
             this.hooks.onError(lib.name, error);
         }
     }
-
 }
 
 export class StoreRepoLegacy {
@@ -329,11 +344,11 @@ export class StoreRepoLegacy {
         this.name = name;
         this.version = "legacy";
     }
-    
+
     setHook(name, fn) {
         this.hooks[name] = fn;
     }
-    
+
     async refreshRepoCache() {
         this.repoCache = await (
             await this.client.fetch(this.baseUrl + "list.json")
@@ -352,7 +367,11 @@ export class StoreRepoLegacy {
         if (!app) {
             throw new Error("App not found");
         }
-        let thumb = URL.createObjectURL(await (await this.client.fetch(encodeURI(this.baseUrl + app.icon))).blob());
+        let thumb = URL.createObjectURL(
+            await (
+                await this.client.fetch(encodeURI(this.baseUrl + app.icon))
+            ).blob(),
+        );
         this.thumbCache.apps[appName] = thumb;
         return thumb;
     }
@@ -365,7 +384,11 @@ export class StoreRepoLegacy {
         if (!lib) {
             throw new Error("Lib not found");
         }
-        let thumb = URL.createObjectURL(await (await this.client.fetch(encodeURI(this.baseUrl + lib.icon))).blob());
+        let thumb = URL.createObjectURL(
+            await (
+                await this.client.fetch(encodeURI(this.baseUrl + lib.icon))
+            ).blob(),
+        );
         this.thumbCache.libs[libName] = thumb;
         return thumb;
     }
@@ -417,7 +440,11 @@ export class StoreRepoLegacy {
             }
         }
 
-        const zipFile = new Uint8Array(await (await this.client.fetch(encodeURI(this.baseUrl + app.data))).arrayBuffer());
+        const zipFile = new Uint8Array(
+            await (
+                await this.client.fetch(encodeURI(this.baseUrl + app.data))
+            ).arrayBuffer(),
+        );
         let zip = fflate.unzipSync(zipFile);
         console.log(zip);
 
@@ -432,9 +459,7 @@ export class StoreRepoLegacy {
         let postInstallScript;
 
         try {
-            for (const [relativePath, content] of Object.entries(
-                zip,
-            )) {
+            for (const [relativePath, content] of Object.entries(zip)) {
                 if (relativePath.endsWith("/")) {
                     fs.mkdir(`${path}/${relativePath}`);
                 } else {
@@ -445,13 +470,11 @@ export class StoreRepoLegacy {
                     }
                     fs.writeFile(
                         `${path}/${relativePath}`,
-                        await Buffer.from(
-                            content,
-                        ),
+                        await Buffer.from(content),
                     );
                 }
             }
-            await sleep(500) // race condition because of manifest.json
+            await sleep(500); // race condition because of manifest.json
             await anura.registerExternalApp("/fs" + path);
             if (postInstallScript) window.top.eval(postInstallScript);
             this.hooks.onComplete(appName);
@@ -466,7 +489,11 @@ export class StoreRepoLegacy {
             throw new Error("Lib not found");
         }
         this.hooks.onDownloadStart(libName);
-        const zipFile = new Uint8Array(await (await this.client.fetch(encodeURI(this.baseUrl + app.data))).arrayBuffer());
+        const zipFile = new Uint8Array(
+            await (
+                await this.client.fetch(encodeURI(this.baseUrl + app.data))
+            ).arrayBuffer(),
+        );
         let zip = await JSZip.loadAsync(zipFile);
         console.log(zip);
 
@@ -479,28 +506,23 @@ export class StoreRepoLegacy {
         );
 
         try {
-            for (const [relativePath, content] of Object.entries(
-                zip,
-            )) {
+            for (const [relativePath, content] of Object.entries(zip)) {
                 if (relativePath.endsWith("/")) {
                     fs.mkdir(`${path}/${relativePath}`);
                 } else {
                     fs.writeFile(
                         `${path}/${relativePath}`,
-                        await Buffer.from(
-                            content,
-                        ),
+                        await Buffer.from(content),
                     );
                 }
             }
-            await sleep(500) // race condition because of manifest.json
+            await sleep(500); // race condition because of manifest.json
             await anura.registerExternalLib("/fs" + path);
             this.hooks.onComplete(libName);
         } catch (error) {
             this.hooks.onError(libName, error);
         }
     }
-
 }
 // Re-export fflate for convenience
 export { fflate };

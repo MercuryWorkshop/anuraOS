@@ -1,7 +1,7 @@
 @font-face {
     font-family: Roboto;
     src: url("/assets/fonts/Roboto-Regular.ttf") format("truetype");
- }
+}
 
 * {
     color: var(--theme-fg);
@@ -50,7 +50,11 @@ body {
     background-color: var(--theme-secondary-bg);
 }
 .sidebar button:active {
-    background-color: color-mix(var(--theme-bg), var(--theme-secondary-bg), 0.5);
+    background-color: color-mix(
+        var(--theme-bg),
+        var(--theme-secondary-bg),
+        0.5
+    );
 }
 
 .sidebar i {
@@ -134,7 +138,11 @@ tr > * {
 }
 
 .selected > * {
-    background-color: color-mix(in srgb, var(--theme-bg) 50%, var(--theme-accent) 50%) !important;
+    background-color: color-mix(
+        in srgb,
+        var(--theme-bg) 50%,
+        var(--theme-accent) 50%
+    ) !important;
 }
 
 .hover > * {
@@ -165,7 +173,11 @@ tr > * {
 }
 
 .topbar button:active {
-    background-color: color-mix(var(--theme-bg), var(--theme-secondary-bg), 0.5);
+    background-color: color-mix(
+        var(--theme-bg),
+        var(--theme-secondary-bg),
+        0.5
+    );
 }
 
 .topbar .sep {

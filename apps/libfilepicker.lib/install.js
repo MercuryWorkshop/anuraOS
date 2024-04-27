@@ -21,7 +21,7 @@ export default async function install(_, filePickerLib) {
                     value: {
                         folders,
                         cancelled,
-                    }
+                    },
                 });
                 return;
             } else {
@@ -32,7 +32,7 @@ export default async function install(_, filePickerLib) {
                     if (typeof files === "string") {
                         files = [files];
                     }
-                } catch (e) {   
+                } catch (e) {
                     files = [];
                     cancelled = true;
                 }
@@ -42,7 +42,7 @@ export default async function install(_, filePickerLib) {
                     value: {
                         files,
                         cancelled,
-                    }
+                    },
                 });
             }
         }

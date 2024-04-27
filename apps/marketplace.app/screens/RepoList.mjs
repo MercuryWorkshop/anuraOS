@@ -1,6 +1,6 @@
 function RepoItem() {
     this.mount = async () => {
-        console.log("Mounting RepoItem")
+        console.log("Mounting RepoItem");
         try {
             const repo = await marketplace.getRepo(this.repourl, this.reponame);
             this.root.onclick = () => {
@@ -13,12 +13,16 @@ function RepoItem() {
             this.root.onclick = () => {
                 anura.notifications.add({
                     title: "Marketplace",
-                    description: "The repository " + this.reponame + " encountered an error: " + e,
+                    description:
+                        "The repository " +
+                        this.reponame +
+                        " encountered an error: " +
+                        e,
                     timeout: 5000,
                 });
             };
         }
-    }
+    };
 
     this.css = css`
         margin-right: auto;
@@ -39,34 +43,44 @@ function RepoItem() {
         saved.repos = saved.repos.filter(([name]) => name != this.reponame);
     });
 
-
     return html`
-        <div 
+        <div
             class=${[
                 "repoItem",
-                use(state.currentRepo, (repo) => (repo || Array(3))[0] == this.reponame ? "selected" : "inactive")
-            ]} 
+                use(state.currentRepo, (repo) =>
+                    (repo || Array(3))[0] == this.reponame
+                        ? "selected"
+                        : "inactive",
+                ),
+            ]}
             on:contextmenu=${(e) => {
                 e.preventDefault();
 
                 const rect = frameElement.getBoundingClientRect();
                 contextMenu.show(e.pageX + rect.x, e.pageY + rect.y);
 
-                addEventListener("click", (e) => {
-                    e.preventDefault();
-                    contextMenu.hide();
-                }, { once: true });
-            }}>${use(this.reponame)}</div>
+                addEventListener(
+                    "click",
+                    (e) => {
+                        e.preventDefault();
+                        contextMenu.hide();
+                    },
+                    { once: true },
+                );
+            }}
+        >
+            ${use(this.reponame)}
+        </div>
     `;
 }
 
 export default function RepoList() {
-    handle(
-        use(saved.repos),
-        repos => {
-            this.repos = repos.map(([name, url]) => html`<${RepoItem} reponame=${name} repourl=${url} />`)
-        }
-    );
+    handle(use(saved.repos), (repos) => {
+        this.repos = repos.map(
+            ([name, url]) =>
+                html`<${RepoItem} reponame=${name} repourl=${url} />`,
+        );
+    });
 
     this.css = css`
         position: fixed;
@@ -78,14 +92,18 @@ export default function RepoList() {
         .repoItem:hover {
             background-color: var(--theme-secondary-bg);
         }
-        
+
         .repoItem.selected {
-            background-color: color-mix(in srgb, var(--theme-bg) 50%, var(--theme-accent) 50%);
+            background-color: color-mix(
+                in srgb,
+                var(--theme-bg) 50%,
+                var(--theme-accent) 50%
+            );
         }
 
         .repoAdd > * {
-            margin-left: .4rem;
-            margin-bottom: .7rem;
+            margin-left: 0.4rem;
+            margin-bottom: 0.7rem;
         }
 
         .repoAdd {
@@ -127,7 +145,7 @@ export default function RepoList() {
                 color: var(--theme-fg);
                 padding: 6px;
                 border-radius: 6px;
-                border: none!important;
+                border: none !important;
                 cursor: pointer;
             }
 
@@ -137,7 +155,7 @@ export default function RepoList() {
                 color: var(--theme-secondary-fg);
             }
         }
-    `
+    `;
 
     return html`
         <div>
@@ -145,28 +163,51 @@ export default function RepoList() {
                 <div id="repoList">
                     ${use(this.repos)}
                     <div class="repoAdd">
-                        <input type="text" placeholder="My Repo" bind:this=${use(this.newRepoName)} /><br>
-                        <input type="text" placeholder="https://anura.repo/" bind:this=${use(this.newRepoURL)} /><br>
-                        <input type="submit" value="Add Repository" on:click=${() => {
-                            if (!this.newRepoURL.value.endsWith("/")) {
-                                anura.notifications.add({
-                                    title: "Marketplace",
-                                    description: "URL does not end with a \"/\" character",
-                                    timeout: 5000,
-                                });
-                                return;
-                            }
-                            if (saved.repos.filter(([n]) => n == this.newRepoName.value).length > 0) {
-                                anura.notifications.add({
-                                    title: "Marketplace",
-                                    description: "Repo is already added",
-                                    timeout: 5000,
-                                });
-                                return;
-                            } else {
-                                saved.repos = [...saved.repos, [this.newRepoName.value, this.newRepoURL.value]];
-                            }
-                        }} />
+                        <input
+                            type="text"
+                            placeholder="My Repo"
+                            bind:this=${use(this.newRepoName)}
+                        /><br />
+                        <input
+                            type="text"
+                            placeholder="https://anura.repo/"
+                            bind:this=${use(this.newRepoURL)}
+                        /><br />
+                        <input
+                            type="submit"
+                            value="Add Repository"
+                            on:click=${() => {
+                                if (!this.newRepoURL.value.endsWith("/")) {
+                                    anura.notifications.add({
+                                        title: "Marketplace",
+                                        description:
+                                            'URL does not end with a "/" character',
+                                        timeout: 5000,
+                                    });
+                                    return;
+                                }
+                                if (
+                                    saved.repos.filter(
+                                        ([n]) => n == this.newRepoName.value,
+                                    ).length > 0
+                                ) {
+                                    anura.notifications.add({
+                                        title: "Marketplace",
+                                        description: "Repo is already added",
+                                        timeout: 5000,
+                                    });
+                                    return;
+                                } else {
+                                    saved.repos = [
+                                        ...saved.repos,
+                                        [
+                                            this.newRepoName.value,
+                                            this.newRepoURL.value,
+                                        ],
+                                    ];
+                                }
+                            }}
+                        />
                     </div>
                 </div>
             </div>
