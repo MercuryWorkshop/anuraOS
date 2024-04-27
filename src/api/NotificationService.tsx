@@ -127,8 +127,8 @@ class AnuraNotification implements NotifParams {
 
     css = css`
         background-color: rgba(22, 22, 22, 0.9);
-        backdrop-filter: blur(40px);
-        -webkit-backdrop-filter: blur(40px);
+        backdrop-filter: blur(30px);
+        -webkit-backdrop-filter: blur(30px);
         border-radius: 1em;
         color: white;
         width: 360px;

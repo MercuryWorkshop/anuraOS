@@ -37,6 +37,11 @@ body {
     font-family: "Roboto", sans-serif;
 }
 
+body.blur-disable #quickSettings {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
 nav ul {
     list-style-type: none;
     margin: 0;

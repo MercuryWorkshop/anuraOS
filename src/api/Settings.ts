@@ -84,6 +84,9 @@ class Settings {
         );
     }
     async remove(prop: string, subprop?: string) {
+        console.warn(
+            "anura.settings.remove() is a debug feature, and should not be used outside of development.",
+        );
         if (subprop) {
             delete this.cache[prop][subprop];
         } else {

@@ -210,8 +210,8 @@ class AnuraUI {
                 box-shadow: inset 0 0 0 1px var(--theme-secondary-bg);
                 border-radius: 1em;
 
-                backdrop-filter: blur(40px);
-                -webkit-backdrop-filter: blur(40px);
+                backdrop-filter: blur(30px);
+                -webkit-backdrop-filter: blur(30px);
 
                 flex-grow: ${this.grow ? 1 : 0};
                 flex-direction: column;

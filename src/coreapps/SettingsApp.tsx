@@ -278,10 +278,16 @@ class SettingsApp extends App {
                                                     "blur-disable",
                                                     true,
                                                 );
+                                                document.body.classList.add(
+                                                    "blur-disable",
+                                                );
                                             } else {
                                                 anura.settings.set(
                                                     "blur-disable",
                                                     false,
+                                                );
+                                                document.body.classList.remove(
+                                                    "blur-disable",
                                                 );
                                             }
                                         }}
@@ -289,9 +295,7 @@ class SettingsApp extends App {
                                         type="checkbox"
                                         role="switch"
                                     />
-                                    <span id="perf">
-                                        Performance mode (requires reload)
-                                    </span>
+                                    <span id="perf">Performance mode</span>
                                 </label>
                             </div>
                             <div class="settings-item">
