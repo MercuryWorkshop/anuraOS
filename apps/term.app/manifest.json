@@ -7,7 +7,7 @@
     "wininfo": {
         "title": "Terminal",
         "allowMultipleInstance": "true",
-        "width": "640px",
-        "height": "480px"
+        "width": "680px",
+        "height": "440px"
     }
 }

@@ -6,6 +6,8 @@
     "icon": "term.png",
     "wininfo": {
         "title": "Terminal",
-        "allowMultipleInstance": "true"
+        "allowMultipleInstance": "true",
+        "width": "680px",
+        "height": "440px"
     }
 }
