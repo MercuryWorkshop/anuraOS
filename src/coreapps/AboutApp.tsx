@@ -42,12 +42,18 @@ class AboutApp extends App {
 
                 <p>
                     This product is licensed under the{" "}
-                    <a
-                        target="_blank"
-                        href="https://github.com/MercuryWorkshop/AliceWM/blob/master/LICENSE"
+                    <button
+                        on:click={async () => {
+                            const browser =
+                                await anura.import("anura.libbrowser");
+                            browser.openTab(
+                                "https://github.com/MercuryWorkshop/anuraOS/blob/main/LICENSE",
+                            );
+                        }}
+                        class="aboutapp-link-button"
                     >
                         GNU AGPLv3
-                    </a>
+                    </button>
                 </p>
             </div>
         </div>

@@ -45,7 +45,7 @@ class BrowserApp extends App {
                                                 // Browser Container attributes changed, so the browser has loaded
                                                 win?.focus();
                                                 //@ts-ignore - aboutbrowser is a global variable
-                                                browserWindow.aboutbrowser.openTab(
+                                                browserWindow.aboutbrowser.navigateTo(
                                                     path,
                                                 );
                                                 // Stop observing
