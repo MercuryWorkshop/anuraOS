@@ -55,7 +55,7 @@ let persistentState = await $store(
     "state",
 );
 
-let externalState = stateful({
+let externalState = $state({
     count: 0,
 });
 
