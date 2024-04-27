@@ -601,3 +601,62 @@ This property returns the type of platform that Anura is running on. This can be
 ### anura.platform.touchInput: `boolean`
 
 This property returns a boolean indicating whether the platform supports touch input.
+
+## anura.ui.theme
+
+### Functions
+
+#### anura.ui.theme.css: `string`
+
+Returns a CSS style you can append to your document's `head` to provide styles for your application:
+
+**Example:**
+
+```css
+document.head.appendChild(html`<><style>${anura.ui.theme.css()}</style></>`);
+```
+
+You now have the following CSS variables to use, corresponding to the properties listed below.
+
+-   --theme-fg
+-   --theme-secondary-fg
+-   --theme-border
+-   --theme-dark-border
+-   --theme-bg
+-   --theme-secondary-bg
+-   --theme-dark-bg
+-   --theme-accent
+
+### Properties
+
+#### anura.ui.theme.accent: `string`
+
+The accent of the theme in hex.
+
+#### anura.ui.theme.background: `string`
+
+The background color of the theme in hex.
+
+#### anura.ui.theme.darkBackground: `string`
+
+The dark background color of the theme in hex.
+
+#### anura.ui.theme.secondaryBackground: `string`
+
+The secondary background color of the theme in hex.
+
+#### anura.ui.theme.border: `string`
+
+The border color of the theme in hex.
+
+#### anura.ui.theme.darkBorder: `string`
+
+The dark border color of the theme in hex.
+
+#### anura.ui.theme.foreground: `string`
+
+The foreground/text color of the theme in hex.
+
+#### anura.ui.theme.secondaryForeground: `string`
+
+The secondary foreground color of the theme in hex.
