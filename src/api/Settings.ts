@@ -43,6 +43,10 @@ class Settings {
             alert("figure this out later");
         }
 
+        if (!initial["wallpaper-fit"]) {
+            initial["wallpaper-fit"] = "cover";
+        }
+
         if (!initial["theme"]) {
             initial["theme"] = new Theme();
         }

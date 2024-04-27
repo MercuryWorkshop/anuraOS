@@ -25,6 +25,15 @@ const wallpaperCSS = css`
     .curr-wallpaper-name {
         margin-top: 0px;
     }
+    select {
+        background-color: var(--theme-secondary-bg);
+        color: var(--theme-fg);
+        border: none;
+        padding: 5px;
+        border-radius: 5px;
+        font-family: "Roboto", sans-serif;
+        outline: none;
+    }
     .separator-hr {
         margin: 20px;
         border: 2px solid #4b4b4b;
@@ -119,6 +128,52 @@ class WallpaperSelector extends App {
                     <h3 class="curr-wallpaper-name" color="white">
                         {this.getCurrentWallpaper().name}
                     </h3>
+                    <div>
+                        <select
+                            name="fit-select"
+                            id="fit-select"
+                            on:change={(e: Event) => {
+                                anura.settings.set(
+                                    "wallpaper-fit",
+                                    (e.target as HTMLSelectElement).value,
+                                );
+                                window.document.body.style.backgroundSize =
+                                    anura.settings.get("wallpaper-fit");
+                            }}
+                        >
+                            <option
+                                value="cover"
+                                selected={
+                                    // Hacky fix but it works
+                                    anura.settings.get("wallpaper-fit") ==
+                                    "cover"
+                                }
+                            >
+                                Cover
+                            </option>
+                            <option
+                                value="contain"
+                                selected={
+                                    anura.settings.get("wallpaper-fit") ==
+                                    "contained"
+                                }
+                            >
+                                Contain
+                            </option>
+                            <option
+                                value="auto"
+                                selected={
+                                    anura.settings.get("wallpaper-fit") ==
+                                    "auto"
+                                }
+                            >
+                                Auto
+                            </option>
+                        </select>
+                        {/* {$if(use(anura.settings.get("wallpaper-fit"), (fit) => fit == "contain"),
+                    <input type="color" name="contain-color" id="contain-color" />
+                    )} */}
+                    </div>
                 </div>
             </div>
 
@@ -242,6 +297,8 @@ class WallpaperSelector extends App {
 
     setWallpaper(url: string) {
         window.document.body.style.background = `url("${url}") no-repeat center center fixed`;
+        window.document.body.style.backgroundSize =
+            anura.settings.get("wallpaper-fit");
     }
 
     constructor() {
