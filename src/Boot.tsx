@@ -539,6 +539,11 @@ document.addEventListener("anura-login-completed", async () => {
     anura.initComplete = true;
     taskbar.updateTaskbar();
     alttab.update();
+
+    if (!anura.settings.get("explore-shown")) {
+        exploreApp.open();
+        anura.settings.set("explore-shown", true);
+    }
 });
 async function bootx86() {
     const mgr = new x86MgrApp();
