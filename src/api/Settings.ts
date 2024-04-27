@@ -47,6 +47,10 @@ class Settings {
             initial["wallpaper-fit"] = "cover";
         }
 
+        if (!initial["wallpaper-contain-color"]) {
+            initial["wallpaper-contain-color"] = "#000000";
+        }
+
         if (!initial["theme"]) {
             initial["theme"] = new Theme();
         }

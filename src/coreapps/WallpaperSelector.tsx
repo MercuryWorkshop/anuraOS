@@ -97,6 +97,29 @@ const wallpaperCSS = css`
         width: 177.78px; /* EWW DIRTY HACK PLEASE FIX - fish */
         cursor: pointer;
     }
+
+    input[type="color"] {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        width: 2.5rem;
+        height: 1.5rem;
+    }
+
+    input[type="color" i]::-webkit-color-swatch {
+        /* This will never work on firefox but who gaf */
+        border-radius: 0.5rem;
+        border: 1px solid var(--theme-border);
+    }
+
+    input[type="color" i]::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    .wall-fit {
+        display: flex;
+        gap: 5px;
+    }
 `;
 
 type WallpaperObject = {
@@ -143,7 +166,7 @@ class WallpaperSelector extends App {
                     <h3 class="curr-wallpaper-name" color="white">
                         {this.getCurrentWallpaper().name}
                     </h3>
-                    <div>
+                    <div class="wall-fit">
                         <select
                             name="fit-select"
                             id="fit-select"
@@ -185,23 +208,34 @@ class WallpaperSelector extends App {
                                 Auto
                             </option>
                         </select>
-                        {/* {$if(use(anura.settings.get("wallpaper-fit"), (fit) => fit == "contain"),
-                    <input type="color" name="contain-color" id="contain-color" />
-                    )} */}
+                        {$if(
+                            use(
+                                // MARK: FIX: Contain only
+                                anura.settings.get("wallpaper-fit"),
+                                (fit) => fit == "contain",
+                            ),
+                            <input
+                                type="color"
+                                name="contain-color"
+                                id="contain-color"
+                                value={anura.settings.get(
+                                    "wallpaper-contain-color",
+                                )}
+                                on:change={(e: Event) => {
+                                    anura.settings.set(
+                                        "wallpaper-contain-color",
+                                        (e.target as HTMLInputElement).value,
+                                    );
+                                    window.document.documentElement.style.backgroundColor =
+                                        anura.settings.get(
+                                            "wallpaper-contain-color",
+                                        );
+                                }}
+                            />,
+                        )}
                     </div>
                 </div>
             </div>
-
-            {/* <hr class="separator-hr" />
-
-            <div class="custom-wallpaper">
-                <h5 class="curr-wallpaper-text" color="gray">
-                    Custom Wallpaper
-                </h5>
-                <button class="matter-button-contained">
-                    Load Custom Wallpaper
-                </button>
-            </div> */}
 
             <hr class="separator-hr" />
 
@@ -327,6 +361,8 @@ class WallpaperSelector extends App {
     }
 
     setWallpaper(url: string) {
+        window.document.documentElement.style.backgroundColor =
+            anura.settings.get("wallpaper-contain-color"); // this might not be ideal but it works
         window.document.body.style.background = `url("${url}") no-repeat center center fixed`;
         window.document.body.style.backgroundSize =
             anura.settings.get("wallpaper-fit");
