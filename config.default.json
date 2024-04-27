@@ -3,7 +3,6 @@
         "apps/term.app",
         "apps/fsapp.app",
         "apps/marketplace.app",
-        "apps/taskbarMan.app",
         "apps/ashell.app"
     ],
     "libs": [
