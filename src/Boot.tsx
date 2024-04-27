@@ -303,44 +303,6 @@ document.addEventListener("anura-login-completed", async () => {
     anura.ui.theme = Theme.new(anura.settings.get("theme"));
     anura.ui.theme.apply();
 
-    const generic = new GenericApp();
-    anura.registerApp(generic);
-
-    const browser = new BrowserApp();
-    anura.registerApp(browser);
-
-    const settings = new SettingsApp();
-    anura.registerApp(settings);
-
-    const about = new AboutApp();
-    anura.registerApp(about);
-
-    const wallpaper = new WallpaperSelector();
-    anura.registerApp(wallpaper);
-
-    const themeEditor = new ThemeEditor();
-    anura.registerApp(themeEditor);
-
-    const exploreApp = new ExploreApp();
-    anura.registerApp(exploreApp);
-
-    const dialog = new Dialog();
-    const dialogApp = await anura.registerApp(dialog);
-    (anura.dialog as any) = dialogApp;
-
-    wallpaper.setWallpaper(
-        anura.settings.get("wallpaper") ||
-            "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
-    );
-
-    for (const lib of anura.config.libs) {
-        await anura.registerExternalLib(lib);
-    }
-
-    for (const app of anura.config.apps) {
-        await anura.registerExternalApp(app);
-    }
-
     /**
      * These directories are used to load user apps and libs from
      * the filesystem, along with folder shortcuts and other things.
@@ -389,6 +351,44 @@ document.addEventListener("anura-login-completed", async () => {
             }
         }
     });
+
+    const generic = new GenericApp();
+    anura.registerApp(generic);
+
+    const browser = new BrowserApp();
+    anura.registerApp(browser);
+
+    const settings = new SettingsApp();
+    anura.registerApp(settings);
+
+    const about = new AboutApp();
+    anura.registerApp(about);
+
+    const wallpaper = new WallpaperSelector();
+    anura.registerApp(wallpaper);
+
+    const themeEditor = new ThemeEditor();
+    anura.registerApp(themeEditor);
+
+    const exploreApp = new ExploreApp();
+    anura.registerApp(exploreApp);
+
+    const dialog = new Dialog();
+    const dialogApp = await anura.registerApp(dialog);
+    (anura.dialog as any) = dialogApp;
+
+    wallpaper.setWallpaper(
+        anura.settings.get("wallpaper") ||
+            "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
+    );
+
+    for (const lib of anura.config.libs) {
+        await anura.registerExternalLib(lib);
+    }
+
+    for (const app of anura.config.apps) {
+        await anura.registerExternalApp(app);
+    }
 
     if ((await fetch("/fs/")).status === 404) {
         // Safe mode
