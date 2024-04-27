@@ -318,7 +318,7 @@ class SettingsApp extends App {
                                         type="checkbox"
                                         role="switch"
                                     />
-                                    <span>Reduce animations</span>
+                                    <span>Reduce motion</span>
                                 </label>
                             </div>
                             <div class="settings-item">

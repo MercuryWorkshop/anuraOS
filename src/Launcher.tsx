@@ -8,9 +8,13 @@ class Launcher {
         active: false,
     });
 
-    private popupTransition = "all 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95)";
+    private popupTransition = anura.settings.get("disable-animation")
+        ? "opacity 0.15s"
+        : "all 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95)";
 
-    private gridTransition = "all 0.225s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+    private gridTransition = anura.settings.get("disable-animation")
+        ? "all 0s"
+        : "all 0.225s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
 
     css = css`
         position: absolute;
