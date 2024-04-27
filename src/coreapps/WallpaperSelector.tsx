@@ -58,7 +58,9 @@ const wallpaperCSS = css`
         margin-left: 20px;
         text-align: center;
         overflow-y: scroll;
-        height: calc(100% - 370px);
+        height: calc(
+            100% - 250px
+        ); /* i just realized this was a hacky workaround, can someone make it better - fish */
     }
     .wallpaper-list-item {
         cursor: pointer;
@@ -81,6 +83,19 @@ const wallpaperCSS = css`
     .matter-button-contained {
         background-color: var(--theme-accent);
         color: var(--theme-fg);
+    }
+
+    #custom-wallpaper-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--theme-secondary-bg);
+        color: var(--theme-fg);
+        border-radius: 10px;
+        aspect-ratio: 16 / 9;
+        height: 100px;
+        width: 177.78px; /* EWW DIRTY HACK PLEASE FIX - fish */
+        cursor: pointer;
     }
 `;
 
@@ -177,44 +192,60 @@ class WallpaperSelector extends App {
                 </div>
             </div>
 
-            <hr class="separator-hr" />
+            {/* <hr class="separator-hr" />
 
             <div class="custom-wallpaper">
                 <h5 class="curr-wallpaper-text" color="gray">
                     Custom Wallpaper
                 </h5>
-                <button
-                    on:click={() => {
-                        this.libfilepicker
-                            .selectFile(
-                                "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
-                                this,
-                            )
-                            .then((filename: any) => {
-                                if (filename == undefined) return;
-                                const wallpaperName = filename.split("/").pop();
-                                const wallpaperURL = "/fs" + filename;
-                                this.setNewWallpaper({
-                                    name: wallpaperName,
-                                    url: wallpaperURL,
-                                });
-                            });
-                    }}
-                    id="custom-wallpaper-btn"
-                    class="matter-button-contained"
-                >
+                <button class="matter-button-contained">
                     Load Custom Wallpaper
                 </button>
-            </div>
+            </div> */}
 
             <hr class="separator-hr" />
 
             {await this.wallpaperList().then((wallpaperJSON: any) => {
                 const wallpaperList = (
-                    <div
-                        id="wallpaper-list"
-                        class="wallpaper-list-container"
-                    ></div>
+                    <div id="wallpaper-list" class="wallpaper-list-container">
+                        <div
+                            class="wallpaper-list-item"
+                            style="display: flex;flex-direction: column;align-items: center;"
+                        >
+                            <div
+                                on:click={() => {
+                                    this.libfilepicker
+                                        .selectFile(
+                                            "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
+                                            this,
+                                        )
+                                        .then((filename: any) => {
+                                            if (filename == undefined) return;
+                                            const wallpaperName = filename
+                                                .split("/")
+                                                .pop();
+                                            const wallpaperURL =
+                                                "/fs" + filename;
+                                            this.setNewWallpaper({
+                                                name: wallpaperName,
+                                                url: wallpaperURL,
+                                            });
+                                        });
+                                }}
+                                id="custom-wallpaper-btn"
+                            >
+                                <span
+                                    class="material-symbols-outlined"
+                                    style="font-size: 32px;"
+                                >
+                                    add
+                                </span>
+                            </div>
+                            <h5 class="wallpaper-list-item-name" color="white">
+                                Upload new
+                            </h5>
+                        </div>
+                    </div>
                 );
                 wallpaperJSON["wallpapers"].forEach(
                     (wallpaper: WallpaperObject) => {
