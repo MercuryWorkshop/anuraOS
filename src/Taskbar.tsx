@@ -2,7 +2,7 @@ class Taskbar {
     timeformat = new Intl.DateTimeFormat(navigator.language, {
         hour: "numeric",
         minute: "numeric",
-        hour12: true,
+        hour12: !anura.settings.get("sir-yes-sir"),
     });
 
     dateformat = new Intl.DateTimeFormat(navigator.language, {
@@ -232,7 +232,11 @@ class Taskbar {
         setInterval(() => {
             const date = new Date();
             this.state.date = this.dateformat.format(date);
-            this.state.time = this.timeformat.format(date).slice(0, -3);
+            if (this.timeformat.resolvedOptions().hour12 == false) {
+                this.state.time = this.timeformat.format(date);
+            } else {
+                this.state.time = this.timeformat.format(date).slice(0, -3);
+            }
         }, 1000);
 
         addEventListener("online", () => {

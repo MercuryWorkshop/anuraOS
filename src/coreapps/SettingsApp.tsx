@@ -252,6 +252,29 @@ class SettingsApp extends App {
                                         on:click={(event: any) => {
                                             if (event.target.checked) {
                                                 anura.settings.set(
+                                                    "sir-yes-sir",
+                                                    true,
+                                                );
+                                            } else {
+                                                anura.settings.set(
+                                                    "sir-yes-sir",
+                                                    false,
+                                                );
+                                            }
+                                        }}
+                                        id="24htime"
+                                        type="checkbox"
+                                        role="switch"
+                                    />
+                                    <span>24-hour time</span>
+                                </label>
+                            </div>
+                            <div class="settings-item">
+                                <label class="matter-switch">
+                                    <input
+                                        on:click={(event: any) => {
+                                            if (event.target.checked) {
+                                                anura.settings.set(
                                                     "borderless-aboutbrowser",
                                                     true,
                                                 );
