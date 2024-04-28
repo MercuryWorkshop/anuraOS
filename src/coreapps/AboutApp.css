@@ -52,16 +52,16 @@
 }
 
 .aboutapp-content a {
-    color: cyan;
+    color: var(--theme-accent);
 }
 
 .aboutapp-link-button {
     background: none !important;
     border: none;
     padding: 0 !important;
-    color: cyan;
+    color: var(--theme-accent);
     text-decoration: underline;
     cursor: pointer;
     font-family: Roboto, sans-serif;
-    font-size: 16px;
+    font-size: 1em;
 }

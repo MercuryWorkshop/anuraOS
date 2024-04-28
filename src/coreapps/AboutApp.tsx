@@ -54,6 +54,7 @@ class AboutApp extends App {
                     >
                         GNU AGPLv3
                     </button>
+                    .
                 </p>
             </div>
         </div>
