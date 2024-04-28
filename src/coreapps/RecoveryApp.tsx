@@ -71,20 +71,35 @@ class RecoveryApp extends App {
                     title="Reset your Anura install to factory settings. This will delete all of your data."
                     on:click={async () => {
                         if (
-                            confirm(
+                            await anura.dialog.confirm(
                                 "Are you sure you want to powerwash Anura? All of your data will be lost.",
                             )
                         ) {
-                            const sh = new anura.fs.Shell();
                             try {
+                                navigator.serviceWorker
+                                    .getRegistrations()
+                                    .then(function (registrations) {
+                                        for (const registration of registrations) {
+                                            registration.unregister();
+                                        }
+                                    });
                                 localStorage.clear();
-                                await sleep(2);
-                                await sh.promises.rm("/", {
-                                    recursive: true,
-                                });
+                                sessionStorage.clear();
+                                const databases = await indexedDB.databases();
+                                for (const database of databases) {
+                                    try {
+                                        await indexedDB.deleteDatabase(
+                                            database.name!,
+                                        );
+                                    } catch {
+                                        console.log(
+                                            `Failed to delete database ${database.name}`,
+                                        );
+                                    }
+                                }
                                 window.location.reload();
-                            } catch (error) {
-                                window.location.reload();
+                            } catch (e) {
+                                console.error("failed powerwash: ", e);
                             }
                         }
                     }}
