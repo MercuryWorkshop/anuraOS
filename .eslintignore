@@ -3,7 +3,6 @@ build/
 aboutproxy/
 v86/
 apps/
-nohost/
 .eslintrc.js
 public/anura-sw.js
 public/lib/
