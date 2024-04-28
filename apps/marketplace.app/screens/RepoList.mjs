@@ -25,7 +25,8 @@ function RepoItem() {
     };
 
     this.css = css`
-        margin-right: auto;
+        margin-right: 10px;
+        border-radius: 0 9999px 9999px 0;
         margin-left: auto;
         height: 38px;
         line-height: 38px;
@@ -35,7 +36,14 @@ function RepoItem() {
         color: var(--theme-fg);
         font-weight: 500;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: background-color 0.1s;
+        display: flex;
+        align-items: center;
+
+        .material-symbols-outlined {
+            margin-right: 10px;
+            font-size: 1.4em;
+        }
     `;
 
     const contextMenu = new anura.ContextMenu();
@@ -69,6 +77,7 @@ function RepoItem() {
                 );
             }}
         >
+            <span class="material-symbols-outlined">shopping_bag</span>
             ${use(this.reponame)}
         </div>
     `;
@@ -96,8 +105,8 @@ export default function RepoList() {
         .repoItem.selected {
             background-color: color-mix(
                 in srgb,
-                var(--theme-bg) 50%,
-                var(--theme-accent) 50%
+                var(--theme-bg) 60%,
+                var(--theme-accent) 30%
             );
         }
 
