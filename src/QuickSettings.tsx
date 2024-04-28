@@ -255,7 +255,6 @@ class QuickSettings {
                     this.quickSettingsCss,
                 ]}
                 width="360px"
-                height="40%"
                 grow
                 id="quickSettings"
             >
