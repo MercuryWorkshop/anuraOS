@@ -1,10 +1,11 @@
 # Browser specific Quirks
 
-This is a list of known issues with other browsers that may affect usability of anura
+This is a list of known issues with other browsers that may affect usability of Anura
 
 ## Firefox
 
 -   No LocalFS feature due to no Filesystem Access API
+-   Powerwashing broken on versions pre 126 due to [indexedDB.databases](https://developer.mozilla.org/en-US/docs/Web/API/IDBFactory/databases)
 
 ## Safari
 
