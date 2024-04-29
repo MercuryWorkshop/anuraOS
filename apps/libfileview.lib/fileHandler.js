@@ -22,6 +22,7 @@ export function openFile(path) {
         fs.readFile(path, function (err, data) {
             let fileView = anura.wm.createGeneric("Image File");
             fileView.content.style.overflow = "auto";
+            fileView.content.style.background = "black";
             let bloburl = URL.createObjectURL(new Blob([data]));
             if (mimetype == "image/svg+xml") {
                 let doc = new DOMParser().parseFromString(
@@ -29,14 +30,16 @@ export function openFile(path) {
                     "image/svg+xml",
                 );
                 let elem = doc.documentElement;
-                elem.style = "width: 100%; height: 100%;";
+                elem.style = "width: 100%; height: auto;";
                 fileView.content.appendChild(elem);
                 return;
             }
             let image = document.createElement("img");
             image.setAttribute("type", mimetype);
             image.src = bloburl;
-            image.style = "width: 100%; height: 100%;";
+            image.style =
+                "width: auto; height: 100%; margin: auto; display: block;";
+
             fileView.content.appendChild(image);
         });
     }
