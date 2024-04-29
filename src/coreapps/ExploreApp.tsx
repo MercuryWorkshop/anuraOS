@@ -129,6 +129,18 @@ class ExploreApp extends App {
                     distro commonly used in containers. To install packages, you
                     can run <code>apk add &lt;package&gt;</code>.
                 </p>
+                <p>
+                    If you want to create a shortcut for an X11 app in the
+                    launcher, you can do so from{" "}
+                    <span>
+                        <img
+                            src="/assets/icons/settings.png"
+                            alt="Settings icon"
+                        />{" "}
+                        Settings
+                    </span>
+                    .
+                </p>
                 <h2>Get new apps</h2>
                 <p>
                     To install more native Anura apps, you can head to the{" "}
