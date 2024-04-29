@@ -24,6 +24,18 @@ window.fs = anura.fs;
 window.Buffer = Filer.Buffer;
 let sh = new anura.fs.Shell();
 
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return "0 Bytes";
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
+
 async function mountLocalFs() {
     if (!window.showDirectoryPicker) {
         anura.notifications.add({
@@ -78,7 +90,8 @@ async function loadPath(path) {
             name.innerText = `${file}/`;
             description.innerText = "Folder";
             date.innerText = new Date(stats.mtime).toLocaleString();
-            size.innerText = stats.size;
+
+            size.innerText = "N/A";
 
             let folderExt = file.split(".").slice("-1")[0];
 
@@ -122,7 +135,7 @@ async function loadPath(path) {
                                 description.innerText = type;
                             });
                         date.innerText = new Date(stats.mtime).toLocaleString();
-                        size.innerText = stats.size;
+                        size.innerText = formatBytes(stats.size);
 
                         try {
                             const iconURL = await anura.files.getIcon(
@@ -152,7 +165,7 @@ async function loadPath(path) {
                     description.innerText = type;
                 });
                 date.innerText = new Date(stats.mtime).toLocaleString();
-                size.innerText = stats.size;
+                size.innerText = formatBytes(stats.size);
 
                 try {
                     const iconURL = await anura.files.getIcon(
