@@ -70,7 +70,7 @@
 
 #taskinfo-container > *,
 #date-container > * {
-    color: whitesmoke;
+    color: var(--theme-fg);
     cursor: pointer;
 }
 

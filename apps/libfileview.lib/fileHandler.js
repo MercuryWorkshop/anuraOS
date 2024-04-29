@@ -120,7 +120,7 @@ export function openFile(path) {
             let iframe = document.createElement("iframe");
             iframe.setAttribute(
                 "style",
-                "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border: none; margin: 0; padding: 0; background-color: #202124;",
+                "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border: none; margin: 0; padding: 0; background-color: transparent;",
             );
             iframe.srcdoc = data;
             fileView.content.appendChild(iframe);

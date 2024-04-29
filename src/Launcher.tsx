@@ -55,7 +55,7 @@ class Launcher {
         .recentItemsWrapper .recentItemsText {
             margin-left: 4em;
             margin-right: 4em;
-            color: #fff;
+            color: var(--theme-fg);
             border-bottom: 1px solid rgb(22 22 22 / 50%);
             padding: 1em 0em;
         }
@@ -79,6 +79,10 @@ class Launcher {
             background-color: #a8bbbf;
         }
 
+        *::-webkit-input-placeholder {
+            color: var(--theme-secondary-fg);
+        }
+
         .appsView {
             transition: ${this.gridTransition};
             transition-delay: 0.075s;
@@ -98,7 +102,7 @@ class Launcher {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #fff;
+            color: var(--theme-fg);
         }
 
         .appsView .app input[type="image"] {
@@ -235,7 +239,7 @@ class Launcher {
                     <img src="/icon.png"></img>
                     <input
                         placeholder="Search your tabs, files, apps, and more..."
-                        style="outline: none; color: white"
+                        style="outline: none; color: var(--theme-fg);"
                         bind:this={use(this.state.search)}
                         on:input={this.handleSearch.bind(this)}
                     />

@@ -19,7 +19,7 @@ const wallpaperCSS = css`
         cursor: pointer;
     }
     .curr-wallpaper-text {
-        color: #b9b9b9;
+        color: var(--theme-secondary-fg);
         margin-bottom: 5px;
     }
     .curr-wallpaper-name {

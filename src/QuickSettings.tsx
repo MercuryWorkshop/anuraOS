@@ -475,11 +475,11 @@ class QuickSettingsNotification {
         closeIndicator: false,
         buttons: [],
     });
-
+    // MARK: FIXME: USE THEME
     css = css`
         background-color: rgba(128, 128, 128, 0.2);
         border-radius: 1em;
-        color: white;
+        color: var(--theme-fg);
         cursor: pointer;
         transition: all 0.15s cubic-bezier(0.445, 0.05, 0.55, 0.95);
         opacity: 1;
@@ -499,7 +499,7 @@ class QuickSettingsNotification {
                 flex-direction: row;
 
                 .ntitle {
-                    color: #e8eaed;
+                    color: var(--theme-fg);
                     font-size: 14px;
                     font-weight: 700;
                     flex-grow: 1;
@@ -518,7 +518,7 @@ class QuickSettingsNotification {
 
             .ndesc {
                 font-size: 12px;
-                color: #bdc1c6;
+                color: var(--theme-secondary-fg);
             }
 
             .nbutton-container {

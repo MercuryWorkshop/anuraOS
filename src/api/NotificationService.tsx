@@ -153,7 +153,7 @@ class AnuraNotification implements NotifParams {
                 flex-direction: row;
 
                 .ntitle {
-                    color: #e8eaed;
+                    color: var(--theme-fg);
                     font-size: 14px;
                     font-weight: 700;
                     flex-grow: 1;
@@ -172,7 +172,7 @@ class AnuraNotification implements NotifParams {
 
             .ndescription {
                 font-size: 12px;
-                color: #bdc1c6;
+                color: var(--theme-secondary-fg);
             }
 
             .nbutton-container {

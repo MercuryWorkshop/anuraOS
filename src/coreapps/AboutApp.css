@@ -38,7 +38,7 @@
     margin-top: 1rem;
     margin-bottom: 1rem;
     height: 1px;
-    background-color: #9ca3af;
+    background-color: var(--theme-border);
     flex-shrink: 0;
     width: 22rem;
 }
