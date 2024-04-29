@@ -134,8 +134,7 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
 watch: bundle FORCE
-	which inotifywait || echo "INSTALL INOTIFYTOOLS"
-	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make tsc & make css & make milestone; echo "Done!"; sleep 1; done
+	npx tsc-watch --onSuccess "make css milestone" 
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
