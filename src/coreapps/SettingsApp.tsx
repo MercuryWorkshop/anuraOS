@@ -109,7 +109,7 @@ const settingsCSS = css`
         outline: none;
     }
     .sidebar-settings-item-name > a {
-        color: #c1c1c1;
+        color: var(--theme-secondary-fg);
         margin-left: 20px;
         text-decoration: none;
         font-family: "Google Sans", Roboto, sans-serif;
