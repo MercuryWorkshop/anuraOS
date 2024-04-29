@@ -21,3 +21,25 @@
 .matter-button-outlined {
     color: var(--theme-accent);
 }
+
+.matter-switch > input + span::before,
+.matter-switch > input + span::after {
+    background-color: var(--theme-secondary-fg) !important;
+}
+
+.matter-switch > input {
+    background-color: var(--theme-secondary-bg) !important;
+}
+
+.matter-switch > input:checked + span::before,
+.matter-switch > input:checked + span::after {
+    background-color: var(--theme-accent) !important;
+}
+
+.matter-switch > input:checked {
+    background-color: color-mix(
+        in srgb,
+        var(--theme-accent) 75%,
+        black 25%
+    ) !important;
+}
