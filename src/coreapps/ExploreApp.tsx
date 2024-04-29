@@ -13,6 +13,10 @@ class ExploreApp extends App {
         height: 100%;
 
         a,
+        a:link {
+            color: var(--theme-accent);
+        }
+
         a:visited {
             color: var(--theme-accent);
         }
@@ -86,8 +90,12 @@ class ExploreApp extends App {
                 <h2>Using the x86 Subsystem</h2>
                 <p>
                     AnuraOS includes an x86 subsystem (based on{" "}
-                    <a href="https://github.com/copy/v86">v86</a>), which lets
-                    you run real Linux within Anura.
+                    <a
+                        href="javascript:anura.apps['anura.browser'].open(['https://github.com/copy/v86']);" // using dreamland on:click or html onclick makes the link not blue
+                    >
+                        v86
+                    </a>
+                    ), which lets you run real Linux within Anura.
                     {$if(
                         use(anura.x86) == undefined,
                         <p>
@@ -135,19 +143,23 @@ class ExploreApp extends App {
                     AnuraOS has robust customization features. You can change
                     the wallpaper using{" "}
                     <span>
-                        <img
-                            src="/assets/icons/wallpaper.png"
-                            alt="Wallpaper Selector Icon"
-                        />{" "}
-                        Wallpaper Selector
+                        <a href="javascript:anura.apps['anura.wallpaper'].open();">
+                            <img
+                                src="/assets/icons/wallpaper.png"
+                                alt="Wallpaper Selector Icon"
+                            />{" "}
+                            Wallpaper Selector
+                        </a>
                     </span>
                     , and change the system colors using{" "}
                     <span>
-                        <img
-                            src="/assets/icons/themeeditor.png"
-                            alt="Theme Editor Icon"
-                        />{" "}
-                        Theme Editor
+                        <a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
+                            <img
+                                src="/assets/icons/themeeditor.png"
+                                alt="Theme Editor Icon"
+                            />{" "}
+                            Theme Editor
+                        </a>
                     </span>
                     .
                 </p>
