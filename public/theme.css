@@ -43,3 +43,16 @@
         black 25%
     ) !important;
 }
+
+.matter-button-outlined {
+    color: var(--theme-accent) !important;
+    border-color: var(--theme-border) !important;
+}
+
+.matter-button-outlined::before {
+    background-color: color-mix(
+        in srgb,
+        var(--theme-accent) 75%,
+        var(--theme-bg) 25%
+    ) !important;
+}
