@@ -134,7 +134,7 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
 watch: bundle FORCE
-	npx tsc-watch --onSuccess "make css milestone" 
+	npx tsc-watch --onSuccess "make css build/cache-load.json milestone" 
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
