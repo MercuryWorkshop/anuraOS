@@ -10,16 +10,16 @@
 }
 
 .matter-switch {
-    color: var(--theme-fg);
+    color: var(--theme-fg) !important;
 }
 
 .matter-button-contained {
-    background-color: var(--theme-accent);
+    background-color: var(--theme-accent) !important;
     /* color: var(--theme-fg); */
 }
 
 .matter-button-outlined {
-    color: var(--theme-accent);
+    color: var(--theme-accent) !important;
 }
 
 .matter-switch > input + span::before,

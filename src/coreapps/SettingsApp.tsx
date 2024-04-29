@@ -20,12 +20,16 @@ const settingsCSS = css`
     }
 
     *::-webkit-scrollbar-thumb {
-        background-color: #2f2f2f;
+        background-color: var(--theme-secondary-fg);
         border-radius: 8px;
     }
 
     *::-webkit-scrollbar-button {
         display: none;
+    }
+
+    *::-webkit-input-placeholder {
+        color: var(--theme-secondary-fg);
     }
 
     .settings-body {
@@ -89,16 +93,16 @@ const settingsCSS = css`
         margin-left: 10px;
     }
     .settings-button {
-        background-color: #2f2f2f;
+        background-color: var(--theme-secondary-bg);
         border: none;
         border-radius: 5px;
         padding: 5px;
-        color: #c1c1c1;
+        color: var(--theme-fg);
         cursor: pointer;
         margin-right: 10px;
     }
     .settings-item-text-input {
-        background-color: #2f2f2f;
+        background-color: var(--theme-bg);
         margin-right: 10px;
         border: none;
         border-radius: 5px;
@@ -112,7 +116,7 @@ const settingsCSS = css`
         color: var(--theme-secondary-fg);
         margin-left: 20px;
         text-decoration: none;
-        font-family: "Google Sans", Roboto, sans-serif;
+        font-family: Roboto, sans-serif;
     }
 
     .disk-info {
@@ -673,6 +677,84 @@ class SettingsApp extends App {
                                             Resize Disk
                                         </button>
                                     </div>
+
+                                    <div class="settings-item">
+                                        <span>
+                                            <span style="margin-left: 10px; margin-right: 10px;">
+                                                Create launcher shortcut
+                                            </span>
+                                            <input
+                                                type="text"
+                                                name="xappstub-name"
+                                                id="xappstub-name"
+                                                class="settings-item-text-input"
+                                                placeholder="Enter app name"
+                                            />
+                                            <input
+                                                type="text"
+                                                name="xappstub-name"
+                                                id="xappstub-cmd"
+                                                class="settings-item-text-input"
+                                                placeholder="Enter command"
+                                            />
+                                        </span>
+                                        <button
+                                            class="settings-button"
+                                            on:click={async () => {
+                                                const name = (
+                                                    document.getElementById(
+                                                        "xappstub-name",
+                                                    ) as HTMLInputElement
+                                                ).value;
+                                                const cmd = (
+                                                    document.getElementById(
+                                                        "xappstub-cmd",
+                                                    ) as HTMLInputElement
+                                                ).value;
+                                                if (name && cmd) {
+                                                    const stub = new XAppStub(
+                                                        name,
+                                                        `anura.user.${cmd}`,
+                                                        "",
+                                                        cmd,
+                                                    );
+                                                    await anura.registerApp(
+                                                        stub,
+                                                    );
+                                                    anura.settings.set(
+                                                        "user-xapps",
+                                                        [
+                                                            ...anura.settings.get(
+                                                                "user-xapps",
+                                                            ),
+                                                            {
+                                                                name: name,
+                                                                cmd: cmd,
+                                                                id: stub.package,
+                                                            },
+                                                        ],
+                                                    );
+                                                    console.log(
+                                                        anura.settings.get(
+                                                            "user-xapps",
+                                                        ),
+                                                    );
+                                                    anura.notifications.add({
+                                                        title: "Shortcut Created",
+                                                        description:
+                                                            "You can now launch your app from the launcher!",
+                                                        timeout: 5000,
+                                                    });
+                                                } else {
+                                                    anura.dialog.alert(
+                                                        "Please fill out both fields!",
+                                                    );
+                                                }
+                                            }}
+                                        >
+                                            Register
+                                        </button>
+                                    </div>
                                     <div class="settings-button-group">
                                         <button
                                             on:click={() => {
@@ -739,79 +821,6 @@ class SettingsApp extends App {
                                             class="settings-button grouped-btn"
                                         >
                                             Upload Custom RootFS
-                                        </button>
-                                    </div>
-                                    <br></br>
-                                    {/* MARK: FIX UI AAAAAA
-                                     */}
-                                    <div>
-                                        <span>Register XAppStub</span>
-                                        <input
-                                            type="text"
-                                            name="xappstub-name"
-                                            id="xappstub-name"
-                                            placeholder="Enter app name"
-                                        />
-                                        <input
-                                            type="text"
-                                            name="xappstub-name"
-                                            id="xappstub-cmd"
-                                            placeholder="Enter command"
-                                        />
-                                        <button
-                                            on:click={async () => {
-                                                const name = (
-                                                    document.getElementById(
-                                                        "xappstub-name",
-                                                    ) as HTMLInputElement
-                                                ).value;
-                                                const cmd = (
-                                                    document.getElementById(
-                                                        "xappstub-cmd",
-                                                    ) as HTMLInputElement
-                                                ).value;
-                                                if (name && cmd) {
-                                                    const stub = new XAppStub(
-                                                        name,
-                                                        `anura.user.${cmd}`,
-                                                        "",
-                                                        cmd,
-                                                    );
-                                                    await anura.registerApp(
-                                                        stub,
-                                                    );
-                                                    anura.settings.set(
-                                                        "user-xapps",
-                                                        [
-                                                            ...anura.settings.get(
-                                                                "user-xapps",
-                                                            ),
-                                                            {
-                                                                name: name,
-                                                                cmd: cmd,
-                                                                id: stub.package,
-                                                            },
-                                                        ],
-                                                    );
-                                                    console.log(
-                                                        anura.settings.get(
-                                                            "user-xapps",
-                                                        ),
-                                                    );
-                                                    anura.notifications.add({
-                                                        title: "XAppStub Registered",
-                                                        description:
-                                                            "XAppStub has been registered!",
-                                                        timeout: 5000,
-                                                    });
-                                                } else {
-                                                    anura.dialog.alert(
-                                                        "Please fill out both fields!",
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            Register
                                         </button>
                                     </div>
                                 </div>
