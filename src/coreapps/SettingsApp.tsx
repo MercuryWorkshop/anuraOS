@@ -688,7 +688,7 @@ class SettingsApp extends App {
                                                 name="xappstub-name"
                                                 id="xappstub-name"
                                                 class="settings-item-text-input"
-                                                placeholder="Enter app name"
+                                                placeholder="Enter display name"
                                             />
                                             <input
                                                 type="text"
