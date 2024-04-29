@@ -556,4 +556,11 @@ async function bootx86() {
     );
     await anura.registerApp(new XAppStub("XTerm", "anura.xterm", "", "xterm"));
     anura.x86 = new V86Backend(anura.x86hdd);
+
+    anura.settings
+        .get("user-xapps")
+        .forEach((stub: { name: string; cmd: string; id: string }) => {
+            console.log("registering user xapp", stub);
+            anura.registerApp(new XAppStub(stub.name, stub.id, "", stub.cmd));
+        });
 }

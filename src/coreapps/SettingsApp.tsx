@@ -741,6 +741,79 @@ class SettingsApp extends App {
                                             Upload Custom RootFS
                                         </button>
                                     </div>
+                                    <br></br>
+                                    {/* MARK: FIX UI AAAAAA
+                                     */}
+                                    <div>
+                                        <span>Register XAppStub</span>
+                                        <input
+                                            type="text"
+                                            name="xappstub-name"
+                                            id="xappstub-name"
+                                            placeholder="Enter app name"
+                                        />
+                                        <input
+                                            type="text"
+                                            name="xappstub-name"
+                                            id="xappstub-cmd"
+                                            placeholder="Enter command"
+                                        />
+                                        <button
+                                            on:click={async () => {
+                                                const name = (
+                                                    document.getElementById(
+                                                        "xappstub-name",
+                                                    ) as HTMLInputElement
+                                                ).value;
+                                                const cmd = (
+                                                    document.getElementById(
+                                                        "xappstub-cmd",
+                                                    ) as HTMLInputElement
+                                                ).value;
+                                                if (name && cmd) {
+                                                    const stub = new XAppStub(
+                                                        name,
+                                                        `anura.user.${cmd}`,
+                                                        "",
+                                                        cmd,
+                                                    );
+                                                    await anura.registerApp(
+                                                        stub,
+                                                    );
+                                                    anura.settings.set(
+                                                        "user-xapps",
+                                                        [
+                                                            ...anura.settings.get(
+                                                                "user-xapps",
+                                                            ),
+                                                            {
+                                                                name: name,
+                                                                cmd: cmd,
+                                                                id: stub.package,
+                                                            },
+                                                        ],
+                                                    );
+                                                    console.log(
+                                                        anura.settings.get(
+                                                            "user-xapps",
+                                                        ),
+                                                    );
+                                                    anura.notifications.add({
+                                                        title: "XAppStub Registered",
+                                                        description:
+                                                            "XAppStub has been registered!",
+                                                        timeout: 5000,
+                                                    });
+                                                } else {
+                                                    anura.dialog.alert(
+                                                        "Please fill out both fields!",
+                                                    );
+                                                }
+                                            }}
+                                        >
+                                            Register
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>

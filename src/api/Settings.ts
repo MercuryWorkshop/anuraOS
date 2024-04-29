@@ -55,6 +55,10 @@ class Settings {
             initial["theme"] = new Theme();
         }
 
+        if (!initial["user-xapps"]) {
+            initial["user-xapps"] = [];
+        }
+
         try {
             const raw = await fs.promises.readFile("/anura_settings.json");
             // This Uint8Array is actuallly a buffer, so JSON.parse can handle it
