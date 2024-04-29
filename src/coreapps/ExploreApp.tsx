@@ -107,22 +107,29 @@ class ExploreApp extends App {
                                     src="/assets/icons/settings.png"
                                     alt="Settings icon"
                                 />{" "}
-                                Settings
+                                <a href="javascript:anura.apps['anura.settings'].open();">
+                                    Settings
+                                </a>
                             </span>
                             .
                         </p>,
                     )}
-                </p>
-                <p>
-                    You can open a terminal using the{" "}
-                    <span>
-                        <img
-                            src="/assets/icons/terminal.png"
-                            alt="v86 Terminal Icon"
-                        />{" "}
-                        v86 Terminal
-                    </span>{" "}
-                    app.
+                    {$if(
+                        use(anura.x86 != undefined),
+                        <p>
+                            You can open a terminal using the{" "}
+                            <span>
+                                <img
+                                    src="/assets/icons/terminal.png"
+                                    alt="v86 Terminal Icon"
+                                />{" "}
+                                <a href="javascript:anura.apps['anura.term'].open();">
+                                    v86 Terminal
+                                </a>
+                            </span>{" "}
+                            app.
+                        </p>,
+                    )}
                 </p>
                 <p>
                     The x86 subsystem is based on an Alpine Linux, a lightweight
@@ -137,18 +144,25 @@ class ExploreApp extends App {
                             src="/assets/icons/settings.png"
                             alt="Settings icon"
                         />{" "}
-                        Settings
+                        <a href="javascript:anura.apps['anura.settings'].open();">
+                            Settings
+                        </a>
                     </span>
                     .
                 </p>
                 <h2>Get new apps</h2>
                 <p>
                     To install more native Anura apps, you can head to the{" "}
-                    <img
-                        src="/apps/marketplace.app/playstore.webp"
-                        alt="Marketplace Icon"
-                    />{" "}
-                    Marketplace.
+                    <span>
+                        <img
+                            src="/apps/marketplace.app/playstore.webp"
+                            alt="Marketplace Icon"
+                        />{" "}
+                        <a href="javascript:anura.apps['anura.store'].open();">
+                            Marketplace
+                        </a>
+                        .
+                    </span>
                 </p>
                 <h2>Customize your experience</h2>
                 <p>
