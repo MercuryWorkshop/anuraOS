@@ -44,6 +44,6 @@
         "dreamland": "^0.0.13",
         "prettier": "3.2.4",
         "rollup": "^2.79.1",
-        "workbox-cli": "^7.0.0"
+        "workbox-cli": "7.0.0"
     }
 }
