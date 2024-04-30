@@ -289,16 +289,16 @@ window.addEventListener("load", async () => {
         () => {
             setTimeout(() => {
                 document.querySelector(".bootsplash")?.classList.add("hide");
-            }, 400); // give the taskbar time to init
+            }, 350); // give the taskbar time to init
             setTimeout(() => {
                 bootsplash.remove();
                 bootsplashMobile.remove();
                 gangstaBootsplash.remove();
-            }, 700);
+            }, 550);
             anura.logger.debug("boot completed");
             document.dispatchEvent(new Event("anura-boot-completed"));
         },
-        anura.settings.get("oobe-complete") ? 1000 : 2000,
+        anura.settings.get("oobe-complete") ? 500 : 1500,
     );
 });
 
