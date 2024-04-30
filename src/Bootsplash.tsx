@@ -17,12 +17,17 @@ const bootsplashMobile = (
 const gangstaBootsplash = (
     <div class="bootsplash">
         <img src="/assets/images/bootsplash.png" />
-        <h1>Gangster Edition</h1>
+        <h2 style="font-size: 55px; margin-top: 1rem; color: #DFDEDE;">
+            Gangster Edition
+        </h2>
         <img
             src="/assets/images/gangsta.jpeg"
-            style="position: absolute; top: 0; bottom: 0; right: 0; width: auto; height: 100%"
+            style="position: absolute; top: 0; bottom: 0; right: 0; width: auto; height: 100%; filter: brightness(0.95)"
         />
         <br id="systemstatus-br" style="display: none;" />
         <h2 id="systemstatus" style="display: none;"></h2>
+        <span style="position: absolute; bottom: 1rem; left: 1rem; text-align: left;">
+            Copyright © 2022-2024<br></br>Mercury Workshop
+        </span>
     </div>
 );
