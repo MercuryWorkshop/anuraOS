@@ -989,15 +989,9 @@ document.addEventListener("contextmenu", (e) => {
 });
 
 document.addEventListener("click", (e) => {
-    if (
-        !document.querySelector("#contextMenu").contains(e.target) ||
-        !e.target.ariaDisabled
-    ) {
-        // document.querySelector("#contextMenu").style.setProperty("display", "none");
-        newcontextmenu.hide();
-        appcontextmenu.hide();
-        emptycontextmenu.hide();
-    }
+    newcontextmenu.hide();
+    appcontextmenu.hide();
+    emptycontextmenu.hide();
 });
 
 async function newFolder(path) {
