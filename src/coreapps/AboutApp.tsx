@@ -8,7 +8,12 @@ class AboutApp extends App {
             <div class="aboutapp-logo">
                 <div
                     class="aboutapp-logo-img"
-                    title="Toss all your change to the wellspring..."
+                    title="誰もが目を奪われていく君は完璧で究極のアイドル"
+                    on:click={() => {
+                        anura.apps["anura.browser"].open([
+                            "https://www.youtube.com/embed/ZRtdQ81jPUQ",
+                        ]);
+                    }}
                 ></div>
             </div>
             <div class="aboutapp-logo-divider"></div>
