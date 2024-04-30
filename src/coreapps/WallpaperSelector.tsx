@@ -33,10 +33,11 @@ const wallpaperCSS = css`
         border-radius: 5px;
         font-family: "Roboto", sans-serif;
         outline: none;
+        height: 25px;
     }
     .separator-hr {
         margin: 20px;
-        border: 2px solid #4b4b4b;
+        border: 2px solid var(--theme-border);
         border-radius: 10px;
     }
     *::-webkit-scrollbar {
@@ -44,7 +45,7 @@ const wallpaperCSS = css`
     }
 
     *::-webkit-scrollbar-thumb {
-        background-color: #2f2f2f;
+        background-color: var(--theme-secondary-bg);
         border-radius: 8px;
     }
 
@@ -53,7 +54,7 @@ const wallpaperCSS = css`
     }
     .wallpaper-list-container {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         grid-gap: 20px;
         margin-left: 20px;
         text-align: center;
@@ -110,17 +111,19 @@ const wallpaperCSS = css`
         border: none;
         padding: 0;
         width: 2.5rem;
-        height: 1.5rem;
+        height: 25px;
     }
 
     input[type="color" i]::-webkit-color-swatch {
         /* This will never work on firefox but who gaf */
         border-radius: 0.5rem;
         border: 1px solid var(--theme-border);
+        height: 25px;
     }
 
     input[type="color" i]::-webkit-color-swatch-wrapper {
         padding: 0;
+        height: 25px;
     }
 
     .wall-fit {
