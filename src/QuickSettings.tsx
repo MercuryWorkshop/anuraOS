@@ -60,7 +60,12 @@ class QuickSettings {
 
                 .symbolButton {
                     border-radius: 28px;
-                    background-color: var(--theme-secondary-bg);
+                    background-color: color-mix(
+                        in srgb,
+                        var(--theme-secondary-bg) 55%,
+                        transparent
+                    );
+                    box-shadow: none;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -97,7 +102,12 @@ class QuickSettings {
                         min-height: 0;
                         min-width: 0;
                         border-radius: 50%;
-                        background-color: var(--theme-secondary-bg);
+                        background-color: color-mix(
+                            in srgb,
+                            var(--theme-secondary-bg) 55%,
+                            transparent
+                        );
+                        box-shadow: none;
 
                         span {
                             color: var(--theme-fg);
@@ -477,7 +487,11 @@ class QuickSettingsNotification {
         buttons: [],
     });
     css = css`
-        background-color: var(--theme-secondary-bg);
+        background-color: color-mix(
+            in srgb,
+            var(--theme-secondary-bg) 40%,
+            transparent
+        );
         border-radius: 1em;
         color: var(--theme-fg);
         cursor: pointer;
