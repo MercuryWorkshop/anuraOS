@@ -475,9 +475,8 @@ class QuickSettingsNotification {
         closeIndicator: false,
         buttons: [],
     });
-    // MARK: FIXME: USE THEME
     css = css`
-        background-color: rgba(128, 128, 128, 0.2);
+        background-color: var(--theme-secondary-bg);
         border-radius: 1em;
         color: var(--theme-fg);
         cursor: pointer;

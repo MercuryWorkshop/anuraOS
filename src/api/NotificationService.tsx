@@ -126,7 +126,11 @@ class AnuraNotification implements NotifParams {
     });
 
     css = css`
-        background-color: rgba(22, 22, 22, 0.9);
+        background-color: color-mix(
+            in srgb,
+            var(--theme-dark-bg) 85%,
+            transparent
+        );
         backdrop-filter: blur(30px);
         -webkit-backdrop-filter: blur(30px);
         border-radius: 1em;
@@ -192,10 +196,7 @@ class AnuraNotification implements NotifParams {
         this.close = close;
         this.buttons = params.buttons || [];
         this.element = (
-            <div
-                class={`${this.css} notification`}
-                style={`${anura.ui.theme ? `background-color: ${anura.ui.theme.darkBackground}e6` : ""}`}
-            >
+            <div class={`${this.css} notification`}>
                 <div
                     class="nbody"
                     on:click={(e: PointerEvent) => {

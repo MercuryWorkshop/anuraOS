@@ -191,12 +191,7 @@ class AnuraUI {
             this.class ||= [];
             if (typeof this.class === "string") this.class = [this.class];
 
-            const dynamicStyle: any = {
-                backgroundColor: use(
-                    anura.ui.theme.state.darkBackground,
-                    (color) => color + "E6",
-                ),
-            };
+            const dynamicStyle: any = {};
 
             if (this.width) dynamicStyle.width = this.width;
             if (this.height) dynamicStyle.height = this.height;
@@ -205,7 +200,11 @@ class AnuraUI {
             this.css = css`
                 display: flex;
                 position: absolute;
-
+                background: color-mix(
+                    in srgb,
+                    var(--theme-dark-bg) 85%,
+                    transparent
+                );
                 border: 1px solid var(--theme-dark-border);
                 box-shadow: inset 0 0 0 1px var(--theme-secondary-bg);
                 border-radius: 1em;

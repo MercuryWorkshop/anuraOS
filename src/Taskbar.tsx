@@ -281,12 +281,6 @@ class Taskbar {
     async init() {
         this.element = (
             <footer
-                style={{
-                    backgroundColor: use(
-                        anura.ui.theme.state.darkBackground,
-                        (color) => color + "e6",
-                    ),
-                }}
                 class={[
                     use(
                         this.state.rounded,

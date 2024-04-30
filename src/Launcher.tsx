@@ -18,6 +18,7 @@ class Launcher {
 
     css = css`
         position: absolute;
+        background: color-mix(in srgb, var(--theme-dark-bg) 85%, transparent);
         bottom: 60px;
         left: 10px;
         overflow-y: hidden;
@@ -69,14 +70,14 @@ class Launcher {
         }
 
         ::-webkit-scrollbar-thumb {
-            background-color: #d6dee1;
+            background-color: var(--theme-bg);
             border-radius: 20px;
             border: 6px solid transparent;
             background-clip: content-box;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background-color: #a8bbbf;
+            background-color: var(--theme-secondary-bg);
         }
 
         *::-webkit-input-placeholder {
