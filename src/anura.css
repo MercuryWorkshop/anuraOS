@@ -80,7 +80,16 @@ nav li {
     text-align: center;
     color: white;
     flex-wrap: wrap;
-    transition: 0.3s;
+    transition: 0.25s;
+    opacity: 1;
+    transform: scale(1);
+}
+
+.bootsplash.hide {
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.25s;
+    transform: scale(1.4);
 }
 
 .flex {

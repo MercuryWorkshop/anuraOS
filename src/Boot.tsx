@@ -287,9 +287,14 @@ window.addEventListener("load", async () => {
 
     setTimeout(
         () => {
-            bootsplash.remove();
-            bootsplashMobile.remove();
-            gangstaBootsplash.remove();
+            setTimeout(() => {
+                document.querySelector(".bootsplash")?.classList.add("hide");
+            }, 400); // give the taskbar time to init
+            setTimeout(() => {
+                bootsplash.remove();
+                bootsplashMobile.remove();
+                gangstaBootsplash.remove();
+            }, 700);
             anura.logger.debug("boot completed");
             document.dispatchEvent(new Event("anura-boot-completed"));
         },
