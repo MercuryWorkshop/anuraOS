@@ -34,7 +34,16 @@ body {
     -o-background-size: cover;
     background-size: cover;
     user-select: none;
-    font-family: "Roboto", sans-serif;
+    font-family:
+        "Roboto",
+        RobotoDraft,
+        "Droid Sans",
+        Arial,
+        Helvetica,
+        -apple-system,
+        BlinkMacSystemFont,
+        system-ui,
+        sans-serif;
 }
 
 body.blur-disable #quickSettings {

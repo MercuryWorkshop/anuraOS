@@ -125,7 +125,7 @@ class Calendar {
                       align-items: top;
                       justify-content: center;
                       overflow: hidden;
-                      font-family: "Roboto Flex", Roboto, RobotoDraft,  sans-serif;
+                      font-family: "Roboto", RobotoDraft, "Droid Sans", Arial, Helvetica, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
                       color: var(--theme-fg)
                   }
 

@@ -5,7 +5,16 @@
 
 * {
     color: var(--theme-fg);
-    font-family: "Roboto", sans-serif;
+    font-family:
+        "Roboto",
+        RobotoDraft,
+        "Droid Sans",
+        Arial,
+        Helvetica,
+        -apple-system,
+        BlinkMacSystemFont,
+        system-ui,
+        sans-serif;
     user-select: none;
 }
 body {

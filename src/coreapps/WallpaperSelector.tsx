@@ -31,7 +31,16 @@ const wallpaperCSS = css`
         border: none;
         padding: 5px;
         border-radius: 5px;
-        font-family: "Roboto", sans-serif;
+        font-family:
+            "Roboto",
+            RobotoDraft,
+            "Droid Sans",
+            Arial,
+            Helvetica,
+            -apple-system,
+            BlinkMacSystemFont,
+            system-ui,
+            sans-serif;
         outline: none;
         height: 25px;
     }

@@ -22,7 +22,7 @@ channel.addEventListener("message", (msg) => {
             <head>
             <style>
             body {
-                font-family: 'Roboto', system-ui, sans-serif;
+                font-family: "Roboto", RobotoDraft, "Droid Sans", Arial, Helvetica, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
                 text-align: center;
                 background: black;
                 color: white;

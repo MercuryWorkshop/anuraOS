@@ -3,7 +3,16 @@ const settingsCSS = css`
 
     .header {
         margin-left: 20px;
-        font-family: Roboto, sans-serif;
+        font-family:
+            "Roboto",
+            RobotoDraft,
+            "Droid Sans",
+            Arial,
+            Helvetica,
+            -apple-system,
+            BlinkMacSystemFont,
+            system-ui,
+            sans-serif;
     }
     .container {
         display: flex;
@@ -116,7 +125,16 @@ const settingsCSS = css`
         color: var(--theme-secondary-fg);
         margin-left: 20px;
         text-decoration: none;
-        font-family: Roboto, sans-serif;
+        font-family:
+            "Roboto",
+            RobotoDraft,
+            "Droid Sans",
+            Arial,
+            Helvetica,
+            -apple-system,
+            BlinkMacSystemFont,
+            system-ui,
+            sans-serif;
     }
 
     .disk-info {
