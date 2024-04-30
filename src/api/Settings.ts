@@ -23,6 +23,10 @@ class Settings {
     ) {
         const initial = defaultsettings;
 
+        if (!initial["i-am-a-true-gangsta"]) {
+            initial["i-am-a-true-gangsta"] = false;
+        }
+
         if (!initial["wisp-url"]) {
             let url = "";
             if (location.protocol == "https:") {

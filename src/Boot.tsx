@@ -181,6 +181,11 @@ window.addEventListener("load", async () => {
     if (anura.platform.type == "mobile" || anura.platform.type == "tablet") {
         bootsplash.remove();
         document.body.appendChild(bootsplashMobile);
+    } else {
+        if (anura.settings.get("i-am-a-true-gangsta") === true) {
+            bootsplash.remove();
+            document.body.appendChild(gangstaBootsplash);
+        }
     }
 
     document.body.classList.add("platform-" + anura.platform.type);
@@ -284,6 +289,7 @@ window.addEventListener("load", async () => {
         () => {
             bootsplash.remove();
             bootsplashMobile.remove();
+            gangstaBootsplash.remove();
             anura.logger.debug("boot completed");
             document.dispatchEvent(new Event("anura-boot-completed"));
         },
