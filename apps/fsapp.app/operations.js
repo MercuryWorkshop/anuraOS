@@ -66,7 +66,8 @@ async function mountLocalFs() {
 
 async function loadPath(path) {
     console.debug("loading path: ", path);
-    const files = await fs.promises.readdir(path + "/");
+    let files = await fs.promises.readdir(path + "/");
+    files.sort();
     console.debug("files: ", files);
     setBreadcrumbs(path);
     let table = document.querySelector("tbody");
