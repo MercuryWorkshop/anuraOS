@@ -13,7 +13,7 @@
     color: var(--theme-fg) !important;
 }
 
-.matter-button-contained {
+.matter-button-contained:not(.settingsIcon, .symbolButton) {
     background-color: var(--theme-accent) !important;
     /* color: var(--theme-fg); */
 }
