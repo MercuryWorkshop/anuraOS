@@ -6,7 +6,7 @@ class Anura {
             patch: "0",
         },
         buildstate: "alpha",
-        codename: "UNNAMED",
+        codename: "Idol",
         get pretty() {
             const semantic = anura.version.semantic;
             return `${semantic.major}.${semantic.minor}.${semantic.patch} ${anura.version.buildstate}`;
