@@ -1,6 +1,6 @@
-# Application development
+# The Hitchhiker's Guide to AnuraOS App Development
 
-See [This Document](./templates/template.app/README.md) for instructions on how to set up a basic iFrame app.
+See [this document](./templates/template.app/README.md) for instructions on how to set up a basic iFrame app.
 
 # AnuraOS Apps
 
