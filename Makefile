@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libs/libcurl build/libs/bare-mux build/libs/idb-keyval build/assets/matter.css build/libs/dreamland 
+all: submodules build/bootstrap v86dirty v86 build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland 
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -41,7 +41,7 @@ build/bootstrap: package.json server/package.json
 #   build/libs/<libname>/<bundle>.min.js.map
 #   build/libs/<libname>/version (contains version number as JSON string, e.g. "1.2.3")
 
-build/libs/libcurl: build/bootstrap
+build/libs/libcurl/version: build/bootstrap
 	mkdir -p build/libs/libcurl
 	cp node_modules/libcurl.js/libcurl.mjs build/libs/libcurl/libcurl.mjs
 	cp node_modules/libcurl.js/libcurl.wasm build/libs/libcurl/libcurl.wasm
@@ -73,12 +73,12 @@ build/libs/mime/mime.iife.js: build/bootstrap
 	npx rollup -f iife build/libs/mime/src/index.js -o build/libs/mime/mime.iife.js -n mime --exports named
 	jq '.version' node_modules/mime/package.json > build/libs/mime/version
 
-build/libs/idb-keyval: build/bootstrap
+build/libs/idb-keyval/idb-keyval.js: build/bootstrap
 	mkdir -p build/libs/idb-keyval
 	cp node_modules/idb-keyval/dist/umd.js build/libs/idb-keyval/idb-keyval.js
 	jq '.version' node_modules/idb-keyval/package.json > build/libs/idb-keyval/version
 
-build/libs/bare-mux: build/bootstrap
+build/libs/bare-mux/bare.cjs: build/bootstrap
 	mkdir -p build/libs/bare-mux
 	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs build/libs/bare-mux/bare.cjs
 	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs.map build/libs/bare-mux/bare.cjs.map
@@ -89,7 +89,7 @@ build/libs/fflate/browser.js: build/bootstrap
 	cp node_modules/fflate/esm/browser.js build/libs/fflate/browser.js
 	jq '.version' node_modules/fflate/package.json > build/libs/fflate/version
 
-build/libs/dreamland: dreamlandjs/src/*
+build/libs/dreamland/all.js: dreamlandjs/src/*
 	mkdir -p build/libs/dreamland
 	cd dreamlandjs; npm i --no-package-lock; npm run build
 	cp dreamlandjs/dist/all.js build/libs/dreamland/all.js
