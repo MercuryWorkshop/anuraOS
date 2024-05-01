@@ -50,6 +50,7 @@
 
     -   [original base](https://gist.github.com/chwkai/290488)
     -   Resizable Table columns in fsapp [codepen](https://codepen.io/adam-lynch/pen/GaqgXP)
+    -   [Calendar panel](https://www.geeksforgeeks.org/how-to-design-a-simple-calendar-using-javascript/)
 
 -   Design & Assets
 
