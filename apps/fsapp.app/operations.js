@@ -39,23 +39,20 @@ function formatBytes(bytes, decimals = 2) {
 
 async function mountLocalFs() {
     if (!window.showDirectoryPicker) {
-        anura.notifications.add({
-            title: "File Manager",
-            description:
-                "Your browser does not support mounting local directories. Currently, this is only supported in Chromium v86 and higher.",
-            timeout: 5000,
-        });
+        anura.dialog.alert(
+            "Your browser does not support mounting local directories.",
+            "Error",
+        );
         return;
     }
     let path = await anura.dialog.prompt(
         "Enter the path where you want to mount the local filesystem",
     );
     if (!path.startsWith("/")) {
-        anura.notifications.add({
-            title: "File Manager",
-            description: 'Path does not start with a "/" character',
-            timeout: 5000,
-        });
+        anura.dialog.alert(
+            "Path does not start with a " / " character",
+            "Error",
+        );
         return;
     }
     sh.mkdirp(path, async function (err) {
@@ -758,11 +755,10 @@ async function fileAction(selected) {
                         iframe.contentDocument.head.appendChild(matter);
                     });
                 } catch (e) {
-                    anura.notifications.add({
-                        title: "Application Install Error",
-                        description: `Application had an error installing: ${e}`,
-                        timeout: 50000,
-                    });
+                    anura.dialog.alert(
+                        `There was an error: ${e}`,
+                        "Error installing app",
+                    );
                 }
             } else if (
                 fileSelected
@@ -1230,11 +1226,10 @@ function installSession() {
                             timeout: 50000,
                         });
                     } catch (e) {
-                        anura.notifications.add({
-                            title: "Application Install Error",
-                            description: `Application had an error installing: ${e}`,
-                            timeout: 50000,
-                        });
+                        anura.dialog.alert(
+                            `There was an error: ${e}`,
+                            "Error installing app",
+                        );
                     }
                 }
                 if (ext == "lib") {
@@ -1251,11 +1246,10 @@ function installSession() {
                             timeout: 50000,
                         });
                     } catch (e) {
-                        anura.notifications.add({
-                            title: "Library Install Error",
-                            description: `Library had an error installing: ${e}`,
-                            timeout: 50000,
-                        });
+                        anura.dialog.alert(
+                            `There was an error: ${e}`,
+                            "Error installing library",
+                        );
                     }
                 }
             }

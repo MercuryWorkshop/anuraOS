@@ -11,15 +11,10 @@ function RepoItem() {
             this.root.innerText += " (Error)";
             this.root.style.color = "red";
             this.root.onclick = () => {
-                anura.notifications.add({
-                    title: "Marketplace",
-                    description:
-                        "The repository " +
-                        this.reponame +
-                        " encountered an error: " +
-                        e,
-                    timeout: 5000,
-                });
+                anura.dialog.alert(
+                    `Repo ${this.reponame} encountered an error: ${e}`,
+                    "Repo encountered error.",
+                );
             };
         }
     };

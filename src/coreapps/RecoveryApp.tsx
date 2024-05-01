@@ -136,12 +136,10 @@ class RecoveryApp extends App {
                             title="Clear the service worker cache. This requires an internet connection on your next boot."
                             on:click={() => {
                                 anura.settings.set("milestone", "__INVALID");
-                                anura.notifications.add({
-                                    title: "Cache invalidated",
-                                    description:
-                                        "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
-                                    timeout: 2000,
-                                });
+                                anura.dialog.alert(
+                                    "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
+                                    "Cache invalidated",
+                                );
                             }}
                         >
                             Invalidate Cache
