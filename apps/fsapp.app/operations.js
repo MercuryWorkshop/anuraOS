@@ -14,6 +14,7 @@ const url = new URL(window.location.href);
 if (url.searchParams.get("picker")) {
     const picker = ExternalApp.deserializeArgs(url.searchParams.get("picker"));
     if (picker) {
+        window.isPicker = true;
         document.getElementById("selector").style.display = "";
         filePicker = {};
         filePicker.regex = new RegExp(picker[0]);
@@ -269,7 +270,9 @@ function reloadListeners() {
             });
             row.addEventListener("click", (e) => {
                 if (currentlySelected.includes(e.currentTarget)) {
-                    fileAction(currentlySelected);
+                    window.isPicker
+                        ? selectAction(currentlySelected)
+                        : fileAction(currentlySelected);
                     currentlySelected.forEach((row) => {
                         row.classList.remove("selected");
                     });
