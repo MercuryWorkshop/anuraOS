@@ -4,10 +4,10 @@
 
 ## [The Anura API](./Anura-API.md)
 
-## [Using the Kernel Override](./Kernel_Override.md)
-
 ## [Anura App Development](./appdevt.md)
 
-## [Anura Security Blueprint](./SECURITY-BP.md)
+## [Marketplace Documentation](./marketplace.md)
 
-## [Anura Store](./marketplace.md)
+## [Using the Kernel Override](./Kernel_Override.md)
+
+## [Anura Security Blueprint](./SECURITY-BP.md)

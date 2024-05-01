@@ -18,6 +18,63 @@ list.json
 manifest.json
 ```
 
+### Repo manifest
+
+This contains information about the repo.
+
+-   `name`: `String` – Repo name. Not strictly required but highly recommended.
+-   `maintainer` – Maintainer info.
+    -   `name`: `String` – Maintainer name
+    -   `email`: `String` – Maintainer email
+    -   `website`: `String` – Maintainer website
+-   `version`: `String` – Repo version.
+
+```json
+{
+    "name": "Anura App Repository",
+    "maintainer": {
+        "name": "Mercury Workshop",
+        "email": "support@mercurywork.shop",
+        "website": "mercurywork.shop"
+    },
+    "version": "2.0.1"
+}
+```
+
+### App list
+
+This is a list with all the app manifests contained in a single json.
+
+Example:
+
+```json
+{
+  "apps": [
+    {
+      "name": "",
+      "icon": "",
+      "summary": "",
+      "desc": "",
+      "package": "",
+      "data": "",
+      "version": "",
+      "category": ""
+    },
+    {
+      "name": "",
+      "icon": "",
+      "summary": "",
+      "desc": "",
+      "package": "",
+      "data": "",
+      "version": "",
+      "category": ""
+    },
+    <...>
+  ]
+}
+```
+
 ### Manifest
 
 Each app is supposed to have its own manifest that lists details about the app.
@@ -67,7 +124,7 @@ This is mostly the same for libraries, minus the `dependencies` and `installHook
 
 ### Publishing
 
-To make a repo accessible via the Store Library you should use the utility [create-anura-repo](https://github.com/MercuryWorkshop/create-anura-repo). It is as simple as running a command in your terminal.
+To make a repo accessible via the Store Library you can use the utility [create-anura-repo](https://github.com/MercuryWorkshop/create-anura-repo). It's as simple as running a command in your terminal.
 
 ```bash
 $ npx create-anura-repo
