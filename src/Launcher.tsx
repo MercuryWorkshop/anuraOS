@@ -18,7 +18,7 @@ class Launcher {
 
     css = css`
         position: absolute;
-        background: color-mix(in srgb, var(--theme-dark-bg) 85%, transparent);
+        background: color-mix(in srgb, var(--theme-dark-bg) 77.5%, transparent);
         bottom: 60px;
         left: 10px;
         overflow-y: hidden;

@@ -159,7 +159,7 @@ class QuickSettings {
     notificationCenterCss = css`
         max-height: calc(60% - 80px);
         min-height: 20px;
-        bottom: calc(70px + 40%);
+        bottom: calc(70px + 46%);
         right: 10px;
         overflow: hidden;
 
@@ -265,7 +265,7 @@ class QuickSettings {
                     this.quickSettingsCss,
                 ]}
                 width="360px"
-                height="40%"
+                height="46%"
                 grow
                 id="quickSettings"
             >
