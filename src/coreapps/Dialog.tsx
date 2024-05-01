@@ -84,7 +84,8 @@ class Dialog extends App {
 
             win.content.appendChild(
                 <div class={[this.css]}>
-                    <h2>{message}</h2>
+                    <h2>{title}</h2>
+                    <p>{message}</p>
                     <div class="buttons">
                         <button
                             class="matter-button-outlined"
