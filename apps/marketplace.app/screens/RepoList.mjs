@@ -123,6 +123,36 @@ export default function RepoList() {
             bottom: 0;
             margin-top: 20px;
 
+            & > button {
+                appearance: none;
+                background: var(--theme-secondary-bg);
+                color: var(--theme-fg);
+                padding: 0;
+                border-radius: 50%;
+                border: none !important;
+                cursor: pointer;
+                font-size: 3rem;
+                width: 3.5rem;
+                height: 3.5rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                margin: 1rem;
+                transition: 0.2s;
+                transform: scale(1);
+            }
+
+            & > button:hover {
+                background: color-mix(
+                    in srgb,
+                    var(--theme-bg) 80%,
+                    var(--theme-fg)
+                );
+                transition: 0.2s;
+                transform: scale(1.05);
+            }
+
             & > input {
                 appearance: none;
                 background-color: transparent;
@@ -172,51 +202,60 @@ export default function RepoList() {
                 <div id="repoList">
                     ${use(this.repos)}
                     <div class="repoAdd">
-                        <input
-                            type="text"
-                            placeholder="My Repo"
-                            bind:this=${use(this.newRepoName)}
-                        /><br />
-                        <input
-                            type="text"
-                            placeholder="https://anura.repo/"
-                            bind:this=${use(this.newRepoURL)}
-                        /><br />
-                        <input
-                            type="submit"
-                            value="Add Repository"
-                            on:click=${() => {
-                                if (!this.newRepoURL.value.endsWith("/")) {
-                                    anura.notifications.add({
-                                        title: "Marketplace",
-                                        description:
-                                            'URL does not end with a "/" character',
-                                        timeout: 5000,
-                                    });
-                                    return;
+                        <button
+                            on:click=${async () => {
+                                let url = await anura.dialog.prompt(
+                                    "Enter the repo URL",
+                                    "https://anura.repo/",
+                                );
+                                var name;
+
+                                if (!url.endsWith("/")) {
+                                    // anura.dialog.alert("URL does not end with a \"/\" character")
+                                    // return;
+                                    console.warn(
+                                        'URL does not end with a "/" character, this is a user skill issue.',
+                                    );
+                                    url = url + "/";
                                 }
+
+                                try {
+                                    console.log(url + "manifest.json");
+                                    let res = await fetch(
+                                        url + "manifest.json",
+                                    );
+                                    // if (res.status != 200); throw "Repo missing manifest.json file, this is a repo maintainer skill issue.";
+                                    let json = await res.text();
+                                    console.log(json);
+                                    json = JSON.parse(json);
+                                    if (!json.name)
+                                        throw "Repo missing name in manifest.json file, this is a repo maintainer skill issue.";
+                                    name = json.name;
+                                } catch (e) {
+                                    console.error(
+                                        "Error getting repo details: " + e,
+                                    );
+                                    name = await anura.dialog.prompt(
+                                        "Enter the repo name",
+                                        "My awesome repo",
+                                    );
+                                }
+
                                 if (
-                                    saved.repos.filter(
-                                        ([n]) => n == this.newRepoName.value,
-                                    ).length > 0
+                                    saved.repos.filter(([n]) => n == url)
+                                        .length > 0
                                 ) {
-                                    anura.notifications.add({
-                                        title: "Marketplace",
-                                        description: "Repo is already added",
-                                        timeout: 5000,
-                                    });
+                                    anura.dialog.alert(
+                                        "Repo is already added.",
+                                    );
                                     return;
                                 } else {
-                                    saved.repos = [
-                                        ...saved.repos,
-                                        [
-                                            this.newRepoName.value,
-                                            this.newRepoURL.value,
-                                        ],
-                                    ];
+                                    saved.repos = [...saved.repos, [name, url]];
                                 }
                             }}
-                        />
+                        >
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
                     </div>
                 </div>
             </div>
