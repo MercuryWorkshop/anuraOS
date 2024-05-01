@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/mime build/libs/filer build/libs/comlink build/libs/workbox build/libs/fflate bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libs/libcurl build/libs/bare-mux build/libs/idb-keyval build/assets/matter.css build/libs/dreamland 
+all: submodules build/bootstrap v86dirty v86 build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libs/libcurl build/libs/bare-mux build/libs/idb-keyval build/assets/matter.css build/libs/dreamland 
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -47,13 +47,13 @@ build/libs/libcurl: build/bootstrap
 	cp node_modules/libcurl.js/libcurl.wasm build/libs/libcurl/libcurl.wasm
 	jq '.version' node_modules/libcurl.js/package.json > build/libs/libcurl/version
 
-build/libs/filer: build/bootstrap
+build/libs/filer/filer.min.js: build/bootstrap
 	mkdir -p build/libs/filer
 	cp node_modules/filer/dist/filer.min.js build/libs/filer/filer.min.js
 	cp node_modules/filer/dist/filer.min.js.map build/libs/filer/filer.min.js.map
 	jq '.version' node_modules/filer/package.json > build/libs/filer/version
 
-build/libs/comlink: build/bootstrap
+build/libs/comlink/comlink.min.mjs: build/bootstrap
 	mkdir -p build/libs/comlink
 	cp node_modules/comlink/dist/esm/comlink.min.mjs build/libs/comlink/comlink.min.mjs
 	cp node_modules/comlink/dist/esm/comlink.min.mjs.map build/libs/comlink/comlink.min.mjs.map
@@ -62,12 +62,12 @@ build/libs/comlink: build/bootstrap
 	sed -i build/libs/comlink/comlink.min.umd.js -e 's|//# sourceMappingURL=comlink.min.js.map|//# sourceMappingURL=comlink.min.umd.js.map|'
 	jq '.version' node_modules/comlink/package.json > build/libs/comlink/version
 
-build/libs/workbox: build/bootstrap
+build/libs/workbox/version: build/bootstrap
 	mkdir -p build/libs/workbox
 	npx workbox-cli@7.1.0 copyLibraries build/libs/workbox/
 	jq '.version' node_modules/workbox-build/package.json > build/libs/workbox/version
 
-build/libs/mime: build/bootstrap
+build/libs/mime/mime.iife.js: build/bootstrap
 	mkdir -p build/libs/mime
 	cp -r node_modules/mime/dist/* build/libs/mime 
 	npx rollup -f iife build/libs/mime/src/index.js -o build/libs/mime/mime.iife.js -n mime --exports named
@@ -84,12 +84,12 @@ build/libs/bare-mux: build/bootstrap
 	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs.map build/libs/bare-mux/bare.cjs.map
 	jq '.version' node_modules/@mercuryworkshop/bare-mux/package.json > build/libs/bare-mux/version
 
-build/libs/fflate: build/bootstrap
+build/libs/fflate/browser.js: build/bootstrap
 	mkdir -p build/libs/fflate
 	cp node_modules/fflate/esm/browser.js build/libs/fflate/browser.js
 	jq '.version' node_modules/fflate/package.json > build/libs/fflate/version
 
-build/libs/dreamland: dreamlandjs/*
+build/libs/dreamland: dreamlandjs/src/*
 	mkdir -p build/libs/dreamland
 	cd dreamlandjs; npm i --no-package-lock; npm run build
 	cp dreamlandjs/dist/all.js build/libs/dreamland/all.js

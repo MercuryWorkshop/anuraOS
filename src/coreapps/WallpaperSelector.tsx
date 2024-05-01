@@ -408,7 +408,7 @@ class WallpaperSelector extends App {
         const win = anura.wm.create(this, {
             title: "",
             width: "910px",
-            height: "720px",
+            height: `${(720 * window.innerHeight) / 1080}px`,
         });
 
         if (this.libfilepicker == undefined) {
