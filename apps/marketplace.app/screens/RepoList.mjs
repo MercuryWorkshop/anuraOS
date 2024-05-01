@@ -141,6 +141,8 @@ export default function RepoList() {
                 margin: 1rem;
                 transition: 0.2s;
                 transform: scale(1);
+
+                box-shadow: 0 0 8px 0px var(--theme-dark-bg);
             }
 
             & > button:hover {
