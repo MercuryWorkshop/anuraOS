@@ -64,7 +64,7 @@ build/libs/comlink: build/bootstrap
 
 build/libs/workbox: build/bootstrap
 	mkdir -p build/libs/workbox
-	npx workbox-cli@7.0.0 copyLibraries build/libs/workbox/
+	npx workbox-cli@7.1.0 copyLibraries build/libs/workbox/
 	jq '.version' node_modules/workbox-build/package.json > build/libs/workbox/version
 
 build/libs/mime: build/bootstrap
