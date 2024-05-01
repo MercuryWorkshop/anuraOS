@@ -1,5 +1,4 @@
-// FIXME: This is not what God wanted (someone pls redo)
-// its good enough, its just a replacement for browser dialogs stfu
+// this has now been redone, nobody is getting sent to hell anymore
 
 class Dialog extends App {
     name = "Anura Dialog";
@@ -13,6 +12,8 @@ class Dialog extends App {
             font-size: 1.2rem;
         }
         .buttons {
+            display: flex;
+            justify-content: flex-end;
             margin-top: 10px;
 
             .matter-button-contained {
@@ -29,18 +30,26 @@ class Dialog extends App {
         super();
     }
 
-    alert(message: string) {
+    alert(message: string, title = "Alert") {
         const dialog = this as object;
         (dialog as any).title = "";
+        (dialog as any).width = "350px";
+        (dialog as any).height = "170px";
         const win = anura.wm.create(this, dialog);
 
         // MARK: The DAMN CSS
         win.content.style.background = "var(--material-bg)";
         win.content.style.color = "white";
 
+        // MARK: good idea?
+        // (win.element as HTMLElement).querySelectorAll(".windowButton").forEach((el: HTMLElement) => {
+        //     el.style.display = "none";
+        // })
+
         win.content.appendChild(
             <div class={[this.css]}>
-                <h2>{message}</h2>
+                <h2>{title}</h2>
+                <p>{message}</p>
                 <div class={["buttons"]}>
                     <button
                         class={["matter-button-contained"]}
@@ -54,10 +63,12 @@ class Dialog extends App {
             </div>,
         );
     }
-    async confirm(message: string): Promise<boolean> {
+    async confirm(message: string, title = "Confirmation"): Promise<boolean> {
         return new Promise((resolve, reject) => {
             const dialog = this as object;
             (dialog as any).title = "";
+            (dialog as any).width = "350px";
+            (dialog as any).height = "170px";
             const win = anura.wm.create(this, dialog);
 
             const oldOnClose = win.onclose;
@@ -102,6 +113,8 @@ class Dialog extends App {
         return new Promise((resolve, reject) => {
             const dialog = this as object;
             (dialog as any).title = "";
+            (dialog as any).width = "350px";
+            (dialog as any).height = "200px";
             const win = anura.wm.create(this, dialog);
 
             const oldOnClose = win.onclose;
@@ -120,10 +133,8 @@ class Dialog extends App {
             win.content.appendChild(
                 <div class={[this.css]}>
                     <h2>{message}</h2>
-                    {/* FIXME: THIS TEXTFIELD SUCKS!!1
-                        idrk if it still does, im just refactoring this code
-                        so I am relaying the previous comment
-                    */}
+                    {/* MARK: FIXME: UGLY
+                     */}
                     <label class="matter-textfield-filled">
                         {
                             (input = (
