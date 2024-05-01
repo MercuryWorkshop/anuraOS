@@ -110,6 +110,10 @@ class Calendar {
                               let style = document.createElement("style");
                               style.innerHTML = css;
                               document.head.appendChild(style);
+                              document.addEventListener("anura-theme-change", () => {
+                                console.log("got theme change event");
+                                style.innerHTML = window.parent.anura.ui.theme.css();
+                            });
                           </script>
                   <style>
                   * {

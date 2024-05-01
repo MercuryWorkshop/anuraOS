@@ -8,6 +8,10 @@
             let style = document.createElement("style");
             style.innerHTML = css;
             document.head.appendChild(style);
+            document.addEventListener("anura-theme-change", () => {
+                console.log("got theme change event");
+                style.innerHTML = anura.ui.theme.css();
+            });
         </script>
         <!-- in any sane case this wouldn't be required. This isn't a sane case, Buffer doesn't work without importing this -->
     </head>

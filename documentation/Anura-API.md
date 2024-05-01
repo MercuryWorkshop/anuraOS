@@ -612,8 +612,16 @@ Returns a CSS style you can append to your document's `head` to provide styles f
 
 **Example:**
 
-```css
-document.head.appendChild(html`<><style>${anura.ui.theme.css()}</style></>`);
+```js
+// Append theme css
+document.head.appendChild(
+    html`<><style data-id="anura-theme">${anura.ui.theme.css()}</style></>`,
+);
+
+document.addEventListener("anura-theme-change", () => {
+    document.head.querySelector('style[data-id="anura-theme"]').innerHTML =
+        anura.ui.theme.css();
+});
 ```
 
 You now have the following CSS variables to use, corresponding to the properties listed below.

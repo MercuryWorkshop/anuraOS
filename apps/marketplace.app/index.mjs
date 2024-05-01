@@ -10,7 +10,14 @@ const branding = anura.settings.get("marketplace-branding") || {
 };
 
 // Wrapped in a fragment because for some reason html`<style />` doesn't work
-document.head.appendChild(html`<><style>${anura.ui.theme.css()}</style></>`);
+document.head.appendChild(
+    html`<><style data-id="anura-theme">${anura.ui.theme.css()}</style></>`,
+);
+
+document.addEventListener("anura-theme-change", () => {
+    document.head.querySelector('style[data-id="anura-theme"]').innerHTML =
+        anura.ui.theme.css();
+});
 
 window.saved = stateful({
     repos: Object.entries(
