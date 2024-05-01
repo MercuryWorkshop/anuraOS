@@ -22,8 +22,7 @@ function Item() {
 
         if (installed) {
             this.installButton.value = "Installed";
-            this.installButton.style.backgroundColor =
-                "var(--theme-secondary-bg)";
+            this.installButton.style.backgroundColor = "var(--theme-bg)";
             this.installButton.style.color = "#fff";
             this.installButton.disabled = true;
         } else {
@@ -155,6 +154,7 @@ export default function ItemList() {
             background-color: var(--theme-border);
             gap: 1px;
             width: 90%;
+            margin-top: 3rem;
         }
 
         // For some reason the & selector is not working right inside Item, so instead we are applying some Item styles here
@@ -171,31 +171,47 @@ export default function ItemList() {
             outline: none;
             border-bottom-color: var(--theme-accent);
         }
+
+        #searchContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: calc(70% - 8px);
+            position: fixed;
+            top: 28.5px;
+            left: calc(30% + 1px);
+            height: 4.5rem;
+            background: color-mix(in srgb, var(--theme-bg) 80%, transparent);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
     `;
 
     return html`
         <div>
-            <input
-                placeholder="Search for items..."
-                on:input=${() => {
-                    const searchQuery = this.search.value.toLowerCase();
-                    Array.from(this.listElem.children).forEach((item) => {
-                        const itemName = item
-                            .querySelector("span")
-                            .innerText.toLowerCase();
-                        if (searchQuery === "") {
-                            item.style.display = "";
-                        } else if (itemName.includes(searchQuery)) {
-                            item.style.display = "";
-                        } else {
-                            item.style.display = "none";
-                        }
-                    });
-                }}
-                bind:this=${use(this.search)}
-                type="text"
-                id="searchBox"
-            />
+            <div id="searchContainer">
+                <input
+                    placeholder="Search for items..."
+                    on:input=${() => {
+                        const searchQuery = this.search.value.toLowerCase();
+                        Array.from(this.listElem.children).forEach((item) => {
+                            const itemName = item
+                                .querySelector("span")
+                                .innerText.toLowerCase();
+                            if (searchQuery === "") {
+                                item.style.display = "";
+                            } else if (itemName.includes(searchQuery)) {
+                                item.style.display = "";
+                            } else {
+                                item.style.display = "none";
+                            }
+                        });
+                    }}
+                    bind:this=${use(this.search)}
+                    type="text"
+                    id="searchBox"
+                />
+            </div>
             <div id="itemList" bind:this=${use(this.listElem)}></div>
         </div>
     `;
