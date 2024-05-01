@@ -2,7 +2,7 @@
 
 See [this document](./templates/template.app/README.md) for instructions on how to set up a basic iFrame app.
 
-# AnuraOS Apps
+## AnuraOS Apps
 
 AnuraOS apps are simple creatures. They live inside folders with the suffix `.app` and the resources specific to each app are contained within that folder.
 
