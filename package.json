@@ -17,7 +17,7 @@
     },
     "homepage": "https://github.com/MercuryWorkshop/AnuraOS#readme",
     "dependencies": {
-        "@mercuryworkshop/bare-mux": "^1.0.8",
+        "@mercuryworkshop/bare-mux": "^1.0.9",
         "@typescript-eslint/eslint-plugin": "^5.60.1",
         "autoprefixer": "^10.4.14",
         "comlink": "^4.4.1",
