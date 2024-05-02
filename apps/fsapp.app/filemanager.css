@@ -106,6 +106,7 @@ th:hover .resize-handle {
 }
 
 table {
+    transition: background-color 0.1s;
     flex-grow: 1;
     overflow: scroll;
     display: grid;
@@ -150,6 +151,7 @@ tr > * {
 }
 
 .selected > * {
+    transition: background-color 0.1s;
     background-color: color-mix(
         in srgb,
         var(--theme-bg) 50%,
@@ -158,6 +160,7 @@ tr > * {
 }
 
 .hover > * {
+    transition: background-color 0.1s;
     background-color: var(--theme-secondary-bg);
 }
 
@@ -174,6 +177,7 @@ tr > * {
     border: none;
     background-color: var(--theme-bg);
     height: 2.25em;
+    transition: background-color 0.1s;
 }
 
 .topbar button > i {
@@ -181,6 +185,7 @@ tr > * {
 }
 
 .topbar button:hover {
+    transition: background-color 0.1s;
     background-color: var(--theme-secondary-bg);
 }
 
