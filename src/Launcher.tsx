@@ -291,7 +291,7 @@ const LauncherShortcut: Component<
                 "applist",
                 anura.settings
                     .get("applist")
-                    .filter((item) => item !== app.package),
+                    .filter((item: string) => item !== app.package),
             );
             document.dispatchEvent(new Event("anura-force-taskbar-update"));
         });
