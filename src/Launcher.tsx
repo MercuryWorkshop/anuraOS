@@ -279,9 +279,31 @@ const LauncherShortcut: Component<
 
     const contextmenu = new anura.ContextMenu();
     const action = this.onclick;
+
     contextmenu.addItem("Open", function () {
         action();
     });
+
+    // MARK: MAKE IT UPDATE
+    if (anura.settings.get("applist").includes(app.package)) {
+        contextmenu.addItem("Unpin from taskbar", function () {
+            anura.settings.set(
+                "applist",
+                anura.settings
+                    .get("applist")
+                    .filter((item) => item !== app.package),
+            );
+            document.dispatchEvent(new Event("anura-force-taskbar-update"));
+        });
+    } else {
+        contextmenu.addItem("Pin to taskbar", function () {
+            anura.settings.set("applist", [
+                ...anura.settings.get("applist"),
+                app.package,
+            ]);
+            document.dispatchEvent(new Event("anura-force-taskbar-update"));
+        });
+    }
     contextmenu.addItem("Delete", function () {
         (async () => {
             if (anura.apps[app.package].source.includes("/fs")) {

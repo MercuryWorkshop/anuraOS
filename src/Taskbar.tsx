@@ -253,6 +253,11 @@ class Taskbar {
             this.state.net_icon = "signal_wifi_off";
         });
 
+        document.addEventListener("anura-force-taskbar-update", () => {
+            console.log("got upd event");
+            this.updateTaskbar();
+        });
+
         // Battery Status API is deprecated, so Microsoft refuses to create type definitions. :(
 
         // @ts-ignore
