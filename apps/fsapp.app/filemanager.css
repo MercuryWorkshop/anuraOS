@@ -83,14 +83,17 @@ body {
     top: 0;
     right: 0;
     bottom: 0;
-    background: black;
+    background: var(--theme-secondary-fg);
     opacity: 0;
-    width: 3px;
+    width: 2.5px;
     cursor: col-resize;
+    transition: opacity 0.1s;
+    margin-block: 0.2em;
 }
 
 .hidden-resize-handle {
-    display: none;
+    opacity: 0;
+    transition: opacity 0.1s;
 }
 
 .resize-handle:hover,
