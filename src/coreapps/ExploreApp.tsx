@@ -10,7 +10,13 @@ class ExploreApp extends App {
     css = css`
         background-color: var(--theme-bg);
         color: var(--theme-fg);
+        width: 100%;
         height: 100%;
+
+        article {
+            height: 100%;
+            overflow-y: auto;
+        }
 
         a,
         a:link {
@@ -70,130 +76,146 @@ class ExploreApp extends App {
                 height: 2.5rem;
             }
         }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--theme-secondary-bg);
+            border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-button {
+            display: none;
+        }
     `;
 
     page = async () => (
         <div class={this.css}>
-            <div id="body">
-                <div class="head">
-                    <img src="/icon.png" alt="AnuraOS Logo" />
-                    <h1>Welcome to AnuraOS!</h1>
-                </div>
-                <h2>Getting Started</h2>
-                <p>
-                    AnuraOS functions just like your average desktop: you can
-                    launch apps from the launcher (accessible via the button in
-                    the bottom-left, or pressing the Meta key), drag windows
-                    around, and pin apps to the taskbar. AnuraOS is visually
-                    based off of Google's ChromeOS.
-                </p>
-                <h2>Using the x86 Subsystem</h2>
-                <p>
-                    AnuraOS includes an x86 subsystem (based on{" "}
-                    <a
-                        href="javascript:anura.apps['anura.browser'].open(['https://github.com/copy/v86']);" // using dreamland on:click or html onclick makes the link not blue
-                    >
-                        v86
-                    </a>
-                    ), which lets you run real Linux within Anura.
-                    {$if(
-                        use(anura.x86) == undefined,
-                        <p>
-                            {" "}
-                            It seems like you dont have the subsystem enabled.
-                            You can install it from{" "}
-                            <span>
-                                <img
-                                    src="/assets/icons/settings.png"
-                                    alt="Settings icon"
-                                />{" "}
-                                <a href="javascript:anura.apps['anura.settings'].open();">
-                                    Settings
-                                </a>
-                            </span>
-                            .
-                        </p>,
-                    )}
-                    {$if(
-                        use(anura.x86 != undefined),
-                        <p>
-                            You can open a terminal using the{" "}
-                            <span>
-                                <img
-                                    src="/assets/icons/terminal.png"
-                                    alt="v86 Terminal Icon"
-                                />{" "}
-                                <a href="javascript:anura.apps['anura.term'].open();">
-                                    v86 Terminal
-                                </a>
-                            </span>{" "}
-                            app.
-                        </p>,
-                    )}
-                </p>
-                <p>
-                    The x86 subsystem is based on an Alpine Linux, a lightweight
-                    distro commonly used in containers. To install packages, you
-                    can run <code>apk add &lt;package&gt;</code>.
-                </p>
-                <p>
-                    If you want to create a shortcut for an X11 app in the
-                    launcher, you can do so from{" "}
-                    <span>
-                        <img
-                            src="/assets/icons/settings.png"
-                            alt="Settings icon"
-                        />{" "}
-                        <a href="javascript:anura.apps['anura.settings'].open();">
-                            Settings
+            <article>
+                <div id="body">
+                    <div class="head">
+                        <img src="/icon.png" alt="AnuraOS Logo" />
+                        <h1>Welcome to AnuraOS!</h1>
+                    </div>
+                    <h2>Getting Started</h2>
+                    <p>
+                        AnuraOS functions just like your average desktop: you
+                        can launch apps from the launcher (accessible via the
+                        button in the bottom-left, or pressing the Meta key),
+                        drag windows around, and pin apps to the taskbar.
+                        AnuraOS is visually based off of Google's ChromeOS.
+                    </p>
+                    <h2>Using the x86 Subsystem</h2>
+                    <p>
+                        AnuraOS includes an x86 subsystem (based on{" "}
+                        <a
+                            href="javascript:anura.apps['anura.browser'].open(['https://github.com/copy/v86']);" // using dreamland on:click or html onclick makes the link not blue
+                        >
+                            v86
                         </a>
-                    </span>
-                    .
-                </p>
-                <h2>Get new apps</h2>
-                <p>
-                    To install more native Anura apps, you can head to the{" "}
-                    <span>
-                        <img
-                            src="/apps/marketplace.app/playstore.webp"
-                            alt="Marketplace Icon"
-                        />{" "}
-                        <a href="javascript:anura.apps['anura.store'].open();">
-                            Marketplace
-                        </a>
+                        ), which lets you run real Linux within Anura.
+                        {$if(
+                            use(anura.x86) == undefined,
+                            <p>
+                                {" "}
+                                It seems like you dont have the subsystem
+                                enabled. You can install it from{" "}
+                                <span>
+                                    <img
+                                        src="/assets/icons/settings.png"
+                                        alt="Settings icon"
+                                    />{" "}
+                                    <a href="javascript:anura.apps['anura.settings'].open();">
+                                        Settings
+                                    </a>
+                                </span>
+                                .
+                            </p>,
+                        )}
+                        {$if(
+                            use(anura.x86 != undefined),
+                            <p>
+                                You can open a terminal using the{" "}
+                                <span>
+                                    <img
+                                        src="/assets/icons/terminal.png"
+                                        alt="v86 Terminal Icon"
+                                    />{" "}
+                                    <a href="javascript:anura.apps['anura.term'].open();">
+                                        v86 Terminal
+                                    </a>
+                                </span>{" "}
+                                app.
+                            </p>,
+                        )}
+                    </p>
+                    <p>
+                        The x86 subsystem is based on an Alpine Linux, a
+                        lightweight distro commonly used in containers. To
+                        install packages, you can run{" "}
+                        <code>apk add &lt;package&gt;</code>.
+                    </p>
+                    <p>
+                        If you want to create a shortcut for an X11 app in the
+                        launcher, you can do so from{" "}
+                        <span>
+                            <img
+                                src="/assets/icons/settings.png"
+                                alt="Settings icon"
+                            />{" "}
+                            <a href="javascript:anura.apps['anura.settings'].open();">
+                                Settings
+                            </a>
+                        </span>
                         .
-                    </span>
-                </p>
-                <h2>Customize your experience</h2>
-                <p>
-                    AnuraOS has robust customization features. You can change
-                    the wallpaper using{" "}
-                    <span>
-                        <a href="javascript:anura.apps['anura.wallpaper'].open();">
+                    </p>
+                    <h2>Get new apps</h2>
+                    <p>
+                        To install more native Anura apps, you can head to the{" "}
+                        <span>
                             <img
-                                src="/assets/icons/wallpaper.png"
-                                alt="Wallpaper Selector Icon"
+                                src="/apps/marketplace.app/playstore.webp"
+                                alt="Marketplace Icon"
                             />{" "}
-                            Wallpaper Selector
-                        </a>
-                    </span>
-                    , and change the system colors using{" "}
-                    <span>
-                        <a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
-                            <img
-                                src="/assets/icons/themeeditor.png"
-                                alt="Theme Editor Icon"
-                            />{" "}
-                            Theme Editor
-                        </a>
-                    </span>
-                    .
-                </p>
-                <p>
-                    For advanced users, Anura will execute any files in the
-                    /userInit folder as JavaScript code on boot.
-                </p>
-            </div>
+                            <a href="javascript:anura.apps['anura.store'].open();">
+                                Marketplace
+                            </a>
+                            .
+                        </span>
+                    </p>
+                    <h2>Customize your experience</h2>
+                    <p>
+                        AnuraOS has robust customization features. You can
+                        change the wallpaper using{" "}
+                        <span>
+                            <a href="javascript:anura.apps['anura.wallpaper'].open();">
+                                <img
+                                    src="/assets/icons/wallpaper.png"
+                                    alt="Wallpaper Selector Icon"
+                                />{" "}
+                                Wallpaper Selector
+                            </a>
+                        </span>
+                        , and change the system colors using{" "}
+                        <span>
+                            <a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
+                                <img
+                                    src="/assets/icons/themeeditor.png"
+                                    alt="Theme Editor Icon"
+                                />{" "}
+                                Theme Editor
+                            </a>
+                        </span>
+                        .
+                    </p>
+                    <p>
+                        For advanced users, Anura will execute any files in the
+                        /userInit folder as JavaScript code on boot.
+                    </p>
+                </div>
+            </article>
         </div>
     );
 
@@ -203,8 +225,9 @@ class ExploreApp extends App {
             width: `calc(${window.innerHeight * 0.8}px * 3 / 4)`, // manually calculating 80vh to prevent wonky behaviour on window resize
             height: `${window.innerHeight * 0.8}px`,
         });
-        win.content.style.overflowY = "auto";
         win.content.style.backgroundColor = "var(--theme-bg)";
+        win.content.style.color = "var(--theme-fg)";
+        win.content.style.height = "calc(100% - 24px)"; // very dirty hack
         win.content.appendChild(await this.page());
 
         return win;
