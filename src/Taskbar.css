@@ -107,3 +107,10 @@ body.blur-disable footer {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 }
+
+#notification-badge {
+    padding: 2px;
+    color: var(--theme-dark-bg);
+    background-color: var(--theme-fg);
+    border-radius: 50%;
+}

@@ -385,6 +385,16 @@ class Taskbar {
                                 {use(this.state.net_icon)}
                                 {use(this.state.bat_icon)}
                             </span>
+                            <span>
+                                {use(anura.notifications.state, (state) =>
+                                    $if(
+                                        state.notifications.length > 0,
+                                        <span id="notification-badge">
+                                            {state.notifications.length}
+                                        </span>,
+                                    ),
+                                )}
+                            </span>
                         </div>
                     </span>
                 </div>
