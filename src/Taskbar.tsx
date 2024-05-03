@@ -36,6 +36,11 @@ class Taskbar {
         width: calc(100% - 2px);
         border-left: 1px solid var(--theme-dark-border);
         border-right: 1px solid var(--theme-dark-border);
+        background-color: color-mix(
+            in srgb,
+            var(--theme-dark-bg) 78%,
+            transparent
+        );
     `;
 
     maximizedWins: WMWindow[] = [];
