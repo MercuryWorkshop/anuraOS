@@ -120,10 +120,9 @@ body.blur-disable footer {
     font-size: 0.75rem;
     font-weight: 600;
     opacity: 1;
-    transition:
-        width 0.2s,
-        height 0.2s,
-        opacity 0.2s;
+    transition-property: width, height, opacity;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
     padding-top: 0.075em; /* mmm */
 }
 
@@ -131,8 +130,7 @@ body.blur-disable footer {
     width: 0em;
     height: 0.25em;
     opacity: 0;
-    transition:
-        width 0.2s,
-        height 0.2s,
-        opacity 0.2s;
+    transition-property: width, height, opacity;
+    transition-duration: 0.15s;
+    transition-timing-function: ease;
 }
