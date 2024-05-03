@@ -108,9 +108,31 @@ body.blur-disable footer {
     -webkit-backdrop-filter: none;
 }
 
-#notification-badge {
-    padding: 2px;
+.notification-badge {
+    display: flex;
+    width: 1.5em;
+    height: 1.5em;
     color: var(--theme-dark-bg);
     background-color: var(--theme-fg);
     border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 1;
+    transition:
+        width 0.2s,
+        height 0.2s,
+        opacity 0.2s;
+    padding-top: 0.075em; /* mmm */
+}
+
+.notification-badge.hidden {
+    width: 0em;
+    height: 0.25em;
+    opacity: 0;
+    transition:
+        width 0.2s,
+        height 0.2s,
+        opacity 0.2s;
 }

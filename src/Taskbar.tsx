@@ -386,7 +386,16 @@ class Taskbar {
                                 {use(this.state.bat_icon)}
                             </span>
                             <span>
-                                <span id="notification-badge">
+                                <span
+                                    class={[
+                                        "notification-badge",
+                                        use(
+                                            anura.notifications.state
+                                                .notifications.length,
+                                            (i) => (i > 0 ? "shown" : "hidden"),
+                                        ),
+                                    ]}
+                                >
                                     {use(
                                         anura.notifications.state.notifications
                                             .length,
