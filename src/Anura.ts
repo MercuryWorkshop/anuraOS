@@ -251,6 +251,11 @@ interface AppManifest {
      */
     handler?: string;
     /**
+     * The link for the app. This is the website that will be loaded when the app is launched when the app
+     * is in webview mode.
+     */
+    src?: string;
+    /**
      * Whether or not the app should be hidden from the app list. This is useful for apps that are
      * only meant to be launched by other apps.
      */

@@ -36,7 +36,7 @@ class ExternalApp extends App {
                 );
             });
     }
-
+    //@ts-expect-error manual apps exist
     async open(args: string[] = []): Promise<WMWindow | undefined> {
         //  TODO: have a "allowmultiinstance" option in manifest? it might confuse users, some windows open a second, some focus
         // if (this.windowinstance) return;
@@ -80,7 +80,7 @@ class ExternalApp extends App {
             });
 
             return win;
-        } else {
+        } else if (this.manifest.type === "manual") {
             // This type of application is reserved only for scripts meant for hacking anura internals
             const req = await fetch(`${this.source}/${this.manifest.handler}`);
             const data = await req.text();
@@ -92,6 +92,35 @@ class ExternalApp extends App {
             alttab.update();
 
             return;
+        } else if (this.manifest.type === "webview") {
+            // FOR INTERNAL USE ONLY
+            const win = anura.wm.create(this, this.manifest.wininfo as object);
+
+            const iframe = document.createElement("iframe");
+            // CSS injection here but it's no big deal
+            const bg = this.manifest.background || "var(--theme-bg)";
+            iframe.setAttribute(
+                "style",
+                "top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
+                    `border: none; margin: 0; padding: 0; background-color: ${bg};`,
+            );
+            console.log(this.source);
+            let encoded = "";
+            for (let i = 0; i < this.manifest.src!.length; i++) {
+                if (i % 2 == 0) {
+                    encoded += this.manifest.src![i];
+                } else {
+                    encoded += String.fromCharCode(
+                        this.manifest.src!.charCodeAt(i) ^ 2,
+                    );
+                }
+            }
+            iframe.setAttribute(
+                "src",
+                `${"/service/" + encodeURIComponent(encoded)}`,
+            );
+            win.content.appendChild(iframe);
+            return win;
         }
     }
 }
