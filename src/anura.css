@@ -115,22 +115,35 @@ nav li {
 
 .custom-menu {
     position: absolute;
-    background-color: var(--theme-dark-bg);
+    background-color: var(--theme-secondary-bg);
     padding: 5px 0;
     width: 150px;
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
 
     z-index: 10000;
     overflow: hidden;
 
-    /* backdrop-filter: blur(20px); */
     padding: 0;
-    border-radius: 6px;
+    border-radius: 3px;
+}
+
+.custom-menu.large {
+    padding: 5px 0;
+    width: 170px;
+    background-color: color-mix(in srgb, var(--theme-dark-bg) 85%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 10px;
 }
 
 .custom-menu-item:hover {
-    background-color: var(--theme-bg);
-    transition: 0.05s;
+    background-color: color-mix(in srgb, var(--theme-fg) 20%, transparent);
+    transition: 0.025s;
+}
+
+body.blur-disable .custom-menu {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 .custom-menu-item {
@@ -141,13 +154,14 @@ nav li {
     color: var(--theme-fg);
     cursor: pointer;
     user-select: none;
-    transition: 0.1s;
+    transition: 0.05s;
 }
 
 .custom-menu-item .material-symbols-outlined {
     margin-top: 0.2px;
-    margin-right: 30px;
+    margin-right: 0.5em;
     padding-left: 1px;
+    font-size: 1.5em;
 }
 
 .custom-menu .extra-menu-wrapper {
