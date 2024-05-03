@@ -386,12 +386,22 @@ class Taskbar {
                                 {use(this.state.bat_icon)}
                             </span>
                             <span>
-                                <span id="notification-badge">
-                                    {use(
-                                        anura.notifications.state.notifications
-                                            .length,
-                                    )}
-                                </span>
+                                {use(
+                                    anura.notifications.state.notifications
+                                        .length,
+                                    (num) => {
+                                        if (num == 0) {
+                                            console.log("nonotif");
+                                            return "";
+                                        } else {
+                                            return (
+                                                <span id="notification-badge">
+                                                    {num}
+                                                </span>
+                                            );
+                                        }
+                                    },
+                                )}
                             </span>
                         </div>
                     </span>
