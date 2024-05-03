@@ -107,18 +107,26 @@ class QuickSettings {
                             var(--theme-secondary-bg) 55%,
                             transparent
                         );
+                        transition: background-color 0.15s;
                         box-shadow: none;
 
                         span {
                             color: var(--theme-fg);
+                            transition: color 0.15s;
                             font-size: 24px;
                         }
 
                         &.enabled {
-                            background-color: var(--theme-accent);
+                            background-color: color-mix(
+                                in srgb,
+                                var(--theme-accent) 65%,
+                                var(--theme-fg)
+                            );
+                            transition: background-color 0.15s;
 
                             span {
-                                color: var(--theme-fg);
+                                color: var(--theme-bg);
+                                transition: color 0.15s;
                             }
                         }
                     }
@@ -200,6 +208,11 @@ class QuickSettings {
             .clearButton {
                 margin: 6px;
                 margin-top: 0;
+                color: color-mix(
+                    in srgb,
+                    var(--theme-accent) 65%,
+                    var(--theme-fg)
+                ) !important;
             }
         }
     `;

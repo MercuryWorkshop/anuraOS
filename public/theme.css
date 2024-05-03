@@ -56,3 +56,7 @@
         var(--theme-bg) 25%
     ) !important;
 }
+
+.matter-button-text {
+    color: var(--theme-accent) !important;
+}
