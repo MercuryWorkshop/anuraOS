@@ -137,8 +137,8 @@ nav li {
 }
 
 .custom-menu-item:hover {
-    background-color: color-mix(in srgb, var(--theme-fg) 20%, transparent);
-    transition: 0.025s;
+    background-color: color-mix(in srgb, var(--theme-fg) 5%, transparent);
+    transition: 0.05s;
 }
 
 body.blur-disable .custom-menu {
@@ -154,7 +154,7 @@ body.blur-disable .custom-menu {
     color: var(--theme-fg);
     cursor: pointer;
     user-select: none;
-    transition: 0.05s;
+    transition: 0.075s;
 }
 
 .custom-menu-item .material-symbols-outlined {
