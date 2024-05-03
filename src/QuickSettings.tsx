@@ -426,7 +426,7 @@ class QuickSettings {
                 registry: "disable-animation",
                 type: "boolean",
                 name: "Accessibility",
-                icon: "accessibility_new",
+                icon: "accessibility",
                 description: "Reduced motion",
                 value: false,
             },
