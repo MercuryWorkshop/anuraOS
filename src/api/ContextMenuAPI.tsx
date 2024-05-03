@@ -1,14 +1,30 @@
 class ContextMenuAPI {
-    #element = (<div class="custom-menu" style=""></div>);
-    item(text: string, callback: VoidFunction) {
+    large = false;
+    #element = (
+        <div class={`custom-menu${this.large ? " large" : ""}`} style=""></div>
+    );
+    item(text: string, callback: VoidFunction, icon?: string) {
         return (
             <div class="custom-menu-item" on:click={callback.bind(this)}>
-                {text}
+                {$if(
+                    icon,
+                    <span class="material-symbols-outlined">{icon}</span>,
+                )}
+                <span>{text}</span>
             </div>
         );
     }
     #isShown = false;
-    constructor() {
+    constructor(large = false) {
+        console.log("creating context menu");
+
+        console.log("large", large);
+        this.large = large;
+        console.log("this.large", this.large);
+        console.log(this.#element.classList);
+        if (this.large) {
+            this.#element.classList.add("large"); // why
+        }
         setTimeout(
             () =>
                 document.addEventListener("click", (event) => {
@@ -26,15 +42,29 @@ class ContextMenuAPI {
     removeAllItems() {
         this.#element.innerHTML = "";
     }
-    addItem(text: string, callback: VoidFunction) {
+    addItem(text: string, callback: VoidFunction, icon?: string) {
         this.#element.appendChild(
-            this.item(text, function () {
-                this.hide();
-                callback();
-            }),
+            this.item(
+                text,
+                function () {
+                    this.hide();
+                    callback();
+                },
+                icon,
+            ),
         );
     }
     show(x: number, y: number) {
+        // remove any existing context menus. i will admit this is a bit of a quick n dirty hack
+        if (document.querySelector(".custom-menu")) {
+            console.warn(
+                "FORCE REMOVING OTHER CONTEXT MENUS, THE APP SHOULD TAKE CARE OF ONLY ALLOWING ONE CONTEXT MENU AT A TIME.",
+            );
+            document.querySelectorAll(".custom-menu").forEach((el) => {
+                el.remove();
+            });
+        }
+
         // Reset out of bound fixes
         this.#element.style.bottom = "";
         this.#element.style.right = "";

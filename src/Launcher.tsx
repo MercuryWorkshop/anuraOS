@@ -277,67 +277,84 @@ const LauncherShortcut: Component<
 > = function () {
     const app = this.app;
 
-    const contextmenu = new anura.ContextMenu();
+    const contextmenu = new anura.ContextMenu(true);
     const action = this.onclick;
 
-    contextmenu.addItem("Open", function () {
-        action();
-    });
+    contextmenu.addItem(
+        "Open",
+        function () {
+            action();
+        },
+        "new_window",
+    );
 
     // MARK: MAKE IT UPDATE
     if (anura.settings.get("applist").includes(app.package)) {
-        contextmenu.addItem("Unpin from taskbar", function () {
-            anura.settings.set(
-                "applist",
-                anura.settings
-                    .get("applist")
-                    .filter((item: string) => item !== app.package),
-            );
-            document.dispatchEvent(new Event("anura-force-taskbar-update"));
-        });
+        contextmenu.addItem(
+            "Unpin from taskbar",
+            function () {
+                anura.settings.set(
+                    "applist",
+                    anura.settings
+                        .get("applist")
+                        .filter((item: string) => item !== app.package),
+                );
+                document.dispatchEvent(new Event("anura-force-taskbar-update"));
+            },
+            "keep_off",
+        );
     } else {
-        contextmenu.addItem("Pin to taskbar", function () {
-            anura.settings.set("applist", [
-                ...anura.settings.get("applist"),
-                app.package,
-            ]);
-            document.dispatchEvent(new Event("anura-force-taskbar-update"));
-        });
+        contextmenu.addItem(
+            "Pin to taskbar",
+            function () {
+                anura.settings.set("applist", [
+                    ...anura.settings.get("applist"),
+                    app.package,
+                ]);
+                document.dispatchEvent(new Event("anura-force-taskbar-update"));
+            },
+            "keep",
+        );
     }
-    contextmenu.addItem("Delete", function () {
-        (async () => {
-            if (anura.apps[app.package].source.includes("/fs")) {
-                try {
-                    const sh = new anura.fs.Shell();
-                    const path = (app as ExternalApp).source.replace(
-                        /^\/fs\//,
-                        "",
-                    );
-                    await sh.rm(
-                        path,
-                        {
-                            recursive: true,
-                        },
-                        function (err) {
-                            if (err) throw err;
-                        },
-                    );
-                    // FIXME: it doesnt get removed from the launcher
-                    delete anura.apps[app.package];
-                } catch (e) {
-                    console.error(e);
+    contextmenu.addItem(
+        "Delete",
+        function () {
+            (async () => {
+                if (anura.apps[app.package].source.includes("/fs")) {
+                    try {
+                        const sh = new anura.fs.Shell();
+                        const path = (app as ExternalApp).source.replace(
+                            /^\/fs\//,
+                            "",
+                        );
+                        await sh.rm(
+                            path,
+                            {
+                                recursive: true,
+                            },
+                            function (err) {
+                                if (err) throw err;
+                            },
+                        );
+                        // FIXME: it doesnt get removed from the launcher
+                        delete anura.apps[app.package];
+                    } catch (e) {
+                        console.error(e);
+                        anura.dialog.alert(
+                            "Could not delete app. Please try again later: " +
+                                e,
+                        );
+                    }
+                } else {
+                    console.error("App not found");
                     anura.dialog.alert(
-                        "Could not delete app. Please try again later: " + e,
+                        "App not found. Either it's a system app or something has gone terribly wrong.",
                     );
                 }
-            } else {
-                console.error("App not found");
-                anura.dialog.alert(
-                    "App not found. Either it's a system app or something has gone terribly wrong.",
-                );
-            }
-        })();
-    });
+            })();
+        },
+        "delete",
+    );
 
     return (
         <div

@@ -154,60 +154,76 @@ class Taskbar {
             </li>
         ));
     }
-    #contextMenu = new ContextMenuAPI(); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
+    #contextMenu = new ContextMenuAPI(true); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
     showcontext(app: App, e: MouseEvent) {
         if (app.windows.length > 0) {
             this.#contextMenu.removeAllItems();
-            this.#contextMenu.addItem("New Window", () => {
-                const potentialFuture = app.open();
-                console.log(potentialFuture);
-                if (
-                    typeof potentialFuture != "undefined" &&
-                    //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
-                    // Typescript doesn't like this, so we have to ignore it.
-                    typeof potentialFuture.then == "function"
-                ) {
-                    // @ts-ignore - Same as above
-                    potentialFuture.then((win) => {
-                        if (typeof win == "undefined") return;
-                        this.updateRadius();
-                    });
-                }
-            });
+            this.#contextMenu.addItem(
+                "New Window",
+                () => {
+                    const potentialFuture = app.open();
+                    console.log(potentialFuture);
+                    if (
+                        typeof potentialFuture != "undefined" &&
+                        //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
+                        // Typescript doesn't like this, so we have to ignore it.
+                        typeof potentialFuture.then == "function"
+                    ) {
+                        // @ts-ignore - Same as above
+                        potentialFuture.then((win) => {
+                            if (typeof win == "undefined") return;
+                            this.updateRadius();
+                        });
+                    }
+                },
+                "new_window",
+            );
 
             let winEnumerator = 1;
             for (const win of app.windows) {
                 const displayTitle =
                     win.state.title || "Window " + winEnumerator;
-                this.#contextMenu.addItem(displayTitle, () => {
-                    win.focus();
-                    win.unminimize();
-                });
+                this.#contextMenu.addItem(
+                    displayTitle,
+                    () => {
+                        win.focus();
+                        win.unminimize();
+                    },
+                    "ad",
+                ); // somehow fits
                 winEnumerator++;
             }
             const pinned = anura.settings.get("applist").includes(app.package);
-            this.#contextMenu.addItem(pinned ? "Unpin" : "Pin", () => {
-                if (pinned) {
-                    anura.settings.set(
-                        "applist",
-                        anura.settings
-                            .get("applist")
-                            .filter((p: string) => p != app.package),
-                    );
-                } else {
-                    anura.settings.set("applist", [
-                        ...anura.settings.get("applist"),
-                        app.package,
-                    ]);
-                }
-                this.updateTaskbar();
-            });
+            this.#contextMenu.addItem(
+                pinned ? "Unpin" : "Pin",
+                () => {
+                    if (pinned) {
+                        anura.settings.set(
+                            "applist",
+                            anura.settings
+                                .get("applist")
+                                .filter((p: string) => p != app.package),
+                        );
+                    } else {
+                        anura.settings.set("applist", [
+                            ...anura.settings.get("applist"),
+                            app.package,
+                        ]);
+                    }
+                    this.updateTaskbar();
+                },
+                pinned ? "keep_off" : "keep",
+            );
 
-            this.#contextMenu.addItem("Close", () => {
-                for (const win of app.windows) {
-                    win.close();
-                }
-            });
+            this.#contextMenu.addItem(
+                "Close",
+                () => {
+                    for (const win of app.windows) {
+                        win.close();
+                    }
+                },
+                "cancel",
+            );
 
             const c = this.#contextMenu.show(e.x, 0);
             // HACK HACK DUMB HACK
