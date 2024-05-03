@@ -17,6 +17,7 @@ class ContextMenuAPI {
     #isShown = false;
     constructor(large = false) {
         console.log("creating context menu");
+
         console.log("large", large);
         this.large = large;
         console.log("this.large", this.large);
@@ -54,6 +55,16 @@ class ContextMenuAPI {
         );
     }
     show(x: number, y: number) {
+        // remove any existing context menus. i will admit this is a bit of a quick n dirty hack
+        if (document.querySelector(".custom-menu")) {
+            console.warn(
+                "FORCE REMOVING OTHER CONTEXT MENUS, THE APP SHOULD TAKE CARE OF ONLY ALLOWING ONE CONTEXT MENU AT A TIME.",
+            );
+            document.querySelectorAll(".custom-menu").forEach((el) => {
+                el.remove();
+            });
+        }
+
         // Reset out of bound fixes
         this.#element.style.bottom = "";
         this.#element.style.right = "";
