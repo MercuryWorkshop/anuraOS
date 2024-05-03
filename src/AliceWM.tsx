@@ -537,9 +537,9 @@ class WMWindow {
         this.oldstyle = this.element.getAttribute("style");
         console.log(this.oldstyle);
         const width =
-            (window.innerWidth ||
-                document.documentElement.clientWidth ||
-                document.body.clientWidth) - 4;
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
         const height =
             window.innerHeight ||
             document.documentElement.clientHeight ||
