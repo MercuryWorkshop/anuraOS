@@ -101,7 +101,11 @@ class Anura {
     async registerExternalApp(source: string): Promise<ExternalApp> {
         const resp = await fetch(`${source}/manifest.json`);
         const manifest = (await resp.json()) as AppManifest;
-        if (manifest.type === "auto" || manifest.type === "manual") {
+        if (
+            manifest.type === "auto" ||
+            manifest.type === "manual" ||
+            manifest.type === "webview"
+        ) {
             const app = new ExternalApp(manifest, source);
             await anura.registerApp(app); // This will let us capture error messages
             return app;
@@ -225,12 +229,13 @@ interface AppManifest {
      */
     name: string;
     /**
-     * The type of the app. This can be "manual" or "auto". If it is "manual", the app will be handled by the
+     * The type of the app. This can be "manual", "auto" or "webview". If it is "manual", the app will be handled by the
      * handler specified in the handler field. If it is "auto", the app will be handled by the index file
-     * specified in the index field. If the type is not "manual" or "auto", it will be handled by the anura
+     * specified in the index field. If it is "webview", the app will be handled by the website specified in the src field.
+     * If the type is not "manual", "auto", or "webview", it will be handled by the anura
      * library specified in the type field.
      */
-    type: "manual" | "auto" | string;
+    type: "manual" | "auto" | "webview" | string;
     /**
      * The package name of the app. This should be unique to the app and should be in reverse domain notation.
      * For example, if the app is called "My App" and is made by "My Company", the package name should be
