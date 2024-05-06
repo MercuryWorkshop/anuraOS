@@ -320,7 +320,10 @@ const LauncherShortcut: Component<
         "Delete",
         function () {
             (async () => {
-                if (anura.apps[app.package].source.includes("/fs")) {
+                if (
+                    anura.apps[app.package].source &&
+                    anura.apps[app.package].source.includes("/fs")
+                ) {
                     try {
                         const sh = new anura.fs.Shell();
                         const path = (app as ExternalApp).source.replace(
