@@ -34,7 +34,7 @@ export default function Overview() {
         }
     };
 
-    this.css = css`
+    this.css = `
         display: flex;
         flex-direction: column;
         height: 100%;

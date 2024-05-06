@@ -91,7 +91,7 @@ build/libs/fflate/browser.js: build/bootstrap
 
 build/libs/dreamland/all.js: dreamlandjs/src/*
 	mkdir -p build/libs/dreamland
-	cd dreamlandjs; npm i --no-package-lock; npm run build
+	cd dreamlandjs; npm i --no-package-lock --legacy-peer-deps; npm run build
 	cp dreamlandjs/dist/all.js build/libs/dreamland/all.js
 	cp dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
 	jq '.version' dreamlandjs/package.json > build/libs/dreamland/version

@@ -197,7 +197,7 @@ class AnuraUI {
             if (this.height) dynamicStyle.height = this.height;
             if (this.margin) dynamicStyle.margin = this.margin;
 
-            this.css = css`
+            this.css = `
                 display: flex;
                 position: absolute;
                 background: color-mix(

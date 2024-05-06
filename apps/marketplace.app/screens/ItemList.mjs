@@ -38,7 +38,7 @@ function Item() {
         }
     };
 
-    this.css = css`
+    this.css = `
         height: 100px;
         width: 100%;
         background: var(--theme-secondary-bg);
@@ -122,7 +122,7 @@ export default function ItemList() {
         });
     };
 
-    this.css = css`
+    this.css = `
         display: flex;
         flex-direction: column;
         align-items: center;

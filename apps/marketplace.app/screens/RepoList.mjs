@@ -19,7 +19,7 @@ function RepoItem() {
         }
     };
 
-    this.css = css`
+    this.css = `
         margin-right: 10px;
         border-radius: 0 9999px 9999px 0;
         margin-left: auto;
@@ -86,7 +86,7 @@ export default function RepoList() {
         );
     });
 
-    this.css = css`
+    this.css = `
         position: fixed;
         width: 30%;
         border-right: 1px solid var(--theme-border);
