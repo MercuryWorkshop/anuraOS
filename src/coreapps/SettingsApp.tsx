@@ -163,6 +163,37 @@ const settingsCSS = css`
     }
 `;
 
+const SettingSwitch: Component<
+    {
+        title: string;
+        setting: string;
+        on?: boolean;
+    },
+    {
+        //
+    }
+> = function () {
+    this.mount = () => {
+        this.on = anura.settings.get(this.setting);
+    };
+    return (
+        <div class="settings-item">
+            <label class="matter-switch">
+                <input
+                    id="use-sw-cache"
+                    type="checkbox"
+                    role="switch"
+                    on:click={() => {
+                        anura.settings.set(this.setting, this.on);
+                    }}
+                    bind:checked={use(this.on)}
+                />
+                <span>{use(this.title)}</span>
+            </label>
+        </div>
+    );
+};
+
 class SettingsApp extends App {
     name = "Settings";
     package = "anura.settings";
@@ -240,203 +271,38 @@ class SettingsApp extends App {
                     <div id="general" class="general settings-category">
                         <h3 class="settings-category-name">General</h3>
                         <div class="settings-group">
-                            <div class="settings-item">
-                                <label class="matter-switch">
-                                    <input
-                                        on:click={(event: any) => {
-                                            if (event.target.checked) {
-                                                anura.settings.set(
-                                                    "use-sw-cache",
-                                                    true,
-                                                );
-                                            } else {
-                                                anura.settings.set(
-                                                    "use-sw-cache",
-                                                    false,
-                                                );
-                                            }
-                                            anura.settings.set(
-                                                "milestone",
-                                                "INVALID",
-                                            );
-                                            window.location.reload();
-                                        }}
-                                        id="use-sw-cache"
-                                        type="checkbox"
-                                        role="switch"
-                                    />
-                                    <span>Allow offline use</span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <label class="matter-switch">
-                                    <input
-                                        on:click={(event: any) => {
-                                            if (event.target.checked) {
-                                                anura.settings.set(
-                                                    "sir-yes-sir",
-                                                    true,
-                                                );
-                                            } else {
-                                                anura.settings.set(
-                                                    "sir-yes-sir",
-                                                    false,
-                                                );
-                                            }
-                                        }}
-                                        id="24htime"
-                                        type="checkbox"
-                                        role="switch"
-                                    />
-                                    <span>24-hour time</span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <label class="matter-switch">
-                                    <input
-                                        on:click={(event: any) => {
-                                            if (event.target.checked) {
-                                                anura.settings.set(
-                                                    "borderless-aboutbrowser",
-                                                    true,
-                                                );
-                                            } else {
-                                                anura.settings.set(
-                                                    "borderless-aboutbrowser",
-                                                    false,
-                                                );
-                                            }
-                                        }}
-                                        id="borderless-aboutbrowser"
-                                        type="checkbox"
-                                        role="switch"
-                                    />
-                                    <span>Borderless AboutBrowser</span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <label class="matter-switch">
-                                    <input
-                                        on:click={(event: any) => {
-                                            if (event.target.checked) {
-                                                anura.settings.set(
-                                                    "blur-disable",
-                                                    true,
-                                                );
-                                                document.body.classList.add(
-                                                    "blur-disable",
-                                                );
-                                            } else {
-                                                anura.settings.set(
-                                                    "blur-disable",
-                                                    false,
-                                                );
-                                                document.body.classList.remove(
-                                                    "blur-disable",
-                                                );
-                                            }
-                                        }}
-                                        id="blur-disable"
-                                        type="checkbox"
-                                        role="switch"
-                                    />
-                                    <span id="perf">Performance mode</span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <label class="matter-switch">
-                                    <input
-                                        on:click={(event: any) => {
-                                            if (event.target.checked) {
-                                                anura.settings.set(
-                                                    "disable-animation",
-                                                    true,
-                                                );
-                                            } else {
-                                                anura.settings.set(
-                                                    "disable-animation",
-                                                    false,
-                                                );
-                                            }
-                                        }}
-                                        id="disable-animation"
-                                        type="checkbox"
-                                        role="switch"
-                                    />
-                                    <span>Reduce motion</span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <label class="matter-switch">
-                                    <input
-                                        on:click={(event: any) => {
-                                            if (event.target.checked) {
-                                                anura.settings.set(
-                                                    "clampWindows",
-                                                    true,
-                                                );
-                                            } else {
-                                                anura.settings.set(
-                                                    "clampWindows",
-                                                    false,
-                                                );
-                                            }
-                                        }}
-                                        id="clampWindows"
-                                        type="checkbox"
-                                        role="switch"
-                                    />
-                                    <span>Window Edge Clamping</span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <label class="matter-switch">
-                                    <input
-                                        on:click={(event: any) => {
-                                            if (event.target.checked) {
-                                                anura.settings.set(
-                                                    "transparent-ashell",
-                                                    true,
-                                                );
-                                            } else {
-                                                anura.settings.set(
-                                                    "transparent-ashell",
-                                                    false,
-                                                );
-                                            }
-                                        }}
-                                        id="transparent-ashell"
-                                        type="checkbox"
-                                        role="switch"
-                                    />
-                                    <span>
-                                        Transparent Anura Shell Background
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="settings-item">
-                                <label class="matter-switch">
-                                    <input
-                                        on:click={(event: any) => {
-                                            if (event.target.checked) {
-                                                anura.settings.set(
-                                                    "launcher-keybind",
-                                                    true,
-                                                );
-                                            } else {
-                                                anura.settings.set(
-                                                    "launcher-keybind",
-                                                    false,
-                                                );
-                                            }
-                                        }}
-                                        id="launcher-keybind"
-                                        type="checkbox"
-                                        role="switch"
-                                    />
-                                    <span>Enable Launcher Keybind</span>
-                                </label>
-                            </div>
+                            <SettingSwitch
+                                title="Allow offline use"
+                                setting="use-sw-cache"
+                            />
+                            <SettingSwitch
+                                title="24-hour time"
+                                setting="sir-yes-sir"
+                            />
+                            <SettingSwitch
+                                title="Borderless AboutBrowser"
+                                setting="borderless-aboutbrowser"
+                            />
+                            <SettingSwitch
+                                title="Performance mode"
+                                setting="blur-disable"
+                            />
+                            <SettingSwitch
+                                title="Reduce motion"
+                                setting="disable-animation"
+                            />
+                            <SettingSwitch
+                                title="Window Edge Clamping"
+                                setting="clampWindows"
+                            />
+                            <SettingSwitch
+                                title="Transparent Anura Shell Background"
+                                setting="transparent-ashell"
+                            />
+                            <SettingSwitch
+                                title="Enable Launcher Keybind"
+                                setting="launcher-keybind"
+                            />
                             <div class="settings-item">
                                 <span class="settings-item-name">
                                     Custom Wisp URL
@@ -920,49 +786,6 @@ class SettingsApp extends App {
         });
 
         win.content.appendChild(await this.page());
-        if (document.getElementById("use-sw-cache")) {
-            if (anura.settings.get("use-sw-cache")) {
-                document
-                    .getElementById("use-sw-cache")!
-                    .setAttribute("checked", "");
-            }
-        }
-        if (document.getElementById("borderless-aboutbrowser")) {
-            if (anura.settings.get("borderless-aboutbrowser")) {
-                document
-                    .getElementById("borderless-aboutbrowser")!
-                    .setAttribute("checked", "");
-            }
-        }
-        if (document.getElementById("clampWindows")) {
-            if (anura.settings.get("clampWindows")) {
-                document
-                    .getElementById("clampWindows")!
-                    .setAttribute("checked", "");
-            }
-        }
-        if (document.getElementById("transparent-ashell")) {
-            if (anura.settings.get("transparent-ashell")) {
-                document
-                    .getElementById("transparent-ashell")!
-                    .setAttribute("checked", "");
-            }
-        }
-        if (document.getElementById("launcher-keybind")) {
-            if (anura.settings.get("launcher-keybind")) {
-                document
-                    .getElementById("launcher-keybind")!
-                    .setAttribute("checked", "");
-            }
-        }
-
-        if (document.getElementById("disable-animation")) {
-            if (anura.settings.get("disable-animation")) {
-                document
-                    .getElementById("disable-animation")!
-                    .setAttribute("checked", "");
-            }
-        }
         return win;
     }
 }
