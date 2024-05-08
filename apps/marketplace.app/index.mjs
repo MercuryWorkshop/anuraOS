@@ -19,7 +19,7 @@ document.addEventListener("anura-theme-change", () => {
         anura.ui.theme.css();
 });
 
-window.saved = stateful({
+window.saved = $state({
     repos: Object.entries(
         anura.settings.get("workstore-repos") || {
             "Anura App Repository":
@@ -38,7 +38,7 @@ instanceWindow.onclose = () => {
     anura.settings.set("workstore-repos", Object.fromEntries(saved.repos));
 };
 
-window.state = stateful({
+window.state = $state({
     showBackButton: false,
     currentScreen: "repoList",
     currentItem: null,
