@@ -4,7 +4,7 @@
         fetchedURL.textContent = ${JSON.stringify(e)};
         for (const node of document.querySelectorAll("#uvHostname")) node.textContent = ${JSON.stringify(location.hostname)};
         reload.addEventListener("click", () => location.reload());
-        uvVersion.textContent = ${JSON.stringify("3.1.1")};
+        uvVersion.textContent = ${JSON.stringify("3.1.2")};
     `;return`<!DOCTYPE html>
         <html>
         <head>
