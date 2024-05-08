@@ -1,6 +1,6 @@
 class OobeView {
     state = $state({
-        color: "var(--oobe-bg)",
+        color: "white",
         text: "#202124",
         step: 0,
     });
@@ -19,8 +19,8 @@ class OobeView {
 
         #content {
             padding: 79.6px 40px 23.8px 40px;
-            width: ${anura.platform.type == "mobile" ? "100vw;" : "1040px;"}
-            height: ${anura.platform.type == "mobile" ? "100vh;" : "680px;"}
+            width: ${anura.platform.type == "mobile" ? "100vw;" : "1040px;"};
+            height: ${anura.platform.type == "mobile" ? "100vh;" : "680px;"};
             box-sizing: border-box;
         }
 
@@ -84,16 +84,24 @@ class OobeView {
             padding-left: 1em;
             padding-right: 1em;
             cursor: pointer;
-            font-family: "Roboto", RobotoDraft, "Droid Sans", Arial, Helvetica, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            font-family:
+                "Roboto",
+                RobotoDraft,
+                "Droid Sans",
+                Arial,
+                Helvetica,
+                -apple-system,
+                BlinkMacSystemFont,
+                system-ui,
+                sans-serif;
         }
 
         #welcome.screen #animation {
             grid-column: 2 / span 1;
             grid-row: 1 / span 2;
             margin-left: auto;
-            display: ${anura.platform.type == "mobile" ? "none;" : "inherit;"}
+            display: ${anura.platform.type == "mobile" ? "none;" : "inherit;"};
         }
-
     `;
 
     steps = [
@@ -331,7 +339,7 @@ async function installx86() {
 
     console.log("done");
 }
-async function preloadFiles() {
+async function preloadFiles(tracker = document.getElementById("tracker")) {
     try {
         const list = await (await fetch("cache-load.json")).json();
         /*
@@ -343,7 +351,6 @@ async function preloadFiles() {
          */
         const chunkSize = 10;
         const promises = [];
-        const tracker = document.getElementById("tracker");
         let i = 0;
         for (const item in list) {
             promises.push(fetch(list[item]));

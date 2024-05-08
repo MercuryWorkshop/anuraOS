@@ -212,30 +212,7 @@ window.addEventListener("load", async () => {
                 } catch {
                     console.log("cache already invalidated");
                 }
-                try {
-                    const list = await (await fetch("cache-load.json")).json();
-                    /*
-                     * The list has a few items that aren't exactly real
-                     * as a result of the developers schizophrenia.
-                     * Because of this, there will be a few errors on the fetch.
-                     * These can safely be ignored, just like the voices in
-                     * the developers head.
-                     */
-                    const chunkSize = 10;
-                    const promises = [];
-                    let i = 0;
-                    for (const item in list) {
-                        promises.push(fetch(list[item]));
-                        if (Number(item) % chunkSize === chunkSize - 1) {
-                            await Promise.all(promises);
-                        }
-                        tracker!.innerText = `Downloading anura system files, chunk ${i}/${list.length}`;
-                        i++;
-                    }
-                    await Promise.all(promises);
-                } catch (e) {
-                    console.warn("error durring oobe preload", e);
-                }
+                await preloadFiles(tracker);
             }
             console.log("invalidated cache");
             window.location.reload();
