@@ -39,5 +39,6 @@
         "@types/node": "^20.5.9",
         "@types/wicg-file-system-access": "^2023.10.4",
         "prettier": "3.2.4"
-    }
+    },
+    "packageManager": "pnpm@9.1.0+sha256.22e36fba7f4880ecf749a5ca128b8435da085ecd49575e7fb9e64d6bf4fad394"
 }
