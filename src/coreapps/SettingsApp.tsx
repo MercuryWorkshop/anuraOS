@@ -167,6 +167,7 @@ const SettingSwitch: Component<
     {
         title: string;
         setting: string;
+        callback?: any;
         on?: boolean;
     },
     {
@@ -185,11 +186,39 @@ const SettingSwitch: Component<
                     role="switch"
                     on:click={() => {
                         anura.settings.set(this.setting, this.on);
+                        if (this.callback) this.callback();
                     }}
                     bind:checked={use(this.on)}
                 />
                 <span>{use(this.title)}</span>
             </label>
+        </div>
+    );
+};
+
+const SettingText: Component<
+    {
+        title: string;
+        setting: string;
+        callback?: any;
+        value?: string;
+    },
+    {
+        //
+    }
+> = function () {
+    return (
+        <div class="settings-item">
+            <span class="settings-item-name">{use(this.title)}</span>
+            <input
+                class="settings-item-text-input"
+                on:change={(event: any) => {
+                    anura.settings.set(this.setting, event.target.value);
+                    if (this.callback) this.callback();
+                }}
+                placeholder={anura.settings.get(this.setting)}
+                type="text"
+            />
         </div>
     );
 };
@@ -274,6 +303,10 @@ class SettingsApp extends App {
                             <SettingSwitch
                                 title="Allow offline use"
                                 setting="use-sw-cache"
+                                callback={() => {
+                                    anura.settings.set("milestone", "INVALID");
+                                    window.location.reload();
+                                }}
                             />
                             <SettingSwitch
                                 title="24-hour time"
@@ -303,54 +336,14 @@ class SettingsApp extends App {
                                 title="Enable Launcher Keybind"
                                 setting="launcher-keybind"
                             />
-                            <div class="settings-item">
-                                <span class="settings-item-name">
-                                    Custom Wisp URL
-                                </span>
-                                <input
-                                    class="settings-item-text-input"
-                                    on:change={(event: any) => {
-                                        anura.settings.set(
-                                            "wisp-url",
-                                            event.target.value,
-                                        );
-                                    }}
-                                    placeholder={anura.settings.get("wisp-url")}
-                                    type="text"
-                                />
-                            </div>
-                            <div class="settings-item">
-                                <span class="settings-item-name">
-                                    Custom Exit URL
-                                </span>
-                                <input
-                                    class="settings-item-text-input"
-                                    on:change={(event: any) => {
-                                        anura.settings.set(
-                                            "exitUrl",
-                                            event.target.value,
-                                        );
-                                    }}
-                                    placeholder={anura.settings.get("exitUrl")}
-                                    type="text"
-                                />
-                            </div>
-                            <div class="settings-item">
-                                <span class="settings-item-name">
-                                    Custom Bare URL (deprecated)
-                                </span>
-                                <input
-                                    class="settings-item-text-input"
-                                    on:change={(event: any) => {
-                                        anura.settings.set(
-                                            "bare-url",
-                                            event.target.value,
-                                        );
-                                    }}
-                                    placeholder={anura.settings.get("bare-url")}
-                                    type="text"
-                                />
-                            </div>
+                            <SettingText
+                                title="Custom Wisp URL"
+                                setting="wisp-url"
+                            />
+                            <SettingText
+                                title="Custom Power Off URL"
+                                setting="exitUrl"
+                            />
                         </div>
                     </div>
                     <div id="v86" class="v86 settings-category">

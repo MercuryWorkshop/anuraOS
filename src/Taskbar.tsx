@@ -27,7 +27,7 @@ class Taskbar {
         time: "",
         date: "",
         bat_icon: "battery_0_bar",
-        net_icon: "signal_wifi_4_bar",
+        net_icon: navigator.onLine ? "signal_wifi_4_bar" : "signal_wifi_off",
     });
 
     rounded = css`
