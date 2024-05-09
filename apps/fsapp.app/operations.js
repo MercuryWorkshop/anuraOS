@@ -98,16 +98,20 @@ async function loadPath(path) {
                 (folderExt == "app") | (folderExt == "lib") &&
                 file !== folderExt
             ) {
-                let manifestPath = `${path}/${file}/manifest.json`;
+                try {
+                    let manifestPath = `${path}/${file}/manifest.json`;
 
-                const data = await fs.promises.readFile(manifestPath);
-                let manifest = JSON.parse(data);
+                    const data = await fs.promises.readFile(manifestPath);
+                    let manifest = JSON.parse(data);
 
-                icon.src = `/fs${path}/${file}/${manifest.icon}`;
-                icon.onerror = () => {
+                    icon.src = `/fs${path}/${file}/${manifest.icon}`;
+                    icon.onerror = () => {
+                        icon.src = anura.files.folderIcon;
+                    };
+                    description.innerText = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
+                } catch {
                     icon.src = anura.files.folderIcon;
-                };
-                description.innerText = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
+                }
             } else {
                 icon.src = anura.files.folderIcon;
             }
@@ -267,9 +271,13 @@ function reloadListeners() {
             });
             row.addEventListener("click", (e) => {
                 if (currentlySelected.includes(e.currentTarget)) {
-                    window.isPicker
-                        ? selectAction(currentlySelected)
-                        : fileAction(currentlySelected);
+                    if (
+                        self.filePicker &&
+                        self.filePicker.type == "file" &&
+                        e.currentTarget.getAttribute("data-type") == "file"
+                    )
+                        selectAction(currentlySelected);
+                    else fileAction(currentlySelected);
                     currentlySelected.forEach((row) => {
                         row.classList.remove("selected");
                     });
