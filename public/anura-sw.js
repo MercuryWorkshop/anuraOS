@@ -376,6 +376,15 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     /^(?!.*(\/config.json|\/MILESTONE|\/images\/|\/service\/))/,
     async ({ url }) => {
+        if (
+            (!cacheenabled && url.pathname == "/") ||
+            (!cacheenabled && url.pathname === "/index.html")
+        ) {
+            return new Response(offlineError(), {
+                status: 500,
+                headers: { "content-type": "text/html" },
+            });
+        }
         if (!cacheenabled) return fetch(url);
         if (url.pathname === "/") {
             url.pathname = "/index.html";
@@ -456,3 +465,36 @@ methods.forEach((method) => {
         method,
     );
 });
+
+// have to put this here because no cache
+function offlineError() {
+    return `<!DOCTYPE html>
+            <html>
+            <head>
+            <style>
+            body {
+                font-family: "Roboto", RobotoDraft, "Droid Sans", Arial, Helvetica, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+                text-align: center;
+                background: black;
+                color: white;
+                overflow: none;
+                margin: 0;
+            }
+            #wrapper {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              height: 100vh;
+            }
+            </style>
+            </head>
+            <body>
+            <div id="wrapper">
+            <h1>AnuraOS is offline without offline support enabled.</h1>
+            <p>If you have offline support enabled and you are seeing this, please refresh the page.</p>
+            </div>
+            </body>
+            </html>
+            `;
+}
