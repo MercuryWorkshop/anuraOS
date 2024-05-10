@@ -96,7 +96,7 @@ const loader = buildLoader(anura);
 await loader.locate();
 
 const persistence = await loader.build(instance);
-const $store = persistence.createStoreFn(stateful, instanceWindow);
+const $store = persistence.createStoreFn($state, instanceWindow);
 
 let persistentState = await $store(
     {
