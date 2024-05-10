@@ -41,7 +41,7 @@
     "devDependencies": {
         "@types/node": "^20.5.9",
         "@types/wicg-file-system-access": "^2023.10.4",
-        "dreamland": "^0.0.13",
+        "dreamland": "^0.0.17",
         "prettier": "3.2.4",
         "rollup": "^2.79.1",
         "workbox-cli": "7.1.0"
