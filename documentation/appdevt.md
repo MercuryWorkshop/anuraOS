@@ -28,11 +28,61 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
 *   `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
 *   `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
 
+## Tips and Tricks
+
+In iframed apps, Anura still gives you full access to the APIs and also gives you access to your app instance and the Window in the Window Manager. You can access the WMWindow using `instanceWindow` and access your anura app instance using `instance` in your javascript. This could be used to manipulate the window or invoke actions on your app instance. An example is shown below where a back arrow is drawn on the window decorations in the marketplace app.
+
+```js
+const back = html`
+    <button
+        class=${["windowButton"]}
+        style=${{
+            width: "24px",
+            height: "24px",
+            display: use(state.showBackButton),
+        }}
+        on:mousedown=${(evt) => {
+            evt.stopPropagation();
+        }}
+        on:click=${async () => {
+            switch (state.currentScreen) {
+                case "overview":
+                    state.currentScreen = "itemList";
+                    break;
+                default:
+                    state.currentScreen = "repoList";
+                    break;
+            }
+        }}
+    >
+        <span
+            class=${["material-symbols-outlined"]}
+            style=${{
+                fontSize: "16px",
+                lineHeight: "24px",
+            }}
+        >
+            arrow_back
+        </span>
+    </button>
+`;
+
+instanceWindow.content.style.position = "absolute";
+instanceWindow.content.style.height = "100%";
+const titlebar = Array.from(instanceWindow.element.children).filter((e) =>
+    e.classList.contains("title"),
+)[0];
+
+titlebar.style.backgroundColor = "rgba(0, 0, 0, 0)";
+
+titlebar.insertBefore(back, titlebar.children[1]);
+```
+
 ## Including Dreamland
 
 dreamland.js is a reactive JSX-inspired rendering library with no virtual dom and no build step. You can find the source code [here](https://github.com/MercuryWorkshop/dreamlandjs) and the documentation [here](https://dreamland.js.org/).
 
-AnuraOS itself uses dreamland for the desktop environment, and you can use it in your apps as well. To include dreamland in your app, you can add the following to the `head` section of your `index.html` file:
+AnuraOS itself uses dreamland for the desktop environment and core system apps, and you can use it in your apps as well. To include dreamland in your app, you can add the following to the `head` section of your `index.html` file:
 
 ```html
 <script src="/libs/dreamland/all.js"></script>
@@ -187,4 +237,54 @@ proxy.key = "value";
 // get a value
 // Here the value returned is a promise, so you need to use `await` or `.then` to get the value.
 let value = await proxy.key;
+```
+
+## File Handlers
+
+Libraries can also be setup to handle files. A file handler library at the least requires a `openFile` function inside of the file handler, but can be extended. An example is shown below for a simple text editor.
+
+```js
+export function openFile(path) {
+    anura.fs.readFile(path, async function (err, data) {
+        let fileView = anura.wm.createGeneric("Simple Text Editor");
+        fileView.content.style.overflow = "auto";
+        fileView.content.style.backgroundColor = "var(--material-bg)";
+        fileView.content.style.color = "white";
+        const text = document.createElement("textarea");
+        text.style.fontFamily = '"Roboto Mono", monospace';
+        text.style.top = 0;
+        text.style.left = 0;
+        text.style.width = "calc( 100% - 20px )";
+        text.style.height = "calc( 100% - 24px )";
+        text.style.backgroundColor = "var(--material-bg)";
+        text.style.color = "white";
+        text.style.border = "none";
+        text.style.resize = "none";
+        text.style.outline = "none";
+        text.style.userSelect = "text";
+        text.style.margin = "8px";
+        text.value = data;
+        text.onchange = () => {
+            fs.writeFile(path, text.value);
+        };
+        fileView.content.appendChild(text);
+    });
+}
+
+export function getIcon(path) {
+    return (
+        import.meta.url.substring(0, import.meta.url.lastIndexOf("/")) +
+        "/icon.png"
+    );
+}
+
+export function getFileType(path) {
+    return "Text File";
+}
+```
+
+After setting up a library like this you can make it the file handler for a file extension by just setting it using the `anura.files.setModule` function.
+
+```js
+anura.files.setModule("(package identifier)", "(file extension)");
 ```
