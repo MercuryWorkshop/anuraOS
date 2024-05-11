@@ -84,28 +84,7 @@ workbox.core.clientsClaim();
 
 importScripts("/libs/idb-keyval/idb-keyval.js");
 
-var cacheenabled = false;
-idbKeyval.get("cacheenabled").then((result) => {
-    if (result !== undefined) cacheenabled = result;
-});
-// FIXME: later
-/*
-self.addEventListener("activate", (event) => {
-    event.waitUntil(init());
-});
-var cacheenabled = false;
-async function init() {
-    importScripts("/libs/idb-keyval/idb-keyval.js");
-
-    let result = await idbKeyval.get("cacheenabled");
-    if (result) {
-        cacheenabled = result;
-    }
-    workbox.core.skipWaiting();
-    clients.claim();
-}
-*/
-
+var cacheenabled;
 workbox.routing.registerRoute(/\/x86\/(.*)/, (req) => {
     return handleRequests(req); // need to do this because of the dumb way workbox handles async
 });
@@ -393,6 +372,12 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     /^(?!.*(\/config.json|\/MILESTONE|\/images\/|\/service\/))/,
     async ({ url }) => {
+        if (cacheenabled === undefined) {
+            let result = await idbKeyval.get("cacheenabled");
+            if (result === undefined || result === null) {
+                cacheenabled = result;
+            }
+        }
         if (
             (!cacheenabled && url.pathname === "/" && !navigator.onLine) ||
             (!cacheenabled &&
