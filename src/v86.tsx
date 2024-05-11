@@ -364,12 +364,12 @@ class V86Backend {
 
     termready = false;
     async netdata_send(data: Uint8Array) {
-        const sendData = new Uint8Array(data.length + 5);
+        const sendData = new Uint8Array(data.length + 4);
         const dataView = new DataView(sendData.buffer);
         console.log("sending message of " + data.length);
         dataView.setUint32(0, data.length, true);
         sendData.set(data, 4);
-        dataView.setUint8(sendData.length - 1, 10);
+        //dataView.setUint8(sendData.length - 1, 10);
         console.log(sendData);
         this.emulator.bus.send("virtio-console0-input-bytes", sendData);
     }
