@@ -415,16 +415,15 @@ class V86Backend {
             async (data) => {
                 console.debug("WHISPER: " + data);
                 if (data.includes("Whisper ready!")) {
-                    this.runcmd("ip addr add 10.0.0.1/24 dev tun0");
                     this.runcmd("sysctl -w net.ipv4.ip_forward=1");
-                    this.runcmd("ip route add default via 10.0.0.1 dev tun0");
+                    this.runcmd("ip route add default via 10.0.10.2 dev tun0");
 
                     anura.notifications.add({
                         title: "x86 Subsystem",
                         description: "Started Networking Stack",
                         timeout: 5000,
                     });
-                } else if (data.includes("/dev/hvc")) {
+                } else if (data.includes("Connecting")) {
                     this.v86Wisp = new WebSocket(anura.wsproxyURL);
                     this.v86Wisp.binaryType = "arraybuffer";
 
