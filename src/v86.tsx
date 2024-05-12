@@ -409,7 +409,7 @@ class V86Backend {
         );
 
         this.netpty = await this.openpty(
-            "modprobe tun && /bin/whisper --tun tun0 --pty /dev/hvc0 --pty /dev/hvc1",
+            "modprobe tun && /bin/whisper --tun tun0 --pty /dev/hvc0 --pty /dev/hvc0",
             1,
             1,
             async (data) => {
@@ -453,7 +453,7 @@ class V86Backend {
         let mfingBuffer: Uint8Array[] = []; // I call it mfing buffer because I only have to do this because mf'ing whisper is screwing up
 
         this.emulator.add_listener(
-            "virtio-console1-output-bytes",
+            "virtio-console0-output-bytes",
             function (bytes: Uint8Array) {
                 console.log(bytes);
                 if (!inTransit) {
