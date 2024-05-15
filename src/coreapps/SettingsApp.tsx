@@ -181,7 +181,7 @@ const SettingSwitch: Component<
         <div class="settings-item">
             <label class="matter-switch">
                 <input
-                    id="use-sw-cache"
+                    id={this.setting}
                     type="checkbox"
                     role="switch"
                     on:click={() => {
@@ -211,6 +211,7 @@ const SettingText: Component<
         <div class="settings-item">
             <span class="settings-item-name">{use(this.title)}</span>
             <input
+                id={this.setting}
                 class="settings-item-text-input"
                 on:change={(event: any) => {
                     anura.settings.set(this.setting, event.target.value);
@@ -234,6 +235,7 @@ class SettingsApp extends App {
         resizing: false,
         settingsBody: undefined as unknown as HTMLDivElement,
     });
+    win: WMWindow;
 
     page = async () => (
         <div
@@ -771,14 +773,17 @@ class SettingsApp extends App {
     }
 
     async open(): Promise<WMWindow | undefined> {
-        const win = anura.wm.create(this, {
+        if (this.win) {
+            return this.win;
+        }
+        this.win = anura.wm.create(this, {
             title: "",
             width: "910px",
             height: `${(720 * window.innerHeight) / 1080}px`,
             resizable: true,
         });
 
-        win.content.appendChild(await this.page());
-        return win;
+        this.win.content.appendChild(await this.page());
+        return this.win;
     }
 }
