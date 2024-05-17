@@ -25,7 +25,6 @@ window.saved = $state({
             "Anura App Repository":
                 "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
             "Anura Games": "https://anura.games/",
-            "Kxtz's Emulators": "https://anura.kxtz.dev/emulators/",
             "BomberFish's Extras":
                 "https://raw.githubusercontent.com/BomberFish/anura-repo/master/",
         },
