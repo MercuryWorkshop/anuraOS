@@ -26,8 +26,9 @@ COPY xsetrandr.sh /bin/xsetrandr
 COPY anurad.c /etc/
 COPY anuramouse/* /etc/anuramouse/
 COPY whisper /bin/whisper
+COPY twisp /bin/twisp
 
-RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/whisper
+RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/whisper /bin/twisp
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil 
 RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anurad /etc/init.d/
