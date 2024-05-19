@@ -370,7 +370,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-    /^(?!.*(\/config.json|\/MILESTONE|\/images\/|\/service\/))/,
+    /^(?!.*(\/config.json|\/MILESTONE|\/x86images\/|\/service\/))/,
     async ({ url }) => {
         if (cacheenabled == undefined) {
             console.log("retrieving cache value");

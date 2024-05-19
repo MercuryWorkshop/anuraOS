@@ -10,7 +10,7 @@ else
 fi
 
 
-IMAGES="$(dirname "$0")"/../../build/images
+IMAGES="$(dirname "$0")"/../../build/x86images
 OUT_ROOTFS_TAR="$IMAGES"/alpine-rootfs.tar
 OUT_ROOTFS_BIN="$IMAGES"/alpine-rootfs.bin
 OUT_ROOTFS_MNT="$IMAGES"/alpine-rootfs.mntpoint
