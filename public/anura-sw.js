@@ -370,8 +370,12 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-    /^(?!.*(\/config.json|\/MILESTONE|\/images\/|\/service\/))/,
+    /^(?!.*(\/config.json|\/MILESTONE|\/service\/))/,
     async ({ url }) => {
+        // dumb hack
+        if (url.pathname.startsWith("/images/")) {
+            return await fetch(url);
+        }
         if (cacheenabled == undefined) {
             console.log("retrieving cache value");
             let result = await idbKeyval.get("cacheenabled");
