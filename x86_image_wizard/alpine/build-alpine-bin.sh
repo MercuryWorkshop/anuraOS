@@ -61,4 +61,4 @@ cd "$IMAGES"
 mkdir -p alpine-rootfs
 split -b50M alpine-rootfs.bin alpine-rootfs/
 cd ../
-find images/alpine-rootfs/* | jq -Rnc "[inputs]"
+find x86images/alpine-rootfs/* | jq -Rnc "[inputs]"
