@@ -773,7 +773,7 @@ class SettingsApp extends App {
     }
 
     async open(): Promise<WMWindow | undefined> {
-        if (this.win) {
+        if (this.win?.element?.parentElement) {
             return this.win;
         }
         this.win = anura.wm.create(this, {
