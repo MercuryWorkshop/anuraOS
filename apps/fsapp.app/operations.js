@@ -14,7 +14,6 @@ const url = new URL(window.location.href);
 if (url.searchParams.get("picker")) {
     const picker = ExternalApp.deserializeArgs(url.searchParams.get("picker"));
     if (picker) {
-        window.isPicker = true;
         document.getElementById("selector").style.display = "";
         filePicker = {};
         filePicker.regex = new RegExp(picker[0]);
@@ -272,12 +271,14 @@ function reloadListeners() {
             row.addEventListener("click", (e) => {
                 if (currentlySelected.includes(e.currentTarget)) {
                     if (
-                        self.filePicker &&
-                        self.filePicker.type == "file" &&
-                        e.currentTarget.getAttribute("data-type") == "file"
-                    )
+                        filePicker &&
+                        filePicker.type === "file" &&
+                        e.currentTarget.getAttribute("data-type") === "file"
+                    ) {
                         selectAction(currentlySelected);
-                    else fileAction(currentlySelected);
+                    } else {
+                        fileAction(currentlySelected);
+                    }
                     currentlySelected.forEach((row) => {
                         row.classList.remove("selected");
                     });
@@ -661,9 +662,19 @@ async function fileAction(selected) {
                     .slice("-1")[0] == "app"
             ) {
                 try {
-                    const data = await fs.promises.readFile(
-                        `${fileSelected.getAttribute("data-path")}/manifest.json`,
-                    );
+                    let data;
+                    try {
+                        data = await fs.promises.readFile(
+                            `${fileSelected.getAttribute("data-path")}/manifest.json`,
+                        );
+                    } catch {
+                        console.debug(
+                            "Changing folder to ",
+                            fileSelected.getAttribute("data-path"),
+                        );
+                        loadPath(fileSelected.getAttribute("data-path"));
+                        return;
+                    }
                     const manifest = JSON.parse(data);
                     if (anura.apps[manifest.package]) {
                         anura.apps[manifest.package].open();
@@ -775,10 +786,19 @@ async function fileAction(selected) {
                     .slice("-1")[0] == "lib"
             ) {
                 try {
-                    console.log(fileSelected.getAttribute("data-path"));
-                    const data = await fs.promises.readFile(
-                        `${fileSelected.getAttribute("data-path")}/manifest.json`,
-                    );
+                    let data;
+                    try {
+                        data = await fs.promises.readFile(
+                            `${fileSelected.getAttribute("data-path")}/manifest.json`,
+                        );
+                    } catch {
+                        console.debug(
+                            "Changing folder to ",
+                            fileSelected.getAttribute("data-path"),
+                        );
+                        loadPath(fileSelected.getAttribute("data-path"));
+                        return;
+                    }
 
                     const manifest = JSON.parse(data);
                     if (anura.libs[manifest.package]) {
