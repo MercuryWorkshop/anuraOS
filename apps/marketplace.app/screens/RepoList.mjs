@@ -8,7 +8,7 @@ function RepoItem() {
                 state.currentScreen = "itemList";
             };
         } catch (e) {
-            this.root.innerText += " (Error)";
+            this.repoNameElement.innerText += " (Error)";
             this.root.style.color = "red";
             this.root.onclick = () => {
                 anura.dialog.alert(
@@ -73,7 +73,9 @@ function RepoItem() {
             }}
         >
             <span class="material-symbols-outlined">shopping_bag</span>
-            ${use(this.reponame)}
+            <span bind:this=${use(this.repoNameElement)}
+                >${use(this.reponame)}</span
+            >
         </div>
     `;
 }
