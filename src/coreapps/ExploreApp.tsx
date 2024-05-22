@@ -253,8 +253,11 @@ class ExploreApp extends App {
             </p>
         </div>
     );
-
-    screen = this.welcome;
+    state: Stateful<{
+        screen?: HTMLElement;
+    }> = $state({
+        screen: this.welcome,
+    });
 
     page = async () => (
         <div class={this.css}>
@@ -264,7 +267,7 @@ class ExploreApp extends App {
                     Welcome
                 </div>
             </div>
-            <article>{this.screen}</article>
+            <article>{use(this.state.screen)}</article>
         </div>
     );
 
