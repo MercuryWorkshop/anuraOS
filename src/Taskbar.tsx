@@ -290,10 +290,6 @@ class Taskbar {
                 //     this.state.bat_icon = "";
                 //     return;
                 // }
-                if (battery.charging) {
-                    this.state.bat_icon = "battery_charging_full";
-                    return;
-                }
                 // I have almost no clue if this will work but im praying.
                 battery.onchargingchange = () => {
                     if (battery.charging) {
@@ -305,7 +301,31 @@ class Taskbar {
                         return;
                     }
                 };
+
+                battery.onlevelchange = () => {
+                    if (battery.charging) {
+                        this.state.bat_icon = "battery_charging_full";
+                        return;
+                    } else {
+                        const bat_bars = Math.round(battery.level * 7) - 1;
+                        if (bat_bars == -1) {
+                            this.state.bat_icon = `battery_alert`;
+                            return;
+                        }
+                        this.state.bat_icon = `battery_${bat_bars}_bar`;
+                        return;
+                    }
+                };
+
+                if (battery.charging) {
+                    this.state.bat_icon = "battery_charging_full";
+                    return;
+                }
                 const bat_bars = Math.round(battery.level * 7) - 1;
+                if (bat_bars == -1) {
+                    this.state.bat_icon = `battery_alert`;
+                    return;
+                }
                 this.state.bat_icon = `battery_${bat_bars}_bar`;
             });
         }
