@@ -409,7 +409,7 @@ class V86Backend {
         );
 
         this.netpty = await this.openpty(
-            "modprobe tun && /bin/whisper --tun tun0 --pty /dev/hvc0 --pty /dev/hvc0",
+            "modprobe tun && /bin/whisper --tun tun0 --pty /dev/hvc0",
             1,
             1,
             async (data) => {
