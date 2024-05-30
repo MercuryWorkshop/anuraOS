@@ -102,7 +102,7 @@ build/assets/matter.css:
 
 clean:
 	rm -rf build
-	cd v86; true || make clean
+	cd v86 && make clean || true
 
 # rootfs-debian: FORCE
 #	cd x86_image_wizard/debian; sh build-debian-bin.sh
