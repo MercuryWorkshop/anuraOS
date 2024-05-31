@@ -394,24 +394,6 @@ class SettingsApp extends App {
                             ) : (
                                 <div className="x86-container">
                                     <div class="settings-item">
-                                        <span class="settings-item-name">
-                                            Custom Bare URL
-                                        </span>
-                                        <input
-                                            class="settings-item-text-input"
-                                            on:change={(event: any) => {
-                                                anura.settings.set(
-                                                    "relay-url",
-                                                    event.target.value,
-                                                );
-                                            }}
-                                            placeholder={anura.settings.get(
-                                                "relay-url",
-                                            )}
-                                            type="text"
-                                        />
-                                    </div>
-                                    <div class="settings-item">
                                         <div class="disk-info">
                                             <span class="settings-item-name">
                                                 Disk Size (MB)
