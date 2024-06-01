@@ -407,7 +407,18 @@ class V86Backend {
                 }
             },
         );
+        const registerv86Wisp = () => {
+            this.v86Wisp = new WebSocket(anura.wsproxyURL);
+            this.v86Wisp.binaryType = "arraybuffer";
 
+            this.v86Wisp.onmessage = (event) => {
+                this.netdata_send(new Uint8Array(event.data));
+            };
+
+            this.v86Wisp.onclose = (event) => {
+                registerv86Wisp();
+            };
+        };
         this.netpty = await this.openpty(
             "modprobe tun && /bin/whisper --tun tun0 --pty /dev/hvc0",
             1,
@@ -424,17 +435,7 @@ class V86Backend {
                         timeout: 5000,
                     });
                 } else if (data.includes("Connecting")) {
-                    this.v86Wisp = new WebSocket(anura.wsproxyURL);
-                    this.v86Wisp.binaryType = "arraybuffer";
-
-                    this.v86Wisp.onmessage = (event) => {
-                        this.netdata_send(new Uint8Array(event.data));
-                    };
-
-                    this.v86Wisp.onclose = (event) => {
-                        this.v86Wisp = new WebSocket(anura.wsproxyURL);
-                        this.v86Wisp.binaryType = "arraybuffer";
-                    };
+                    registerv86Wisp();
                 }
             },
         );

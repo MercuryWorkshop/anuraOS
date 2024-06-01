@@ -15,7 +15,7 @@ RUN  apk add --update \
     mkdir -p /etc/openrc/conf.d && echo hostname="anuraos" > /etc/openrc/conf.d/hostname && \
     rm /etc/motd /etc/issue
 
-ARG CACHEBUST=32743425
+ARG CACHEBUST=2374838
 
 COPY xorg.conf /etc/X11/
 COPY X11/* /etc/X11/
