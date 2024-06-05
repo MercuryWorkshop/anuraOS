@@ -378,6 +378,100 @@ document.addEventListener("anura-login-completed", async () => {
         await anura.registerExternalApp(app);
     }
 
+    // Initialize static UI components that utilize anura.ui after loading apps, scripts, libs, so that external apps and libraries can apply overrides.
+    await quickSettings.init();
+    await calendar.init();
+    await launcher.init();
+    await taskbar.init();
+
+    document.body.appendChild(contextMenu.element);
+    document.body.appendChild(launcher.element);
+    document.body.appendChild(launcher.clickoffChecker);
+    document.body.appendChild(quickSettings.quickSettingsElement);
+    document.body.appendChild(calendar.element);
+    document.body.appendChild(quickSettings.notificationCenterElement);
+    document.body.appendChild(taskbar.element);
+    document.body.appendChild(alttab.element);
+
+    anura.ui.theme.apply();
+
+    (window as any).taskbar = taskbar;
+
+    // Initializes apps and libs from userApps/ and userLibs/ and runs any user specified init scripts
+    await bootUserCustomizations();
+
+    if (!anura.settings.get("x86-disabled")) {
+        await bootx86();
+    }
+
+    if (anura.settings.get("kiosk-mode")) {
+        taskbar.element.remove();
+        // There is a race condition here, but it doesn't matter
+        // because this feature is a joke
+        await sleep(1000);
+        anura.settings.get("kiosk-apps").forEach((app: string) => {
+            anura.apps[app].open();
+        });
+    }
+
+    document.addEventListener("contextmenu", function (e) {
+        if (e.shiftKey) return;
+        e.preventDefault();
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.shiftKey && e.key.toLowerCase() == "tab") {
+            e.preventDefault();
+            alttab.onComboPress();
+        }
+        if (
+            e.key.toLowerCase() === "meta" &&
+            anura.settings.get("launcher-keybind")
+        ) {
+            quickSettings.close();
+            calendar.close();
+            launcher.toggleVisible();
+            return;
+        }
+    });
+    document.addEventListener("keyup", (e) => {
+        // console.log("keyup", e);
+        if (e.key.toLowerCase() === "shift") {
+            alttab.onModRelease();
+            return;
+        }
+    });
+
+    anura.initComplete = true;
+    taskbar.updateTaskbar();
+    alttab.update();
+
+    if (!anura.settings.get("explore-shown")) {
+        exploreApp.open();
+        anura.settings.set("explore-shown", true);
+    }
+});
+async function bootx86() {
+    const mgr = new x86MgrApp();
+    await anura.registerApp(mgr);
+
+    await anura.registerApp(new XFrogApp());
+
+    await anura.registerApp(
+        new XAppStub("X Calculator", "anura.xcalc", "", "xcalc"),
+    );
+    await anura.registerApp(new XAppStub("XTerm", "anura.xterm", "", "xterm"));
+    anura.x86 = new V86Backend(anura.x86hdd);
+
+    anura.settings
+        .get("user-xapps")
+        .forEach((stub: { name: string; cmd: string; id: string }) => {
+            console.log("registering user xapp", stub);
+            anura.registerApp(new XAppStub(stub.name, stub.id, "", stub.cmd));
+        });
+}
+async function bootUserCustomizations() {
+    const directories = anura.settings.get("directories");
     if ((await fetch("/fs/")).status === 404) {
         // Safe mode
         // Register recovery helper app
@@ -451,104 +545,4 @@ document.addEventListener("anura-login-completed", async () => {
     } catch (e) {
         anura.logger.error(e);
     }
-
-    if (!anura.settings.get("x86-disabled")) {
-        await bootx86();
-    }
-
-    // Initialize static UI components that utilize anura.ui after loading apps, scripts, libs, so that external apps and libraries can apply overrides.
-    await quickSettings.init();
-    await calendar.init();
-    await launcher.init();
-    await taskbar.init();
-
-    document.body.appendChild(contextMenu.element);
-    document.body.appendChild(launcher.element);
-    document.body.appendChild(launcher.clickoffChecker);
-    document.body.appendChild(quickSettings.quickSettingsElement);
-    document.body.appendChild(calendar.element);
-    document.body.appendChild(quickSettings.notificationCenterElement);
-    document.body.appendChild(taskbar.element);
-    document.body.appendChild(alttab.element);
-
-    anura.ui.theme.apply();
-
-    (window as any).taskbar = taskbar;
-
-    if (anura.settings.get("kiosk-mode")) {
-        taskbar.element.remove();
-        // There is a race condition here, but it doesn't matter
-        // because this feature is a joke
-        await sleep(1000);
-        anura.settings.get("kiosk-apps").forEach((app: string) => {
-            anura.apps[app].open();
-        });
-    }
-
-    document.addEventListener("contextmenu", function (e) {
-        if (e.shiftKey) return;
-        e.preventDefault();
-        //     const menu: any = document.querySelector(".custom-menu");
-        //     menu.style.removeProperty("display");
-        //     menu.style.top = `${e.clientY}px`;
-        //     menu.style.left = `${e.clientX}px`;
-    });
-    //
-    // document.addEventListener("click", (e) => {
-    //     if (e.button != 0) return;
-    //     (
-    //         document.querySelector(".custom-menu")! as HTMLElement
-    //     ).style.setProperty("display", "none");
-    // });
-
-    document.addEventListener("keydown", (e) => {
-        if (e.shiftKey && e.key.toLowerCase() == "tab") {
-            e.preventDefault();
-            alttab.onComboPress();
-        }
-        if (
-            e.key.toLowerCase() === "meta" &&
-            anura.settings.get("launcher-keybind")
-        ) {
-            quickSettings.close();
-            calendar.close();
-            launcher.toggleVisible();
-            return;
-        }
-    });
-    document.addEventListener("keyup", (e) => {
-        // console.log("keyup", e);
-        if (e.key.toLowerCase() === "shift") {
-            alttab.onModRelease();
-            return;
-        }
-    });
-
-    anura.initComplete = true;
-    taskbar.updateTaskbar();
-    alttab.update();
-
-    if (!anura.settings.get("explore-shown")) {
-        exploreApp.open();
-        anura.settings.set("explore-shown", true);
-    }
-});
-async function bootx86() {
-    const mgr = new x86MgrApp();
-    await anura.registerApp(mgr);
-
-    await anura.registerApp(new XFrogApp());
-
-    await anura.registerApp(
-        new XAppStub("X Calculator", "anura.xcalc", "", "xcalc"),
-    );
-    await anura.registerApp(new XAppStub("XTerm", "anura.xterm", "", "xterm"));
-    anura.x86 = new V86Backend(anura.x86hdd);
-
-    anura.settings
-        .get("user-xapps")
-        .forEach((stub: { name: string; cmd: string; id: string }) => {
-            console.log("registering user xapp", stub);
-            anura.registerApp(new XAppStub(stub.name, stub.id, "", stub.cmd));
-        });
 }
