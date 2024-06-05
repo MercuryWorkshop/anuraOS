@@ -503,3 +503,13 @@ function offlineError() {
             </html>
             `;
 }
+
+async function initSw() {
+    console.log("initing");
+    for (const client of await self.clients.matchAll()) {
+        client.postMessage({
+            anura_target: "anura.sw.reinit",
+        });
+    }
+}
+initSw();

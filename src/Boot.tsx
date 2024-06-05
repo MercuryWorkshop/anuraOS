@@ -100,27 +100,8 @@ window.addEventListener("load", async () => {
     const comlinksrc = "/libs/comlink/comlink.min.mjs";
     const comlink = await import(comlinksrc);
 
-    async function initComlink() {
-        const { port1, port2 } = new MessageChannel();
-
-        const msg = {
-            anura_target: "anura.comlink.init",
-            value: port2,
-        };
-
-        comlink.expose(swShared, port1);
-
-        navigator.serviceWorker.controller!.postMessage(msg, [port2]);
-    }
-
-    if (navigator.serviceWorker.controller) {
-        await initComlink();
-    }
-
-    navigator.serviceWorker.addEventListener("controllerchange", initComlink);
-
     let conf, milestone, instancemilestone;
-    await navigator.serviceWorker.register("/anura-sw.js");
+
     try {
         conf = await (await fetch("/config.json")).json();
         milestone = await (await fetch("/MILESTONE")).text();
@@ -139,12 +120,31 @@ window.addEventListener("load", async () => {
 
     swShared.anura = anura;
     swShared.sh = new anura.fs.Shell();
+    async function initComlink() {
+        const { port1, port2 } = new MessageChannel();
 
-    if (navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-            anura_target: "anura.nohost.set",
-        });
+        const msg = {
+            anura_target: "anura.comlink.init",
+            value: port2,
+        };
+
+        comlink.expose(swShared, port1);
+
+        navigator.serviceWorker.controller!.postMessage(msg, [port2]);
+        if (swShared.anura)
+            navigator.serviceWorker.controller!.postMessage({
+                anura_target: "anura.nohost.set",
+            });
     }
+
+    navigator.serviceWorker.addEventListener("controllerchange", initComlink);
+
+    await navigator.serviceWorker.register("/anura-sw.js");
+    initComlink();
+
+    navigator.serviceWorker.addEventListener("message", (event) => {
+        if (event.data.anura_target == "anura.sw.reinit") initComlink(); // this could accidentally be run twice but realistically there aren't any consequences for doing so
+    });
 
     // Register built-in Node Polyfills
     anura.registerLib(new NodeFS());
