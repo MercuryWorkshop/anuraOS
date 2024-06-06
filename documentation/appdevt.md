@@ -30,7 +30,7 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
 
 ## Tips and Tricks
 
-In iframed apps, Anura still gives you full access to the APIs and also gives you access to your app instance and the Window in the Window Manager. You can access the WMWindow using `instanceWindow` and access your anura app instance using `instance` in your javascript. This could be used to manipulate the window or invoke actions on your app instance. An example is shown below where a back arrow is drawn on the window decorations in the marketplace app.
+-   In iframed apps, Anura still gives you full access to the APIs and also gives you access to your app instance and the Window in the Window Manager. You can access the WMWindow using `instanceWindow` and access your anura app instance using `instance` in your javascript. This could be used to manipulate the window or invoke actions on your app instance. An example is shown below where a back arrow is drawn on the window decorations in the marketplace app.
 
 ```js
 const back = html`
@@ -76,6 +76,32 @@ const titlebar = Array.from(instanceWindow.element.children).filter((e) =>
 titlebar.style.backgroundColor = "rgba(0, 0, 0, 0)";
 
 titlebar.insertBefore(back, titlebar.children[1]);
+```
+
+-   All Anura windows allow you to hook into their events. This can be achieved via a callback or a event listener. You can see this in action in the window managment api and in multiple system apps.
+
+```js
+let win = anura.wm.create(instance, {
+    title: "Example Window",
+    width: "1280px",
+    height: "720px",
+});
+win.addEventListener("focus", (event) => {});
+
+win.addEventListener("resize", (event) => {
+    console.log(event.data.height);
+    console.log(event.data.width);
+});
+
+win.addEventListener("close", (event) => {});
+
+win.addEventListener("maximize", () => {});
+
+win.addEventListener("unmaximize", () => {});
+
+win.addEventListener("snap", (event) => {
+    console.log(event.data.snappedDirection);
+});
 ```
 
 ## Including Dreamland
