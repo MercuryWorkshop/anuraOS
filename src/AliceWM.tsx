@@ -39,7 +39,7 @@ class WindowInformation {
     resizable: boolean;
 }
 
-class WMWindow {
+class WMWindow extends EventTarget {
     element: HTMLElement;
     content: HTMLElement;
     maximized: boolean;
@@ -79,6 +79,7 @@ class WMWindow {
 
     maximizeImg: HTMLImageElement;
     constructor(wininfo: WindowInformation) {
+        super();
         this.wininfo = wininfo;
         this.state = $state({
             title: wininfo.title,
@@ -306,6 +307,14 @@ class WMWindow {
                         reactivateFrames();
                         window.removeEventListener("pointermove", resize);
                         if (!sentResize) {
+                            this.dispatchEvent(
+                                new MessageEvent("resize", {
+                                    data: {
+                                        width: this.width,
+                                        height: this.height,
+                                    },
+                                }),
+                            );
                             this.onresize(this.width, this.height);
                             sentResize = true;
                         }
@@ -504,7 +513,7 @@ class WMWindow {
             (getHighestZindex() + 1).toString(),
         );
         normalizeZindex();
-
+        this.dispatchEvent(new Event("focus"));
         if (this.onfocus) this.onfocus();
     }
     close() {
@@ -516,7 +525,7 @@ class WMWindow {
             this.element.remove();
             // TODO, Remove this and make it an event
             anura.removeStaleApps();
-
+            this.dispatchEvent(new Event("close"));
             if (this.onclose) this.onclose();
         }, 200);
     }
@@ -533,6 +542,7 @@ class WMWindow {
             return;
         }
 
+        this.dispatchEvent(new Event("maximize"));
         if (this.onmaximize) this.onmaximize();
         this.oldstyle = this.element.getAttribute("style");
         console.log(this.oldstyle);
@@ -564,6 +574,11 @@ class WMWindow {
 
         this.justresized = true;
         this.maximized = true;
+        this.dispatchEvent(
+            new MessageEvent("resize", {
+                data: { width: this.width, height: this.height },
+            }),
+        );
         this.onresize(this.width, this.height);
     }
     async unmaximize() {
@@ -591,10 +606,16 @@ class WMWindow {
 
             this.element.setAttribute("style", this.oldstyle!);
             this.justresized = true;
+            this.dispatchEvent(
+                new MessageEvent("resize", {
+                    data: { width: this.width, height: this.height },
+                }),
+            );
             this.onresize(this.width, this.height);
             return;
         }
 
+        this.dispatchEvent(new Event("unmaximize"));
         if (this.onunmaximize) this.onunmaximize();
         console.log("restoring");
         if (!anura.settings.get("disable-animation"))
@@ -611,6 +632,11 @@ class WMWindow {
         await sleep(10); // Race condition as a feature
         this.justresized = true;
         this.maximized = false;
+        this.dispatchEvent(
+            new MessageEvent("resize", {
+                data: { width: this.width, height: this.height },
+            }),
+        );
         this.onresize(this.width, this.height);
     }
     async remaximize() {
@@ -839,6 +865,11 @@ class WMWindow {
         }
 
         console.log("calling onSnap", this.onsnap);
+        this.dispatchEvent(
+            new MessageEvent("snap", {
+                data: { snapDirection: snapDirection },
+            }),
+        );
         if (this.onsnap) this.onsnap(snapDirection);
 
         switch (snapDirection) {
@@ -858,6 +889,11 @@ class WMWindow {
 
         this.element.style.width = scaledWidth - 4 + "px";
         this.element.style.height = height - 49 + "px";
+        this.dispatchEvent(
+            new MessageEvent("resize", {
+                data: { width: this.width, height: this.height },
+            }),
+        );
         this.onresize(this.width, this.height);
         this.dragging = false;
 

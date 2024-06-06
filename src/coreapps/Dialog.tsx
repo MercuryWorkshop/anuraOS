@@ -71,11 +71,7 @@ class Dialog extends App {
             (dialog as any).height = "170px";
             const win = anura.wm.create(this, dialog);
 
-            const oldOnClose = win.onclose;
             win.onclose = () => {
-                if (oldOnClose) {
-                    oldOnClose();
-                }
                 resolve(false);
             };
 
@@ -118,11 +114,7 @@ class Dialog extends App {
             (dialog as any).height = "200px";
             const win = anura.wm.create(this, dialog);
 
-            const oldOnClose = win.onclose;
             win.onclose = () => {
-                if (oldOnClose) {
-                    oldOnClose();
-                }
                 resolve(null);
             };
 

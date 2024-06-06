@@ -89,21 +89,16 @@ class BrowserApp extends App {
             return;
         }
 
-        const browser = anura.wm.create(
-            this,
-            {
-                title: "",
-                width: "700px",
-                height: "500px",
-            },
-            null,
-            null,
-            () => {
-                if (this.lastWindow == browser) {
-                    this.lastWindow = undefined;
-                }
-            },
-        );
+        const browser = anura.wm.create(this, {
+            title: "",
+            width: "700px",
+            height: "500px",
+        });
+        browser.onclose = () => {
+            if (this.lastWindow == browser) {
+                this.lastWindow = undefined;
+            }
+        };
         // Set the last active window to this one, as it was just opened
         this.lastWindow = browser;
 

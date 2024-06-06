@@ -75,13 +75,10 @@ export default class Anureg extends PersistenceProvider {
         ) => {
             target = (await this.get("dreamland." + ident)) || target;
 
-            const oldonclose = win.onclose;
-
-            win.onclose = () => {
-                if (oldonclose) oldonclose();
+            win.addEventListener("close", () => {
                 console.info("[dreamland.js]: saving " + ident);
                 this.set("dreamland." + ident, target);
-            }
+            });
             
             return stateful(target);
         }

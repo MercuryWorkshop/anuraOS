@@ -122,30 +122,29 @@ class XFrogApp extends App {
                         .replaceAll("\r", "")
                         .replaceAll("\n", "")
                         .split("x");
-                    win = anura.wm.create(
-                        this,
-                        {
-                            title: "X window",
-                            width: `${dimensions[0]}px`,
-                            height: `${Number(dimensions[1]!) + 28}px`,
-                        },
-                        () => sfocus(),
-                        (w, h) => {
-                            // onResize
-                            console.log(w, h);
-                            anura.x86!.openpty(
-                                `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
-                                    win!.width
-                                } ${win!.height - 28}`,
-                                0,
-                                0,
-                                console.log,
-                            );
-                        },
-                        () => {
-                            anura.x86!.runcmd(`xkill -id ${xwid}`);
-                        },
-                    );
+                    win = anura.wm.create(this, {
+                        title: "X window",
+                        width: `${dimensions[0]}px`,
+                        height: `${Number(dimensions[1]!) + 28}px`,
+                    });
+                    win.onfocus = () => {
+                        sfocus();
+                    };
+                    win.onresize = (w, h) => {
+                        // onResize
+                        console.log(w, h);
+                        anura.x86!.openpty(
+                            `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
+                                win!.width
+                            } ${win!.height - 28}`,
+                            0,
+                            0,
+                            console.log,
+                        );
+                    };
+                    win.onclose = () => {
+                        anura.x86!.runcmd(`xkill -id ${xwid}`);
+                    };
                     this.xwindows[xwid] = win;
                     // sfocus();
                 } else {

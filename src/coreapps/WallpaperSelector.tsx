@@ -228,11 +228,7 @@ class WallpaperSelector extends App {
                             </option>
                         </select>
                         {$if(
-                            use(
-                                // MARK: FIX: Contain only
-                                anura.settings.get("wallpaper-fit"),
-                                (fit) => fit == "contain",
-                            ),
+                            anura.settings.get("wallpaper-fit") === "contain",
                             <input
                                 type="color"
                                 name="contain-color"

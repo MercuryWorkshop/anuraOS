@@ -31,11 +31,9 @@ window.saved = $state({
     ),
 });
 
-const oldOnClose = instanceWindow.onclose;
-instanceWindow.onclose = () => {
-    oldOnClose && oldOnClose();
+instanceWindow.addEventListener("close", () => {
     anura.settings.set("workstore-repos", Object.fromEntries(saved.repos));
-};
+});
 
 window.state = $state({
     showBackButton: false,
