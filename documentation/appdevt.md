@@ -102,6 +102,14 @@ win.addEventListener("unmaximize", () => {});
 win.addEventListener("snap", (event) => {
     console.log(event.data.snappedDirection);
 });
+
+// Same things but callbacks instead
+win.onfocus: () => void;
+win.onresize: (width, height) => void;
+win.onclose: () => void;
+win.onmaximize: () => void;
+win.onsnap: (snapDirection) => void;
+win.onunmaximize: () => void;
 ```
 
 ## Including Dreamland
