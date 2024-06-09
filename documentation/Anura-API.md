@@ -306,11 +306,37 @@ This API provides access to Anura's networking backend, for routing your request
 
 **Usage:**
 
-```js
-anura.net.fetch; // Same functionality as built in fetch function
+### anura.net.fetch
 
-anura.net.WebSocket; // Same functionality as built in WebSocket constructor
+This has the same functionality as the DOM fetch function. It returns a `Response` and takes in a URL with options or a Request object.
+
+**Usage:**
+
+```js
+let response = await anura.net.fetch("https://anura.pro/MILESTONE");
+console.log(await response.text());
 ```
+
+### anura.net.WebSocket
+
+This has the same functionality as the built in DOM function and works identically as the regular `WebSocket` constructor.
+
+**Usage:**
+
+```js
+let ws = new anura.net.WebSocket("wss://echo.websocket.in/");
+ws.addEventListener("open", () => {
+    console.log("ws connected!");
+    ws.send("hello".repeat(128));
+});
+ws.addEventListener("message", (event) => {
+    console.log(event.data);
+});
+```
+
+### anura.net.libcurl
+
+This part of the api gives you full access to the libcurl.js APIs directly. You can learn more on how to use them [here](https://github.com/ading2210/libcurl.js?tab=readme-ov-file#javascript-api).
 
 ## anura.fs
 
