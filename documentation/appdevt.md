@@ -112,6 +112,58 @@ win.onsnap: (snapDirection) => void;
 win.onunmaximize: () => void;
 ```
 
+-   When an app is installed from the Marketplace or `libstore`, the current version and the repo that the app was downloaded from is injected into the manifest of your app. This could be used for update logic in your apps. An example is shown below of basic app updating logic, where it checks to see if libstore downloaded the app. If it did, then it checks if the version is the same on the repo it was downloaded from and updates if not.
+
+```js
+if (instance.manifest.marketplace) {
+    let libstore = await anura.import("anura.libstore@2.0.0");
+
+    marketplace = new libstore.Store(anura.net, {
+        onError: (appName, error) => {
+            anura.notifications.add({
+                title: "Example Application",
+                description: `Example Application encountered an error while updating.`,
+                timeout: 5000,
+            });
+        },
+        onDownloadStart: (appName) => {
+            anura.notifications.add({
+                title: "Example Application",
+                description: `Example Application started downloading an update.`,
+                timeout: 5000,
+            });
+        },
+        onDepInstallStart: (appName, libName) => {
+            anura.notifications.add({
+                title: "Example Application",
+                description: `Example Application started updating dependency ${libName}.`,
+                timeout: 5000,
+            });
+        },
+        onComplete: (appName) => {
+            anura.notifications.add({
+                title: "Example Application",
+                description: `Example Application finished updating.`,
+                timeout: 5000,
+            });
+        },
+    });
+    const marketplaceRepo = await marketplace.getRepo(
+        "Update Repo",
+        instance.manifest.marketplace.repo,
+    );
+    let repoApp;
+    if (repo.version === "legacy") {
+        repoApp = marketplaceRepo.getApp(instance.name);
+    } else {
+        repoApp = marketplaceRepo.getApp(instance.package);
+    }
+    if (instance.manifest.version !=== repoApp.version) {
+        repo.installApp(instance.package)
+    }
+}
+```
+
 ## Including Dreamland
 
 dreamland.js is a reactive JSX-inspired rendering library with no virtual dom and no build step. You can find the source code [here](https://github.com/MercuryWorkshop/dreamlandjs) and the documentation [here](https://dreamland.js.org/).

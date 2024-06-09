@@ -130,13 +130,13 @@ To make a repo accessible via the Store Library you can use the utility [create-
 $ npx create-anura-repo
 ```
 
-After doing this you can add host the repo statically and be able to use it in libstore. Keep in mind you will have to rerun this command whenever a change is made to the repo.
+After doing this you can add host the repo statically and be able to use it in libstore. Keep in mind you will have to rerun this command whenever a change is made to the repo as this takes all of your individual app manifests and packages it into `list.json` to make repos fast to resolve.
 
 # libstore
 
 ## Initialization
 
-To initialize the libstore library, call the `Store` constructor with a networking client. The client must have a fetch function that returns `Response` objects.
+To initialize the libstore library, call the `Store` constructor with a networking client. The client must have a `fetch` function that returns `Response` objects.
 
 **Usage:**
 
@@ -186,4 +186,52 @@ const marketplaceRepo = await marketplace.getRepo(
     "Anura App Repository",
     "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
 );
+```
+
+## Using your repo
+
+After initializing your repo, there is somethings to keep in mind before using it.
+
+### Repo Version
+
+First, check if your repo is a legacy repo. you can do this by checking the `version` property of the StoreRepo that you get returned to you. If your repo returns legacy, this means that the repo does not have a manifest, which means that this repo is pre 2.0, which means that apps and libraries are identified by their names and not their package idenfitifers.
+
+### repo.refreshRepoCache
+
+This flushes the repo cache and refetches it. This does not return anything.
+
+**Usage:**
+
+```js
+let button = document.createElement("button");
+button.innerHTML = "Refresh";
+button.addEventListener("click", () => {
+    repo.refreshRepoCache();
+});
+```
+
+### repo.refreshThumbCache
+
+This flushes the the thumbnail cache. All new thumbnail fetches will add to the new cache.
+
+**Usage:**
+
+```js
+let button = document.createElement("button");
+button.innerHTML = "Refresh";
+button.addEventListener("click", () => {
+    repo.refreshRepoCache();
+});
+```
+
+### repo.getRepoManifest
+
+This fetches the repo manifest, and returns the repo version. The manifest is then set as repo.manifest. If the repo is legacy, this does not exist as legacy repos do not have a manifest.
+
+**Usage:**
+
+```js
+let version = repo.getRepoManifest();
+console.log(`Repo Version: ${version}`);
+console.log("Repo Manifest: ", repo.manifest);
 ```
