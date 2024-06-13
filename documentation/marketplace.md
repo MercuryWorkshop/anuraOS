@@ -136,7 +136,7 @@ After doing this you can add host the repo statically and be able to use it in l
 
 ## Initialization
 
-To initialize the libstore library, call the `Store` constructor with a networking client. The client must have a `fetch` function that returns `Response` objects.
+To initialize the libstore library, call the `Store` constructor with a networking client. The client must have a `fetch` function that returns `Response` objects. You can also utilize libstore hooks that get initalized here.
 
 **Usage:**
 
@@ -198,7 +198,7 @@ First, check if your repo is a legacy repo. you can do this by checking the `ver
 
 ### repo.refreshRepoCache
 
-This flushes the repo cache and refetches it. This does not return anything.
+This method flushes the repo cache and refetches it. This does not return anything.
 
 **Usage:**
 
@@ -212,7 +212,7 @@ button.addEventListener("click", () => {
 
 ### repo.refreshThumbCache
 
-This flushes the the thumbnail cache. All new thumbnail fetches will add to the new cache.
+This method flushes the the thumbnail cache. All new thumbnail fetches will add to the new cache.
 
 **Usage:**
 
@@ -226,12 +226,90 @@ button.addEventListener("click", () => {
 
 ### repo.getRepoManifest
 
-This fetches the repo manifest, and returns the repo version. The manifest is then set as repo.manifest. If the repo is legacy, this does not exist as legacy repos do not have a manifest.
+This method fetches the repo manifest, and returns the repo version. The manifest is then set as repo.manifest. If the repo is legacy, this does method does not exist as legacy repos do not have a manifest. The repo manifest is already fetched at the start of a repo, which means this does not need to be rerun unless you need to fetch it again.
 
 **Usage:**
 
 ```js
-let version = repo.getRepoManifest();
+let version = await repo.getRepoManifest();
 console.log(`Repo Version: ${version}`);
 console.log("Repo Manifest: ", repo.manifest);
+```
+
+### repo.getApps
+
+This method grabs all of the apps from the repo and returns all of them in an array.
+
+```js
+let apps = await repo.getApps();
+apps.forEach((app) => {
+    console.log("App Data: ", app);
+});
+```
+
+### repo.getApp
+
+This method grabs an app based on its package identifier if it is >=2.0 or takes in a package name if its legacy and then returns its app details in an object.
+
+```js
+let app = await repo.getApp("anura.ide");
+console.log("App Data: ", app);
+```
+
+### repo.installApp
+
+This method installs an app based on its package identifier if it is >=2.0 or takes in a package name if its legacy.
+
+```js
+await repo.installApp("anura.ide");
+```
+
+### repo.getAppThumb
+
+This method grabs a app icon based on its package identifier if it is >=2.0 or takes in a package name if its legacy and then returns a blob url of the icon.
+
+```js
+let icon = await repo.getAppThumb("anura.ide");
+let element = document.createElement("img");
+element.src = icon;
+document.body.appendChild(element);
+```
+
+### repo.getLibs
+
+This method grabs all of the libraries from the repo and returns all of them in an array.
+
+```js
+let libs = await repo.getlibs();
+libs.forEach((lib) => {
+    console.log("Library Data: ", lib);
+});
+```
+
+### repo.getLib
+
+This method grabs an library based on its package identifier if it is >=2.0 or takes in a package name if its legacy and then returns its library details in an object.
+
+```js
+let lib = await repo.getlib("anura.flash.handler");
+console.log("Library Data: ", lib);
+```
+
+### repo.installLib
+
+This method installs an library based on its package identifier if it is >=2.0 or takes in a package name if its legacy.
+
+```js
+await repo.installLib("anura.flash.handler");
+```
+
+### repo.getLibThumb
+
+This method grabs a library icon based on its package identifier if it is >=2.0 or takes in a package name if its legacy and then returns a blob url of the icon.
+
+```js
+let icon = await repo.getLibThumb("anura.flash.handler");
+let element = document.createElement("img");
+element.src = icon;
+document.body.appendChild(element);
 ```
