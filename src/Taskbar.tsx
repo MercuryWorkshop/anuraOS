@@ -410,6 +410,7 @@ class Taskbar {
                                 {use(this.state.net_icon)}
                                 {use(this.state.bat_icon)}
                             </span>
+                            <span class="systray"></span>
                             <span>
                                 <span
                                     class={[

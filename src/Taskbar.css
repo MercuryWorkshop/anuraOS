@@ -105,7 +105,13 @@ body.blur-disable footer {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
 }
-
+.systray {
+    display: flex;
+    padding-top: 0.075em; /* mmm */
+    height: 1.5em;
+    align-items: center;
+    justify-content: center;
+}
 .notification-badge {
     display: flex;
     width: 1.5em;

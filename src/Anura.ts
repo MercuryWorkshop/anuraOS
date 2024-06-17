@@ -173,6 +173,7 @@ class Anura {
         taskbar.updateTaskbar();
         alttab.update();
     }
+    systray: Systray;
     async import(packageName: string, searchPath?: string) {
         if (searchPath) {
             // Using node-style module resolution

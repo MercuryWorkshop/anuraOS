@@ -392,6 +392,7 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(quickSettings.notificationCenterElement);
     document.body.appendChild(taskbar.element);
     document.body.appendChild(alttab.element);
+    anura.systray = new Systray();
 
     anura.ui.theme.apply();
 
