@@ -1,3 +1,5 @@
+// BRAINROT WARNING: this file sucks to work on, it's written terribly, should be refactored, most likely wont be
+
 class QuickSettings {
     dateformat = new Intl.DateTimeFormat(navigator.language, {
         weekday: "short",
@@ -223,6 +225,21 @@ class QuickSettings {
     updateClickoffChecker: (show: boolean) => void;
 
     open() {
+        console.log("reading and assigning");
+        // reason for this is otherwise dreamland doesn't run the use() dunno why
+        const pinnedSettings = this.state.pinnedSettings;
+        for (let i = 0; i < pinnedSettings.length; i++) {
+            console.log("reading: " + pinnedSettings[i]!.registry);
+
+            pinnedSettings[i]!.value = anura.settings.get(
+                pinnedSettings[i]!.registry,
+            );
+            console.log(
+                "assigned: " + anura.settings.get(pinnedSettings[i]!.registry),
+            );
+        }
+
+        this.state.pinnedSettings = pinnedSettings;
         this.state.showQuickSettings = true;
     }
 
@@ -335,21 +352,48 @@ class QuickSettings {
                         </button>
                     </div>
                     <div class={["quickSettingsPinned"]}>
-                        {use(this.state.pinnedSettings, (pinnedSettings) =>
-                            pinnedSettings
-                                .filter((setting) => setting.type === "boolean")
-                                .map((setting) => (
+                        {use(this.state.pinnedSettings, (pinnedSettings) => {
+                            const settingsElements = [];
+                            for (let i = 0; i < pinnedSettings.length; i++) {
+                                settingsElements.push(
                                     <div
                                         class="pinnedSetting"
-                                        title={setting.description}
+                                        title={
+                                            this.state.pinnedSettings[i]!
+                                                .description
+                                        }
                                         on:click={() => {
-                                            setting.value = !setting.value;
+                                            anura.settings.set(
+                                                this.state.pinnedSettings[i]!
+                                                    .registry,
+                                                !anura.settings.get(
+                                                    this.state.pinnedSettings[
+                                                        i
+                                                    ]!.registry,
+                                                ),
+                                            );
+                                            this.state.pinnedSettings[
+                                                i
+                                            ]!.value = anura.settings.get(
+                                                this.state.pinnedSettings[i]!
+                                                    .registry,
+                                            );
                                             this.state.pinnedSettings =
                                                 pinnedSettings;
-                                            console.log(setting);
-                                            if (setting.onChange) {
+                                            console.log(
+                                                this.state.pinnedSettings[i]!,
+                                            );
+                                            if (
+                                                this.state.pinnedSettings[i]!
+                                                    .onChange
+                                            ) {
                                                 console.log("Calling onChange");
-                                                setting.onChange(setting.value);
+                                                this.state.pinnedSettings[i]!
+                                                    .onChange!(
+                                                    this.state.pinnedSettings[
+                                                        i
+                                                    ]!.value,
+                                                );
                                             }
                                         }}
                                     >
@@ -357,19 +401,49 @@ class QuickSettings {
                                             class={[
                                                 "matter-button-contained",
                                                 "settingsIcon",
-                                                setting.value && "enabled",
+                                                use(
+                                                    this.state.pinnedSettings[
+                                                        i
+                                                    ]!.value,
+                                                    (value) => {
+                                                        console.log(
+                                                            "Hold on let me cook: " +
+                                                                this.state
+                                                                    .pinnedSettings[
+                                                                    i
+                                                                ]!.registry +
+                                                                " " +
+                                                                this.state
+                                                                    .pinnedSettings[
+                                                                    i
+                                                                ]!.value,
+                                                        );
+                                                        if (value)
+                                                            return "enabled";
+                                                        else return "disabled";
+                                                    },
+                                                ),
                                             ]}
                                         >
                                             <span class="material-symbols-outlined">
-                                                {setting.icon || "settings"}
+                                                {this.state.pinnedSettings[i]!
+                                                    .icon || "settings"}
                                             </span>
                                         </button>
                                         <div class="settingTitle">
-                                            <span>{setting.name}</span>
+                                            <span>
+                                                {
+                                                    this.state.pinnedSettings[
+                                                        i
+                                                    ]!.name
+                                                }
+                                            </span>
                                         </div>
-                                    </div>
-                                )),
-                        )}
+                                    </div>,
+                                );
+                            }
+                            return settingsElements;
+                        })}
                     </div>
                     <div class={["sliderContainer"]}></div>
                     <div class={["dateContainer"]}>
@@ -466,12 +540,12 @@ class QuickSettings {
                         : "none";
                 },
             );
-        handle(use(this.state.pinnedSettings), (pinnedSettings) => {
-            anura.settings.set("pinnedSettings", pinnedSettings);
-            pinnedSettings.forEach((setting) => {
-                anura.settings.set(setting.registry, setting.value);
-            });
-        });
+        // handle(use(this.state.pinnedSettings), (pinnedSettings) => {
+        //     anura.settings.set("pinnedSettings", pinnedSettings);
+        //     pinnedSettings.forEach((setting) => {
+        //         anura.settings.set(setting.registry, setting.value);
+        //     });
+        // });
 
         handle(use(this.state.showQuickSettings), (show: boolean) => {
             this.updateClickoffChecker(show);
