@@ -16,7 +16,7 @@ class QuickSettings {
             name: string;
             description: string;
             value: any;
-            onChange?: (value: any) => void;
+            onChange?: string;
         }>;
         date: string;
     }> = $state({
@@ -388,8 +388,12 @@ class QuickSettings {
                                                     .onChange
                                             ) {
                                                 console.log("Calling onChange");
-                                                this.state.pinnedSettings[i]!
-                                                    .onChange!(
+                                                new Function(
+                                                    "value",
+                                                    this.state.pinnedSettings[
+                                                        i
+                                                    ]!.onChange!,
+                                                )(
                                                     this.state.pinnedSettings[
                                                         i
                                                     ]!.value,
@@ -511,14 +515,13 @@ class QuickSettings {
                 icon: "speed",
                 description: "Remove background blur",
                 value: false,
-                onChange: (value) => {
+                onChange: `
                     console.log("Blur disable changed to", value);
                     if (value === true) {
                         document.body.classList.add("blur-disable");
                     } else {
                         document.body.classList.remove("blur-disable");
-                    }
-                },
+                    }`,
             },
             {
                 registry: "launcher-keybind",
