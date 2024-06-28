@@ -196,7 +196,7 @@ class Launcher {
         this.clickoffChecker = clickoffChecker;
         this.updateClickoffChecker = updateClickoffChecker;
 
-        handle(use(this.state.active), updateClickoffChecker);
+        useChange(use(this.state.active), updateClickoffChecker);
     }
 
     async init() {

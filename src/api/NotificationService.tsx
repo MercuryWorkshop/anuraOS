@@ -50,7 +50,7 @@ class NotificationService {
             this.remove(notif);
         });
 
-        handle(use(notif.state.timedOut), (timedOut) => {
+        useChange(use(notif.state.timedOut), (timedOut) => {
             console.log("timedOut", timedOut);
             if (timedOut) this.remove(notif, true);
         });
@@ -76,7 +76,7 @@ class NotificationService {
     subscribe(callback: (notifications: AnuraNotification[]) => void) {
         let active = true;
 
-        handle(use(this.state.notifications), () => {
+        useChange(use(this.state.notifications), () => {
             if (!active) return;
 
             callback(this.state.notifications);

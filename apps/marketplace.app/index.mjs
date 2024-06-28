@@ -240,7 +240,7 @@ function App() {
     `;
 
     this.mount = () => {
-        handle(use(state.currentScreen), (screen) => {
+        useChange(use(state.currentScreen), (screen) => {
             this.screen.innerHTML = "";
             switch (screen) {
                 case "repoList":

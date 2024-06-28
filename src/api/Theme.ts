@@ -137,7 +137,7 @@ class Theme implements ThemeProps {
         });
 
         for (const key in this.state) {
-            handle(use(this.state[key as keyof ThemeProps]), (value) => {
+            useChange(use(this.state[key as keyof ThemeProps]), (value) => {
                 for (const prop of this.cssPropMap[key as keyof ThemeProps]) {
                     document.body.style.setProperty(prop, value);
                 }

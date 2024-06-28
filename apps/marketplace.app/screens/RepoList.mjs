@@ -81,7 +81,7 @@ function RepoItem() {
 }
 
 export default function RepoList() {
-    handle(use(saved.repos), (repos) => {
+    useChange(use(saved.repos), (repos) => {
         this.repos = repos.map(
             ([name, url]) =>
                 html`<${RepoItem} reponame=${name} repourl=${url} />`,

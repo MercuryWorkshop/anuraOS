@@ -164,8 +164,8 @@ class AnuraUI {
                 this.components = new Map();
             }
         }
-
-        const AnuraVersion: Component<{ product: string }, Empty> =
+        // dont ask about the random a string, dreamland types are fucked up, will fix later
+        const AnuraVersion: Component<{ product: string }, Empty, "a"> =
             function () {
                 this.product ||= "Anura";
                 return (
@@ -174,7 +174,7 @@ class AnuraUI {
                     </span>
                 );
             };
-
+        // dont ask about the random a string, dreamland types are fucked up, will fix later
         const Panel: Component<
             {
                 width?: string;
@@ -185,7 +185,8 @@ class AnuraUI {
                 class?: string | (string | DLPointer<any>)[];
                 id?: string;
             },
-            { children: HTMLElement[] }
+            { children: HTMLElement[] },
+            "a"
         > = function () {
             this.style ||= {};
             this.class ||= [];

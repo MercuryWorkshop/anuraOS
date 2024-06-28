@@ -407,7 +407,7 @@ prenexIcons.forEach(icon => {
             </Panel>
         );
 
-        handle(use(this.state.show), (show: boolean) => {
+        useChange(use(this.state.show), (show: boolean) => {
             this.updateClickoffChecker(show);
         });
     }

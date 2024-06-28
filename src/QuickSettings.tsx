@@ -532,7 +532,7 @@ class QuickSettings {
                 value: true,
             },
         ]),
-            handle(
+            useChange(
                 use(
                     anura.notifications.state.notifications,
                     (notifications) => notifications.length > 0,
@@ -543,14 +543,14 @@ class QuickSettings {
                         : "none";
                 },
             );
-        // handle(use(this.state.pinnedSettings), (pinnedSettings) => {
+        // useChange(use(this.state.pinnedSettings), (pinnedSettings) => {
         //     anura.settings.set("pinnedSettings", pinnedSettings);
         //     pinnedSettings.forEach((setting) => {
         //         anura.settings.set(setting.registry, setting.value);
         //     });
         // });
 
-        handle(use(this.state.showQuickSettings), (show: boolean) => {
+        useChange(use(this.state.showQuickSettings), (show: boolean) => {
             this.updateClickoffChecker(show);
             anura.notifications.setRender(!show);
         });
