@@ -299,13 +299,72 @@ document.addEventListener("anura-login-completed", async () => {
      */
     let directories = anura.settings.get("directories");
 
-    if (!directories) {
+    const sh = new anura.fs.Shell();
+
+    /**
+     * This is a migration for the new directory structure
+     * introduced in AnuraOS 2.0.0. This is to ensure that
+     * users who have been using AnuraOS for a while can
+     * have a consistent experience with new installations.
+     */
+    const map = {
+        apps: ["/userApps", "/usr/apps"],
+        libs: ["/userLibs", "/usr/lib"],
+        init: ["/userInit", "/usr/init"],
+    };
+
+    if (directories) {
+        const needsMigration = Object.entries(map).filter(
+            ([key, [old, _new]]) => directories[key] === old,
+        );
+
+        if (needsMigration.length > 0) {
+            anura.notifications.add({
+                title: "Anura Update",
+                description:
+                    "AnuraOS has been updated to a new version. Users are recommended to change the installation directory of their apps and libraries to /usr/ to ensure consistency with new installations.",
+                timeout: "never",
+                buttons: [
+                    {
+                        text: "Migrate Now",
+                        callback: async () => {
+                            const migrate = async (
+                                oldPath: string,
+                                newPath: string,
+                            ) => {
+                                const parent = newPath.split("/").slice(0, -1);
+                                await sh.promises.mkdirp(parent.join("/"));
+                                await anura.fs.promises.rename(
+                                    oldPath,
+                                    newPath,
+                                );
+                            };
+
+                            await Promise.all(
+                                needsMigration.map(
+                                    async ([key, [old, newPath]]) => {
+                                        directories[key] = newPath;
+                                        await migrate(old!, newPath!);
+                                    },
+                                ),
+                            );
+
+                            await anura.settings.set(
+                                "directories",
+                                directories,
+                            );
+                        },
+                    },
+                ],
+            });
+        }
+    } else {
         await anura.settings.set(
             "directories",
             (directories = {
-                apps: "/userApps",
-                libs: "/userLibs",
-                init: "/userInit",
+                apps: "/usr/apps",
+                libs: "/usr/lib",
+                init: "/usr/init",
                 opt: "/opt",
             }),
         );
@@ -332,7 +391,7 @@ document.addEventListener("anura-login-completed", async () => {
 
     requiredDirectories.forEach(async (k: string) => {
         try {
-            await anura.fs.promises.mkdir(directories[k]);
+            await sh.promises.mkdirp(directories[k]);
         } catch (e) {
             if (e.code !== "EEXIST") {
                 console.error(e);
@@ -473,6 +532,7 @@ async function bootx86() {
 }
 async function bootUserCustomizations() {
     const directories = anura.settings.get("directories");
+    console.log("directories", directories);
     if ((await fetch("/fs/")).status === 404) {
         // Safe mode
         // Register recovery helper app

@@ -440,7 +440,7 @@ class AFSShell {
             /**
              * Callback to execute on each file.
              */
-            exec?: (path: string, next: () => void) => void;
+            exec?: (path: string) => void;
         },
         callback?: (err: Error | null, files: string[]) => void,
     ): void;
@@ -522,15 +522,7 @@ class AFSShell {
                 );
             }
             if (options.exec) {
-                let remaining = results.length;
-                results.forEach((file) => {
-                    options.exec!(file, () => {
-                        remaining--;
-                        if (remaining === 0) {
-                            callback!(null, results);
-                        }
-                    });
-                });
+                results.forEach((file) => options.exec!(file));
             } else {
                 callback!(null, results);
             }
@@ -562,22 +554,13 @@ class AFSShell {
         const entries: any[] = [];
 
         if (options.recursive) {
-            this.find(
-                dir,
-                {
-                    exec: (path, next = () => {}) => {
-                        entries.push(path);
-                        next();
-                    },
-                },
-                (err, _) => {
-                    if (err) {
-                        callback!(err, []);
-                        return;
-                    }
-                    callback!(null, entries);
-                },
-            );
+            this.find(dir, (err, files) => {
+                if (err) {
+                    callback!(err, []);
+                    return;
+                }
+                callback!(null, files);
+            });
         } else {
             anura.fs.readdir(
                 this.#relativeToAbsolute(dir),
@@ -812,7 +795,7 @@ class AFSShell {
                 regex?: RegExp;
                 name?: string;
                 path?: string;
-                exec?: (path: string, next: () => void) => void;
+                exec?: (path: string) => void;
             },
         ) => {
             return new Promise<string[]>((resolve, reject) => {
