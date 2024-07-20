@@ -24,9 +24,7 @@ class Platform {
             if (mobileRE.test(ua) && !notMobileRE.test(ua)) {
                 console.log("Mobile detected");
                 platform = "mobile";
-            }
-
-            if (tabletRE.test(ua)) {
+            } else if (tabletRE.test(ua)) {
                 console.log("Tablet detected");
                 platform = "tablet";
             }
