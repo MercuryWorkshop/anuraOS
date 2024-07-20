@@ -99,8 +99,15 @@
     align-items: center;
     z-index: 1;
 }
+body.platform-mobile .aliceWMwin {
+    border: 0;
+    border-radius: 0px;
+}
 
-body.platform-mobile .aliceWMwin .title,
+body.platform-mobile .aliceWMwin .title {
+    height: 21px; /* just big enough to hide behind taskbar */
+}
+
 body.platform-tablet .aliceWMwin .title {
     height: 32px;
 }

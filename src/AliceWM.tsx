@@ -90,12 +90,13 @@ class WMWindow extends EventTarget {
             this.resizable = true;
         }
         this.clampWindows = !!anura.settings.get("clampWindows");
+
         this.element = (
             <div
                 class="aliceWMwin opacity0"
                 style={`
-                    width: ${anura.platform.type == "mobile" ? "calc(100vw - 10px)" : wininfo.width};
-                    height: ${anura.platform.type == "mobile" ? "calc(100vh - 58px)" : wininfo.height};
+                    width: ${wininfo.width};
+                    height: ${wininfo.height};
                     ${anura.platform.type == "mobile" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
                 on:pointerover={() => {
@@ -434,6 +435,14 @@ class WMWindow extends EventTarget {
 
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("scaletransition");
+
+        if (anura.platform.type == "mobile") {
+            if (!this.onresize) {
+                // it crashes without this, I hope this doesn't break anything
+                this.onresize = () => {};
+            }
+            this.maximize();
+        }
 
         setTimeout(() => this.element.classList.remove("opacity0"), 10);
     }

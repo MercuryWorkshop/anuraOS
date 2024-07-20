@@ -217,16 +217,16 @@ class Launcher {
             <Panel
                 id="launcher"
                 width={
-                    anura.platform.type == "mobile"
-                        ? "calc(min(100%, 65em) - 20px)"
-                        : "min(70%, 35em)"
+                    anura.platform.type == "mobile" ? "100%" : "min(70%, 35em)"
                 }
                 height={use(this.state.active, (active) =>
                     active
                         ? anura.platform.type == "mobile"
-                            ? "min(50%, 25em)"
+                            ? "calc(100% - 75px)"
                             : "min(80%, 40em)"
-                        : "min(30%, 20em)",
+                        : anura.platform.type == "mobile"
+                          ? "100%"
+                          : "min(30%, 20em)",
                 )}
                 class={[
                     this.css,
