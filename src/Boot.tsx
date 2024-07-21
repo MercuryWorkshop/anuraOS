@@ -480,6 +480,43 @@ document.addEventListener("anura-login-completed", async () => {
         launcher.state.active = true;
     }
 
+    if (anura.platform.type == "tablet") {
+        // Adjust styles for Taskbar right
+        const tright: HTMLDivElement =
+            taskbar.element.querySelector("#taskbar-right")!;
+        tright.style.backgroundColor = "black";
+        tright.style.top = "0";
+        tright.style.right = "0";
+        tright.style.height = "25px";
+        tright.style.transform = "translateY(0%)";
+        tright.style.width = "100%";
+        tright.style.zIndex = "1000000";
+
+        // Adjust styles taskinfo-container (has date and battery)
+        const tinfocont: HTMLDivElement = tright.querySelector(
+            "#taskinfo-container",
+        )!;
+        tinfocont.style.background = "black";
+        tinfocont.style.right = "0";
+        tinfocont.style.position = "absolute";
+
+        // Adjust styles for date container
+        const tdatecon: HTMLDivElement =
+            tright.querySelector("#date-container")!;
+        tdatecon.style.background = "black";
+
+        document.body.appendChild(tright);
+
+        // Adjust launcher CSS
+        launcher.element.style.left = "0";
+        launcher.element.style.top = "25px";
+        launcher.element.style.borderRadius = "0";
+        const aview: HTMLDivElement =
+            launcher.element.querySelector(".appsView")!;
+        aview.style.gridTemplateColumns = "1fr 1fr 1fr 1fr 1fr 1fr";
+        launcher.state.active = true;
+    }
+
     document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
     document.body.appendChild(launcher.clickoffChecker);

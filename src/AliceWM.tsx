@@ -97,7 +97,7 @@ class WMWindow extends EventTarget {
                 style={`
                     width: ${wininfo.width};
                     height: ${wininfo.height};
-                    ${anura.platform.type == "mobile" ? "top: 5px!important; left: 5px!important;" : ""}
+                    ${anura.platform.type == "mobile" || anura.platform.type == "tablet" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
                 on:pointerover={() => {
                     this.mouseover = true;
@@ -126,7 +126,10 @@ class WMWindow extends EventTarget {
                     on:pointerdown={(evt: PointerEvent) => {
                         deactivateFrames();
 
-                        if (anura.platform.type !== "mobile") {
+                        if (
+                            anura.platform.type !== "mobile" &&
+                            anura.platform.type !== "tablet"
+                        ) {
                             this.dragging = true;
                             this.originalLeft = this.element.offsetLeft;
                             this.originalTop = this.element.offsetTop;
@@ -286,7 +289,11 @@ class WMWindow extends EventTarget {
                 "pointerdown",
                 (e: PointerEvent) => {
                     e.preventDefault();
-                    if (anura.platform.type == "mobile") return;
+                    if (
+                        anura.platform.type == "mobile" ||
+                        anura.platform.type == "tablet"
+                    )
+                        return;
                     original_width = parseFloat(
                         getComputedStyle(this.element, null)
                             .getPropertyValue("width")
@@ -436,7 +443,10 @@ class WMWindow extends EventTarget {
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("scaletransition");
 
-        if (anura.platform.type == "mobile") {
+        if (
+            anura.platform.type == "mobile" ||
+            anura.platform.type == "tablet"
+        ) {
             if (!this.onresize) {
                 // it crashes without this, I hope this doesn't break anything
                 this.onresize = () => {};
@@ -1112,7 +1122,10 @@ let AliceWM = {
         const win = new WMWindow(wininfo);
         document.body.appendChild(win.element);
         win.focus();
-        if (anura.platform.type != "mobile") {
+        if (
+            anura.platform.type != "mobile" &&
+            anura.platform.type != "tablet"
+        ) {
             center(win.element);
         }
         return win;

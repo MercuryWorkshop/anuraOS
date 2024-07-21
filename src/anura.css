@@ -1,10 +1,11 @@
 html {
     background-color: black;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
-    -webkit-touch-callout: none;
     width: 100%;
     height: 100%;
     margin: 0;

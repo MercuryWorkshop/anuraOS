@@ -23,7 +23,10 @@ class Taskbar {
         pinnedApps: [],
         activeApps: [],
         showBar: false,
-        rounded: anura.platform.type == "mobile" ? false : true,
+        rounded:
+            anura.platform.type == "mobile" || anura.platform.type == "tablet"
+                ? false
+                : true,
         time: "",
         date: "",
         bat_icon: "battery_0_bar",
@@ -460,7 +463,11 @@ class Taskbar {
         if (this.maximizedWins.length > 0 || snappedWindows.length > 0) {
             this.state.rounded = false;
         } else {
-            if (anura.platform.type != "mobile") this.state.rounded = true;
+            if (
+                anura.platform.type != "mobile" &&
+                anura.platform.type != "tablet"
+            )
+                this.state.rounded = true;
         }
         console.log("max:", this.maximizedWins.length);
     }
