@@ -140,6 +140,9 @@ export function openFile(path) {
         case "css":
             openText(path);
             break;
+        case "ajs":
+            anura.processes.execute(path);
+            break;
         case "mp3":
             openAudio(path, "audio/mpeg");
             break;

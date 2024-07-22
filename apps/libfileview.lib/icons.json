@@ -109,6 +109,12 @@
             "type": "JavaScript CommonJS Module"
         },
         {
+            "ext": "ajs",
+            "icon": "icons/js.svg",
+            "source": "papirus/Papirus/16x16/mimetypes/application-javascript.svg",
+            "type": "Anura JavaScript Binary"
+        },
+        {
             "ext": "json",
             "icon": "icons/json.svg",
             "source": "papirus/Papirus/16x16/mimetypes/application-json.svg",
