@@ -14,9 +14,9 @@ class Processes {
 abstract class Process {
     pid: number;
 
-    stdout: ReadableStream<string>;
-    stderr: ReadableStream<string>;
-    stdin: WritableStream<string>;
+    stdout: ReadableStream<Uint8Array>;
+    stderr: ReadableStream<Uint8Array>;
+    stdin: WritableStream<Uint8Array>;
 
     kill() {
         delete anura.processes.procs[this.pid];
