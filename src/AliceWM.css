@@ -63,6 +63,12 @@
     z-index: 9999;
 }
 
+/* super jank */
+.snapPreview-se,
+.snapPreview-sw {
+    bottom: 49px !important;
+}
+
 #snapSplitBar {
     background-color: rgba(0, 0, 0, 0.1);
     top: 0;

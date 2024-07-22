@@ -12,7 +12,7 @@
 
 type SnappedWindow = {
     window: WMWindow;
-    direction: "left" | "right";
+    direction: "left" | "right" | "ne" | "nw" | "se" | "sw";
 };
 
 let splitBar: WMSplitBar | null = null;
@@ -64,7 +64,9 @@ class WMWindow extends EventTarget implements Process {
     onresize: (w: number, h: number) => void;
     onclose: () => void;
     onmaximize: () => void;
-    onsnap: (snapDirection: "left" | "right" | "top") => void;
+    onsnap: (
+        snapDirection: "left" | "right" | "top" | "ne" | "nw" | "se" | "sw",
+    ) => void;
     onunmaximize: () => void;
 
     snapped = false;
@@ -842,7 +844,7 @@ class WMWindow extends EventTarget implements Process {
         }, 10);
     }
 
-    snap(snapDirection: "left" | "right" | "top") {
+    snap(snapDirection: "left" | "right" | "top" | "ne" | "nw" | "se" | "sw") {
         this.dragging = false;
         this.oldstyle = this.element.getAttribute("style");
 
@@ -895,13 +897,17 @@ class WMWindow extends EventTarget implements Process {
             }),
         );
         if (this.onsnap) this.onsnap(snapDirection);
-
+        console.log(snapDirection);
         switch (snapDirection) {
             case "left":
+                this.element.style.width = scaledWidth - 4 + "px";
+                this.element.style.height = height - 49 + "px";
                 this.element.style.top = "0px";
                 this.element.style.left = "0px";
                 break;
             case "right":
+                this.element.style.width = scaledWidth - 4 + "px";
+                this.element.style.height = height - 49 + "px";
                 this.element.style.top = "0px";
                 this.element.style.left = scaledWidth + "px";
                 break;
@@ -909,15 +915,55 @@ class WMWindow extends EventTarget implements Process {
                 this.maximize();
                 this.dragging = false;
                 return;
+            case "ne":
+                this.element.style.width = width / 2 + "px";
+                this.element.style.height = height / 2 - 4 + "px";
+                this.element.style.top = "0px";
+                this.element.style.left =
+                    width - this.element.clientWidth + "px";
+                break;
+            case "nw":
+                this.element.style.width = width / 2 + "px";
+                this.element.style.height = height / 2 - 49 + "px";
+                this.element.style.top = "0px";
+                this.element.style.left = "0px";
+                break;
+            case "se":
+                this.element.style.width = width / 2 + "px";
+                this.element.style.height = height / 2 - 49 + "px";
+                this.element.style.top =
+                    height - 49 - this.element.clientHeight + "px";
+                this.element.style.left =
+                    width - this.element.clientWidth + "px";
+                break;
+            case "sw":
+                this.element.style.width = width / 2 + "px";
+                this.element.style.height = height / 2 - 49 + "px";
+                this.element.style.top =
+                    height - 49 - this.element.clientHeight + "px";
+                this.element.style.left = "0px";
+                break;
         }
 
-        this.element.style.width = scaledWidth - 4 + "px";
-        this.element.style.height = height - 49 + "px";
+        console.log(
+            this,
+            snapDirection,
+            this.element.style.top,
+            height,
+            this.element.style.left,
+            width,
+            this.element.style.width,
+            this.element.style.height,
+        );
         this.dispatchEvent(
             new MessageEvent("resize", {
                 data: { width: this.width, height: this.height },
             }),
         );
+        if (!this.onresize) {
+            // bruh
+            this.onresize = () => {};
+        }
         this.onresize(this.width, this.height);
 
         this.maximizeImg.src = "/assets/window/restore.svg";
@@ -927,7 +973,35 @@ class WMWindow extends EventTarget implements Process {
     getSnapDirection(
         forceX: number,
         forceY: number,
-    ): "left" | "right" | "top" | null {
+    ): "left" | "right" | "top" | "ne" | "nw" | "se" | "sw" | null {
+        if (forceX > 20 && forceY > 20) {
+            if (this.element.offsetLeft == 0 && this.element.offsetTop == 0) {
+                return "nw";
+            }
+            if (
+                this.element.offsetLeft + this.element.clientWidth ==
+                    window.innerWidth &&
+                this.element.offsetTop == 0
+            ) {
+                return "ne";
+            }
+            if (
+                this.element.offsetTop + this.element.clientHeight ==
+                    window.innerHeight - 49 &&
+                this.element.offsetLeft == 0
+            ) {
+                return "sw";
+            }
+            if (
+                this.element.offsetTop + this.element.clientHeight ==
+                    window.innerHeight - 49 &&
+                this.element.offsetLeft + this.element.clientWidth ==
+                    window.innerWidth
+            ) {
+                return "se";
+            }
+        }
+
         if (forceX > 20) {
             if (this.element.offsetLeft == 0) {
                 // Snap to left
@@ -940,13 +1014,14 @@ class WMWindow extends EventTarget implements Process {
             // Snap to top
             return "top";
         }
+
         return null;
     }
 
     getSnapDirectionFromPosition(
         left: number,
         width: number,
-    ): "left" | "right" | null {
+    ): "left" | "right" | "top" | "ne" | "nw" | "se" | "sw" | null {
         if (left == 0) {
             return "left";
         }
@@ -961,7 +1036,7 @@ class WMWindow extends EventTarget implements Process {
         return null;
     }
 
-    snapPreview(side: "left" | "right" | "top") {
+    snapPreview(side: "left" | "right" | "top" | "ne" | "nw" | "se" | "sw") {
         const width =
             window.innerWidth ||
             document.documentElement.clientWidth ||
@@ -977,13 +1052,27 @@ class WMWindow extends EventTarget implements Process {
         if (side != "top") {
             scaledWidth = width / 2;
         }
-        scaledHeight = height - 49;
+
+        if (["ne", "nw", "se", "sw"].includes(side)) {
+            scaledWidth = width / 2;
+            scaledHeight = height / 2;
+        }
+
+        scaledHeight -= 49;
+
+        let previewSide = side;
+
+        if (["ne", "se"].includes(side)) {
+            previewSide = "right";
+        } else if (["nw", "sw"].includes(side)) {
+            previewSide = "left";
+        }
 
         const elem: DLElement<any> = (
             <div
                 class={`snapPreview-${side}`}
                 id="snapPreview"
-                style={`${side}: 0px; width: ${scaledWidth}px; height: ${scaledHeight}px; opacity: 0;`}
+                style={`${previewSide}: 0px; width: ${scaledWidth}px; height: ${scaledHeight}px; opacity: 0; `}
             ></div>
         );
 
