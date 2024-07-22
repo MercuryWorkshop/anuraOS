@@ -9,6 +9,36 @@ class Processes {
         this.procs.push(new WeakRef(proc));
         return proc;
     }
+
+    async execute(path: string) {
+        const data = await anura.fs.promises.readFile(path);
+        // Read the file until the first newline
+        let i = 0;
+        while (data[i] !== 10) {
+            i++;
+        }
+        const shebang = new TextDecoder().decode(data.slice(0, i));
+
+        const options: { lang: "module" | "common"; version?: string } = {
+            lang: "module",
+        };
+
+        if (shebang.startsWith("#!")) {
+            const [_, opt] = shebang.split(" ");
+            if (opt) {
+                Object.assign(options, JSON.parse(opt));
+            }
+        }
+
+        const payload = data.slice(i + 1);
+
+        if (["common", "module"].includes(options.lang)) {
+            const script = new TextDecoder().decode(payload);
+            const proc = this.create(script, options.lang);
+            return proc;
+        }
+        throw new Error("Invalid shebang");
+    }
 }
 
 abstract class Process {
