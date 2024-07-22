@@ -65,6 +65,7 @@ const clickoffChecker = (
                           width: 100%;
                           height: 100%;
                           display: block;
+                          z-index: 9998;
                       `
                     : css`
                           display: none;
