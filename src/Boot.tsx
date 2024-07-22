@@ -417,6 +417,9 @@ document.addEventListener("anura-login-completed", async () => {
     const settings = new SettingsApp();
     anura.registerApp(settings);
 
+    const taskmgr = new TaskManager();
+    anura.registerApp(taskmgr);
+
     const about = new AboutApp();
     anura.registerApp(about);
 
@@ -426,8 +429,8 @@ document.addEventListener("anura-login-completed", async () => {
     const themeEditor = new ThemeEditor();
     anura.registerApp(themeEditor);
 
-    const exploreApp = new ExploreApp();
-    anura.registerApp(exploreApp);
+    const explore = new ExploreApp();
+    anura.registerApp(explore);
 
     const dialog = new Dialog();
     const dialogApp = await anura.registerApp(dialog);
@@ -602,7 +605,7 @@ document.addEventListener("anura-login-completed", async () => {
     alttab.update();
 
     if (!anura.settings.get("explore-shown")) {
-        exploreApp.open();
+        explore.open();
         anura.settings.set("explore-shown", true);
     }
 });
