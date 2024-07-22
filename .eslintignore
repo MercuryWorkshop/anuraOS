@@ -1,5 +1,6 @@
 dist.js
 build/
+bin/
 aboutproxy/
 v86/
 apps/
@@ -10,7 +11,7 @@ documentation/templates
 public/lib/html-to-image.min.js
 public/uv/
 static/
-phoenix-anura/
+chimerix/
 dreamlandjs/
 x86_image_wizard/whisper/
 x86_image_wizard/twisp/

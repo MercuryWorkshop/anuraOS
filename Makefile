@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/libphoenix.lib build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
+all: submodules build/bootstrap v86dirty v86 build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -20,11 +20,10 @@ hooks: FORCE
 apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 	cd apps/libfileview.lib; bash geticons.sh
 
-apps/libphoenix.lib: phoenix-anura/*
-	rm -rf apps/libphoenix.lib
-	cd phoenix-anura; npm i
-	cd phoenix-anura; npx rollup -c rollup.config.js
-	cp -r phoenix-anura/dist apps/libphoenix.lib
+bin/chimerix.ajs: chimerix/*
+	cd chimerix; npm i
+	cd chimerix; npx rollup -c rollup.config.js
+	cp chimerix/dist/chimerix.ajs bin/chimerix.ajs
 
 public/config.json:
 	cp config.default.json public/config.json
@@ -123,7 +122,7 @@ v86: libv86.js build/lib/v86.wasm
 	cp -r v86/bios public
 
 build/cache-load.json: FORCE
-	(find apps/ -type f && cd build/ && find lib/ -type f && find libs/ -type f && find assets/ -type f && find bundle.css -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e .map -e "/\." | jq -Rnc '[inputs]' > build/cache-load.json
+	(find apps/ -type f && find bin/ -type f && cd build/ && find lib/ -type f && find libs/ -type f && find assets/ -type f && find bundle.css -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e .map -e "/\." | jq -Rnc '[inputs]' > build/cache-load.json
 
 libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 	cd v86; make build/libv86.js
@@ -157,6 +156,7 @@ static: all
 	cp -r apps/ static/apps/
 	cp -r build/* static/
 	cp -r public/* static/ 
+	cp -r bin/* static/bin/
 
 server: FORCE
 	cd server; npx ts-node server.ts

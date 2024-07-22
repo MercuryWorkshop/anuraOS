@@ -9,9 +9,9 @@
         "/apps/libfileview.lib",
         "/apps/libfilepicker.lib",
         "/apps/libstore.lib",
-        "/apps/libpersist.lib",
-        "/apps/libphoenix.lib"
+        "/apps/libpersist.lib"
     ],
+    "bin": ["/bin/chimerix.ajs"],
     "defaultsettings": {
         "use-sw-cache": false,
         "applist": ["anura.browser", "anura.settings", "anura.fsapp"],

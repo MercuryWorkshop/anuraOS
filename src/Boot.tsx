@@ -300,6 +300,14 @@ document.addEventListener("anura-login-completed", async () => {
      */
     let directories = anura.settings.get("directories");
 
+    const defaultDirectories = {
+        apps: "/usr/apps",
+        libs: "/usr/lib",
+        init: "/usr/init",
+        bin: "/usr/bin",
+        opt: "/opt",
+    };
+
     const sh = new anura.fs.Shell();
 
     /**
@@ -362,12 +370,7 @@ document.addEventListener("anura-login-completed", async () => {
     } else {
         await anura.settings.set(
             "directories",
-            (directories = {
-                apps: "/usr/apps",
-                libs: "/usr/lib",
-                init: "/usr/init",
-                opt: "/opt",
-            }),
+            (directories = defaultDirectories),
         );
     }
 
@@ -383,14 +386,19 @@ document.addEventListener("anura-login-completed", async () => {
      */
     let requiredDirectories = anura.settings.get("requiredDirectories");
 
-    if (!requiredDirectories) {
+    if (!requiredDirectories || !requiredDirectories.includes("bin")) {
         await anura.settings.set(
             "requiredDirectories",
-            (requiredDirectories = ["apps", "libs", "init", "opt"]),
+            (requiredDirectories = ["apps", "libs", "init", "bin", "opt"]),
         );
     }
 
     requiredDirectories.forEach(async (k: string) => {
+        if (!directories[k]) {
+            directories[k] =
+                defaultDirectories[k as keyof typeof defaultDirectories];
+            await anura.settings.set("directories", directories);
+        }
         try {
             await sh.promises.mkdirp(directories[k]);
         } catch (e) {
@@ -429,6 +437,18 @@ document.addEventListener("anura-login-completed", async () => {
         anura.settings.get("wallpaper") ||
             "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
     );
+
+    for (const bin of anura.config.bin) {
+        const path = bin.split("/").slice(-1)[0];
+        try {
+            await anura.fs.promises.stat(directories.bin + "/" + path);
+        } catch (e) {
+            await anura.fs.promises.writeFile(
+                directories.bin + "/" + path,
+                await fetch(bin).then((r) => r.text()),
+            );
+        }
+    }
 
     for (const lib of anura.config.libs) {
         await anura.registerExternalLib(lib);

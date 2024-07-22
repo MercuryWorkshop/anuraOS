@@ -4,9 +4,6 @@
 [submodule "aboutproxy"]
 	path = aboutproxy
 	url = https://github.com/MercuryWorkshop/aboutproxy
-[submodule "phoenix-anura"]
-	path = phoenix-anura
-	url = https://github.com/Endercass/phoenix-anura
 [submodule "dreamlandjs"]
 	path = dreamlandjs
 	url = https://github.com/mercuryworkshop/dreamlandjs
@@ -16,3 +13,6 @@
 [submodule "x86_image_wizard/twisp"]
 	path = x86_image_wizard/twisp
 	url = https://github.com/MercuryWorkshop/twisp.git
+[submodule "chimerix"]
+	path = chimerix
+	url = https://github.com/MercuryWorkshop/chimerix.git

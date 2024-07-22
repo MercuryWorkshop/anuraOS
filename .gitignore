@@ -16,7 +16,7 @@ dist/
 bios/
 apps/games.app
 apps/libfileview.lib/icons/
-apps/libphoenix.lib
+bin/chimerix.ajs
 libv86.js
 v86.wasm
 public/dist.js
