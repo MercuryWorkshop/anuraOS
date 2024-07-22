@@ -843,6 +843,7 @@ class WMWindow extends EventTarget implements Process {
     }
 
     snap(snapDirection: "left" | "right" | "top") {
+        this.dragging = false;
         this.oldstyle = this.element.getAttribute("style");
 
         const width =
@@ -918,7 +919,6 @@ class WMWindow extends EventTarget implements Process {
             }),
         );
         this.onresize(this.width, this.height);
-        this.dragging = false;
 
         this.maximizeImg.src = "/assets/window/restore.svg";
         this.snapped = true;
