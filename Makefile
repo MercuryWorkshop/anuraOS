@@ -21,6 +21,7 @@ apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 	cd apps/libfileview.lib; bash geticons.sh
 
 bin/chimerix.ajs: chimerix/*
+	mkdir -p bin
 	cd chimerix; npm i
 	cd chimerix; npx rollup -c rollup.config.js
 	cp chimerix/dist/chimerix.ajs bin/chimerix.ajs
