@@ -22,7 +22,7 @@ class Anura {
     net: Networking;
     platform: Platform;
     ui = new AnuraUI();
-    // theme: Theme; // TODO: Move this into UI
+    processes: Processes;
     dialog: Dialog;
 
     private constructor(
@@ -41,6 +41,7 @@ class Anura {
         this.net = net;
 
         this.notifications = new NotificationService();
+        this.processes = new Processes();
         document.body.appendChild(this.notifications.element);
     }
 

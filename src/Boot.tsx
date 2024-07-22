@@ -631,13 +631,17 @@ async function bootUserCustomizations() {
                         const data = await anura.fs.promises.readFile(
                             directories["init"] + "/" + file,
                         );
-                        try {
-                            eval(new TextDecoder("utf-8").decode(data));
+                        const script = `try {
+                            ${new TextDecoder("utf-8").decode(data)}
                         } catch (e) {
                             console.error(e);
-                        }
+                        }`;
+
+                        anura.processes.create(script);
                     } catch (e) {
-                        anura.logger.error("Anura failed to load an app " + e);
+                        anura.logger.error(
+                            "Anura failed to load a script " + e,
+                        );
                     }
                 }
             }

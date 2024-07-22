@@ -39,7 +39,7 @@ class WindowInformation {
     resizable: boolean;
 }
 
-class WMWindow extends EventTarget {
+class WMWindow extends EventTarget implements Process {
     element: HTMLElement;
     content: HTMLElement;
     maximized: boolean;
@@ -455,6 +455,9 @@ class WMWindow extends EventTarget {
         }
 
         setTimeout(() => this.element.classList.remove("opacity0"), 10);
+
+        this.pid = anura.processes.procs.length;
+        anura.processes.procs.push(new WeakRef(this));
     }
 
     handleDrag(evt: PointerEvent) {
@@ -536,6 +539,7 @@ class WMWindow extends EventTarget {
         if (this.onfocus) this.onfocus();
     }
     close() {
+        delete anura.processes.procs[this.pid];
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("scaletransition");
 
@@ -988,6 +992,18 @@ class WMWindow extends EventTarget {
         }, 10);
 
         return elem;
+    }
+
+    pid: number;
+
+    stdout: ReadableStream<string> = new ReadableStream();
+    stdin: WritableStream<string> = new WritableStream();
+    stderr: ReadableStream<string> = new ReadableStream();
+
+    kill = this.close;
+
+    get alive() {
+        return this.element.isConnected;
     }
 }
 

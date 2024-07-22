@@ -65,9 +65,82 @@ class ExternalApp extends App {
                 LocalFS,
                 instance: this,
                 instanceWindow: win,
+                print: (message: string) => {
+                    iframe.contentWindow!.window.postMessage({
+                        type: "stdout",
+                        message,
+                    });
+                },
+                println: (message: string) => {
+                    iframe.contentWindow!.postMessage({
+                        type: "stdout",
+                        message: message + "\n",
+                    });
+                },
+                printerr: (message: string) => {
+                    iframe.contentWindow!.postMessage({
+                        type: "stderr",
+                        message,
+                    });
+                },
+                printlnerr: (message: string) => {
+                    iframe.contentWindow!.postMessage({
+                        type: "stderr",
+                        message: message + "\n",
+                    });
+                },
+                read: () => {
+                    return new Promise((resolve) => {
+                        iframe.contentWindow!.addEventListener(
+                            "message",
+                            (e) => {
+                                if (e.data.type === "stdin") {
+                                    resolve(e.data.message);
+                                }
+                            },
+                            { once: true },
+                        );
+                    });
+                },
+                env: {
+                    process: this,
+                },
                 open: async (url: string | URL) => {
                     const browser = await anura.import("anura.libbrowser");
                     browser.openTab(url);
+                },
+            });
+
+            win.stdin = new WritableStream({
+                write: (message) => {
+                    iframe.contentWindow!.postMessage({
+                        type: "stdin",
+                        message,
+                    });
+                },
+            });
+
+            win.stderr = new ReadableStream({
+                start: (controller) => {
+                    iframe.contentWindow!.addEventListener("error", (e) => {
+                        controller.enqueue(e.error);
+                    });
+
+                    iframe.contentWindow!.addEventListener("message", (e) => {
+                        if (e.data.type === "stderr") {
+                            controller.enqueue(e.data.message);
+                        }
+                    });
+                },
+            });
+
+            win.stdout = new ReadableStream({
+                start: (controller) => {
+                    iframe.contentWindow!.addEventListener("message", (e) => {
+                        if (e.data.type === "stdout") {
+                            controller.enqueue(e.data.message);
+                        }
+                    });
                 },
             });
 

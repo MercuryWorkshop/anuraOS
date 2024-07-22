@@ -58,7 +58,7 @@ class Taskbar {
             <li class="taskbar-button">
                 <input
                     type="image"
-                    draggable="true"
+                    draggable={anura.platform.type === "desktop"}
                     src={app?.icon || ""}
                     on:dragend={(e: DragEvent) => {
                         if (!this.insidedrag) {
@@ -73,11 +73,7 @@ class Taskbar {
                             );
                             this.updateTaskbar();
                         } else {
-                            console.log("skibidi dop dop");
-
                             const dropX = e.clientX;
-                            console.log("dropX", dropX);
-
                             const icons = document.querySelectorAll(
                                 ".taskbar-button .showDialog",
                             );
@@ -102,8 +98,6 @@ class Taskbar {
                                 }
                             });
 
-                            console.log("closestIndex", closestIndex);
-
                             if (
                                 anura.settings
                                     .get("applist")
@@ -119,9 +113,7 @@ class Taskbar {
                             }
 
                             const order = [...anura.settings.get("applist")];
-                            console.log(order);
                             order.splice(closestIndex, 0, app.package);
-                            console.log(order);
                             anura.settings.set("applist", order);
 
                             this.updateTaskbar();
