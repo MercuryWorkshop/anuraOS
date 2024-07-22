@@ -1085,9 +1085,9 @@ class WMWindow extends EventTarget implements Process {
 
     pid: number;
 
-    stdout: ReadableStream<string> = new ReadableStream();
-    stdin: WritableStream<string> = new WritableStream();
-    stderr: ReadableStream<string> = new ReadableStream();
+    stdout: ReadableStream<Uint8Array> = new ReadableStream();
+    stdin: WritableStream<Uint8Array> = new WritableStream();
+    stderr: ReadableStream<Uint8Array> = new ReadableStream();
 
     kill = this.close;
 
