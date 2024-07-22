@@ -57,7 +57,7 @@ class ExternalApp extends App {
                 `${this.source}/${this.manifest.index}${this.manifest.index?.includes("?") ? "&" : "?"}args=${ExternalApp.serializeArgs(args)}`,
             );
             win.content.appendChild(iframe);
-
+            iframe.id = `proc-${win.pid}`;
             Object.assign(iframe.contentWindow as any, {
                 anura,
                 AliceWM,

@@ -66,6 +66,7 @@ class IframeProcess extends Process {
         super();
         this.frame = (
             <iframe
+                id={`proc-${pid}`}
                 style="display: none;"
                 srcdoc={`
 <!DOCTYPE html>
