@@ -16,19 +16,22 @@ class ExploreApp extends App {
         flex-direction: row;
 
         #sidebar {
-            width: 62.5%;
-            padding: 2%;
+            width: 22rem;
+            padding: 1rem;
             padding-left: 0;
 
             div {
                 padding-block: 0.7rem;
                 font-size: 1.1rem;
-                border-radius: 0 9999px 9999px 0;
+                border-radius: 0 3rem 3rem 0;
                 padding-left: 1.25em;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
                 font-weight: 600;
+                width: 100%;
+
+                transition: 0.2s;
             }
 
             div.selected {
@@ -43,6 +46,8 @@ class ExploreApp extends App {
                     transparent
                 );
                 font-weight: 700;
+
+                transition: 0.15s ease;
             }
         }
 
@@ -51,6 +56,7 @@ class ExploreApp extends App {
         }
 
         article {
+            width: 100%;
             height: 100%;
             overflow-y: auto;
         }
@@ -67,6 +73,7 @@ class ExploreApp extends App {
         #body {
             font-size: 1.05rem;
             padding: 1rem;
+            padding-left: 2rem;
 
             p {
                 margin-block: 0.5rem;
@@ -79,7 +86,6 @@ class ExploreApp extends App {
             }
 
             span:has(img) {
-                /* display: flex; */
                 gap: 0.2rem;
                 align-items: center;
                 font-weight: 600;
@@ -128,27 +134,43 @@ class ExploreApp extends App {
         }
     `;
 
-    welcome = (
+    whatsnew = (
         <div id="body">
-            <div class="head">
-                <img src="/icon.png" alt="AnuraOS Logo" />
-                <h1>Welcome to AnuraOS!</h1>
-            </div>
-            <h2>What is AnuraOS?</h2>
+            <h1>What's new in AnuraOS {anura.version.pretty}?</h1>
+            <h2>Themes</h2>
             <p>
-                AnuraOS is a desktop environment made for development that runs
-                right in your browser. It features full Linux emulation and a
-                robust app ecosystem.
+                You can now completely customize how Anura looks! Just open the
+                Theme Editor app
             </p>
-            <h2>Getting Started</h2>
+            <h2>Support for more platforms</h2>
+            <p>Anura now supports tablets and phones! yada yada yada</p>
+            <h2>Overhauled Marketplace</h2>
             <p>
-                AnuraOS functions just like your average desktop: you can launch
-                apps from the launcher (accessible via the button in the
-                bottom-left, or pressing the Meta key), drag windows around, and
-                pin apps to the taskbar. AnuraOS is visually based off of
-                Google's ChromeOS.
+                The Marketplace app has been completely redesigned from the
+                ground up for a better experience.
             </p>
-            <h2>Using the x86 Subsystem</h2>
+            <h2>Task Manager</h2>
+            <p>
+                A brand new Task Manager app has been added! You can manage
+                running apps from there.
+            </p>
+            <h2>Other</h2>
+            <ul>
+                <li>A calendar was added to the system tray.</li>
+                <li>A quick settings menu was added.</li>
+                <li>
+                    Various UI elements were reworked to create a more cohesive
+                    user experience.
+                </li>
+                <li>Various bugs were squashed.</li>
+                <li>Removed Herobrine.</li>
+            </ul>
+        </div>
+    );
+
+    v86 = (
+        <div id="body">
+            <h1>Using the x86 Subsystem</h1>
             <p>
                 AnuraOS includes an x86 subsystem (based on{" "}
                 <a
@@ -208,6 +230,30 @@ class ExploreApp extends App {
                 </span>
                 .
             </p>
+        </div>
+    );
+
+    welcome = (
+        <div id="body">
+            <div class="head">
+                <img src="/icon.png" alt="AnuraOS Logo" />
+                <h1>Welcome to AnuraOS!</h1>
+            </div>
+            <h2>What is AnuraOS?</h2>
+            <p>
+                AnuraOS is a desktop environment made for development that runs
+                right in your browser. It features full Linux emulation and a
+                robust app ecosystem.
+            </p>
+            <h2>Getting Started</h2>
+            <p>
+                AnuraOS functions just like your average desktop: you can launch
+                apps from the launcher (accessible via the button in the
+                bottom-left, or pressing the Meta key), drag windows around, and
+                pin apps to the taskbar. AnuraOS is visually based off of
+                Google's ChromeOS.
+            </p>
+
             <h2>Get new apps</h2>
             <p>
                 To install more native Anura apps, you can head to the{" "}
@@ -262,9 +308,41 @@ class ExploreApp extends App {
     page = async () => (
         <div class={this.css}>
             <div id="sidebar">
-                <div class="selected">
+                <div
+                    on:click={() => {
+                        this.state.screen = this.welcome;
+                    }}
+                    class:selected={use(
+                        this.state.screen,
+                        (sc) => sc == this.welcome,
+                    )}
+                >
                     <span class="material-symbols-outlined">kid_star</span>
                     Welcome
+                </div>
+                <div
+                    on:click={() => {
+                        this.state.screen = this.whatsnew;
+                    }}
+                    class:selected={use(
+                        this.state.screen,
+                        (sc) => sc == this.whatsnew,
+                    )}
+                >
+                    <span class="material-symbols-outlined">history</span>
+                    What's new
+                </div>
+                <div
+                    on:click={() => {
+                        this.state.screen = this.v86;
+                    }}
+                    class:selected={use(
+                        this.state.screen,
+                        (sc) => sc == this.v86,
+                    )}
+                >
+                    <span class="material-symbols-outlined">memory</span>
+                    x86 Subsystem
                 </div>
             </div>
             <article>{use(this.state.screen)}</article>
