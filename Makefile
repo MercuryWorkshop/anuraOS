@@ -157,7 +157,7 @@ static: all
 	cp -r apps/ static/apps/
 	cp -r build/* static/
 	cp -r public/* static/ 
-	cp -r bin/* static/bin/
+	cp -r bin/ static/bin/
 
 server: FORCE
 	cd server; npx ts-node server.ts
