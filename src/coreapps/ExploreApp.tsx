@@ -16,7 +16,7 @@ class ExploreApp extends App {
         flex-direction: row;
 
         #sidebar {
-            width: 50%;
+            width: 62.5%;
             padding: 2%;
             padding-left: 0;
 
