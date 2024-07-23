@@ -5,7 +5,7 @@ anura.settings.set("shell", shell);
 const config = anura.settings.get("anura-shell-config") || {};
 anura.settings.set("anura-shell-config", config);
 
-const term = new hterm.Terminal();
+const term = (globalThis.term = new hterm.Terminal());
 const $term = document.getElementById("terminal");
 
 const encoder = new TextEncoder();
@@ -46,6 +46,22 @@ term.onTerminalReady = async () => {
     io.sendString = (str) => {
         stdinWriter.write(str);
     };
+
+    io.onTerminalResize = (cols, rows) => {
+        proc.window.postMessage({
+            type: "ioctl.set",
+            windowSize: {
+                rows,
+                cols,
+            },
+        });
+    };
+
+    proc.window.addEventListener("message", (event) => {
+        if (event.data.type === "ready") {
+            io.onTerminalResize(term.screenSize.width, term.screenSize.height);
+        }
+    });
 
     term.installKeyboard();
 
