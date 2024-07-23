@@ -325,8 +325,12 @@ class WMWindow extends EventTarget implements Process {
                                     },
                                 }),
                             );
-                            this.onresize(this.width, this.height);
-                            sentResize = true;
+                            // TODO: Sometimes attempting to resize just does nothing?
+                            // This if statement blocks against an error being spit out, but there is a bug here
+                            if (typeof this.onresize == "function") {
+                                this.onresize(this.width, this.height);
+                                sentResize = true;
+                            }
                         }
                     });
                 },
