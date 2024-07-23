@@ -102,6 +102,28 @@ class ExternalApp extends App {
                         );
                     });
                 },
+                readln: () => {
+                    return new Promise((resolve) => {
+                        // Read until a newline
+                        let buffer = "";
+                        const listener = (e: MessageEvent<any>) => {
+                            if (e.data.type === "stdin") {
+                                buffer += e.data.message;
+                                if (buffer.includes("\n")) {
+                                    resolve(buffer);
+                                    iframe.contentWindow!.removeEventListener(
+                                        "message",
+                                        listener,
+                                    );
+                                }
+                            }
+                        };
+                        iframe.contentWindow!.addEventListener(
+                            "message",
+                            listener,
+                        );
+                    });
+                },
                 env: {
                     process: this,
                 },

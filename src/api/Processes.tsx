@@ -125,6 +125,25 @@ class IframeProcess extends Process {
                     );
                 });
             },
+            readln: () => {
+                return new Promise((resolve) => {
+                    // Read until a newline
+                    let buffer = "";
+                    const listener = (e: MessageEvent<any>) => {
+                        if (e.data.type === "stdin") {
+                            buffer += e.data.message;
+                            if (buffer.includes("\n")) {
+                                resolve(buffer);
+                                this.window.removeEventListener(
+                                    "message",
+                                    listener,
+                                );
+                            }
+                        }
+                    };
+                    this.window.addEventListener("message", listener);
+                });
+            },
             env: {
                 process: this,
             },
