@@ -14,7 +14,7 @@ class Processes {
         const data = await anura.fs.promises.readFile(path);
         // Read the file until the first newline
         let i = 0;
-        while (data[i] !== 10) {
+        while (data[i] !== 10 && i < data.length) {
             i++;
         }
         const shebang = new TextDecoder().decode(data.slice(0, i));
