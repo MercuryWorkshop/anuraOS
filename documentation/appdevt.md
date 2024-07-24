@@ -30,7 +30,7 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
 
 ## Tips and Tricks
 
--   In iframed apps, Anura still gives you full access to the APIs and also gives you access to your app instance and the Window in the Window Manager. You can access the WMWindow using `instanceWindow` and access your anura app instance using `instance` in your javascript. This could be used to manipulate the window or invoke actions on your app instance. An example is shown below where a back arrow is drawn on the window decorations in the marketplace app.
+-   In iframed apps, Anura still gives you full access to the APIs through the `anura` object and also gives you access to your app instance and the Window in the Window Manager. You can access the WMWindow using `instanceWindow` and access your anura app instance using `instance` in your javascript. This could be used to manipulate the window or invoke actions on your app instance. An example is shown below where a back arrow is drawn on the window decorations in the marketplace app.
 
 ```js
 const back = html`
