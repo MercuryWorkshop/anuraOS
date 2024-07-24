@@ -140,10 +140,21 @@ class ExploreApp extends App {
             <h2>Themes</h2>
             <p>
                 You can now completely customize how Anura looks! Just open the
-                Theme Editor app
+                <span>
+                    <a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
+                        <img
+                            src="/assets/icons/themeeditor.png"
+                            alt="Theme Editor Icon"
+                        />{" "}
+                        Theme Editor
+                    </a>
+                </span>
             </p>
             <h2>Support for more platforms</h2>
-            <p>Anura now supports tablets and phones! yada yada yada</p>
+            <p>
+                Anura now supports tablets and phones through the new redesigned
+                mobile shell to provide better support to those platforms.
+            </p>
             <h2>Overhauled Marketplace</h2>
             <p>
                 The Marketplace app has been completely redesigned from the
@@ -295,7 +306,7 @@ class ExploreApp extends App {
             </p>
             <p>
                 For advanced users, Anura will execute any files in the
-                /userInit folder as JavaScript code on boot.
+                /usr/init folder as JavaScript code on boot.
             </p>
         </div>
     );
