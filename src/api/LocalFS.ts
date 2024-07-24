@@ -79,7 +79,18 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         }
         return acc;
     }
+    static async newOPFS(anuraPath: string) {
+        const dirHandle = await navigator.storage.getDirectory();
 
+        try {
+            await anura.fs.promises.mkdir(anuraPath);
+        } catch (e) {
+            // Ignore, the directory already exists so we don't need to create it
+        }
+        const fs = new LocalFS(dirHandle, anuraPath);
+        anura.fs.installProvider(fs);
+        return fs;
+    }
     static async new(anuraPath: string) {
         let dirHandle;
         try {
