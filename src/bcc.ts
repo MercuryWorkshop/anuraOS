@@ -1,4 +1,6 @@
 const bare = (window as any).BareMux;
+const connection = new bare.BareMuxConnection("/libs/bare-mux/worker.js");
+
 class AnuraBareClient {
     ready = true;
 
@@ -20,6 +22,7 @@ class AnuraBareClient {
             headers: headers,
             body,
             redirect: "manual",
+            duplex: "half",
         });
 
         const respheaders = {};
@@ -54,7 +57,10 @@ class AnuraBareClient {
         onmessage: (data: Blob | ArrayBuffer | string) => void,
         onclose: (code: number, reason: string) => void,
         onerror: (error: string) => void,
-    ): (data: Blob | ArrayBuffer | string) => void {
+    ): [
+        (data: Blob | ArrayBuffer | string) => void,
+        (code: number, reason: string) => void,
+    ] {
         //@ts-ignore
         const socket = new anura.net.WebSocket(url.toString(), protocols, {
             headers: requestHeaders,
@@ -75,13 +81,15 @@ class AnuraBareClient {
             onmessage(event.data);
         };
 
-        //there's no way to close the websocket in bare-mux?
-        return (data) => {
-            socket.send(data);
-        };
+        return [
+            (data) => {
+                socket.send(data);
+            },
+            (code, reason) => {
+                socket.close(code, reason);
+            },
+        ];
     }
 }
-navigator.serviceWorker.ready.then((isReady) => {
-    bare.registerRemoteListener(isReady.active);
-    bare.SetSingletonTransport(new AnuraBareClient());
-});
+
+connection.setRemoteTransport(new AnuraBareClient(), "AnuraBareClient");

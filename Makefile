@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
+all: submodules build/bootstrap v86dirty v86 build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/index.js build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -78,11 +78,24 @@ build/libs/idb-keyval/idb-keyval.js: build/bootstrap
 	cp node_modules/idb-keyval/dist/umd.js build/libs/idb-keyval/idb-keyval.js
 	jq '.version' node_modules/idb-keyval/package.json > build/libs/idb-keyval/version
 
-build/libs/bare-mux/bare.cjs: build/bootstrap
+build/libs/bare-mux/index.js: build/bootstrap
 	mkdir -p build/libs/bare-mux
-	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs build/libs/bare-mux/bare.cjs
-	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs.map build/libs/bare-mux/bare.cjs.map
+	cp node_modules/@mercuryworkshop/bare-mux/dist/index.js build/libs/bare-mux/index.js
+	cp node_modules/@mercuryworkshop/bare-mux/dist/index.js.map build/libs/bare-mux/index.js.map
+	cp node_modules/@mercuryworkshop/bare-mux/dist/worker.js build/libs/bare-mux/worker.js
 	jq '.version' node_modules/@mercuryworkshop/bare-mux/package.json > build/libs/bare-mux/version
+
+build/uv/uv.bundle.js: build/bootstrap
+	mkdir -p build/uv
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.bundle.js build/uv/uv.bundle.js
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.bundle.js.map build/uv/uv.bundle.js.map
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.client.js build/uv/uv.client.js
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.client.js.map build/uv/uv.client.js.map
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.handler.js build/uv/uv.handler.js
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.handler.js.map build/uv/uv.handler.js.map
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.sw.js build/uv/uv.sw.js
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.sw.js.map build/uv/uv.sw.js.map
+	jq '.version' node_modules/@titaniumnetwork-dev/ultraviolet/package.json > build/uv/version
 
 build/libs/fflate/browser.js: build/bootstrap
 	mkdir -p build/libs/fflate
@@ -95,6 +108,7 @@ build/libs/dreamland/all.js: dreamlandjs/src/*
 	cp dreamlandjs/dist/all.js build/libs/dreamland/all.js
 	cp dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
 	jq '.version' dreamlandjs/package.json > build/libs/dreamland/version
+
 
 build/assets/matter.css:
 	mkdir -p build/assets
