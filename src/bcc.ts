@@ -1,5 +1,7 @@
 const bare = (window as any).BareMux;
+/*
 const connection = new bare.BareMuxConnection("/libs/bare-mux/worker.js");
+*/
 
 class AnuraBareClient {
     ready = true;
@@ -91,5 +93,12 @@ class AnuraBareClient {
         ];
     }
 }
-
+/*
+keeping this for when we can revert to a less garbage version of this library
 connection.setRemoteTransport(new AnuraBareClient(), "AnuraBareClient");
+*/
+
+navigator.serviceWorker.ready.then((isReady) => {
+    bare.registerRemoteListener(isReady.active);
+    bare.SetSingletonTransport(new AnuraBareClient());
+});

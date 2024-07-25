@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/index.js build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
+all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -78,11 +78,18 @@ build/libs/idb-keyval/idb-keyval.js: build/bootstrap
 	cp node_modules/idb-keyval/dist/umd.js build/libs/idb-keyval/idb-keyval.js
 	jq '.version' node_modules/idb-keyval/package.json > build/libs/idb-keyval/version
 
-build/libs/bare-mux/index.js: build/bootstrap
+# keeping this for when we change from this version of the library
+# build/libs/bare-mux/index.js: build/bootstrap \
+	mkdir -p build/libs/bare-mux \
+	cp node_modules/@mercuryworkshop/bare-mux/dist/index.js build/libs/bare-mux/index.js \
+	cp node_modules/@mercuryworkshop/bare-mux/dist/index.js.map build/libs/bare-mux/index.js.map \
+	cp node_modules/@mercuryworkshop/bare-mux/dist/worker.js build/libs/bare-mux/worker.js \
+	jq '.version' node_modules/@mercuryworkshop/bare-mux/package.json > build/libs/bare-mux/version
+
+build/libs/bare-mux/bare.cjs: build/bootstrap
 	mkdir -p build/libs/bare-mux
-	cp node_modules/@mercuryworkshop/bare-mux/dist/index.js build/libs/bare-mux/index.js
-	cp node_modules/@mercuryworkshop/bare-mux/dist/index.js.map build/libs/bare-mux/index.js.map
-	cp node_modules/@mercuryworkshop/bare-mux/dist/worker.js build/libs/bare-mux/worker.js
+	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs build/libs/bare-mux/bare.cjs
+	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs.map build/libs/bare-mux/bare.cjs.map
 	jq '.version' node_modules/@mercuryworkshop/bare-mux/package.json > build/libs/bare-mux/version
 
 build/uv/uv.bundle.js: build/bootstrap

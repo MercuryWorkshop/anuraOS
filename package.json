@@ -14,8 +14,8 @@
     },
     "homepage": "https://github.com/MercuryWorkshop/AnuraOS#readme",
     "dependencies": {
-        "@mercuryworkshop/bare-mux": "^2.0.4",
-        "@titaniumnetwork-dev/ultraviolet": "^3.2.6",
+        "@mercuryworkshop/bare-mux": "^1.1.4",
+        "@titaniumnetwork-dev/ultraviolet": "3.1.5",
         "@typescript-eslint/eslint-plugin": "^5.60.1",
         "autoprefixer": "^10.4.14",
         "comlink": "^4.4.1",
@@ -28,7 +28,7 @@
         "filer": "^1.4.1",
         "fs-readdir-recursive": "^1.1.0",
         "idb-keyval": "^6.2.1",
-        "libcurl.js": "^0.6.9",
+        "libcurl.js": "^0.6.11",
         "mime": "^4.0.1",
         "onchange": "^7.1.0",
         "postcss": "^8.4.24",
@@ -38,7 +38,7 @@
     },
     "devDependencies": {
         "@types/node": "^20.5.9",
-        "@types/wicg-file-system-access": "^2023.10.4",
+        "@types/wicg-file-system-access": "^2023.10.5",
         "dreamland": "^0.0.24",
         "prettier": "3.2.4",
         "rollup": "^2.79.1",
