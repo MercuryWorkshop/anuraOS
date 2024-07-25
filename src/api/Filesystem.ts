@@ -912,6 +912,16 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         });
     }
 
+    async whatwgfs() {
+        // These paths must be TS ignore'd since they are in build/
+        // @ts-ignore
+        const fs = await import("/libs/nfsadapter/nfsadapter.js");
+        // @ts-ignore
+        return await fs.getOriginPrivateDirectory(
+            import("/libs/nfsadapter/adapters/anuraadapter.js"),
+        );
+    }
+
     clearCache() {
         this.providerCache = {};
     }
