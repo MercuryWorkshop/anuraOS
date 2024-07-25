@@ -180,6 +180,7 @@ build/libs/nfsadapter/nfsadapter.js: native-file-system-adapter/src/es6.js nativ
 	cd native-file-system-adapter; npm i; npm run build
 	mkdir -p build/libs/nfsadapter
 	cp native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
+	cp native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/anuraadapter.js
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 
