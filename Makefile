@@ -179,8 +179,11 @@ server: FORCE
 build/libs/nfsadapter/nfsadapter.js: native-file-system-adapter/src/es6.js native-file-system-adapter/src/adapters/filer.js
 	cd native-file-system-adapter; npm i; npm run build
 	mkdir -p build/libs/nfsadapter
+	mkdir -p build/libs/nfsadapter/adapters
 	cp native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
-	cp native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/anuraadapter.js
+	cp native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/adapters/anuraadapter.js
+	cp native-file-system-adapter/src/util.js build/libs/nfsadapter/
+	cp native-file-system-adapter/src/config.js build/libs/nfsadapter/	
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 
