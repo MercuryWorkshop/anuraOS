@@ -24,6 +24,8 @@ class Anura {
     ui = new AnuraUI();
     processes: Processes;
     dialog: Dialog;
+    sw: SWProcess;
+    anurad: Anurad;
 
     private constructor(
         fs: AnuraFilesystem,
@@ -276,4 +278,54 @@ interface AppManifest {
      * This contains the properties for the default app window.
      */
     wininfo: string | WindowInformation;
+}
+
+class SWProcess extends Process {
+    pid = 0;
+    constructor() {
+        super();
+        this.stdin = new WritableStream({
+            write: (message) => {
+                navigator.serviceWorker.controller!.postMessage(
+                    {
+                        type: "stdin",
+                        message,
+                    },
+                    [message],
+                );
+            },
+        });
+        this.stdout = new ReadableStream({
+            start: (controller) => {
+                navigator.serviceWorker.addEventListener("message", (event) => {
+                    if (event.data.type === "stdout") {
+                        controller.enqueue(event.data.message);
+                    }
+                });
+            },
+        });
+        this.stderr = new ReadableStream({
+            start: (controller) => {
+                navigator.serviceWorker.addEventListener("message", (event) => {
+                    if (event.data.type === "stderr") {
+                        controller.enqueue(event.data.message);
+                    }
+                });
+            },
+        });
+    }
+
+    kill() {
+        super.kill();
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+            for (const registration of registrations) {
+                registration.unregister();
+            }
+        });
+        location.reload();
+    }
+
+    get alive() {
+        return navigator.serviceWorker.controller !== null;
+    }
 }

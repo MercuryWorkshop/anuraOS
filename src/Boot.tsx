@@ -147,6 +147,23 @@ window.addEventListener("load", async () => {
         if (event.data.anura_target == "anura.sw.reinit") initComlink(); // this could accidentally be run twice but realistically there aren't any consequences for doing so
     });
 
+    // Create "Process" that controls the service worker
+
+    const swProcess = new SWProcess();
+    // We do not want the service worker process to be garbage collected
+    // so we will store it in the Window object as well.
+    anura.sw = swProcess;
+    anura.processes.procs.push(new WeakRef(swProcess));
+
+    // Register requirements for anurad
+    anura.registerLib(new AnuradHelpersLib());
+
+    // Register anurad, claiming PID 1
+    const anurad = new Anurad(1);
+
+    anura.anurad = anurad;
+    anura.processes.procs.push(new WeakRef(anurad));
+
     // Register built-in Node Polyfills
     anura.registerLib(new NodeFS());
     anura.registerLib(new NodePrelude());
