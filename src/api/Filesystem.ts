@@ -918,6 +918,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         const fs = await import("/libs/nfsadapter/nfsadapter.js");
         // @ts-ignore
         return await fs.getOriginPrivateDirectory(
+            // @ts-ignore
             import("/libs/nfsadapter/adapters/anuraadapter.js"),
         );
     }
