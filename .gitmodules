@@ -16,3 +16,6 @@
 [submodule "chimerix"]
 	path = chimerix
 	url = https://github.com/MercuryWorkshop/chimerix.git
+[submodule "native-file-system-adapter"]
+	path = native-file-system-adapter
+	url = https://github.com/MercuryWorkshop/native-file-system-adapter/

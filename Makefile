@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/index.js build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
+all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/index.js build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
@@ -175,6 +175,11 @@ static: all
 
 server: FORCE
 	cd server; npx ts-node server.ts
+
+build/libs/nfsadapter/nfsadapter.js: native-file-system-adapter/src/es6.js native-file-system-adapter/src/adapters/filer.js
+	cd native-file-system-adapter; npm i; npm run build
+	mkdir -p build/libs/nfsadapter
+	cp native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 
