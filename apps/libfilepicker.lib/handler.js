@@ -48,7 +48,7 @@ export function selectFile(options) {
             AliceWM,
             ExternalApp,
             LocalFS,
-            instance: app,
+            instance: options.app,
             instanceWindow: picker,
         });
     });
@@ -104,7 +104,7 @@ export function selectFolder(options) {
             AliceWM,
             ExternalApp,
             LocalFS,
-            instance: app,
+            instance: options.app,
             instanceWindow: picker,
         });
     });
