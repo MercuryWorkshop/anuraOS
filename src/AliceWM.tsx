@@ -60,14 +60,14 @@ class WMWindow extends EventTarget implements Process {
 
     state: { title: string };
 
-    onfocus: () => void;
-    onresize: (w: number, h: number) => void;
-    onclose: () => void;
-    onmaximize: () => void;
+    onfocus: () => void = () => {};
+    onresize: (w: number, h: number) => void = () => {};
+    onclose: () => void = () => {};
+    onmaximize: () => void = () => {};
     onsnap: (
         snapDirection: "left" | "right" | "top" | "ne" | "nw" | "se" | "sw",
-    ) => void;
-    onunmaximize: () => void;
+    ) => void = () => {};
+    onunmaximize: () => void = () => {};
 
     snapped = false;
 
@@ -80,6 +80,9 @@ class WMWindow extends EventTarget implements Process {
     mouseover = false;
 
     get title() {
+        if (!this.state.title && this.app) {
+            return this.app.name;
+        }
         return this.state.title;
     }
 
@@ -464,10 +467,6 @@ class WMWindow extends EventTarget implements Process {
             anura.platform.type == "mobile" ||
             anura.platform.type == "tablet"
         ) {
-            if (!this.onresize) {
-                // it crashes without this, I hope this doesn't break anything
-                this.onresize = () => {};
-            }
             this.maximize();
         }
 
@@ -975,10 +974,6 @@ class WMWindow extends EventTarget implements Process {
                 data: { width: this.width, height: this.height },
             }),
         );
-        if (!this.onresize) {
-            // bruh
-            this.onresize = () => {};
-        }
         this.onresize(this.width, this.height);
 
         this.maximizeImg.src = "/assets/window/restore.svg";

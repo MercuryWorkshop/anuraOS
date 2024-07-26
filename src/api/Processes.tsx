@@ -13,11 +13,13 @@ class Processes {
 
     remove(pid: number) {
         delete this.state.procs[pid];
+        // eslint-disable-next-line no-self-assign
         this.state.procs = this.state.procs;
     }
 
     register(proc: Process) {
         this.state.procs.push(new WeakRef(proc));
+        // eslint-disable-next-line no-self-assign
         this.state.procs = this.state.procs;
     }
 
