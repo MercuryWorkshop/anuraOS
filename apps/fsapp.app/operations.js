@@ -18,6 +18,8 @@ if (url.searchParams.get("picker")) {
         filePicker = {};
         filePicker.regex = new RegExp(picker[0]);
         filePicker.type = picker[1];
+        filePicker.multiple = picker[2];
+        filePicker.id = picker[3];
     }
 }
 window.fs = anura.fs;
@@ -210,6 +212,7 @@ async function selectAction(selected) {
         if (fileSelected.getAttribute("data-type") == filePicker.type) {
             let fileData = {
                 message: "FileSelected",
+                id: filePicker.id,
                 filePath: fileSelected
                     .getAttribute("data-path")
                     .replace(/(\/)\1+/g, "$1"),
@@ -217,7 +220,7 @@ async function selectAction(selected) {
 
             window.parent.postMessage(fileData, "*");
         }
-    } else if (selected.length > 1) {
+    } else if (selected.length > 1 && filePicker.multiple) {
         let dataPaths = [];
         for (var i = 0; i < selected.length; i++) {
             var dataType = selected[i].getAttribute("data-type");
@@ -231,6 +234,7 @@ async function selectAction(selected) {
         }
         let fileData = {
             message: "FileSelected",
+            id: filePicker.id,
             filePath: dataPaths,
         };
 
@@ -239,6 +243,7 @@ async function selectAction(selected) {
         if (filePicker.type == "dir") {
             let fileData = {
                 message: "FileSelected",
+                id: filePicker.id,
                 filePath: document
                     .querySelector(".breadcrumbs")
                     .getAttribute("data-current-path"),

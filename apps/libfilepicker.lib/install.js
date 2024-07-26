@@ -7,7 +7,7 @@ export default async function install(_, filePickerLib) {
                 let folders;
                 let cancelled = false;
                 try {
-                    folders = await selectFolder(event.data.regex);
+                    folders = await selectFolder({ regex: event.data.regex });
                     if (typeof folders === "string") {
                         folders = [folders];
                     }
@@ -28,7 +28,7 @@ export default async function install(_, filePickerLib) {
                 let files;
                 let cancelled = false;
                 try {
-                    files = await selectFile(event.data.regex);
+                    files = await selectFile({ regex: event.data.regex });
                     if (typeof files === "string") {
                         files = [files];
                     }

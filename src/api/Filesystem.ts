@@ -901,6 +901,40 @@ class AFSShell {
 class AnuraFilesystem implements AnuraFSOperations<any> {
     providers: Map<string, AFSProvider<any>> = new Map();
     providerCache: { [path: string]: AFSProvider<any> } = {};
+    whatwgfs = {
+        async getFolder() {
+            // These paths must be TS ignore'd since they are in build/
+            // @ts-ignore
+            const fs = await import("/libs/nfsadapter/nfsadapter.js");
+            // @ts-ignore
+            return await fs.getOriginPrivateDirectory(
+                // @ts-ignore
+                import("/libs/nfsadapter/adapters/anuraadapter.js"),
+            );
+        },
+        async showDirectoryPicker(options: object) {
+            const picker = await anura.import("anura.filepicker");
+            const path = (await picker.selectFolder()).split("/");
+            // prettier-ignore
+            let workingPath = (await anura.fs.whatwgfs.getFolder());
+            for (const dir of path) {
+                if (dir !== "")
+                    workingPath = await workingPath.getDirectoryHandle(dir);
+            }
+            return workingPath;
+        },
+        async showOpenFilePicker(options: object) {
+            const picker = await anura.import("anura.filepicker");
+            const path = (await picker.selectFile()).split("/");
+            // prettier-ignore
+            let workingPath = (await anura.fs.whatwgfs.getFolder());
+            for (const dir of path) {
+                if (dir !== "")
+                    workingPath = await workingPath.getFileHandle(dir);
+            }
+            return workingPath;
+        },
+    };
 
     // Note: Intentionally aliasing the property to a class instead of an instance
     static Shell = AFSShell;
@@ -910,17 +944,6 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         providers.forEach((provider) => {
             this.providers.set(provider.domain, provider);
         });
-    }
-
-    async whatwgfs() {
-        // These paths must be TS ignore'd since they are in build/
-        // @ts-ignore
-        const fs = await import("/libs/nfsadapter/nfsadapter.js");
-        // @ts-ignore
-        return await fs.getOriginPrivateDirectory(
-            // @ts-ignore
-            import("/libs/nfsadapter/adapters/anuraadapter.js"),
-        );
     }
 
     clearCache() {

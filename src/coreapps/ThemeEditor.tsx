@@ -175,7 +175,9 @@ class ThemeEditor extends App {
     async importTheme() {
         // Here be dragons
         console.log("importing baller ass theme");
-        const file = await (await this.picker).selectFile("(json|txt)");
+        const file = await (
+            await this.picker
+        ).selectFile({ regex: "(json|txt)" });
         console.log("got the baller ass theme");
         try {
             const data = await anura.fs.promises.readFile(file);

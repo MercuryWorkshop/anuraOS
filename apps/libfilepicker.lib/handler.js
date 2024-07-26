@@ -1,6 +1,13 @@
-export function selectFile(regex = ".*", app = anura.apps["anura.fsapp"]) {
+export function selectFile(options) {
+    const defaultOptions = {
+        regex: ".*",
+        app: anura.apps["anura.fsapp"],
+        multiple: false,
+    };
+    options = Object.assign({}, defaultOptions, options);
     return new Promise((resolve, reject) => {
-        let picker = anura.wm.create(app, "Select a File...");
+        let picker = anura.wm.create(options.app, "Select a File...");
+        let id = crypto.randomUUID();
 
         picker.onclose = () => {
             reject("User cancelled");
@@ -12,12 +19,18 @@ export function selectFile(regex = ".*", app = anura.apps["anura.fsapp"]) {
         iframe.setAttribute(
             "src",
             `/apps/fsapp.app/filemanager.html?picker=` +
-                ExternalApp.serializeArgs([regex, "file"]),
+                ExternalApp.serializeArgs([
+                    options.regex,
+                    "file",
+                    options.multiple,
+                    id,
+                ]),
         );
         function handleMessage(event) {
             if (
                 typeof event.data === "object" &&
-                event.data.message === "FileSelected"
+                event.data.message === "FileSelected" &&
+                event.data.id === id
             ) {
                 let receivedData = event.data;
                 let filePath = receivedData.filePath;
@@ -41,9 +54,16 @@ export function selectFile(regex = ".*", app = anura.apps["anura.fsapp"]) {
     });
 }
 
-export function selectFolder(regex = "", app = anura.apps["anura.fsapp"]) {
+export function selectFolder(options) {
+    const defaultOptions = {
+        regex: "",
+        app: anura.apps["anura.fsapp"],
+        multiple: false,
+    };
+    options = Object.assign({}, defaultOptions, options);
     return new Promise((resolve, reject) => {
-        let picker = anura.wm.create(app, "Select a Folder...");
+        let picker = anura.wm.create(options.app, "Select a Folder...");
+        let id = crypto.randomUUID();
 
         picker.onclose = () => {
             reject("User cancelled");
@@ -55,12 +75,18 @@ export function selectFolder(regex = "", app = anura.apps["anura.fsapp"]) {
         iframe.setAttribute(
             "src",
             `/apps/fsapp.app/filemanager.html?picker=` +
-                ExternalApp.serializeArgs([regex, "dir"]),
+                ExternalApp.serializeArgs([
+                    options.regex,
+                    "dir",
+                    options.multiple,
+                    id,
+                ]),
         );
         function handleMessage(event) {
             if (
                 typeof event.data === "object" &&
-                event.data.message === "FileSelected"
+                event.data.message === "FileSelected" &&
+                event.data.id === id
             ) {
                 let receivedData = event.data;
                 let filePath = receivedData.filePath;

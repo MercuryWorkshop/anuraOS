@@ -284,10 +284,13 @@ let picker = await anura.import("anura.filepicker");
 // select file of any type
 let file = await picker.selectFile();
 // regex supported
-let fileWithFilter = await picker.selectFile(
-    "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
-);
-// select folder
+let fileWithFilter = await picker.selectFile({
+    regex: "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
+});
+let multipleFiles = await picker.selectFile({
+    multiple: true,
+});
+// select folder (all options except for regex apply here)
 let folder = await picker.selectFolder();
 ```
 
