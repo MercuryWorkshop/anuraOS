@@ -1,5 +1,4 @@
 class Processes {
-    // procs: WeakRef<Process>[] = [];
     get procs() {
         return this.state.procs;
     }

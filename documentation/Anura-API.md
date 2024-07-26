@@ -481,6 +481,113 @@ anura.notifications.add({
 }); // Show a notification to the user, on click, it says hi in console, it lasts for 2 seconds.
 ```
 
+<!--🫃🏿-->
+
+## anura.processes
+
+This API allows you to manage processes running in anura.
+
+### anura.processes.procs
+
+Returns a list of all the processes running in anura, as a dreamland stateful
+array of WeakRefs to the processes.
+
+Note: You should never directly mutate this array, use the provided APIs instead.
+
+### anura.processes.remove
+
+This API allows you to remove a process from the process list. This is usually ran as
+the last function of a processes kill function.
+
+**Usage:**
+
+```js
+function kill() {
+    anura.processes.remove(this.pid);
+}
+```
+
+### anura.processes.register
+
+This API allows you to register a process with the process list. This is usually ran
+by the constructor of a process.
+
+**Usage:**
+
+```js
+// SpecialProcess extends Process
+const process = new SpecialProcess();
+
+anura.processes.register(process);
+```
+
+### anura.processes.create
+
+This API allows you to create a process from the given script and type.
+
+**Usage:**
+
+```js
+anura.processes.create("print('Hello, ' + await readln())", "module");
+```
+
+### anura.processes.execute
+
+This API allows you to execute a process from the given script file path
+
+**Usage:**
+
+```js
+await anura.processes.execute("/path/to/script.js");
+```
+
+## anura.sw
+
+This API provides a special process that wraps the anura service worker. This
+process claims PID 0 and when it is killed, it will unregister the service worker
+and reload the page.
+
+## anura.anurad
+
+This API provides a special process that wraps the anura daemon. This process claims PID 1 and manages all anura init scripts.
+
+An example of an init script can be found in [this document](./templates/template.init.ajs)
+
+Note: All anurad init scripts must have the `.init.ajs` extension, and contain a
+shebang-like header like so:
+
+```
+#! {"lang":"module"}
+```
+
+### anura.anurad.addInitScript
+
+This API allows you to add an init script to the anura daemon.
+
+**Usage:**
+
+```js
+const script = `
+export name = "example";
+export description = "This is an example init script";
+
+export start = async () => {
+    console.log("Hello, World!");
+};
+`;
+
+await anura.anurad.addInitScript(script);
+```
+
+### anura.anurad.initScripts
+
+This is an array of running init scripts, which are a special process type.
+This array is not stateful and direct mutations are allowed.
+
+### anura.anurad.kill
+
+This function kills the anura daemon and all running init scripts.
+
 ## anura.wsproxyURL
 
 This API returns a usable wsproxy url for any TCP application.
