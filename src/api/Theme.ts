@@ -175,7 +175,6 @@ class Theme implements ThemeProps {
                 el.style.background = darkBackground + "e6";
             });
         document.querySelectorAll("iframe").forEach((el: HTMLIFrameElement) => {
-            console.log("dispatching to ", el);
             el.contentWindow?.document.dispatchEvent(
                 new Event("anura-theme-change"),
             );

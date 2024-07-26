@@ -89,7 +89,7 @@ class Calendar {
                     this.calCSS,
                 ]}
                 width="380px"
-                height="30%"
+                height="380px"
                 grow
                 id="calendar"
             >
