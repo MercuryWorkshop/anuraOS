@@ -150,6 +150,10 @@ class AnuradInitScript extends Process {
                 this.info.start ||= async () => {};
                 this.info.stop ||= async () => {};
 
+                this.info.name ||= "Anurad Script " + this.pid;
+                this.info.description ||= "Anurad script with PID " + this.pid;
+                this.info.provides ||= [];
+
                 await this.info.depend();
                 await this.info.start();
                 AnuradHelpers.setStage(this.info.name);

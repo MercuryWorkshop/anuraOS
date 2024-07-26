@@ -155,63 +155,6 @@ window.addEventListener("load", async () => {
     anura.sw = swProcess;
     anura.processes.procs.push(new WeakRef(swProcess));
 
-    // Register requirements for anurad
-    anura.registerLib(new AnuradHelpersLib());
-
-    // Register anurad, claiming PID 1
-    const anurad = new Anurad(1);
-
-    anura.anurad = anurad;
-    anura.processes.procs.push(new WeakRef(anurad));
-
-    // Register built-in Node Polyfills
-    anura.registerLib(new NodeFS());
-    anura.registerLib(new NodePrelude());
-
-    // Register vendored NPM packages
-    anura.registerLib(new Comlink());
-    anura.registerLib(new Mime());
-    anura.registerLib(new Fflate());
-
-    // console.log("comlink proxy", swProxy);
-    // console.log(await swProxy.test);
-    // console.log(await swProxy.testfn());
-
-    launcher = new Launcher(
-        clickoffChecker as HTMLDivElement,
-        updateClickoffChecker,
-    );
-
-    quickSettings = new QuickSettings(
-        clickoffChecker as HTMLDivElement,
-        updateClickoffChecker,
-    );
-
-    calendar = new Calendar(
-        clickoffChecker as HTMLDivElement,
-        updateClickoffChecker,
-    );
-
-    taskbar = new Taskbar();
-
-    oobeview = new OobeView();
-
-    if (anura.platform.type == "mobile" || anura.platform.type == "tablet") {
-        bootsplash.remove();
-        document.body.appendChild(bootsplashMobile);
-    } else {
-        if (anura.settings.get("i-am-a-true-gangsta") === true) {
-            bootsplash.remove();
-            document.body.appendChild(gangstaBootsplash);
-        }
-    }
-
-    document.body.classList.add("platform-" + anura.platform.type);
-
-    if (anura.settings.get("blur-disable")) {
-        document.body.classList.add("blur-disable");
-    }
-
     if (milestone) {
         const stored = anura.settings.get("milestone");
         if (!stored) await anura.settings.set("milestone", milestone);
@@ -237,83 +180,24 @@ window.addEventListener("load", async () => {
         }
     }
 
-    Object.assign(window, {
-        $store,
-        anura,
-    });
+    // Register requirements for anurad
+    anura.registerLib(new AnuradHelpersLib());
 
-    anura.ui.init();
+    // Register anurad, claiming PID 1
+    const anurad = new Anurad(1);
 
-    if (!anura.settings.get("oobe-complete")) {
-        // This is a new install, so an old version containing the old extension
-        // handler system can't be installed. We can skip the migration.
-        anura.settings.set("handler-migration-complete", true);
-    }
+    anura.anurad = anurad;
+    anura.processes.procs.push(new WeakRef(anurad));
+    AnuradHelpers.setReady("anura.anurad");
 
-    if (!anura.settings.get("handler-migration-complete")) {
-        // Convert legacy file handlers
-        // This is a one-time migration
-        const extHandlers = anura.settings.get("FileExts") || {};
-
-        console.log("migrating file handlers");
-        console.log(extHandlers);
-
-        for (const ext in extHandlers) {
-            const handler = extHandlers[ext];
-            if (handler.handler_type === "module") continue;
-            if (handler.handler_type === "cjs") continue;
-            if (typeof handler === "string") {
-                if (handler === "/apps/libfileview.app/fileHandler.js") {
-                    extHandlers[ext] = {
-                        handler_type: "module",
-                        id: "anura.fileviewer",
-                    };
-                    continue;
-                }
-                extHandlers[ext] = {
-                    handler_type: "cjs",
-                    path: handler,
-                };
-            }
-        }
-        anura.settings.set("FileExts", extHandlers);
-        anura.settings.set("handler-migration-complete", true);
-    }
-
-    setTimeout(
-        () => {
-            setTimeout(() => {
-                document.querySelector(".bootsplash")?.classList.add("hide");
-            }, 350); // give the taskbar time to init
-            setTimeout(() => {
-                bootsplash.remove();
-                bootsplashMobile.remove();
-                gangstaBootsplash.remove();
-            }, 550);
-            anura.logger.debug("boot completed");
-            document.dispatchEvent(new Event("anura-boot-completed"));
-        },
-        anura.settings.get("oobe-complete") ? 500 : 1500,
-    );
-});
-
-document.addEventListener("anura-boot-completed", async () => {
-    if (anura.settings.get("oobe-complete")) {
-        document.dispatchEvent(new Event("anura-login-completed"));
-    } else {
-        document.body.appendChild(oobeview.element);
-    }
-});
-
-document.addEventListener("anura-login-completed", async () => {
-    anura.ui.theme = Theme.new(anura.settings.get("theme"));
-    anura.ui.theme.apply();
+    Object.entries(anura)
+        .filter(([_, v]) => v !== undefined)
+        .map(([k]) => "anura." + k)
+        .forEach(AnuradHelpers.setReady);
 
     /**
      * These directories are used to load user apps and libs from
      * the filesystem, along with folder shortcuts and other things.
-     *
-     *
      */
     let directories = anura.settings.get("directories");
 
@@ -425,6 +309,151 @@ document.addEventListener("anura-login-completed", async () => {
         }
     });
 
+    if ((await fetch("/fs/")).status !== 404) {
+        try {
+            const files = await anura.fs.promises.readdir(directories["init"]);
+            if (files) {
+                for (const file of files) {
+                    // Init scripts have 2 modes:
+                    // 1. Normal init scripts, ran after all apps and libs are loaded
+                    // 2. anurad init scripts, ran before all apps and libs are loaded. These will end with .init.ajs and will be loaded here.
+                    if (!file.endsWith(".init.ajs")) continue;
+
+                    const data = await anura.fs.promises.readFile(
+                        directories["init"] + "/" + file,
+                    );
+                    anurad.addInitScript(new TextDecoder("utf-8").decode(data));
+                }
+            }
+        } catch (e) {
+            anura.logger.error(e);
+        }
+    }
+
+    // Register built-in Node Polyfills
+    anura.registerLib(new NodeFS());
+    anura.registerLib(new NodePrelude());
+
+    // Register vendored NPM packages
+    anura.registerLib(new Comlink());
+    anura.registerLib(new Mime());
+    anura.registerLib(new Fflate());
+
+    // console.log("comlink proxy", swProxy);
+    // console.log(await swProxy.test);
+    // console.log(await swProxy.testfn());
+
+    launcher = new Launcher(
+        clickoffChecker as HTMLDivElement,
+        updateClickoffChecker,
+    );
+
+    quickSettings = new QuickSettings(
+        clickoffChecker as HTMLDivElement,
+        updateClickoffChecker,
+    );
+
+    calendar = new Calendar(
+        clickoffChecker as HTMLDivElement,
+        updateClickoffChecker,
+    );
+
+    taskbar = new Taskbar();
+
+    oobeview = new OobeView();
+
+    if (anura.platform.type == "mobile" || anura.platform.type == "tablet") {
+        bootsplash.remove();
+        document.body.appendChild(bootsplashMobile);
+    } else {
+        if (anura.settings.get("i-am-a-true-gangsta") === true) {
+            bootsplash.remove();
+            document.body.appendChild(gangstaBootsplash);
+        }
+    }
+
+    document.body.classList.add("platform-" + anura.platform.type);
+
+    if (anura.settings.get("blur-disable")) {
+        document.body.classList.add("blur-disable");
+    }
+
+    Object.assign(window, {
+        $store,
+        anura,
+    });
+
+    anura.ui.init();
+
+    if (!anura.settings.get("oobe-complete")) {
+        // This is a new install, so an old version containing the old extension
+        // handler system can't be installed. We can skip the migration.
+        anura.settings.set("handler-migration-complete", true);
+    }
+
+    if (!anura.settings.get("handler-migration-complete")) {
+        // Convert legacy file handlers
+        // This is a one-time migration
+        const extHandlers = anura.settings.get("FileExts") || {};
+
+        console.log("migrating file handlers");
+        console.log(extHandlers);
+
+        for (const ext in extHandlers) {
+            const handler = extHandlers[ext];
+            if (handler.handler_type === "module") continue;
+            if (handler.handler_type === "cjs") continue;
+            if (typeof handler === "string") {
+                if (handler === "/apps/libfileview.app/fileHandler.js") {
+                    extHandlers[ext] = {
+                        handler_type: "module",
+                        id: "anura.fileviewer",
+                    };
+                    continue;
+                }
+                extHandlers[ext] = {
+                    handler_type: "cjs",
+                    path: handler,
+                };
+            }
+        }
+        anura.settings.set("FileExts", extHandlers);
+        anura.settings.set("handler-migration-complete", true);
+    }
+
+    setTimeout(
+        () => {
+            setTimeout(() => {
+                document.querySelector(".bootsplash")?.classList.add("hide");
+            }, 350); // give the taskbar time to init
+            setTimeout(() => {
+                bootsplash.remove();
+                bootsplashMobile.remove();
+                gangstaBootsplash.remove();
+            }, 550);
+            anura.logger.debug("boot completed");
+            document.dispatchEvent(new Event("anura-boot-completed"));
+        },
+        anura.settings.get("oobe-complete") ? 500 : 1500,
+    );
+});
+
+document.addEventListener("anura-boot-completed", async () => {
+    AnuradHelpers.setStage("anura.boot");
+    if (anura.settings.get("oobe-complete")) {
+        document.dispatchEvent(new Event("anura-login-completed"));
+    } else {
+        document.body.appendChild(oobeview.element);
+    }
+});
+
+document.addEventListener("anura-login-completed", async () => {
+    AnuradHelpers.setStage("anura.login");
+    const directories = anura.settings.get("directories");
+    anura.ui.theme = Theme.new(anura.settings.get("theme"));
+    anura.ui.theme.apply();
+    AnuradHelpers.setReady("anura.ui.theme");
+
     const generic = new GenericApp();
     anura.registerApp(generic);
 
@@ -452,6 +481,7 @@ document.addEventListener("anura-login-completed", async () => {
     const dialog = new Dialog();
     const dialogApp = await anura.registerApp(dialog);
     (anura.dialog as any) = dialogApp;
+    AnuradHelpers.setReady("anura.dialog");
 
     wallpaper.setWallpaper(
         anura.settings.get("wallpaper") ||
@@ -567,6 +597,7 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(taskbar.element);
     document.body.appendChild(alttab.element);
     anura.systray = new Systray();
+    AnuradHelpers.setReady("anura.systray");
 
     anura.ui.theme.apply();
 
@@ -618,6 +649,7 @@ document.addEventListener("anura-login-completed", async () => {
     });
 
     anura.initComplete = true;
+    AnuradHelpers.setReady("anura.initComplete");
     taskbar.updateTaskbar();
     alttab.update();
 
@@ -637,6 +669,7 @@ async function bootx86() {
     );
     await anura.registerApp(new XAppStub("XTerm", "anura.xterm", "", "xterm"));
     anura.x86 = new V86Backend(anura.x86hdd);
+    AnuradHelpers.setReady("anura.x86");
 
     anura.settings
         .get("user-xapps")
@@ -644,6 +677,7 @@ async function bootx86() {
             console.log("registering user xapp", stub);
             anura.registerApp(new XAppStub(stub.name, stub.id, "", stub.cmd));
         });
+    AnuradHelpers.setStage("anura.bootx86");
 }
 async function bootUserCustomizations() {
     const directories = anura.settings.get("directories");
@@ -668,6 +702,11 @@ async function bootUserCustomizations() {
             // Fixes a weird edgecase that I was facing where no user apps are installed, nothing breaks it just throws an error which I would like to mitigate.
             if (files) {
                 for (const file of files) {
+                    // Init scripts have 2 modes:
+                    // 1. Normal init scripts, ran after all apps and libs are loaded
+                    // 2. anurad init scripts, ran before all apps and libs are loaded. These will end with .init.ajs and will not be loaded here.
+                    if (file.endsWith(".init.ajs")) continue;
+
                     try {
                         const data = await anura.fs.promises.readFile(
                             directories["init"] + "/" + file,
@@ -725,4 +764,6 @@ async function bootUserCustomizations() {
     } catch (e) {
         anura.logger.error(e);
     }
+
+    AnuradHelpers.setStage("anura.bootUserCustomizations");
 }
