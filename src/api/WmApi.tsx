@@ -2,7 +2,7 @@ class WMAPI {
     windows: WeakRef<WMWindow>[] = [];
     hasFullscreenWindow = false;
     create(ctx: App, info: object): WMWindow {
-        const win = AliceWM.create(info as unknown as any);
+        const win = AliceWM.create(info as unknown as any, ctx);
         win.focus();
 
         win.addEventListener("focus", (event) => {

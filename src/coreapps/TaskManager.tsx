@@ -81,19 +81,15 @@ class TaskManager extends App {
                                 alt="app"
                                 class="icon"
                                 src={(() => {
-                                    try {
-                                        return (
-                                            (
-                                                (proc.deref() as WMWindow)
-                                                    .content!
-                                                    .firstChild as HTMLIFrameElement
-                                            ).contentWindow as Window & {
-                                                instance: App;
-                                            }
-                                        ).instance.icon!;
-                                    } catch {
-                                        return anura.apps["anura.generic"].icon;
+                                    let icon = anura.apps["anura.generic"].icon;
+                                    const process = proc.deref();
+                                    if (
+                                        process instanceof WMWindow &&
+                                        process.app
+                                    ) {
+                                        icon = process.app.icon;
                                     }
+                                    return icon;
                                 })()}
                             />
 

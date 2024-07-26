@@ -88,7 +88,10 @@ class WMWindow extends EventTarget implements Process {
     }
 
     maximizeImg: HTMLImageElement;
-    constructor(wininfo: WindowInformation) {
+    constructor(
+        wininfo: WindowInformation,
+        public app?: App,
+    ) {
         super();
         this.wininfo = wininfo;
         this.state = $state({
@@ -1218,7 +1221,7 @@ class WMSplitBar {
 
 // eslint-disable-next-line prefer-const
 let AliceWM = {
-    create: function (givenWinInfo: string | WindowInformation) {
+    create: function (givenWinInfo: string | WindowInformation, app?: App) {
         // Default param
         let wininfo: WindowInformation = {
             title: "",
@@ -1236,7 +1239,7 @@ let AliceWM = {
             // Only title given
             wininfo.title = givenWinInfo;
 
-        const win = new WMWindow(wininfo);
+        const win = new WMWindow(wininfo, app);
         document.body.appendChild(win.element);
         win.focus();
         if (
