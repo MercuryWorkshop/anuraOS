@@ -79,6 +79,14 @@ class WMWindow extends EventTarget implements Process {
 
     mouseover = false;
 
+    get title() {
+        return this.state.title;
+    }
+
+    set title(title: string) {
+        this.state.title = title;
+    }
+
     maximizeImg: HTMLImageElement;
     constructor(wininfo: WindowInformation) {
         super();
@@ -462,8 +470,8 @@ class WMWindow extends EventTarget implements Process {
 
         setTimeout(() => this.element.classList.remove("opacity0"), 10);
 
-        this.pid = anura.processes.procs.length;
-        anura.processes.procs.push(new WeakRef(this));
+        this.pid = anura.processes.state.procs.length;
+        anura.processes.register(this);
     }
 
     handleDrag(evt: PointerEvent) {
@@ -545,7 +553,7 @@ class WMWindow extends EventTarget implements Process {
         if (this.onfocus) this.onfocus();
     }
     close() {
-        delete anura.processes.procs[this.pid];
+        anura.processes.remove(this.pid);
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("scaletransition");
 

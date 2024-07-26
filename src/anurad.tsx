@@ -13,6 +13,7 @@ type InitScriptFrame = HTMLIFrameElement & {
 
 class Anurad extends Process {
     initScripts: AnuradInitScript[] = [];
+    title = "anurad";
 
     constructor(public pid: number) {
         super();
@@ -22,9 +23,9 @@ class Anurad extends Process {
     async addInitScript(script: string) {
         const initScript = new AnuradInitScript(
             script,
-            anura.processes.procs.length,
+            anura.processes.state.procs.length,
         );
-        anura.processes.procs.push(new WeakRef(initScript));
+        anura.processes.register(initScript);
         this.initScripts.push(initScript);
     }
 
@@ -40,17 +41,24 @@ class Anurad extends Process {
     }
 }
 
-class AnuradInitScript extends Process {
+class AnuradInitScript implements Process {
     script: string;
     frame: InitScriptFrame;
     window: InitScriptFrame["contentWindow"];
     info?: InitScriptExports;
 
+    get title() {
+        return this.info?.name as string;
+    }
+
+    set title(value: string) {
+        this.info!.name = value;
+    }
+
     constructor(
         script: string,
         public pid: number,
     ) {
-        super();
         this.script = script;
         this.frame = (
             <iframe
@@ -159,6 +167,30 @@ class AnuradInitScript extends Process {
                 AnuradHelpers.setStage(this.info.name);
             }
         });
+
+        this.stdout = new ReadableStream({
+            start: (controller) => {
+                this.window!.addEventListener("message", (e) => {
+                    if (e.data.type === "stdout") {
+                        controller.enqueue(e.data.message);
+                    }
+                });
+            },
+        });
+
+        this.stderr = new ReadableStream({
+            start: (controller) => {
+                this.window!.addEventListener("error", (e) => {
+                    controller.enqueue(e.error);
+                });
+
+                this.window!.addEventListener("message", (e) => {
+                    if (e.data.type === "stderr") {
+                        controller.enqueue(e.data.message);
+                    }
+                });
+            },
+        });
     }
 
     get alive(): boolean {
@@ -166,8 +198,14 @@ class AnuradInitScript extends Process {
     }
 
     kill(): void {
-        super.kill();
         this.info!.stop();
         this.frame.remove();
+        anura.processes.remove(this.pid);
     }
+
+    stdin: WritableStream<Uint8Array>;
+
+    stderr: ReadableStream<Uint8Array>;
+
+    stdout: ReadableStream<Uint8Array>;
 }

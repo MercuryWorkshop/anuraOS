@@ -17,13 +17,19 @@ class TaskManager extends App {
             align-items: center;
         }
 
+        .icon {
+            height: 1.5rem;
+            width: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
         .row.selected {
             background: var(--theme-accent);
             color: var(--theme-fg);
         }
 
         .list {
-            overflow: scroll;
+            overflow-y: scroll;
             height: calc(100% - 8rem);
             border: 1px var(--theme-border) solid;
             margin: 0.5rem;
@@ -40,7 +46,6 @@ class TaskManager extends App {
     `;
 
     state = $state({
-        procs: anura.processes,
         selected: -1, // TODO: Multiselect. Shouldn't be too hard
     });
 
@@ -56,8 +61,8 @@ class TaskManager extends App {
             class={`background ${this.css}`}
         >
             <div class="list">
-                {use(this.state.procs, (procs) =>
-                    procs.procs.map((proc) => (
+                {use(anura.processes.state.procs, (procs) =>
+                    procs.map((proc) => (
                         <div
                             class="row"
                             class:selected={use(
@@ -72,7 +77,29 @@ class TaskManager extends App {
                                 console.log(this.state.selected);
                             }}
                         >
-                            <span class="pid">Task {proc.deref()?.pid}</span>
+                            <img
+                                alt="app"
+                                class="icon"
+                                src={(() => {
+                                    try {
+                                        return (
+                                            (
+                                                (proc.deref() as WMWindow)
+                                                    .content!
+                                                    .firstChild as HTMLIFrameElement
+                                            ).contentWindow as Window & {
+                                                instance: App;
+                                            }
+                                        ).instance.icon!;
+                                    } catch {
+                                        return anura.apps["anura.generic"].icon;
+                                    }
+                                })()}
+                            />
+
+                            <span class="pid">
+                                {proc.deref()?.title} (PID {proc.deref()?.pid})
+                            </span>
                         </div>
                     )),
                 )}
@@ -82,8 +109,10 @@ class TaskManager extends App {
                     bind:disabled={use(this.state.selected, (num) => num == -1)}
                     class="matter-button-contained"
                     on:click={() => {
-                        const proc = this.state.procs.procs.find(
-                            (proc) => proc.deref()?.pid == this.state.selected,
+                        const proc = anura.processes.state.procs.find(
+                            (proc) =>
+                                proc &&
+                                proc.deref()?.pid == this.state.selected,
                         );
                         if (proc) {
                             proc.deref()?.kill();
@@ -103,10 +132,6 @@ class TaskManager extends App {
             height: `${(360 * window.innerHeight) / 1080}px`,
         });
         win.content.appendChild(await this.page());
-
-        setInterval(() => {
-            this.state.procs = anura.processes;
-        }, 500);
 
         return win;
     }

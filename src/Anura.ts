@@ -282,6 +282,8 @@ interface AppManifest {
 
 class SWProcess extends Process {
     pid = 0;
+    title = "Service Worker";
+
     constructor() {
         super();
         this.stdin = new WritableStream({
@@ -316,12 +318,12 @@ class SWProcess extends Process {
     }
 
     kill() {
-        super.kill();
         navigator.serviceWorker.getRegistrations().then((registrations) => {
             for (const registration of registrations) {
                 registration.unregister();
             }
         });
+        super.kill();
         location.reload();
     }
 

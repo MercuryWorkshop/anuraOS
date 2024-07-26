@@ -153,7 +153,7 @@ window.addEventListener("load", async () => {
     // We do not want the service worker process to be garbage collected
     // so we will store it in the Window object as well.
     anura.sw = swProcess;
-    anura.processes.procs.push(new WeakRef(swProcess));
+    anura.processes.register(swProcess);
 
     if (milestone) {
         const stored = anura.settings.get("milestone");
@@ -187,7 +187,7 @@ window.addEventListener("load", async () => {
     const anurad = new Anurad(1);
 
     anura.anurad = anurad;
-    anura.processes.procs.push(new WeakRef(anurad));
+    anura.processes.register(anurad);
     AnuradHelpers.setReady("anura.anurad");
 
     Object.entries(anura)

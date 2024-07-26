@@ -1,12 +1,33 @@
 class Processes {
-    procs: WeakRef<Process>[] = [];
+    // procs: WeakRef<Process>[] = [];
+    get procs() {
+        return this.state.procs;
+    }
+
+    set procs(value) {
+        this.state.procs = value;
+    }
+
+    state = $state({
+        procs: $state([] as WeakRef<Process>[]),
+    });
+
+    remove(pid: number) {
+        delete this.state.procs[pid];
+        this.state.procs = this.state.procs;
+    }
+
+    register(proc: Process) {
+        this.state.procs.push(new WeakRef(proc));
+        this.state.procs = this.state.procs;
+    }
 
     create(
         script: string,
         type: "common" | "module" = "common",
     ): IframeProcess {
         const proc = new IframeProcess(script, type, this.procs.length);
-        this.procs.push(new WeakRef(proc));
+        this.register(proc);
         return proc;
     }
 
@@ -42,20 +63,22 @@ class Processes {
 }
 
 abstract class Process {
-    pid: number;
+    abstract pid: number;
+    abstract title: string;
 
     stdout: ReadableStream<Uint8Array>;
     stderr: ReadableStream<Uint8Array>;
     stdin: WritableStream<Uint8Array>;
 
     kill() {
-        delete anura.processes.procs[this.pid];
+        anura.processes.remove(this.pid);
     }
     abstract get alive(): boolean;
 }
 
 class IframeProcess extends Process {
     script: string;
+    title = "Process";
     frame: HTMLIFrameElement;
 
     constructor(
@@ -64,20 +87,20 @@ class IframeProcess extends Process {
         public pid: number,
     ) {
         super();
+        this.title = `Process ${pid}`;
+
         this.frame = (
             <iframe
                 id={`proc-${pid}`}
                 style="display: none;"
-                srcdoc={`
-<!DOCTYPE html>
+                srcdoc={`<!DOCTYPE html>
 <html>
     <head>
         <script ${type === "module" ? 'type="module"' : ""}>
         ${script}
         </script>
     </head>
-</html>
-        `}
+</html>`}
             ></iframe>
         ) as HTMLIFrameElement;
 
@@ -184,8 +207,8 @@ class IframeProcess extends Process {
     }
 
     kill() {
-        super.kill();
         this.frame.remove();
+        super.kill();
     }
 
     get alive() {
