@@ -346,6 +346,8 @@ const LauncherShortcut: Component<
                         );
                         // FIXME: it doesnt get removed from the launcher
                         delete anura.apps[app.package];
+                        // FIXME: DUMB HACK
+                        location.reload();
                     } catch (e) {
                         console.error(e);
                         anura.dialog.alert(
