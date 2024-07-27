@@ -280,12 +280,6 @@ class Taskbar {
         if (navigator.getBattery) {
             // @ts-ignore
             navigator.getBattery().then((battery) => {
-                // Gonna comment this out for now to see if you guys actually want this as a feature.
-                // if (battery.dischargingTime == Infinity) {
-                //     this.state.bat_icon = "";
-                //     return;
-                // }
-                // I have almost no clue if this will work but im praying.
                 battery.onchargingchange = () => {
                     if (battery.charging) {
                         this.state.bat_icon = "battery_charging_full";
@@ -311,6 +305,13 @@ class Taskbar {
                         return;
                     }
                 };
+
+                // This literally just checks if the battery is charging and fully charged
+                // which is a *close enough* approximation of whether it's a laptop or not.
+                if (battery.charging && battery.chargingTime === 0) {
+                    this.state.bat_icon = "";
+                    return;
+                }
 
                 if (battery.charging) {
                     this.state.bat_icon = "battery_charging_full";
