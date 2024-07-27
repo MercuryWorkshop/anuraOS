@@ -4,16 +4,16 @@ RUN  apk add --update \
         alpine-base bash ncurses shadow curl \
         linux-lts linux-firmware-none linux-headers \
         gcc make gcompat musl-dev libx11-dev xinit \
-        dhcpcd \
+        bind-tools \
         htop vim nano \
     && \
     setup-xorg-base xhost xterm xcalc xdotool xkill || true && \
     setup-devd udev || true && \
     touch /root/.Xdefaults && \
-    passwd -d root && \
-    chsh -s /bin/bash && \
     printf "anura" > /etc/hostname && \
-    rm /etc/motd /etc/issue
+    rm /etc/motd /etc/issue && \
+    passwd -d root && \
+    chsh -s /bin/bash
 
 COPY xorg.conf /etc/X11/
 COPY X11/* /etc/X11/
@@ -25,6 +25,7 @@ RUN chmod 644 /etc/profile
 
 COPY anurad.c /etc/
 COPY anuramouse/* /etc/anuramouse/
+COPY interfaces /etc/network/interfaces
 COPY whisper /bin/whisper
 COPY twisp /bin/twisp
 
@@ -34,7 +35,7 @@ RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anurad /etc/init.d/
 COPY anura-boot /etc/init.d/
 RUN chmod +x /etc/init.d/anurad /etc/init.d/anura-boot
-RUN printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n" > /etc/resolv.conf.head
+RUN printf "nameserver 192.168.86.1\n" > /etc/resolv.conf.head
 
 # setup init system
 RUN rc-update add dmesg sysinit

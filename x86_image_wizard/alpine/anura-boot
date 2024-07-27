@@ -12,9 +12,9 @@ start() {
   mount / -o remount,rw
   mount -t 9p host9p /root &
   modprobe ne2k-pci
-  dhcpcd &
-  eend $?
+  ifupdown ifup eth0
   ip link set lo up
+  eend $?
 }
 
 stop() {

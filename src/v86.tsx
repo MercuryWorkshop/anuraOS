@@ -314,7 +314,7 @@ class V86Backend {
 
             bios: { url: "/bios/seabios.bin" },
             vga_bios: { url: "/bios/vgabios.bin" },
-            network_relay_url: anura.settings.get("relay-url"),
+            network_relay_url: "fetch",
             // initial_state: { url: "/images/v86state.bin" },
             autostart: true,
             uart1: true,
@@ -407,6 +407,7 @@ class V86Backend {
                 }
             },
         );
+        /*
         const registerv86Wisp = () => {
             this.v86Wisp = new WebSocket(anura.wsproxyURL);
             this.v86Wisp.binaryType = "arraybuffer";
@@ -419,6 +420,7 @@ class V86Backend {
                 registerv86Wisp();
             };
         };
+
         this.netpty = await this.openpty(
             "modprobe tun && /bin/whisper --tun tun0 --pty /dev/hvc0 --wisp-v1",
             1,
@@ -439,6 +441,7 @@ class V86Backend {
                 }
             },
         );
+        */
         // await sleep(200);
 
         this.runpty = await this.openpty("DISPLAY=:0 bash", 1, 1, (data) => {

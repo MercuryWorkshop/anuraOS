@@ -5,12 +5,12 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
+all: build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
 
 full: all rootfs-debian rootfs-arch rootfs-alpine
 
-submodules: .gitmodules
-	git submodule update
+#submodules: .gitmodules
+#	git submodule update
 
 hooks: FORCE
 	mkdir -p .git/hooks
