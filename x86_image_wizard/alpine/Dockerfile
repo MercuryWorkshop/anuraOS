@@ -1,7 +1,7 @@
 FROM i386/alpine:edge
 
 RUN  apk add --update \
-        alpine-base bash shadow curl \
+        alpine-base bash ncurses shadow curl \
         linux-lts linux-firmware-none linux-headers \
         gcc make gcompat musl-dev libx11-dev xinit \
         dhcpcd \
@@ -12,16 +12,16 @@ RUN  apk add --update \
     touch /root/.Xdefaults && \
     passwd -d root && \
     chsh -s /bin/bash && \
-    mkdir -p /etc/openrc/conf.d && echo hostname="anuraos" > /etc/openrc/conf.d/hostname && \
+    printf "anura" > /etc/hostname && \
     rm /etc/motd /etc/issue
-
-ARG CACHEBUST=2374838
 
 COPY xorg.conf /etc/X11/
 COPY X11/* /etc/X11/
 
 COPY xfrog.sh /bin/xfrog
 COPY xsetrandr.sh /bin/xsetrandr
+COPY profile /etc/profile
+RUN chmod 644 /etc/profile
 
 COPY anurad.c /etc/
 COPY anuramouse/* /etc/anuramouse/
@@ -37,7 +37,6 @@ RUN chmod +x /etc/init.d/anurad /etc/init.d/anura-boot
 RUN printf "nameserver 8.8.8.8\nnameserver 8.8.4.4\n" > /etc/resolv.conf.head
 
 # setup init system
-RUN rc-update add devfs sysinit
 RUN rc-update add dmesg sysinit
 RUN rc-update add anura-boot sysinit
 
