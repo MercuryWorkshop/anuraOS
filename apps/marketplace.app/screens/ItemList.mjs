@@ -178,7 +178,7 @@ export default function ItemList() {
             align-items: center;
             width: calc(70% - 8px);
             position: fixed;
-            top: 28.5px;
+            top: 28px;
             left: calc(30% + 1px);
             height: 4.5rem;
             background: color-mix(in srgb, var(--theme-bg) 80%, transparent);
