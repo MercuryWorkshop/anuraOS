@@ -491,10 +491,10 @@ export class StoreRepoLegacy {
         this.hooks.onDownloadStart(libName);
         const zipFile = new Uint8Array(
             await (
-                await this.client.fetch(encodeURI(this.baseUrl + app.data))
+                await this.client.fetch(encodeURI(this.baseUrl + lib.data))
             ).arrayBuffer(),
         );
-        let zip = await JSZip.loadAsync(zipFile);
+        let zip = fflate.unzipSync(zipFile);
         console.log(zip);
 
         const path = `${this.directories["libs"]}/${libName}.lib`;
