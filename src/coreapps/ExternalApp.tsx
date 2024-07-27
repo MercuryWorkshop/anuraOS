@@ -58,6 +58,55 @@ class ExternalApp extends App {
             );
             win.content.appendChild(iframe);
             iframe.id = `proc-${win.pid}`;
+
+            if (this.manifest.useIdbWrapper) {
+                const idbWrapper = new Proxy(iframe.contentWindow!.indexedDB, {
+                    get: (target, prop, receiver) => {
+                        switch (prop) {
+                            case "databases":
+                                return async () => {
+                                    const dbs = await target.databases();
+                                    return dbs
+                                        .filter((db: any) =>
+                                            db.name.startsWith(
+                                                this.package + "-",
+                                            ),
+                                        )
+                                        .map((db: any) => {
+                                            db.name = db.name.slice(
+                                                this.package.length + 1,
+                                            );
+                                            return db;
+                                        });
+                                };
+                            case "open":
+                                return (name: string, version: number) => {
+                                    return target.open(
+                                        name.startsWith(this.package + "-")
+                                            ? name
+                                            : `${this.package}-${name}`,
+                                        version,
+                                    );
+                                };
+                            case "deleteDatabase":
+                                return (name: string) => {
+                                    return target.deleteDatabase(
+                                        name.startsWith(this.package + "-")
+                                            ? name
+                                            : `${this.package}-${name}`,
+                                    );
+                                };
+                            default:
+                                return Reflect.get(target, prop, receiver);
+                        }
+                    },
+                });
+                Object.defineProperty(iframe.contentWindow!, "indexedDB", {
+                    value: idbWrapper,
+                    writable: false,
+                });
+            }
+
             Object.assign(iframe.contentWindow as any, {
                 anura,
                 AliceWM,

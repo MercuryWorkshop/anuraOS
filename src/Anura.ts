@@ -278,6 +278,11 @@ interface AppManifest {
      * This contains the properties for the default app window.
      */
     wininfo: string | WindowInformation;
+    /**
+     * Whether or not the app should use the IDB wrapper. This option allows the app to access indexedDB without
+     * worrying about the app purging anura's own databases.
+     */
+    useIdbWrapper?: boolean;
 }
 
 class SWProcess extends Process {

@@ -21,12 +21,13 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
 -   `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Anura will display this icon throughout the DE.
 -   `background`: Background color of iframe while it is loading. Optional.
 -   `handler`: `String` - Path (from app directory) to a file containing JavaScript to execute at the top-level document. Required if `type` is `"manual"`, ignored otherwise - the top-level document will execute this file as JavaScript.
+-   `useIdbWrapper`: `Boolean` - Use the IndexedDB wrapper, which prevents the app from making accidental modifications to other app's indexeddb stores or anura's own stores. Defaults to `false`. Optional.
 -   `wininfo`: `Object {title, width, height, resizable}` - Required if `type` is `"auto"`.
 
-*   `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
-*   `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
-*   `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
-*   `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
+    -   `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
+    -   `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
+    -   `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
+    -   `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
 
 ## Tips and Tricks
 
