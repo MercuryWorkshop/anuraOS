@@ -6,18 +6,6 @@ build_alpine() {
     cd ..
 }
 
-build_debian() {
-    cd debian
-    sh build-debian-bin.sh
-    cd ..
-}
-
-build_arch() {
-    cd arch
-    sh build-arch-bin.sh
-    cd ..
-}
-
 display_menu() {
     echo "Choose a rootfs image to build:"
     echo "1. Alpine"

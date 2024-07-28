@@ -7,7 +7,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 
 all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
 
-full: all rootfs-debian rootfs-arch rootfs-alpine
+full: all rootfs-alpine
 
 submodules: .gitmodules
 	git submodule update
@@ -116,7 +116,6 @@ build/libs/dreamland/all.js: dreamlandjs/src/*
 	cp dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
 	jq '.version' dreamlandjs/package.json > build/libs/dreamland/version
 
-
 build/assets/matter.css:
 	mkdir -p build/assets
 	curl https://github.com/finnhvman/matter/releases/latest/download/matter.css -L -o build/assets/matter.css
@@ -124,12 +123,6 @@ build/assets/matter.css:
 clean:
 	rm -rf build
 	cd v86 && make clean || true
-
-# rootfs-debian: FORCE
-#	cd x86_image_wizard/debian; sh build-debian-bin.sh
-
-# rootfs-arch: FORCE
-# 	cd x86_image_wizard/arch; sh build-arch-bin.sh
 
 rootfs-alpine: FORCE
 	cd x86_image_wizard/alpine; sh build-alpine-bin.sh
