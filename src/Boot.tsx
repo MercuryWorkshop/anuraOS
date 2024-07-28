@@ -79,7 +79,6 @@ const updateClickoffChecker = (show: boolean) => {
     clickoffCheckerState.active = show;
 };
 
-const contextMenu = new ContextMenu();
 let taskbar: Taskbar;
 let launcher: Launcher;
 let oobeview: OobeView;
@@ -588,7 +587,6 @@ document.addEventListener("anura-login-completed", async () => {
         launcher.state.active = true;
     }
 
-    document.body.appendChild(contextMenu.element);
     document.body.appendChild(launcher.element);
     document.body.appendChild(launcher.clickoffChecker);
     document.body.appendChild(quickSettings.quickSettingsElement);
