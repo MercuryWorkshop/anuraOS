@@ -457,11 +457,11 @@ class SettingsApp extends App {
                                                                     .screen_container,
 
                                                             initrd: {
-                                                                url: "/images/resizefs.img",
+                                                                url: "/x86images/resizefs.img",
                                                             },
 
                                                             bzimage: {
-                                                                url: "/images/bzResize",
+                                                                url: "/x86images/bzResize",
                                                                 async: false,
                                                             },
                                                             hda: {
