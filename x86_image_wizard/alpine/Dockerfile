@@ -38,9 +38,6 @@ RUN chmod +x /etc/init.d/anurad /etc/init.d/anura-boot
 COPY rc.conf /etc/rc.conf
 RUN rc-update add dmesg sysinit
 RUN rc-update add anura-boot sysinit
-RUN rc-update add udev sysinit
-RUN rc-update add udev-trigger sysinit
-RUN rc-update add udev-settle sysinit
 
 RUN rc-update add root boot
 RUN rc-update add localmount boot
@@ -53,7 +50,6 @@ RUN rc-update add mount-ro shutdown
 RUN rc-update add killprocs shutdown
 RUN rc-update add savecache shutdown
 
-RUN rc-update add udev-postmount default
 RUN rc-update add anurad default
 
 RUN bash

@@ -3,6 +3,10 @@
 description="Run Anura Boot Scripts"
 
 start() {
+  rc-service --ifstopped udev start
+  rc-service --ifstopped udev-trigger start
+  rc-service --ifstopped udev-settle start
+  rc-service --ifstopped udev-postmount start
   ebegin "Running Anura Boot Scripts"
   mount / -o remount,rw
   printf "anura" > /etc/hostname
