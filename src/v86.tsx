@@ -324,6 +324,11 @@ class V86Backend {
 
         let s0data = "";
         let s1data = "";
+        // WISP networking
+        let netBuffer: Uint8Array[] = [];
+        let inTransit = false;
+        let currentRead = 0;
+        let currentPacketSize = 0;
 
         // temporary, needs to be fixed later
         this.saveinterval = setInterval(() => {
@@ -355,6 +360,52 @@ class V86Backend {
             }
             s1data += char;
         });
+
+        this.emulator.add_listener(
+            "virtio-console0-output-bytes",
+            async (bytes: Uint8Array) => {
+                if (!inTransit) {
+                    const dataView = new DataView(bytes.buffer);
+                    const length = dataView.getUint32(0, true);
+                    if (bytes.length - 4 != length) {
+                        inTransit = true;
+                        currentRead += bytes.length - 4;
+                        currentPacketSize = length;
+                        netBuffer.push(bytes.slice(4, bytes.length - 1));
+                        inTransit = true;
+                    } else {
+                        anura.x86?.v86Wisp.send(
+                            bytes.slice(4, bytes.byteLength),
+                        );
+                        inTransit = false;
+                        currentRead = 0;
+                        currentPacketSize = 0;
+                        netBuffer = [];
+                    }
+                } else {
+                    netBuffer.push(bytes);
+                    currentRead += bytes.length;
+                    if (currentRead == currentPacketSize) {
+                        console.log("Sending netbuffer: ");
+                        console.log(new Blob(netBuffer));
+                        anura.x86?.v86Wisp.send(
+                            new Uint8Array(
+                                await new Blob(netBuffer).arrayBuffer(),
+                            ),
+                        );
+                        inTransit = false;
+                        currentRead = 0;
+                        currentPacketSize = 0;
+                        netBuffer = [];
+                    }
+                }
+                console.log("got data");
+                console.log(bytes);
+                console.log("stream transit: " + inTransit);
+                console.log("read: " + currentRead);
+                console.log("packetSize: " + currentPacketSize);
+            },
+        );
     }
 
     netids: string[] = [];
