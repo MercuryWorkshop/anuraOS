@@ -25,10 +25,9 @@ RUN chmod 644 /etc/profile
 COPY anurad.c /etc/
 COPY anuramouse/* /etc/anuramouse/
 COPY interfaces /etc/network/interfaces
-COPY whisper /bin/whisper
 COPY twisp /bin/twisp
 
-RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/whisper /bin/twisp
+RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/twisp
 RUN gcc /etc/anurad.c -o /bin/anurad -lutil 
 RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anurad /etc/init.d/
