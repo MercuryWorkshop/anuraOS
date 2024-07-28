@@ -10,7 +10,6 @@ RUN  apk add --update \
     setup-xorg-base xhost xterm xcalc xdotool xkill || true && \
     setup-devd udev || true && \
     touch /root/.Xdefaults && \
-    printf "anura" > /etc/hostname && \
     rm /etc/motd /etc/issue && \
     passwd -d root && \
     chsh -s /bin/bash
@@ -35,17 +34,19 @@ RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY anurad /etc/init.d/
 COPY anura-boot /etc/init.d/
 RUN chmod +x /etc/init.d/anurad /etc/init.d/anura-boot
-RUN printf "nameserver 192.168.86.1\n" > /etc/resolv.conf.head
 
 # setup init system
+COPY rc.conf /etc/rc.conf
 RUN rc-update add dmesg sysinit
 RUN rc-update add anura-boot sysinit
+RUN rc-update add udev sysinit
+RUN rc-update add udev-trigger sysinit
+RUN rc-update add udev-settle sysinit
 
 RUN rc-update add root boot
 RUN rc-update add localmount boot
 RUN rc-update add modules boot
 RUN rc-update add sysctl boot
-RUN rc-update add hostname boot
 RUN rc-update add bootmisc boot
 RUN rc-update add syslog boot
 
@@ -53,6 +54,7 @@ RUN rc-update add mount-ro shutdown
 RUN rc-update add killprocs shutdown
 RUN rc-update add savecache shutdown
 
+RUN rc-update add udev-postmount default
 RUN rc-update add anurad default
 
 RUN bash

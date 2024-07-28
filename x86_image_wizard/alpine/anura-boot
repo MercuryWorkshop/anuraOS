@@ -3,13 +3,11 @@
 description="Run Anura Boot Scripts"
 
 start() {
-  rc-service --ifstopped udev start
-  rc-service --ifstopped udev-trigger start
-  rc-service --ifstopped udev-settle start
-  rc-service --ifstopped udev-postmount start
-  rc-service --ifstopped hostname start
   ebegin "Running Anura Boot Scripts"
   mount / -o remount,rw
+  printf "anura" > /etc/hostname
+  printf "nameserver 192.168.86.1\n" > /etc/resolv.conf
+  rc-service --ifstopped hostname start
   mount -t 9p host9p /root &
   modprobe ne2k-pci
   ifupdown ifup eth0
