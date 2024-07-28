@@ -24,7 +24,6 @@ cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
 cp -r ../anuramouse .
-cd ../whisper; RUSTFLAGS="-C target-feature=+crt-static" cargo +nightly b -r --target i686-unknown-linux-gnu --no-default-features -F rustls; cp target/i686-unknown-linux-gnu/release/whisper ../alpine/;
 cd ../twisp; RUSTFLAGS="-C target-feature=+crt-static" cargo +nightly b -r --target i686-unknown-linux-gnu --no-default-features; cp target/i686-unknown-linux-gnu/release/twisp ../alpine/;
 cd ../alpine;
 
