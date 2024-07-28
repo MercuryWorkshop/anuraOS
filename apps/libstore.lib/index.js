@@ -3,6 +3,15 @@ const fflate = await anura.import("npm:fflate");
 const fs = Filer.fs;
 const Buffer = Filer.Buffer;
 
+function unzip(zip) {
+    return new Promise((res, rej) => {
+        fflate.unzip(zip, (err, unzipped) => {
+            if (err) rej(err);
+            else res(unzipped);
+        });
+    });
+}
+
 export class Store {
     client;
     cache;
@@ -209,7 +218,7 @@ export class StoreRepo {
                 await this.client.fetch(encodeURI(app.baseUrl + app.data))
             ).arrayBuffer(),
         );
-        let zip = fflate.unzipSync(zipFile);
+        let zip = await unzip(zipFile);
         console.log(zip);
 
         const path = `${this.directories["apps"]}/${appName}.app`;
@@ -277,7 +286,7 @@ export class StoreRepo {
                 await this.client.fetch(lib.baseUrl + lib.data)
             ).arrayBuffer(),
         );
-        let zip = fflate.unzipSync(zipFile);
+        let zip = await unzip(zipFile);
         console.log(zip);
 
         const path = `${this.directories["libs"]}/${libName}.lib`;
@@ -445,7 +454,7 @@ export class StoreRepoLegacy {
                 await this.client.fetch(encodeURI(this.baseUrl + app.data))
             ).arrayBuffer(),
         );
-        let zip = fflate.unzipSync(zipFile);
+        let zip = await unzip(zipFile);
         console.log(zip);
 
         const path = `${this.directories["apps"]}/${appName}.app`;
@@ -494,7 +503,7 @@ export class StoreRepoLegacy {
                 await this.client.fetch(encodeURI(this.baseUrl + lib.data))
             ).arrayBuffer(),
         );
-        let zip = fflate.unzipSync(zipFile);
+        let zip = await unzip(zipFile);
         console.log(zip);
 
         const path = `${this.directories["libs"]}/${libName}.lib`;

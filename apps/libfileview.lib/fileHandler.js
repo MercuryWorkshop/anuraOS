@@ -3,21 +3,6 @@ const icons = await (await fetch(localPathToURL("icons.json"))).json();
 export function openFile(path) {
     const fs = anura.fs || Filer.fs;
     // let AliceWM = AliceWM || window.parent.AliceWM
-    async function runPython(path) {
-        let pythonInterpreter = await window.parent.anura.python("test");
-        fs.readFile(path, async function (err, data) {
-            let fileView = anura.wm.createGeneric("Python Output");
-            fileView.content.style.overflow = "auto";
-            function handleOutput(out) {
-                fileView.content.innerText += out;
-                console.log("Intercepted output: " + out);
-            }
-            let pythonInterpreter = await window.parent.anura.python("test");
-            pythonInterpreter.window.console.log = handleOutput;
-            pythonInterpreter.runPython(new TextDecoder().decode(data));
-        });
-    }
-
     function openImage(path, mimetype) {
         fs.readFile(path, function (err, data) {
             let fileView = anura.wm.createGeneric("Image File");
@@ -179,9 +164,6 @@ export function openFile(path) {
             break;
         case "pdf":
             openPDF(path);
-            break;
-        case "py":
-            runPython(path);
             break;
         case "html":
             openHTML(path);

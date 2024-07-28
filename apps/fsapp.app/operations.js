@@ -356,7 +356,7 @@ async function fileAction(selected) {
                     .slice(0, -1)
                     .join(".");
 
-                const zip = fflate.unzipSync(new Uint8Array(data));
+                const zip = await unzip(new Uint8Array(data));
                 const manifest = JSON.parse(
                     new TextDecoder().decode(zip["manifest.json"]),
                 );
@@ -509,7 +509,7 @@ async function fileAction(selected) {
                     .slice(0, -1)
                     .join(".");
 
-                const zip = fflate.unzipSync(new Uint8Array(data));
+                const zip = await unzip(new Uint8Array(data));
                 console.log(zip);
                 const manifest = JSON.parse(
                     new TextDecoder().decode(zip["manifest.json"]),
@@ -1471,6 +1471,15 @@ function navigate() {
         loadPath(currentlySelected[0].getAttribute("data-path"));
     }
     // Can't navigate to multiple folders
+}
+
+function unzip(zip) {
+    return new Promise((res, rej) => {
+        fflate.unzip(zip, (err, unzipped) => {
+            if (err) rej(err);
+            else res(unzipped);
+        });
+    });
 }
 
 loadPath("/");
