@@ -3,7 +3,25 @@ class OobeView {
         color: "white",
         text: "#202124",
         step: 0,
+        offlineEnabled: true,
+        v86Enabled: false,
+        dlsize: "0MB",
     });
+
+    constructor() {
+        useChange([this.state.offlineEnabled, this.state.v86Enabled], () => {
+            console.log(this.state.offlineEnabled, this.state.v86Enabled);
+            this.state.dlsize = "0MB";
+
+            if (this.state.offlineEnabled) {
+                this.state.dlsize = "~30MB";
+            }
+
+            if (this.state.v86Enabled) {
+                this.state.dlsize = "~1GB";
+            }
+        });
+    }
 
     css = css`
         z-index: 9996;
@@ -16,6 +34,8 @@ class OobeView {
         justify-content: center;
         align-content: center;
         flex-wrap: wrap;
+
+        --matter-onsurface-rgb: #121212 !important;
 
         #content {
             padding: 79.6px 40px 23.8px 40px;
@@ -96,11 +116,29 @@ class OobeView {
                 sans-serif;
         }
 
-        #welcome.screen #animation {
+        .screen #animation {
             grid-column: 2 / span 1;
             grid-row: 1 / span 2;
             margin-left: auto;
-            display: ${anura.platform.type == "mobile" ? "none;" : "inherit;"};
+            display: ${anura.platform.type == "mobile" ? "none;" : "unset;"};
+        }
+
+        .material-symbols-outlined {
+            font-size: 1rem;
+        }
+
+        #size {
+            color: #96969f;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            & > .material-symbols-outlined {
+                font-size: 1.1rem;
+            }
+        }
+
+        #features #subtitle {
+            margin-bottom: 2rem;
         }
     `;
 
@@ -127,68 +165,71 @@ class OobeView {
         },
         {
             elm: (
-                <div class="screen">
+                <div class="screen" id="features">
                     <h1>Choose your experience</h1>
                     <div id="subtitle">What kind of Anura user are you?</div>
-
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("use-sw-cache", true);
-                            anura.settings.set("x86-image", "alpine");
-                            anura.settings.set("applist", [
-                                ...anura.settings.get("applist"),
-                                "anura.term",
-                            ]);
-                            this.nextStep();
-                        }}
-                    >
-                        Alpine Linux - 1GB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("use-sw-cache", false);
-                            anura.settings.set("x86-image", "alpine");
-                            anura.settings.set("applist", [
-                                ...anura.settings.get("applist"),
-                                "anura.term",
-                            ]);
-                            this.nextStep();
-                        }}
-                    >
-                        Alpine Linux (disable offline functionality) - 1GB
-                        download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", true);
-                            anura.settings.set("use-sw-cache", true);
-                            anura.settings.set("applist", [
-                                ...anura.settings.get("applist"),
-                                "anura.ashell",
-                            ]);
-                            this.nextStep();
-                        }}
-                    >
-                        Normal User (disable linux) - 23.3MB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", true);
-                            anura.settings.set("use-sw-cache", false);
-                            anura.settings.set("applist", [
-                                ...anura.settings.get("applist"),
-                                "anura.ashell",
-                            ]);
-                            this.nextStep();
-                        }}
-                    >
-                        No Download (disable linux and offline functionality)
-                    </button>
+                    <label class="matter-checkbox">
+                        <input
+                            type="checkbox"
+                            bind:checked={use(this.state.offlineEnabled)}
+                        />
+                        <span>Offline Functionality</span>
+                    </label>
+                    <br></br>
+                    <label class="matter-checkbox">
+                        <input
+                            type="checkbox"
+                            bind:checked={use(this.state.v86Enabled)}
+                        />
+                        <span>Linux Emulation</span>
+                    </label>
+                    <br></br>
+                    <br></br>
+                    <div id="size">
+                        <span class="material-symbols-outlined">download</span>
+                        &nbsp;{use(this.state.dlsize)} download
+                    </div>
+                    <div id="gridContent">
+                        <img
+                            id="animation"
+                            src="assets/oobe/checking_for_update.gif"
+                        />
+                        <div id="bottomButtons">
+                            <button
+                                on:click={() => {
+                                    anura.settings.set(
+                                        "x86-disabled",
+                                        !this.state.v86Enabled,
+                                    );
+                                    anura.settings.set(
+                                        "use-sw-cache",
+                                        this.state.offlineEnabled,
+                                    );
+                                    anura.settings.set("applist", [
+                                        ...anura.settings.get("applist"),
+                                        this.state.v86Enabled
+                                            ? "anura.term"
+                                            : "anura.ashell",
+                                    ]);
+                                    this.nextStep();
+                                }}
+                                class="preferredButton"
+                            >
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        fontSize: "0.7rem!important",
+                                    }}
+                                >
+                                    <span>Next</span>
+                                    <span class="material-symbols-outlined">
+                                        chevron_right
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             ),
             on: () => {},
