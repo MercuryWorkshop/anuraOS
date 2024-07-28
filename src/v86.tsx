@@ -650,29 +650,6 @@ class V86Backend {
         this.emulator.write_memory(bytes, addr);
     }
 }
-async function savestate() {
-    const new_state = await anura.x86!.emulator.save_state();
-    const a = document.createElement("a");
-    a.download = "v86state.bin";
-    a.href = window.URL.createObjectURL(new Blob([new_state]));
-    a.dataset.downloadurl =
-        "application/octet-stream:" + a.download + ":" + a.href;
-    a.click();
-
-    this.blur();
-}
-async function a() {
-    const emulator = anura.x86!.emulator;
-    (window as any).emulator = emulator;
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const text = await navigator.clipboard.readText();
-    for (const l of text.split("\n")) {
-        emulator.serial0_send(`${l}\n`);
-
-        await new Promise((resolve) => setTimeout(resolve, 10));
-    }
-    emulator.serial0_send("\n\x04\n");
-}
 
 interface FakeFile {
     slice: (start: number, end: number) => Promise<Blob>;
