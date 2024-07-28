@@ -363,22 +363,10 @@ class V86Backend {
     v86Wisp: WebSocket;
 
     termready = false;
-    async netdata_send(data: Uint8Array) {
-        const sendData = new Uint8Array(data.length + 4);
-        const dataView = new DataView(sendData.buffer);
-        console.log("sending message of " + data.length);
-        dataView.setUint32(0, data.length, true);
-        sendData.set(data, 4);
-        //dataView.setUint8(sendData.length - 1, 10);
-        console.log(sendData);
-        this.emulator.bus.send("virtio-console0-input-bytes", sendData);
-    }
 
     async onboot() {
         if (this.registered) return;
         this.registered = true;
-
-        // await sleep(500); // to be safe
 
         anura.notifications.add({
             title: "x86 Subsystem Ready",
@@ -386,8 +374,6 @@ class V86Backend {
             timeout: 5000,
         });
         this.termready = true;
-
-        // await sleep(1000); // to be safe
 
         this.xpty = await this.openpty(
             "startx /bin/xfrog",
@@ -397,7 +383,6 @@ class V86Backend {
                 console.debug("XFROG " + data);
                 if (data.includes("XFROG-INIT")) {
                     anura.apps["anura.xfrog"].startup();
-                    // await sleep(1000); // to be safer?? (some PTY bug occurs without this, I'm not a racist but it feels like a race condition)
                     this.startMouseDriver();
                     anura.notifications.add({
                         title: "x86 Subsystem",
@@ -407,125 +392,9 @@ class V86Backend {
                 }
             },
         );
-        /*
-        const registerv86Wisp = () => {
-            this.v86Wisp = new WebSocket(anura.wsproxyURL);
-            this.v86Wisp.binaryType = "arraybuffer";
-
-            this.v86Wisp.onmessage = (event) => {
-                this.netdata_send(new Uint8Array(event.data));
-            };
-
-            this.v86Wisp.onclose = (event) => {
-                registerv86Wisp();
-            };
-        };
-
-        this.netpty = await this.openpty(
-            "modprobe tun && /bin/whisper --tun tun0 --pty /dev/hvc0 --wisp-v1",
-            1,
-            1,
-            async (data) => {
-                console.debug("WHISPER: " + data);
-                if (data.includes("Whisper ready!")) {
-                    this.runcmd("sysctl -w net.ipv4.ip_forward=1");
-                    this.runcmd("ip route add default via 10.0.10.2 dev tun0");
-
-                    anura.notifications.add({
-                        title: "x86 Subsystem",
-                        description: "Started Networking Stack",
-                        timeout: 5000,
-                    });
-                } else if (data.includes("Connecting")) {
-                    registerv86Wisp();
-                }
-            },
-        );
-        */
-        // await sleep(200);
-
         this.runpty = await this.openpty("DISPLAY=:0 bash", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
         });
-        // await sleep(200);
-
-        // WISP networking
-        let netBuffer: Uint8Array[] = [];
-        let inTransit = false;
-        let currentRead = 0;
-        let currentPacketSize = 0;
-        let mfingBuffer: Uint8Array[] = []; // I call it mfing buffer because I only have to do this because mf'ing whisper is screwing up
-
-        this.emulator.add_listener(
-            "virtio-console0-output-bytes",
-            function (bytes: Uint8Array) {
-                console.log(bytes);
-                if (!inTransit) {
-                    if (bytes.length < 4 && mfingBuffer.length < 4) {
-                        mfingBuffer.push(bytes); // bytes? more like just one byte
-                        console.log("motherfucker mode activated");
-                        console.log("mf steps: " + mfingBuffer.length);
-                        if (mfingBuffer.length == 4) {
-                            let totalSize = 0;
-                            for (const array of mfingBuffer) {
-                                totalSize += array.length;
-                            }
-                            const newBytes = new Uint8Array(totalSize);
-                            let offset = 0;
-                            for (const array of mfingBuffer) {
-                                newBytes.set(array, offset);
-                                offset += array.length;
-                            }
-                            bytes = newBytes;
-
-                            console.log("mfing redemption time");
-                            console.log(bytes);
-                            mfingBuffer = [];
-                        } else {
-                            return;
-                        }
-                    }
-
-                    const dataView = new DataView(bytes.buffer);
-
-                    const length = dataView.getUint32(0, true);
-                    if (bytes.length - 4 != length) {
-                        inTransit = true;
-                        currentRead += bytes.length - 4;
-                        currentPacketSize = length;
-                        netBuffer.push(bytes.slice(4, bytes.length - 1));
-                        inTransit = true;
-                    } else {
-                        anura.x86?.v86Wisp.send(
-                            bytes.slice(4, bytes.byteLength),
-                        );
-                        inTransit = false;
-                        currentRead = 0;
-                        currentPacketSize = 0;
-                        netBuffer = [];
-                    }
-                } else {
-                    netBuffer.push(bytes);
-                    currentRead += bytes.length;
-                    if (currentRead >= currentPacketSize) {
-                        console.log("Sending netbuffer: ");
-                        console.log(new Blob(netBuffer));
-
-                        anura.x86?.v86Wisp.send(new Blob(netBuffer));
-
-                        inTransit = false;
-                        currentRead = 0;
-                        currentPacketSize = 0;
-                        netBuffer = [];
-                    }
-                }
-                console.log("got data");
-                console.log(bytes);
-                console.log("stream transit: " + inTransit);
-                console.log("read: " + currentRead);
-                console.log("packetSize: " + currentPacketSize);
-            },
-        );
     }
 
     runcmd(cmd: string) {
