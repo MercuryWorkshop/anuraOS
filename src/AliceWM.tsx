@@ -552,20 +552,20 @@ class WMWindow extends EventTarget implements Process {
         );
         normalizeZindex();
         this.dispatchEvent(new Event("focus"));
-        if (this.onfocus) this.onfocus();
+        this.onfocus();
     }
     close() {
         anura.processes.remove(this.pid);
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("scaletransition");
 
+        this.dispatchEvent(new Event("close"));
+        this.onclose();
         this.element.classList.add("opacity0");
         setTimeout(() => {
             this.element.remove();
             // TODO, Remove this and make it an event
             anura.removeStaleApps();
-            this.dispatchEvent(new Event("close"));
-            if (this.onclose) this.onclose();
         }, 200);
     }
     togglemaximize() {
@@ -582,7 +582,7 @@ class WMWindow extends EventTarget implements Process {
         }
 
         this.dispatchEvent(new Event("maximize"));
-        if (this.onmaximize) this.onmaximize();
+        this.onmaximize();
         this.oldstyle = this.element.getAttribute("style");
         console.log(this.oldstyle);
         const width =
@@ -655,7 +655,7 @@ class WMWindow extends EventTarget implements Process {
         }
 
         this.dispatchEvent(new Event("unmaximize"));
-        if (this.onunmaximize) this.onunmaximize();
+        this.onunmaximize();
         console.log("restoring");
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("maxtransition");
@@ -910,7 +910,7 @@ class WMWindow extends EventTarget implements Process {
                 data: { snapDirection: snapDirection },
             }),
         );
-        if (this.onsnap) this.onsnap(snapDirection);
+        this.onsnap(snapDirection);
         console.log(snapDirection);
         switch (snapDirection) {
             case "left":
