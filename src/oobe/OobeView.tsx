@@ -36,6 +36,9 @@ class OobeView {
         flex-wrap: wrap;
 
         --matter-onsurface-rgb: #121212 !important;
+        * {
+            --matter-helper-theme: 26, 115, 232 !important;
+        }
 
         #content {
             padding: 79.6px 40px 23.8px 40px;
