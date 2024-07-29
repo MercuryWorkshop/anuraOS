@@ -59,7 +59,7 @@ class Networking {
                         let buffer = "";
                         const endMarker = crypto.randomUUID();
                         const pty = anura.x86!.openpty(
-                            `/bin/bash -c "curl -o - -s -i -X ${requestObj.method} http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} | cat | base64 && echo -n ${endMarker}"`,
+                            `/bin/ash -c 'curl -o - -s -i -X "${requestObj.method}" http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} | cat | base64 && echo -n "${endMarker}"'`,
                             0,
                             0,
                             async (data) => {
