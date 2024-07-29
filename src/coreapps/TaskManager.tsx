@@ -170,12 +170,12 @@ class TaskManager extends App {
                                         (num) => num == proc.deref()?.pid,
                                     )}
                                     on:click={() => {
-                                        console.log("setting");
+                                        // console.log("setting");
                                         if (proc.deref()) {
                                             this.state.selected =
                                                 proc.deref()!.pid;
                                         }
-                                        console.log(this.state.selected);
+                                        // console.log(this.state.selected);
                                     }}
                                 >
                                     <td>
@@ -207,7 +207,7 @@ class TaskManager extends App {
                                     </td>
 
                                     <td>
-                                        <span>69MB</span>
+                                        <span>Measuring</span>
                                     </td>
 
                                     <td class="pid">
@@ -252,6 +252,60 @@ class TaskManager extends App {
         win.content.appendChild(page);
 
         createResizableTable(page.querySelector("table.list")!);
+        if ((performance as any).measureUserAgentSpecificMemory) {
+            const measure = async () => {
+                if (!(performance as any).measureUserAgentSpecificMemory)
+                    return {}; // this API only works on chromium
+                const start = performance.now();
+                const perfTree = await (
+                    performance as any
+                ).measureUserAgentSpecificMemory();
+
+                // type this maybe?
+                const usage: any = {};
+                for (const memUser of perfTree.breakdown) {
+                    if (
+                        !memUser.attribution[0] ||
+                        memUser.attribution[0].scope !== "Window" ||
+                        !memUser.attribution[0].container
+                    )
+                        continue;
+                    if (
+                        !memUser.attribution[0].container.id.startsWith("proc-")
+                    )
+                        continue;
+                    const pid = Number(
+                        memUser.attribution[0].container.id.slice(5),
+                    );
+                    usage[pid] = memUser.bytes;
+                }
+                return usage;
+            };
+            while (page.parentElement) {
+                // hasn't been killed
+                const perfList = await measure();
+                // IDK why I have to any this but it doesn't like it otherewise
+                const allRows = Array.from(
+                    (
+                        document.querySelectorAll("[id^=taskmgr-proc-]") as any
+                    ).values(),
+                );
+                for (const app in perfList) {
+                    const row = page.querySelector("#taskmgr-proc-" + app);
+                    (row!.children[1]! as HTMLElement).innerText =
+                        Math.ceil(perfList[app] / 1000) + "kB";
+                    if (allRows.includes(row)) {
+                        delete allRows[allRows.indexOf(row)];
+                    }
+                    // console.log(row);
+                }
+                for (const row of allRows) {
+                    (
+                        (row! as HTMLElement).children[1]! as HTMLElement
+                    ).innerText = "(System Process)";
+                }
+            }
+        }
 
         return win;
     }
