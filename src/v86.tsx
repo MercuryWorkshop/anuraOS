@@ -489,7 +489,7 @@ class V86Backend {
                         processIncomingWispFrame(payload);
                     }
                 } else {
-                    if (data.length == remaniningLength) {
+                    if (data.length === remaniningLength) {
                         // Length matches now, Merge and send off to wisp processer
 
                         const merged = new Uint8Array(
@@ -497,10 +497,10 @@ class V86Backend {
                         );
                         merged.set(recBuffer, 0);
                         merged.set(data, recBuffer.length);
+                        remaniningLength = 0;
                         processIncomingWispFrame(merged);
                     } else {
                         // Length STILL does not match actual packet size
-
                         console.log(
                             "Packet overloaded^2, more in next virtio frame",
                         );
@@ -509,6 +509,7 @@ class V86Backend {
                         );
                         merged.set(recBuffer, 0);
                         merged.set(data, recBuffer.length);
+                        remaniningLength -= data.length;
                         recBuffer = merged;
                     }
                 }
@@ -645,23 +646,26 @@ class V86Backend {
                     view.setUint16(9, frameObj.rows); // Rows
                     view.setUint16(11, frameObj.cols); // Cols
             }
-
-            if (congestion !== 0) {
-                anura.x86!.emulator.bus.send(
-                    "virtio-console0-input-bytes",
-                    fullPacket,
-                );
-                console.log(fullPacket);
-            } else {
-                // Wait for the continue to be recieved and processed
-                while (congestion === 0) {
-                    await sleep(100);
-                }
-                anura.x86!.emulator.bus.send(
-                    "virtio-console0-input-bytes",
-                    fullPacket,
-                );
-            }
+            anura.x86!.emulator.bus.send(
+                "virtio-console0-input-bytes",
+                fullPacket,
+            );
+            // if (congestion !== 0) {
+            //     anura.x86!.emulator.bus.send(
+            //         "virtio-console0-input-bytes",
+            //         fullPacket,
+            //     );
+            //     console.log(fullPacket);
+            // } else {
+            //     // Wait for the continue to be recieved and processed
+            //     while (congestion === 0) {
+            //         await sleep(100);
+            //     }
+            //     anura.x86!.emulator.bus.send(
+            //         "virtio-console0-input-bytes",
+            //         fullPacket,
+            //     );
+            // }
         };
     }
 }
