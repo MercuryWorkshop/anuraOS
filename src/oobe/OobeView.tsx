@@ -14,11 +14,15 @@ class OobeView {
             this.state.dlsize = "0MB";
 
             if (this.state.offlineEnabled) {
-                this.state.dlsize = "~30MB";
+                this.state.dlsize = "~25MB";
             }
 
             if (this.state.v86Enabled) {
-                this.state.dlsize = "~1GB";
+                this.state.dlsize = "1GB";
+
+                if (this.state.offlineEnabled) {
+                    this.state.dlsize = "~1GB";
+                }
             }
         });
     }
