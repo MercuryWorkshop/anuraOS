@@ -34,7 +34,7 @@ window.addEventListener("load", async () => {
         );
 
         const pty = await anura.x86.openpty(
-            "/bin/bash",
+            "/bin/bash --login",
             t.screenSize.width,
             t.screenSize.height,
             (data) => {

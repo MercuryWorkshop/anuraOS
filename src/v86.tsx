@@ -328,7 +328,7 @@ class V86Backend {
         });
 
         this.xpty = await this.openpty(
-            '/bin/bash -c "startx /bin/xfrog"',
+            "/bin/bash -c startx /bin/xfrog",
             1,
             1,
             async (data) => {

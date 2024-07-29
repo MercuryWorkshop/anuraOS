@@ -18,7 +18,7 @@ class XFrogApp extends App {
         console.log("Starting Xfrog Client");
         let buf: string[] = [];
         await anura.x86!.openpty(
-            '/bin/bash -c "while true; do DISPLAY=:0 xdotool search --maxdepth 1 ".*" 2>/dev/null; echo EOF; sleep 2; done"',
+            '/bin/bash -c while true; do DISPLAY=:0 xdotool search --maxdepth 1 ".*" 2>/dev/null; echo EOF; sleep 2; done',
             0,
             0,
             (data) => {
