@@ -11,6 +11,11 @@
     border: 0.0125rem solid var(--theme-border);
 }
 
+body.blur-disable .alttab-container {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
 .alttab-hidden {
     display: none;
 }
