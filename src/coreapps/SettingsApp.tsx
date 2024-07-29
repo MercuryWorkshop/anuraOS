@@ -100,7 +100,9 @@ const settingsCSS = css`
     .settings-item-name,
     .matter-switch {
         margin-left: 10px;
+        font-size: 1rem;
     }
+
     .settings-button {
         background-color: var(--theme-secondary-bg);
         border: none;
