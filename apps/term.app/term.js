@@ -2,7 +2,6 @@ const $ = document.querySelector.bind(document);
 
 window.addEventListener("load", async () => {
     const t = new hterm.Terminal();
-    top.t = t;
 
     let htermNode = $("#terminal");
 
