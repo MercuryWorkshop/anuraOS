@@ -146,13 +146,15 @@ class TaskManager extends App {
                 <table class="list">
                     <thead>
                         <th>Name</th>
-                        <th>PID</th>
+                        <th>Memory footprint</th>
+                        <th>Process ID</th>
                     </thead>
                     <tbody>
                         {use(anura.processes.state.procs, (procs) =>
                             procs.map((proc) => (
                                 <tr
                                     class="row"
+                                    id={`taskmgr-proc-${proc.deref()?.pid}`}
                                     class:selected={use(
                                         this.state.selected,
                                         (num) => num == proc.deref()?.pid,
@@ -192,6 +194,10 @@ class TaskManager extends App {
                                                 {proc.deref()?.title}
                                             </span>
                                         </span>
+                                    </td>
+
+                                    <td>
+                                        <span>69MB</span>
                                     </td>
 
                                     <td class="pid">
