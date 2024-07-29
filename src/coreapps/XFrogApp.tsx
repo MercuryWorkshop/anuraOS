@@ -18,7 +18,7 @@ class XFrogApp extends App {
         console.log("Starting Xfrog Client");
         let buf: string[] = [];
         await anura.x86!.openpty(
-            'while true; do DISPLAY=:0 xdotool search --maxdepth 1 ".*" 2>/dev/null; echo EOF; sleep 2; done',
+            '/bin/bash -c "while true; do DISPLAY=:0 xdotool search --maxdepth 1 ".*" 2>/dev/null; echo EOF; sleep 2; done"',
             0,
             0,
             (data) => {
@@ -85,7 +85,7 @@ class XFrogApp extends App {
                 // DISPLAY=:0 xdotool windowmap $(xwininfo -children -id ${xwid} | grep -o '^ \\+0x[0-9a-f]\\+');
                 if (isNew)
                     anura.x86!.openpty(
-                        `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
+                        `/bin/env DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                             win!.width
                         } ${win!.height - 28}`,
                         0,
@@ -113,7 +113,7 @@ class XFrogApp extends App {
         this.xwindows[xwid] = "placeholder" as any;
 
         await anura.x86?.openpty(
-            `DISPLAY=:0 xdotool getwindowgeometry ${xwid} 2>/dev/null | grep -o '[0-9]*x[0-9]*'; while true; do DISPLAY=:0 xdotool getwindowname ${xwid}; sleep 5; done`,
+            `/bin/env DISPLAY=:0 xdotool getwindowgeometry ${xwid} 2>/dev/null | grep -o '[0-9]*x[0-9]*'; while true; do DISPLAY=:0 xdotool getwindowname ${xwid}; sleep 5; done`,
             0,
             0,
             (data) => {
@@ -134,7 +134,7 @@ class XFrogApp extends App {
                         // onResize
                         console.log(w, h);
                         anura.x86!.openpty(
-                            `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
+                            `/bin/env DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                                 win!.width
                             } ${win!.height - 28}`,
                             0,

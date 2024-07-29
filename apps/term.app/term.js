@@ -2,15 +2,9 @@ const $ = document.querySelector.bind(document);
 
 window.addEventListener("load", async () => {
     const t = new hterm.Terminal();
-
     let htermNode = $("#terminal");
-
     t.decorate(htermNode);
-
-    const decoder = new TextDecoder("UTF-8");
     t.onTerminalReady = async () => {
-        let currentCol;
-        let currentRow;
         let e = document
             .querySelector("iframe")
             .contentDocument.querySelector("x-screen");
@@ -20,12 +14,17 @@ window.addEventListener("load", async () => {
 
         t.setBackgroundColor("#141516");
         t.setCursorColor("#bbb");
-        currentCol = t.screenSize.width;
-        currentRow = t.screenSize.height;
 
         if (anura.x86 == undefined) {
             io.print(
                 "\u001b[33mThe Anura x86 subsystem is not enabled. Please enable it in Settings.\u001b[0m",
+            );
+            return;
+        }
+
+        if (!anura.x86.ready) {
+            io.print(
+                "\u001b[33mThe Anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m",
             );
             return;
         }
@@ -35,7 +34,7 @@ window.addEventListener("load", async () => {
         );
 
         const pty = await anura.x86.openpty(
-            "bash --login",
+            "/bin/bash",
             t.screenSize.width,
             t.screenSize.height,
             (data) => {

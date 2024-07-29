@@ -328,7 +328,7 @@ class V86Backend {
         });
 
         this.xpty = await this.openpty(
-            "startx /bin/xfrog",
+            '/bin/bash -c "startx /bin/xfrog"',
             1,
             1,
             async (data) => {
@@ -344,7 +344,8 @@ class V86Backend {
                 }
             },
         );
-        this.runpty = await this.openpty("bash", 1, 1, (data) => {
+
+        this.runpty = await this.openpty("/bin/bash", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
         });
     }
@@ -384,7 +385,7 @@ class V86Backend {
     }
 
     writepty(TTYn: number, data: string) {
-        if (TTYn == -1) {
+        if (TTYn === -1) {
             return;
         }
 
@@ -396,6 +397,10 @@ class V86Backend {
     }
 
     resizepty(TTYn: number, cols: number, rows: number) {
+        if (TTYn === -1) {
+            return;
+        }
+
         this.sendWispFrame({
             type: "RESIZE",
             streamID: TTYn,
@@ -405,6 +410,10 @@ class V86Backend {
     }
 
     closepty(TTYn: number) {
+        if (TTYn === -1) {
+            return;
+        }
+
         this.sendWispFrame({
             type: "CLOSE",
             streamID: TTYn,
