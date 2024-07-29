@@ -20,7 +20,7 @@ class ExploreApp extends App {
             padding: 1rem;
             padding-left: 0;
 
-            div {
+            & div {
                 padding-block: 0.7rem;
                 font-size: 1.1rem;
                 border-radius: 0 3rem 3rem 0;
@@ -34,7 +34,7 @@ class ExploreApp extends App {
                 transition: 0.2s;
             }
 
-            div.selected {
+            & div.selected {
                 color: color-mix(
                     in srgb,
                     var(--theme-accent) 35%,
@@ -75,34 +75,34 @@ class ExploreApp extends App {
             padding: 1rem;
             padding-left: 2rem;
 
-            p {
+            & p {
                 margin-block: 0.5rem;
             }
 
-            p img {
+            & p img {
                 width: 1.05rem;
                 height: 1.05rem;
                 margin-top: 0.5rem;
             }
 
-            span:has(img) {
+            & span:has(img) {
                 gap: 0.2rem;
                 align-items: center;
                 font-weight: 600;
             }
 
-            code {
+            & code {
                 background-color: var(--theme-secondary-bg);
                 padding: 0.1rem 0.3rem;
                 border-radius: 0.2rem;
                 font-family: "Roboto Mono", monospace;
             }
 
-            h2 {
+            & h2 {
                 margin-block: 1.5rem 0;
             }
 
-            h2:first-of-type {
+            & h2:first-of-type {
                 margin-block-start: 0.25rem;
             }
         }
@@ -114,7 +114,7 @@ class ExploreApp extends App {
             gap: 1rem;
             align-items: center;
 
-            img {
+            & img {
                 width: 2.5rem;
                 height: 2.5rem;
             }
