@@ -84,6 +84,16 @@ class TaskManager extends App {
 
             & th {
                 position: relative;
+                font-weight: 400;
+                padding-inline: 0.6rem;
+                padding-block: 0.15rem;
+                font-size: 0.9rem;
+                text-align: right;
+                &:first-of-type {
+                    text-align: left;
+                }
+
+                height: 1.5rem;
             }
         }
 
