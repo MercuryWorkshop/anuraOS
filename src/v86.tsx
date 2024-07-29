@@ -327,6 +327,7 @@ class V86Backend {
             timeout: 5000,
         });
 
+        /*
         this.xpty = await this.openpty(
             "/bin/bash -c startx /bin/xfrog",
             1,
@@ -344,7 +345,7 @@ class V86Backend {
                 }
             },
         );
-
+        */
         this.runpty = await this.openpty("/bin/bash", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
         });
@@ -518,7 +519,7 @@ class V86Backend {
 
         let congestion = 0;
         function processIncomingWispFrame(frame: Uint8Array) {
-            console.log(frame);
+            //console.log(frame);
             let view;
             let streamID;
             switch (frame[0]) {
@@ -559,8 +560,8 @@ class V86Backend {
                     full.set(frame, 4);
                     view = new DataView(full.buffer);
                     view.setUint32(0, full.length - 4, true);
-                    console.log("Refection: ");
-                    console.log(full);
+                    //console.log("Refection: ");
+                    //console.log(full);
                     anura.x86!.emulator.bus.send(
                         "virtio-console0-input-bytes",
                         full,
