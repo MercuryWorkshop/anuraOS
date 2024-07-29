@@ -46,7 +46,7 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 -   `docker`
 
 > [!NOTE]
-> You will have to install the required Rust toolchain by running `rustup target add wasm32-unknown-unknown`.
+> You will have to install the required Rust toolchain by running `rustup target add wasm32-unknown-unknown` and also `rustup target add i686-unknown-linux-gnu` if you are planning to build v86 images.
 
 #### Building
 
