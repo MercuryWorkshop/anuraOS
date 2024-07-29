@@ -13,7 +13,7 @@ class TaskManager extends App {
 
         .row {
             padding-inline: 1em;
-            height: 1.75rem;
+            height: 2rem;
 
             &,
             & td,
@@ -22,8 +22,8 @@ class TaskManager extends App {
                     border: 2px solid var(--theme-border);
                 }
 
-                height: 1.75rem;
-                line-height: 1.75rem;
+                height: 2rem;
+                line-height: 2rem;
             }
 
             border-right: 0 !important;
