@@ -256,6 +256,7 @@ class OobeView {
                 this.state.color = "var(--material-bg)";
                 this.state.text = "whitesmoke";
                 if (!anura.settings.get("x86-disabled")) {
+                    await anura.settings.set("x86-image", "alpine");
                     await installx86();
                 }
                 if (anura.settings.get("use-sw-cache")) await preloadFiles();

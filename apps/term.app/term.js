@@ -1,9 +1,6 @@
 const $ = document.querySelector.bind(document);
 
 window.addEventListener("load", async () => {
-    /** @type {Anura} */
-    let anura = top.anura;
-
     const t = new hterm.Terminal();
     top.t = t;
 
@@ -34,19 +31,12 @@ window.addEventListener("load", async () => {
             return;
         }
 
-        if (!anura.x86.termready) {
-            io.print(
-                "\u001b[33mThe Anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m",
-            );
-            return;
-        }
-
         await io.print(
             "Welcome to the Anura x86 subsystem.\r\nTo access your Anura files within Linux, use the /root directory.\r\n",
         );
 
         const pty = await anura.x86.openpty(
-            "TERM=xterm DISPLAY=:0 bash --login",
+            "bash --login",
             t.screenSize.width,
             t.screenSize.height,
             (data) => {
@@ -63,6 +53,10 @@ window.addEventListener("load", async () => {
 
         io.onTerminalResize = (cols, rows) => {
             anura.x86.resizepty(pty, cols, rows);
+        };
+
+        instanceWindow.onclose = () => {
+            anura.x86.closepty(pty);
         };
 
         t.installKeyboard();

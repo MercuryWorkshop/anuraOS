@@ -22,17 +22,15 @@ COPY xsetrandr.sh /bin/xsetrandr
 COPY profile /etc/profile
 RUN chmod 644 /etc/profile
 
-COPY anurad.c /etc/
 COPY anuramouse/* /etc/anuramouse/
 COPY interfaces /etc/network/interfaces
 COPY twisp /bin/twisp
 
 RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/twisp
-RUN gcc /etc/anurad.c -o /bin/anurad -lutil 
 RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
-COPY anurad /etc/init.d/
+COPY twisp-service /etc/init.d/
 COPY anura-boot /etc/init.d/
-RUN chmod +x /etc/init.d/anurad /etc/init.d/anura-boot
+RUN chmod +x /etc/init.d/twisp-service /etc/init.d/anura-boot
 
 # setup init system
 COPY rc.conf /etc/rc.conf
@@ -50,6 +48,6 @@ RUN rc-update add mount-ro shutdown
 RUN rc-update add killprocs shutdown
 RUN rc-update add savecache shutdown
 
-RUN rc-update add anurad default
+RUN rc-update add twisp-service default
 
 RUN bash

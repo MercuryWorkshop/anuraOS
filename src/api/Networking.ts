@@ -54,7 +54,7 @@ class Networking {
             if (this.loopback.addressMap.has(port))
                 return this.loopback.call(port, requestObj);
             else {
-                if (anura.x86?.termready) {
+                if (anura.x86?.ready) {
                     return await new Promise((resolve) => {
                         let buffer = "";
                         const endMarker = crypto.randomUUID();

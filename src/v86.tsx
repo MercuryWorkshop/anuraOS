@@ -233,19 +233,8 @@ async function InitV86Hdd(): Promise<FakeFile> {
 }
 
 class V86Backend {
-    private sendQueue: [string, number][] = [];
-    private nextWrite: Uint8Array | null = null;
-    private openQueue: { (number: number): void }[] = [];
-    private onDataCallbacks: { [key: number]: (string: string) => void } = {};
-
-    private read_intent_phys_addr: number;
-    private write_intent_phys_addr: number;
-    private new_intent_phys_addr: number;
-    private read_nbytes_phys_addr: number;
-    private write_nbytes_phys_addr: number;
-    private s_rows_phys_addr: number;
-    private s_cols_phys_addr: number;
-    private resize_intent_phys_addr: number;
+    ptyNum = 1;
+    ready = false;
 
     vgacanvas: HTMLCanvasElement = null!;
 
@@ -265,20 +254,14 @@ class V86Backend {
         </div>
     );
 
-    ready = true;
-    act = false;
-    cmd_q: string | null = null;
-
     virt_hda: FakeFile;
-
     netpty: number;
-
     xpty: number;
-
     runpty: number;
 
     emulator;
     saveinterval;
+    sendWispFrame: any;
     //
 
     constructor(virt_hda: FakeFile) {
@@ -322,14 +305,6 @@ class V86Backend {
             virtio_console: true,
         });
 
-        let s0data = "";
-        let s1data = "";
-        // WISP networking
-        let netBuffer: Uint8Array[] = [];
-        let inTransit = false;
-        let currentRead = 0;
-        let currentPacketSize = 0;
-
         // temporary, needs to be fixed later
         this.saveinterval = setInterval(() => {
             this.virt_hda.save();
@@ -339,92 +314,18 @@ class V86Backend {
             event.preventDefault();
             await this.virt_hda.save();
         });
-
-        this.emulator.add_listener("serial0-output-byte", (byte: number) => {
-            const char = String.fromCharCode(byte);
-            if (char === "\r") {
-                anura.logger.debug(s0data);
-
-                this._proc_data(s0data);
-                s0data = "";
-                return;
-            }
-            s0data += char;
-        });
-        this.emulator.add_listener("serial1-output-byte", (byte: number) => {
-            const char = String.fromCharCode(byte);
-            if (char === "\r") {
-                this._proc_data(s1data);
-                s1data = "";
-                return;
-            }
-            s1data += char;
-        });
-
-        this.emulator.add_listener(
-            "virtio-console0-output-bytes",
-            async (bytes: Uint8Array) => {
-                if (!inTransit) {
-                    const dataView = new DataView(bytes.buffer);
-                    const length = dataView.getUint32(0, true);
-                    if (bytes.length - 4 != length) {
-                        inTransit = true;
-                        currentRead += bytes.length - 4;
-                        currentPacketSize = length;
-                        netBuffer.push(bytes.slice(4, bytes.length - 1));
-                        inTransit = true;
-                    } else {
-                        anura.x86?.v86Wisp.send(
-                            bytes.slice(4, bytes.byteLength),
-                        );
-                        inTransit = false;
-                        currentRead = 0;
-                        currentPacketSize = 0;
-                        netBuffer = [];
-                    }
-                } else {
-                    netBuffer.push(bytes);
-                    currentRead += bytes.length;
-                    if (currentRead == currentPacketSize) {
-                        console.log("Sending netbuffer: ");
-                        console.log(new Blob(netBuffer));
-                        anura.x86?.v86Wisp.send(
-                            new Uint8Array(
-                                await new Blob(netBuffer).arrayBuffer(),
-                            ),
-                        );
-                        inTransit = false;
-                        currentRead = 0;
-                        currentPacketSize = 0;
-                        netBuffer = [];
-                    }
-                }
-                console.log("got data");
-                console.log(bytes);
-                console.log("stream transit: " + inTransit);
-                console.log("read: " + currentRead);
-                console.log("packetSize: " + currentPacketSize);
-            },
-        );
+        this.twispinit();
     }
 
-    netids: string[] = [];
-
-    registered = false;
-    v86Wisp: WebSocket;
-
-    termready = false;
-
     async onboot() {
-        if (this.registered) return;
-        this.registered = true;
+        if (this.ready) return;
+        this.ready = true;
 
         anura.notifications.add({
             title: "x86 Subsystem Ready",
             description: "x86 OS has booted and is ready for use",
             timeout: 5000,
         });
-        this.termready = true;
 
         this.xpty = await this.openpty(
             "startx /bin/xfrog",
@@ -448,34 +349,13 @@ class V86Backend {
         });
     }
 
-    runcmd(cmd: string) {
-        this.writepty(this.runpty, `( ${cmd} ) & \n`);
-    }
-
-    closepty(TTYn: number) {
-        this.emulator.serial0_send(`c\n${TTYn}`);
-    }
-    async #waitAndTry(
-        command: string,
-        cols: number,
-        rows: number,
-        onData: (string: string) => void,
-    ) {
-        while (!anura.x86!.canopenpty) {
-            console.log("waiting for pty");
-            await sleep(1000);
-        }
-        return await this.openpty(command, cols, rows, onData);
-    }
-    canopenpty = true;
-    opensafeQueue: any = [];
     openpty(
         command: string,
         cols: number,
         rows: number,
         onData: (string: string) => void,
     ): Promise<number> {
-        if (!anura.x86!.termready) {
+        if (!anura.x86!.ready) {
             onData(
                 "\u001b[33mThe anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m",
             );
@@ -483,62 +363,59 @@ class V86Backend {
                 resolve(-1);
             });
         }
-        if (!anura.x86!.canopenpty) {
-            // return new Promise((resolve) => this.opensafeQueue.push(resolve));
-            return this.#waitAndTry(command, cols, rows, onData);
-        }
 
-        anura.x86!.canopenpty = false;
-
-        this.write_uint(rows, this.s_rows_phys_addr);
-        this.write_uint(cols, this.s_cols_phys_addr);
-        this.write_uint(1, this.new_intent_phys_addr);
-
-        if (this.ready) {
-            this.ready = false;
-
-            this.emulator.serial0_send("\x06\n");
-            this.emulator.serial0_send(`${command}\n`);
-        } else {
-            this.cmd_q = command;
-            this.act = true;
-        }
-        const waitAndLet = async () => {
-            await sleep(10);
-            anura.x86!.canopenpty = true;
-        };
+        this.sendWispFrame({
+            type: "CONNECT",
+            streamID: this.ptyNum,
+            command: command,
+            dataCallback: (data: Uint8Array) => {
+                const string = decoder.decode(data);
+                onData(string);
+            },
+            closeCallback: (data: number) => {
+                console.log(data);
+            },
+        });
 
         return new Promise((resolve) => {
-            this.openQueue.push((number: number) => {
-                this.onDataCallbacks[number] = onData;
-                resolve(number);
-                anura.logger.debug("Resolved PTY with ID: " + number);
-                waitAndLet();
-                //
-            });
+            resolve(this.ptyNum);
+            this.ptyNum++;
         });
     }
-    resizepty(TTYn: number, cols: number, rows: number) {
-        // Until somebody fixes proper resizing, this is what you get, dont like it? fix it.
-        this.runcmd(
-            `stty -F /dev/pts/${TTYn} cols ${cols} && stty -F /dev/pts/${TTYn} rows ${rows}`,
-        );
-        /*
+
+    writepty(TTYn: number, data: string) {
         if (TTYn == -1) {
             return;
         }
-        this.write_uint(rows, this.s_rows_phys_addr);
-        this.write_uint(cols, this.s_cols_phys_addr);
-        this.write_uint(TTYn + 1, this.resize_intent_phys_addr);
-        this.write_uint(1336, this.read_intent_phys_addr);
-        if (this.ready) {
-            this.ready = false;
-            this.emulator.serial0_send("\x06\n");
-        } else {
-            this.act = true;
-        }
-        */
+
+        this.sendWispFrame({
+            type: "DATA",
+            streamID: TTYn,
+            data: encoder.encode(data),
+        });
     }
+
+    resizepty(TTYn: number, cols: number, rows: number) {
+        this.sendWispFrame({
+            type: "RESIZE",
+            streamID: TTYn,
+            cols: cols,
+            rows: rows,
+        });
+    }
+
+    closepty(TTYn: number) {
+        this.sendWispFrame({
+            type: "CLOSE",
+            streamID: TTYn,
+            reason: 0x02,
+        });
+    }
+
+    runcmd(cmd: string) {
+        this.writepty(this.runpty, `( ${cmd} ) & \n`);
+    }
+
     async startMouseDriver() {
         let ready = false;
         function pack(value1: number, value2: number) {
@@ -580,125 +457,208 @@ class V86Backend {
             movemouse(0, 768);
         };
     }
-    writepty(TTYn: number, data: string) {
-        if (TTYn == -1) {
-            return;
-        }
-        const bytes = encoder.encode(data);
 
-        if (this.nextWrite) {
-            this.sendQueue.push([data, TTYn]);
-            return;
-        }
+    async twispinit() {
+        let remaniningLength = 0;
+        let recBuffer: Uint8Array;
 
-        this.write_uint(TTYn + 1, this.write_intent_phys_addr);
+        const connections: any = {};
 
-        this.write_uint(bytes.length, this.write_nbytes_phys_addr);
+        this.emulator.add_listener(
+            "virtio-console0-output-bytes",
+            async (data: Uint8Array) => {
+                if (!remaniningLength) {
+                    const payload = data.slice(4);
+                    const view = new DataView(data.buffer);
+                    const length = view.getUint32(0, true);
 
-        this.nextWrite = bytes;
-        if (this.ready) {
-            this.ready = false;
-            this.emulator.serial0_send("\x06\n");
-        } else {
-            this.act = true;
-        }
-    }
+                    if (length + 4 > data.length) {
+                        // Length does not match actual packet size
 
-    async _proc_data(data: string) {
-        const start = data.indexOf("\x05");
-        if (start === -1) return; // \005 is our special control code
-        data = data.substring(start + 1);
-        const parts = data.split(" ");
+                        console.log(
+                            "Packet overloaded, more in next virtio frame",
+                        );
+                        remaniningLength = length + 4 - data.length;
+                        recBuffer = payload;
+                    } else {
+                        // Perfect Length, ideal scenario
+                        processIncomingWispFrame(payload);
+                    }
+                } else {
+                    if (data.length == remaniningLength) {
+                        // Length matches now, Merge and send off to wisp processer
 
-        switch (parts.shift()) {
-            case "i": {
-                const arr: any[] = parts.map((p) => parseInt(p));
+                        const merged = new Uint8Array(
+                            recBuffer.length + data.length,
+                        );
+                        merged.set(recBuffer, 0);
+                        merged.set(data, recBuffer.length);
+                        processIncomingWispFrame(merged);
+                    } else {
+                        // Length STILL does not match actual packet size
 
-                [
-                    this.read_intent_phys_addr,
-                    this.write_intent_phys_addr,
-                    this.new_intent_phys_addr,
-                    this.read_nbytes_phys_addr,
-                    this.write_nbytes_phys_addr,
-                    this.s_rows_phys_addr,
-                    this.s_cols_phys_addr,
-                    this.resize_intent_phys_addr,
-                ] = arr;
-
-                if (!this.registered) this.onboot();
-
-                this.emulator.serial0_send("\x06\n");
-                break;
-            }
-            case "r": {
-                const addr = parseInt(parts[0]!);
-
-                const n_bytes = this.read_uint(this.read_nbytes_phys_addr);
-                // let n_tty = this.read_uint(this.read_intent_phys_addr) - 1;
-                const n_tty = parseInt(parts[1]!);
-
-                const mem = this.emulator.read_memory(addr, n_bytes);
-                const text = decoder.decode(mem);
-
-                // console.log(n_tty)
-
-                // console.log(text);
-                const cb = this.onDataCallbacks[n_tty];
-                if (cb) {
-                    cb(text);
-                }
-
-                this.emulator.serial1_send("\x06\n");
-                break;
-            }
-            case "w": {
-                const addr = parseInt(parts[0]!);
-
-                this.emulator.write_memory(this.nextWrite, addr);
-                this.nextWrite = null;
-
-                this.write_uint(0, this.write_intent_phys_addr);
-
-                const queued = this.sendQueue.shift();
-                if (queued) {
-                    this.writepty(queued[1], queued[0]);
-                }
-                this.emulator.serial0_send("\x06\n");
-                break;
-            }
-            case "n": {
-                const func = this.openQueue.shift();
-                if (func) {
-                    func(parseInt(parts[0]!));
-                }
-                this.emulator.serial0_send("\x06\n");
-                break;
-            }
-            case "v": {
-                this.ready = true;
-                if (this.act) {
-                    this.ready = false;
-                    this.act = false;
-                    this.emulator.serial0_send("\x06\n");
-                    if (this.cmd_q) {
-                        this.cmd_q = null;
-                        this.emulator.serial0_send(`${this.cmd_q}\n`);
+                        console.log(
+                            "Packet overloaded^2, more in next virtio frame",
+                        );
+                        const merged = new Uint8Array(
+                            recBuffer.length + data.length,
+                        );
+                        merged.set(recBuffer, 0);
+                        merged.set(data, recBuffer.length);
+                        recBuffer = merged;
                     }
                 }
+            },
+        );
+
+        let congestion = 0;
+        function processIncomingWispFrame(frame: Uint8Array) {
+            console.log(frame);
+            let view;
+            let streamID;
+            switch (frame[0]) {
+                case 1: // CONNECT
+                    // The server should never send this actually
+                    throw new Error(
+                        "Server sent client only frame: CONNECT 0x01",
+                    );
+                case 2: // DATA
+                    view = new DataView(frame.buffer);
+                    streamID = view.getUint32(1, true);
+                    if (connections[streamID])
+                        connections[streamID].dataCallback(frame.slice(5));
+                    else
+                        throw new Error(
+                            "Got a DATA packet but stream not registered. ID: " +
+                                streamID,
+                        );
+
+                    break;
+                case 3: // CONTINUE
+                    view = new DataView(frame.buffer);
+                    congestion = view.getUint32(0, true);
+
+                    break;
+                case 4: // CLOSE
+                    // Call some closer here
+                    view = new DataView(frame.buffer);
+                    streamID = view.getUint32(1, true);
+                    if (connections[streamID])
+                        connections[streamID].closeCallback(view.getUint8(5));
+
+                    break;
+                case 5: // PROTOCOL EXT
+                    // Reflect protocol ext packet
+                    // eslint-disable-next-line no-case-declarations
+                    const full = new Uint8Array(frame.length + 4);
+                    full.set(frame, 4);
+                    view = new DataView(full.buffer);
+                    view.setUint32(0, full.length - 4, true);
+                    console.log("Refection: ");
+                    console.log(full);
+                    anura.x86!.emulator.bus.send(
+                        "virtio-console0-input-bytes",
+                        full,
+                    );
+                    anura.x86!.onboot();
+                    break;
             }
         }
 
-        // this.emulator.serial0_send("\x06\n"); // ack'd
-    }
+        // FrameObj will be the following
+        // FrameObj.streamID (number)
+        //
+        // FrameObj.type -- CONNECT
+        //      FrameObj.command (string)
+        //      FrameObj.dataCallback (function (Uint8Array))
+        //      FrameObj.closeCallback (function (number)) OPTIONAL
+        //
+        // FrameObj.type -- DATA
+        //      FrameObj.data (Uint8Array)
+        //
+        // FrameObj.type -- CLOSE
+        //      FrameObj.reason (number)
+        //
+        // FrameObj.type -- RESIZE
+        //      FrameObj.cols (number)
+        //      FrameObj.rows (number)
+        //
+        //
+        //
 
-    read_uint(addr: number) {
-        const b = this.emulator.read_memory(addr, 4);
-        return b[0] + (b[1] << 8) + (b[2] << 16) + (b[3] << 24);
-        // it's as shrimple as that
-    }
-    write_uint(i: number, addr: number) {
-        const bytes = [i, i >> 8, i >> 16, i >> 24].map((a) => a % 256);
-        this.emulator.write_memory(bytes, addr);
+        this.sendWispFrame = async (frameObj: any) => {
+            let fullPacket;
+            let view;
+            switch (frameObj.type) {
+                case "CONNECT":
+                    // eslint-disable-next-line no-case-declarations
+                    const commandBuffer = new TextEncoder().encode(
+                        frameObj.command,
+                    );
+                    fullPacket = new Uint8Array(
+                        4 + 5 + 1 + 1 + commandBuffer.length,
+                    );
+                    view = new DataView(fullPacket.buffer);
+                    view.setUint32(0, fullPacket.length - 4, true); // Packet size
+                    view.setUint8(4, 0x01); // TYPE
+                    view.setUint32(5, frameObj.streamID, true); // Stream ID
+                    view.setUint8(9, 0x03); // TCP
+                    view.setUint16(10, 10); // PORT (unused, hardcoded to 10)
+                    fullPacket.set(commandBuffer, 11); // command
+
+                    // Setting callbacks
+                    connections[frameObj.streamID] = {
+                        dataCallback: frameObj.dataCallback,
+                        closeCallback: frameObj.closeCallback,
+                    };
+
+                    break;
+                case "DATA":
+                    fullPacket = new Uint8Array(4 + 5 + frameObj.data.length);
+                    view = new DataView(fullPacket.buffer);
+                    view.setUint32(0, fullPacket.length - 4, true); // Packet size
+                    view.setUint8(4, 0x02); // TYPE
+                    view.setUint32(5, frameObj.streamID, true); // Stream ID
+                    fullPacket.set(frameObj.data, 9); // Actual data
+                    congestion -= 1;
+
+                    break;
+                case "CLOSE":
+                    fullPacket = new Uint8Array(4 + 5 + 1);
+                    view = new DataView(fullPacket.buffer);
+                    view.setUint32(0, fullPacket.length - 4, true); // Packet size
+                    view.setUint8(4, 0x04); // TYPE
+                    view.setUint32(5, frameObj.streamID, true); // Stream ID
+                    view.setUint8(9, frameObj.reason); // Packet size
+
+                    break;
+                case "RESIZE":
+                    fullPacket = new Uint8Array(4 + 5 + 2 + 2);
+                    view = new DataView(fullPacket.buffer);
+                    view.setUint32(0, fullPacket.length - 4, true); // Packet size
+                    view.setUint8(4, 0xf0); // TYPE
+                    view.setUint32(5, frameObj.streamID, true); // Stream ID
+                    view.setUint16(9, frameObj.rows); // Rows
+                    view.setUint16(11, frameObj.cols); // Cols
+            }
+
+            if (congestion !== 0) {
+                anura.x86!.emulator.bus.send(
+                    "virtio-console0-input-bytes",
+                    fullPacket,
+                );
+                console.log(fullPacket);
+            } else {
+                // Wait for the continue to be recieved and processed
+                while (congestion === 0) {
+                    await sleep(100);
+                }
+                anura.x86!.emulator.bus.send(
+                    "virtio-console0-input-bytes",
+                    fullPacket,
+                );
+            }
+        };
     }
 }
 

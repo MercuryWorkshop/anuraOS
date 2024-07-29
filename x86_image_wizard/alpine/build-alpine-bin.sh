@@ -20,7 +20,6 @@ IMAGE_NAME=i386/alpine-full
 rm -rf "$IMAGES/alpine-boot" || :
 rm -rf "$IMAGES/alpine-rootfs" || :
 rm -rf $OUT_ROOTFS_BIN || :
-cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
 cp -r ../anuramouse .
@@ -49,9 +48,10 @@ sudo umount "$loop"
 sudo losetup -d "$loop"
 rm "$OUT_ROOTFS_TAR"
 rm -rf "$OUT_ROOTFS_MNT"
-rm anurad.c
 rm xfrog.sh
 rm xsetrandr.sh
+rm twisp
+rm -rf whisper
 rm -rf anuramouse
 
 echo "done! created"
