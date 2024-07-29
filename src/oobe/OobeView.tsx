@@ -42,6 +42,10 @@ class OobeView {
             width: ${anura.platform.type == "mobile" ? "100vw;" : "1040px;"};
             height: ${anura.platform.type == "mobile" ? "100vh;" : "680px;"};
             box-sizing: border-box;
+
+            &:has(#features) {
+                padding-top: 28px;
+            }
         }
 
         #content .screen {
@@ -127,7 +131,7 @@ class OobeView {
             font-size: 1rem;
         }
 
-        #size {
+        .sub {
             color: #96969f;
             font-size: 1.05rem;
             display: flex;
@@ -175,6 +179,11 @@ class OobeView {
                         />
                         <span>Offline Functionality</span>
                     </label>
+                    <div class="sub">
+                        <span class="material-symbols-outlined">info</span>
+                        &nbsp;This allows you to use AnuraOS without an internet
+                        connection.
+                    </div>
                     <br></br>
                     <label class="matter-checkbox">
                         <input
@@ -183,11 +192,19 @@ class OobeView {
                         />
                         <span>Linux Emulation</span>
                     </label>
+                    <div class="sub">
+                        <span class="material-symbols-outlined">info</span>
+                        &nbsp;This allows you to run Linux applications on
+                        AnuraOS.
+                    </div>
                     <br></br>
-                    <br></br>
-                    <div id="size">
+                    <div id="size" class="sub">
                         <span class="material-symbols-outlined">download</span>
                         &nbsp;{use(this.state.dlsize)} download
+                    </div>
+                    <div class="sub">
+                        <span class="material-symbols-outlined">info</span>
+                        &nbsp;These features can always be enabled in Settings.
                     </div>
                     <div id="gridContent">
                         <img
