@@ -643,8 +643,8 @@ class V86Backend {
                     view.setUint32(0, fullPacket.length - 4, true); // Packet size
                     view.setUint8(4, 0xf0); // TYPE
                     view.setUint32(5, frameObj.streamID, true); // Stream ID
-                    view.setUint16(9, frameObj.rows); // Rows
-                    view.setUint16(11, frameObj.cols); // Cols
+                    view.setUint16(9, frameObj.rows, true); // Rows
+                    view.setUint16(11, frameObj.cols, true); // Cols
             }
             anura.x86!.emulator.bus.send(
                 "virtio-console0-input-bytes",
@@ -657,7 +657,7 @@ class V86Backend {
             //     );
             //     console.log(fullPacket);
             // } else {
-            //     // Wait for the continue to be recieved and processed
+            //     // Wait for the continue     to be recieved and processed
             //     while (congestion === 0) {
             //         await sleep(100);
             //     }
