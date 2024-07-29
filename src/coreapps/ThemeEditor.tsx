@@ -95,9 +95,10 @@ class ThemeEditor extends App {
                 }
 
                 &:hover,
-                &:focus {
+                &:focus-visible {
                     background: var(--theme-secondary-bg);
                     transition: 0.15s background;
+                    outline: none;
                 }
 
                 &:active {
