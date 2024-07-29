@@ -60,6 +60,7 @@ class Taskbar {
                     type="image"
                     draggable={anura.platform.type === "desktop"}
                     src={app?.icon || ""}
+                    title={app?.name || "App"}
                     on:dragend={(e: DragEvent) => {
                         if (!this.insidedrag) {
                             for (const i of app.windows) {
