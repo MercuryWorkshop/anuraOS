@@ -6,14 +6,19 @@ class ThemeEditor extends App {
     picker: any;
 
     css = css`
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        overflow-y: auto;
+
         input[type="color"] {
             appearance: none;
             background: none;
             padding: 0;
             border: 0;
-            border-radius: 100%;
-            width: 20px;
-            height: 20px;
+            border-radius: 1rem;
+            width: 4rem;
+            height: 3rem;
         }
 
         input[type="color" i]::-webkit-color-swatch-wrapper {
@@ -22,19 +27,88 @@ class ThemeEditor extends App {
         }
 
         input[type="color" i]::-webkit-color-swatch {
-            border-radius: 50%;
+            border-radius: 1rem;
             padding: 0;
+            border-color: var(--theme-border);
         }
 
-        div > * {
+        .editor {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-
-            margin: 10px 0;
+            width: 100%;
+            padding-block: 0.6rem;
         }
 
-        div > input {
-            margin: 0 10px;
+        .editor:not(:last-of-type) {
+            border-bottom: 1px solid var(--theme-border);
+        }
+
+        .editor input {
+            margin: 0 0.8rem;
+        }
+
+        #colors {
+            display: flex;
+            flex-direction: column;
+            padding-inline: 2rem;
+            padding-top: 0.6rem;
+        }
+
+        #head {
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--theme-bg);
+
+            & > h1 {
+                margin-left: 0.5rem;
+                margin-block: 0.9rem;
+            }
+        }
+
+        #btns {
+            display: flex;
+            gap: 0.15rem;
+
+            & button {
+                padding: 0.5rem 0.75rem;
+                border-radius: 10rem;
+                background: transparent;
+                color: var(--theme-fg);
+                border: none;
+                cursor: pointer;
+                font-family: inherit;
+                font-size: 1rem;
+
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+
+                transition: 0.15s background;
+
+                & .material-symbols-outlined {
+                    font-size: 1.7rem;
+                }
+
+                &:hover,
+                &:focus {
+                    background: var(--theme-secondary-bg);
+                    transition: 0.15s background;
+                }
+
+                &:active {
+                    background: color-mix(
+                        in srgb,
+                        var(--theme-secondary-bg) 90%,
+                        var(--theme-fg)
+                    );
+                    transition: 0.05s background;
+                }
+            }
         }
     `;
 
@@ -86,24 +160,58 @@ class ThemeEditor extends App {
     page = async () => (
         <div
             style={{
-                padding: "2%",
-                height: "100%",
-                width: "100%",
-                position: "absolute",
                 color: use(anura.ui.theme.state.foreground),
-                background: use(anura.ui.theme.state.background),
+                background: use(anura.ui.theme.state.darkBackground),
             }}
             class={`background ${this.css}`}
             id="theme-editor"
         >
-            {/* TODO: WTF IS THIS UI 
-            
-            peak is what it is */}
-            <h1>Theme Editor</h1>
+            <div id="head">
+                <h1>Theme Editor</h1>
+                <div id="btns">
+                    <button
+                        style={{
+                            color: use(anura.ui.theme.state.foreground),
+                        }}
+                        on:click={() => {
+                            anura.ui.theme.reset();
+                            anura.settings.set("theme", anura.ui.theme.state);
+                        }}
+                    >
+                        <span class="material-symbols-outlined">restore</span>
+                        Reset
+                    </button>
 
-            <div>
+                    <button
+                        style={{
+                            color: use(anura.ui.theme.state.foreground),
+                        }}
+                        on:click={() => {
+                            this.exportTheme(
+                                JSON.stringify(anura.ui.theme.state),
+                            );
+                        }}
+                    >
+                        <span class="material-symbols-outlined">save</span>Save
+                    </button>
+
+                    <button
+                        style={{
+                            color: use(anura.ui.theme.state.foreground),
+                        }}
+                        on:click={() => {
+                            this.importTheme();
+                        }}
+                    >
+                        <span class="material-symbols-outlined">folder</span>
+                        Import
+                    </button>
+                </div>
+            </div>
+
+            <div id="colors">
                 {this.colorEditors.map((color) => (
-                    <div>
+                    <div class="editor">
                         {color.name}
                         <input
                             type="color"
@@ -117,45 +225,6 @@ class ThemeEditor extends App {
                         />
                     </div>
                 ))}
-                <button
-                    class="matter-button-contained"
-                    style={{
-                        backgroundColor: use(anura.ui.theme.state.accent),
-                        color: use(anura.ui.theme.state.foreground),
-                    }}
-                    on:click={() => {
-                        anura.ui.theme.reset();
-                        anura.settings.set("theme", anura.ui.theme.state);
-                    }}
-                >
-                    Reset
-                </button>
-
-                <button
-                    class="matter-button-contained"
-                    style={{
-                        backgroundColor: use(anura.ui.theme.state.accent),
-                        color: use(anura.ui.theme.state.foreground),
-                    }}
-                    on:click={() => {
-                        this.exportTheme(JSON.stringify(anura.ui.theme.state));
-                    }}
-                >
-                    Export
-                </button>
-
-                <button
-                    class="matter-button-contained"
-                    style={{
-                        backgroundColor: use(anura.ui.theme.state.accent),
-                        color: use(anura.ui.theme.state.foreground),
-                    }}
-                    on:click={() => {
-                        this.importTheme();
-                    }}
-                >
-                    Import
-                </button>
             </div>
         </div>
     );
