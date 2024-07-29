@@ -344,7 +344,7 @@ class V86Backend {
                 }
             },
         );
-        this.runpty = await this.openpty("DISPLAY=:0 bash", 1, 1, (data) => {
+        this.runpty = await this.openpty("bash", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
         });
     }
@@ -423,16 +423,11 @@ class V86Backend {
             return result;
         }
         let pointer = "";
-        const pty = await this.openpty(
-            "TERM=xterm DISPLAY=:0 /bin/anuramouse",
-            100,
-            100,
-            (data) => {
-                pointer = data.slice(0, -2);
-                console.log(pointer);
-                ready = true;
-            },
-        );
+        const pty = await this.openpty("/bin/anuramouse", 100, 100, (data) => {
+            pointer = data.slice(0, -2);
+            console.log(pointer);
+            ready = true;
+        });
         function write_uint(i: number, addr: number) {
             // I have to redefine this here because "this" breaks
             const bytes = [i, i >> 8, i >> 16, i >> 24].map((a) => a % 256);
