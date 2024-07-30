@@ -473,7 +473,29 @@ class V86Backend {
         let remaniningLength = 0;
         let recBuffer: Uint8Array;
 
-        const connections: any = {};
+        const connections: any = { 0: { congestion: 0 } };
+
+        const congestedBuffer: {
+            data: Uint8Array;
+            type: "CONNECT" | "DATA" | "RESIZE" | "CLOSE";
+        }[] = [];
+        function sendPacket(
+            data: Uint8Array,
+            type: "DATA" | "CONNECT" | "RESIZE" | "CLOSE",
+            streamID: number,
+        ) {
+            if (connections[streamID].congestion > 0) {
+                if (type === "DATA") connections[streamID].congestion--;
+
+                anura.x86!.emulator.bus.send(
+                    "virtio-console0-input-bytes",
+                    data,
+                );
+            } else {
+                connections[streamID].congested = true;
+                congestedBuffer.push({ data: data, type: type });
+            }
+        }
 
         this.emulator.add_listener(
             "virtio-console0-output-bytes",
@@ -523,11 +545,11 @@ class V86Backend {
             },
         );
 
-        let congestion = 0;
         function processIncomingWispFrame(frame: Uint8Array) {
             //console.log(frame);
-            let view;
-            let streamID;
+            const view = new DataView(frame.buffer);
+            const streamID = view.getUint32(1, true);
+
             switch (frame[0]) {
                 case 1: // CONNECT
                     // The server should never send this actually
@@ -535,8 +557,6 @@ class V86Backend {
                         "Server sent client only frame: CONNECT 0x01",
                     );
                 case 2: // DATA
-                    view = new DataView(frame.buffer);
-                    streamID = view.getUint32(1, true);
                     if (connections[streamID])
                         connections[streamID].dataCallback(frame.slice(5));
                     else
@@ -547,14 +567,24 @@ class V86Backend {
 
                     break;
                 case 3: // CONTINUE
-                    view = new DataView(frame.buffer);
-                    congestion = view.getUint32(0, true);
+                    if (connections[streamID]) {
+                        connections[streamID].congestion = view.getUint32(
+                            5,
+                            true,
+                        );
+                    }
+
+                    if (connections[streamID].congested) {
+                        for (const packet of congestedBuffer) {
+                            sendPacket(packet.data, packet.type, streamID);
+                        }
+                        connections[streamID].congested = false;
+                    }
 
                     break;
                 case 4: // CLOSE
                     // Call some closer here
-                    view = new DataView(frame.buffer);
-                    streamID = view.getUint32(1, true);
+
                     if (connections[streamID])
                         connections[streamID].closeCallback(view.getUint8(5));
 
@@ -564,8 +594,9 @@ class V86Backend {
                     // eslint-disable-next-line no-case-declarations
                     const full = new Uint8Array(frame.length + 4);
                     full.set(frame, 4);
-                    view = new DataView(full.buffer);
-                    view.setUint32(0, full.length - 4, true);
+                    // eslint-disable-next-line no-case-declarations
+                    const fullView = new DataView(full.buffer);
+                    fullView.setUint32(0, full.length - 4, true);
                     //console.log("Refection: ");
                     //console.log(full);
                     anura.x86!.emulator.bus.send(
@@ -622,6 +653,7 @@ class V86Backend {
                     connections[frameObj.streamID] = {
                         dataCallback: frameObj.dataCallback,
                         closeCallback: frameObj.closeCallback,
+                        congestion: connections[0].congestion,
                     };
 
                     break;
@@ -632,7 +664,6 @@ class V86Backend {
                     view.setUint8(4, 0x02); // TYPE
                     view.setUint32(5, frameObj.streamID, true); // Stream ID
                     fullPacket.set(frameObj.data, 9); // Actual data
-                    congestion -= 1;
 
                     break;
                 case "CLOSE":
@@ -652,27 +683,11 @@ class V86Backend {
                     view.setUint32(5, frameObj.streamID, true); // Stream ID
                     view.setUint16(9, frameObj.rows, true); // Rows
                     view.setUint16(11, frameObj.cols, true); // Cols
+                    break;
+                default:
+                    throw new Error("Invalid Packet Type");
             }
-            anura.x86!.emulator.bus.send(
-                "virtio-console0-input-bytes",
-                fullPacket,
-            );
-            // if (congestion !== 0) {
-            //     anura.x86!.emulator.bus.send(
-            //         "virtio-console0-input-bytes",
-            //         fullPacket,
-            //     );
-            //     console.log(fullPacket);
-            // } else {
-            //     // Wait for the continue     to be recieved and processed
-            //     while (congestion === 0) {
-            //         await sleep(100);
-            //     }
-            //     anura.x86!.emulator.bus.send(
-            //         "virtio-console0-input-bytes",
-            //         fullPacket,
-            //     );
-            // }
+            sendPacket(fullPacket, frameObj.type, frameObj.streamID);
         };
     }
 }
