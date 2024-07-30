@@ -127,7 +127,7 @@ class Networking {
                                         anura.x86!.closepty(await pty);
 
                                         const res = new Response(data, {
-                                            status: status || 500,
+                                            status: status,
                                             statusText: "OK",
                                             headers: new Headers(raw_headers),
                                         });
