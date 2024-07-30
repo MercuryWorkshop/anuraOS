@@ -79,7 +79,7 @@ class Networking {
                         const endMarker = crypto.randomUUID();
 
                         const pty = anura.x86!.openpty(
-                            `/bin/ash -c 'curl -o - -s -i -X "${requestObj.method}" http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} ${curlHeaders}| cat | base64 && echo -n "${endMarker}"'`,
+                            `/bin/ash -c 'curl -o - -s -i -X "${requestObj.method}" ${JSON.stringify(`http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search}`)} ${curlHeaders}| cat | base64 && echo -n "${endMarker}"'`,
                             0,
                             0,
                             async (data) => {
@@ -125,8 +125,9 @@ class Networking {
                                         }
 
                                         anura.x86!.closepty(await pty);
+
                                         const res = new Response(data, {
-                                            status: status,
+                                            status: status || 500,
                                             statusText: "OK",
                                             headers: new Headers(raw_headers),
                                         });
