@@ -300,9 +300,11 @@ class TaskManager extends App {
                     // console.log(row);
                 }
                 for (const row of allRows) {
-                    (
-                        (row! as HTMLElement).children[1]! as HTMLElement
-                    ).innerText = "(System Process)";
+                    if (row) {
+                        (
+                            (row as HTMLElement).children[1]! as HTMLElement
+                        ).innerText = "(System Process)";
+                    }
                 }
             }
         }

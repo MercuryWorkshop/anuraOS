@@ -10,7 +10,7 @@ all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js
 full: all rootfs-alpine
 
 submodules: .gitmodules
-	git submodule update
+#	git submodule update
 
 hooks: FORCE
 	mkdir -p .git/hooks
