@@ -74,7 +74,7 @@ class Networking {
                                 (await requestObj.body?.getReader().read())!
                                     .value!,
                             );
-                            curlHeaders += `--data "@${tmpFileName}" `;
+                            curlHeaders += `--data "@/root${tmpFileName}" `;
                         }
                         const endMarker = crypto.randomUUID();
 
