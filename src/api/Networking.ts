@@ -58,12 +58,15 @@ class Networking {
                     return await new Promise(async (resolve) => {
                         let buffer = "";
                         let curlHeaders = "";
-                        for (const header of (requestObj as any).raw_headers) {
+
+                        for (const header of (
+                            requestObj as any
+                        ).headers.entries()) {
                             curlHeaders += `-H "${header[0]}: ${header[1]}" `;
                         }
 
                         let tmpFileName: string;
-                        if (requestObj.bodyUsed) {
+                        if (requestObj.body) {
                             const id = crypto.randomUUID();
                             tmpFileName = "/tmp." + id;
                             await anura.fs.promises.writeFile(
@@ -137,7 +140,8 @@ class Networking {
                                     anura.notifications.add({
                                         title: "Anura Networking Error",
                                         description:
-                                            "fetch requested to non binded localhost port",
+                                            "fetch requested to non binded localhost port " +
+                                            requestObj.url,
                                         timeout: 5000,
                                     });
                                     resolve(new Response(e));
