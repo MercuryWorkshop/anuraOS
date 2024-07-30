@@ -327,9 +327,8 @@ class V86Backend {
             timeout: 5000,
         });
 
-        /*
         this.xpty = await this.openpty(
-            "/bin/bash -c startx /bin/xfrog",
+            "/bin/ash -c 'startx /bin/xfrog'",
             1,
             1,
             async (data) => {
@@ -345,7 +344,7 @@ class V86Backend {
                 }
             },
         );
-        */
+
         this.runpty = await this.openpty("/bin/bash", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
         });
