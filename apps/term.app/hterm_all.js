@@ -11827,6 +11827,10 @@ hterm.ScrollPort.prototype.decorate = function(div, callback) {
       'width: 100%');
 
   div.appendChild(this.iframe_);
+  
+  //https://stackoverflow.com/a/7828576
+  this.iframe_.contentDocument.open();
+  this.iframe_.contentDocument.close();
 
   const onLoad = () => {
     this.paintIframeContents_();
@@ -11835,13 +11839,7 @@ hterm.ScrollPort.prototype.decorate = function(div, callback) {
     }
   };
 
-  // Insert Iframe content asynchronously in FF.  Otherwise when the frame's
-  // load event fires in FF it clears out the content of the iframe.
-  if ('mozInnerScreenX' in globalThis) { // detect a FF only property
-    this.iframe_.addEventListener('load', () => onLoad());
-  } else {
-    onLoad();
-  }
+  onLoad();
 };
 
 
