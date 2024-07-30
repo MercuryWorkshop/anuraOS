@@ -21,7 +21,7 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unused-vars": "off",
         "@typescript-eslint/no-non-null-assertion": "off",
-
+        "no-async-promise-executor": "off",
         "@typescript-eslint/no-namespace": "off",
         "linebreak-style": ["error", "unix"],
         // quotes: ["error", "double"],

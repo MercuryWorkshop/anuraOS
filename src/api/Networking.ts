@@ -55,11 +55,28 @@ class Networking {
                 return this.loopback.call(port, requestObj);
             else {
                 if (anura.x86?.ready) {
-                    return await new Promise((resolve) => {
+                    return await new Promise(async (resolve) => {
                         let buffer = "";
+                        let curlHeaders = "";
+                        for (const header of (requestObj as any).raw_headers) {
+                            curlHeaders += `-H "${header[0]}: ${header[1]}" `;
+                        }
+
+                        let tmpFileName: string;
+                        if (requestObj.bodyUsed) {
+                            const id = crypto.randomUUID();
+                            tmpFileName = "/tmp." + id;
+                            await anura.fs.promises.writeFile(
+                                tmpFileName,
+                                (await requestObj.body?.getReader().read())!
+                                    .value!,
+                            );
+                            curlHeaders += `--data "@${tmpFileName}" `;
+                        }
                         const endMarker = crypto.randomUUID();
+
                         const pty = anura.x86!.openpty(
-                            `/bin/ash -c 'curl -o - -s -i -X "${requestObj.method}" http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} | cat | base64 && echo -n "${endMarker}"'`,
+                            `/bin/ash -c 'curl -o - -s -i -X "${requestObj.method}" http://localhost:${urlObj.port}${urlObj.pathname}${urlObj.search} ${curlHeaders}| cat | base64 && echo -n "${endMarker}"'`,
                             0,
                             0,
                             async (data) => {
@@ -96,6 +113,11 @@ class Networking {
                                         for (const header of splitInfo!) {
                                             raw_headers.push(
                                                 header.split(": "),
+                                            );
+                                        }
+                                        if (requestObj.bodyUsed) {
+                                            await anura.fs.promises.unlink(
+                                                tmpFileName,
                                             );
                                         }
 

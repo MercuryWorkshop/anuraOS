@@ -377,6 +377,11 @@ class V86Backend {
                 console.log(data);
             },
         });
+        const ptyNumberStatic = this.ptyNum; // this.ptyNum changes and to avoid a race condition this is needed;
+        setTimeout(() => {
+            console.log(`pty ${this} reizing to ${rows}x${cols}`);
+            this.resizepty(ptyNumberStatic, cols, rows);
+        }, 0);
 
         return new Promise((resolve) => {
             resolve(this.ptyNum);
