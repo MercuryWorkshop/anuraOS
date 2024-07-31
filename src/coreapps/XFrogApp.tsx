@@ -84,13 +84,10 @@ class XFrogApp extends App {
             timeout = setTimeout(() => {
                 // DISPLAY=:0 xdotool windowmap $(xwininfo -children -id ${xwid} | grep -o '^ \\+0x[0-9a-f]\\+');
                 if (isNew)
-                    anura.x86!.openpty(
-                        `/bin/ash -c 'DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
+                    anura.x86!.runcmd(
+                        `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                             win!.width
-                        } ${win!.height - 28}'`,
-                        0,
-                        0,
-                        console.log,
+                        } ${win!.height - 28}`,
                     );
 
                 setTimeout(() => {
@@ -128,18 +125,14 @@ class XFrogApp extends App {
                     win.onresize = async (w, h) => {
                         // onResize
                         console.log(w, h);
-                        const pty = await anura.x86!.openpty(
-                            `/bin/ash -c 'DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
+                        await anura.x86!.runcmd(
+                            `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                                 win!.width
-                            } ${win!.height - 28}'`,
-                            0,
-                            0,
-                            console.log,
+                            } ${win!.height - 28}`,
                         );
-                        anura.x86!.closepty(pty);
                     };
                     win.onclose = () => {
-                        anura.x86!.runcmd(`xkill -id ${xwid}`);
+                        anura.x86!.runcmd(`DISPLAY=:0 xkill -id ${xwid}`);
                     };
                     this.xwindows[xwid] = win;
                 } else {

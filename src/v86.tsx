@@ -347,7 +347,7 @@ class V86Backend {
             },
         );
 
-        this.runpty = await this.openpty("/bin/bash", 1, 1, (data) => {
+        this.runpty = await this.openpty("/bin/bash --login", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
         });
     }
