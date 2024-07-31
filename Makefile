@@ -14,7 +14,7 @@ submodules: .gitmodules
 
 hooks: FORCE
 	mkdir -p .git/hooks
-	echo -e "#!/bin/sh\nmake lint\ngit update-index --again" > .git/hooks/pre-commit
+	echo -e "#!/bin/sh\nmake lint -j$(nproc --all)\ngit update-index --again" > .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 
 apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
