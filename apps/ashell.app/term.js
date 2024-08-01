@@ -80,19 +80,16 @@ term.onTerminalReady = async () => {
             },
         }),
     );
-
     const oldProcKill = proc.kill.bind(proc);
-    const oldWindowClose = instanceWindow.close.bind(instanceWindow);
 
     proc.kill = () => {
         oldProcKill();
-        oldWindowClose();
+        instanceWindow.close();
     };
 
-    instanceWindow.close = () => {
-        oldProcKill();
-        oldWindowClose();
-    };
+    instanceWindow.addEventListener("close", () => {
+        proc.kill();
+    });
 
     proc.exit = proc.kill.bind(proc);
 };
