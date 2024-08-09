@@ -28,6 +28,7 @@ class OobeView {
     }
 
     css = css`
+        color-scheme: light;
         z-index: 9996;
         position: absolute;
         width: 100%;

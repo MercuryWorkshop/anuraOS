@@ -4,7 +4,7 @@
     -ms-user-select: none;
     height: 200px;
     width: 500px;
-    background: white;
+    background: var(--theme-bg);
     position: fixed;
     overflow: hidden;
     z-index: 91;
@@ -130,6 +130,11 @@ body.platform-tablet .aliceWMwin .title {
 .aliceWMwin .content {
     padding: 2px;
     flex: 1;
+    background-color: var(--theme-bg);
+}
+
+.aliceWMwin .content iframe {
+    color-scheme: normal; /* quirk to preserve frame bg */
 }
 
 .aliceWMwin .title:hover {
