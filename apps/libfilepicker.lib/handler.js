@@ -52,9 +52,6 @@ export function selectFile(options) {
             callback: handleMessage,
             instanceWindow: picker,
         });
-        picker.onclose = () => {
-            reject("User cancelled");
-        };
     });
 }
 
@@ -68,6 +65,10 @@ export function selectFolder(options) {
     return new Promise((resolve, reject) => {
         let picker = anura.wm.create(options.app, "Select a Folder...");
         let id = crypto.randomUUID();
+
+        picker.onclose = () => {
+            reject("User cancelled");
+        };
 
         let iframe = document.createElement("iframe");
         iframe.style =
