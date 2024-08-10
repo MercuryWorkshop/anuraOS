@@ -174,7 +174,7 @@ class ExternalApp extends App {
                     });
                 },
                 env: {
-                    process: this,
+                    process: win,
                 },
                 open: async (url: string | URL) => {
                     const browser = await anura.import("anura.libbrowser");

@@ -715,7 +715,8 @@ async function bootUserCustomizations() {
                             console.error(e);
                         }`;
 
-                        anura.processes.create(script);
+                        const process = anura.processes.create(script);
+                        process.title = file;
                     } catch (e) {
                         anura.logger.error(
                             "Anura failed to load a script " + e,
