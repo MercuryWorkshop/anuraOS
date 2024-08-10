@@ -37,8 +37,8 @@ export function selectFile(options) {
 
                 // parent.removeEventListener("message", handleMessage);
 
-                picker.close();
                 resolve(filePath);
+                picker.close();
             }
         }
         // parent.addEventListener("message", handleMessage);
@@ -93,8 +93,8 @@ export function selectFolder(options) {
 
                 // parent.removeEventListener("message", handleMessage);
 
-                picker.close();
                 resolve(filePath);
+                picker.close();
             }
         }
         // parent.addEventListener("message", handleMessage);
