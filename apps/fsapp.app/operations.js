@@ -217,8 +217,8 @@ async function selectAction(selected) {
                     .getAttribute("data-path")
                     .replace(/(\/)\1+/g, "$1"),
             };
-
-            window.parent.postMessage(fileData, "*");
+            window.callback({ data: fileData });
+            // window.parent.postMessage(fileData, "*");
         }
     } else if (selected.length > 1 && filePicker.multiple) {
         let dataPaths = [];
@@ -237,8 +237,8 @@ async function selectAction(selected) {
             id: filePicker.id,
             filePath: dataPaths,
         };
-
-        window.parent.postMessage(fileData, "*");
+        window.callback({ data: fileData });
+        // window.parent.postMessage(fileData, "*");
     } else if (selected.length == 0) {
         if (filePicker.type == "dir") {
             let fileData = {
@@ -249,7 +249,7 @@ async function selectAction(selected) {
                     .getAttribute("data-current-path"),
             };
 
-            window.parent.postMessage(fileData, "*");
+            window.callback({ data: fileData });
         }
     }
 }

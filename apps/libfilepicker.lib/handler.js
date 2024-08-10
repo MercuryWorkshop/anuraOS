@@ -35,13 +35,13 @@ export function selectFile(options) {
                 let receivedData = event.data;
                 let filePath = receivedData.filePath;
 
-                parent.removeEventListener("message", handleMessage);
+                // parent.removeEventListener("message", handleMessage);
 
                 picker.close();
                 resolve(filePath);
             }
         }
-        parent.addEventListener("message", handleMessage);
+        // parent.addEventListener("message", handleMessage);
         picker.content.appendChild(iframe);
         Object.assign(iframe.contentWindow, {
             anura,
@@ -49,8 +49,12 @@ export function selectFile(options) {
             ExternalApp,
             LocalFS,
             instance: options.app,
+            callback: handleMessage,
             instanceWindow: picker,
         });
+        picker.onclose = () => {
+            reject("User cancelled");
+        };
     });
 }
 
@@ -64,10 +68,6 @@ export function selectFolder(options) {
     return new Promise((resolve, reject) => {
         let picker = anura.wm.create(options.app, "Select a Folder...");
         let id = crypto.randomUUID();
-
-        picker.onclose = () => {
-            reject("User cancelled");
-        };
 
         let iframe = document.createElement("iframe");
         iframe.style =
@@ -91,13 +91,13 @@ export function selectFolder(options) {
                 let receivedData = event.data;
                 let filePath = receivedData.filePath;
 
-                parent.removeEventListener("message", handleMessage);
+                // parent.removeEventListener("message", handleMessage);
 
                 picker.close();
                 resolve(filePath);
             }
         }
-        parent.addEventListener("message", handleMessage);
+        // parent.addEventListener("message", handleMessage);
         picker.content.appendChild(iframe);
         Object.assign(iframe.contentWindow, {
             anura,
@@ -105,6 +105,7 @@ export function selectFolder(options) {
             ExternalApp,
             LocalFS,
             instance: options.app,
+            callback: handleMessage,
             instanceWindow: picker,
         });
     });
