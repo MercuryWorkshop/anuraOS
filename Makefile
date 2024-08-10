@@ -9,32 +9,20 @@ all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js
 
 full: all rootfs-alpine
 
-submodules: .gitmodules
-	git submodule update
-
-hooks: FORCE
-	mkdir -p .git/hooks
-	echo -e "#!/bin/sh\nmake lint -j$(nproc --all)\ngit update-index --again" > .git/hooks/pre-commit
-	chmod +x .git/hooks/pre-commit
-
-apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
-	cd apps/libfileview.lib; bash geticons.sh
-
-bin/chimerix.ajs: chimerix/*
-	mkdir -p bin
-	cd chimerix; npm i
-	cd chimerix; npx rollup -c rollup.config.js
-	cp chimerix/dist/chimerix.ajs bin/chimerix.ajs
-
-public/config.json:
-	cp config.default.json public/config.json
-
 build/bootstrap: package.json server/package.json
 	mkdir -p build/lib
 	npm i
 	cd server; npm i
 	make hooks
 	>build/bootstrap
+
+hooks: FORCE
+	mkdir -p .git/hooks
+	echo -e "#!/bin/sh\nmake lint\ngit update-index --again" > .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
+
+submodules: .gitmodules
+	git submodule update
 
 # Each dependency should have a similar structure to the following:
 #   build/libs/<libname>/<bundle>.min.js
@@ -116,9 +104,27 @@ build/libs/dreamland/all.js: dreamlandjs/src/*
 	cp dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
 	jq '.version' dreamlandjs/package.json > build/libs/dreamland/version
 
+build/libs/nfsadapter/nfsadapter.js: native-file-system-adapter/src/es6.js native-file-system-adapter/src/adapters/filer.js
+	cd native-file-system-adapter; npm i; npm run build
+	mkdir -p build/libs/nfsadapter
+	mkdir -p build/libs/nfsadapter/adapters
+	cp native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
+	cp native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/adapters/anuraadapter.js
+	cp native-file-system-adapter/src/util.js build/libs/nfsadapter/
+	cp native-file-system-adapter/src/config.js build/libs/nfsadapter/	
+
 build/assets/matter.css:
 	mkdir -p build/assets
 	curl https://github.com/finnhvman/matter/releases/latest/download/matter.css -L -o build/assets/matter.css
+
+apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
+	cd apps/libfileview.lib; bash geticons.sh
+
+bin/chimerix.ajs: chimerix/*
+	mkdir -p bin
+	cd chimerix; npm i
+	cd chimerix; npx rollup -c rollup.config.js
+	cp chimerix/dist/chimerix.ajs bin/chimerix.ajs
 
 clean:
 	rm -rf build
@@ -130,14 +136,8 @@ rootfs-alpine: FORCE
 rootfs: FORCE
 	cd x86_image_wizard; sh x86_image_wizard.sh
 
-v86dirty: 
-	touch v86timestamp # makes it "dirty" and forces recompilation
-
 v86: libv86.js build/lib/v86.wasm
 	cp -r v86/bios public
-
-build/cache-load.json: FORCE
-	(find apps/ -type f && find bin/ -type f && cd build/ && find lib/ -type f && find libs/ -type f && find uv/ -type f && find assets/ -type f && find bundle.css -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e \.map -e \.d\.ts -e "/\." -e "uv/" -e "workbox/" | jq -Rnc '[inputs]' > build/cache-load.json
 
 libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 	cd v86; make build/libv86.js
@@ -147,8 +147,21 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
+v86dirty: 
+	touch v86timestamp # makes it "dirty" and forces recompilation
+
+build/cache-load.json: FORCE
+	(find apps/ -type f && find bin/ -type f && cd build/ && find lib/ -type f && find libs/ -type f && find uv/ -type f && find assets/ -type f && find bundle.css -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e \.map -e \.d\.ts -e "/\." -e "uv/" -e "workbox/" | jq -Rnc '[inputs]' > build/cache-load.json
+
+public/config.json:
+	cp config.default.json public/config.json
+
 watch: bundle FORCE
 	npx tsc-watch --onSuccess "make css build/cache-load.json milestone" 
+
+bundle: tsc css lint milestone
+	mkdir -p build/artifacts
+
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
@@ -156,13 +169,12 @@ tsc:
 css: src/*.css
 	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
-bundle: tsc css lint milestone
-	mkdir -p build/artifacts
-milestone:
-	uuidgen > build/MILESTONE
 lint:
 	npx prettier -w --log-level error .
 	npx eslint . --fix
+milestone:
+	uuidgen > build/MILESTONE
+
 # prod: all
 #	npx google-closure-compiler --js build/lib/libv86.js build/assets/libs/filer.min.js build/lib/coreapps/ExternalApp.js build/lib/coreapps/x86MgrApp.js build/lib/coreapps/SettingsApp.js build/lib/coreapps/BrowserApp.js build/lib/v86.js build/lib/AliceWM.js build/lib/AliceJS.js build/lib/Taskbar.js build/lib/ContextMenu.js build/lib/api/ContextMenuAPI.js build/lib/Launcher.js build/lib/Bootsplash.js build/lib/oobe/OobeView.js build/lib/oobe/OobeWelcomeStep.js build/lib/oobe/OobeAssetsStep.js build/lib/Utils.js build/lib/Anura.js build/lib/api/Settings.js build/lib/api/NotificationService.js build/lib/Boot.js --js_output_file public/dist.js
 static: all
@@ -175,15 +187,6 @@ static: all
 
 server: FORCE
 	cd server; npx ts-node server.ts
-
-build/libs/nfsadapter/nfsadapter.js: native-file-system-adapter/src/es6.js native-file-system-adapter/src/adapters/filer.js
-	cd native-file-system-adapter; npm i; npm run build
-	mkdir -p build/libs/nfsadapter
-	mkdir -p build/libs/nfsadapter/adapters
-	cp native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
-	cp native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/adapters/anuraadapter.js
-	cp native-file-system-adapter/src/util.js build/libs/nfsadapter/
-	cp native-file-system-adapter/src/config.js build/libs/nfsadapter/	
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 
