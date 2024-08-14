@@ -1,14 +1,16 @@
 # The Anura Internal API
 
-This document has a brief explanation of all the Anura JS APIs and how to use them
+This document has a brief explanation of all the Anura JS APIs and how to use them.
 
 ## anura.settings
 
 This API is used to define system settings in Anura, it is a key value store of JS objects.
 
-### anura.settings.get
+### Functions
 
-This api allows you to get settings and change already defined settings values.
+#### anura.settings.get: `string | undefined`
+
+This api allows you to get a value in the key value store.
 
 **Usage:**
 
@@ -16,9 +18,9 @@ This api allows you to get settings and change already defined settings values.
 anura.settings.get("applist"); // Get pinned apps in anura's taskbar
 ```
 
-### anura.settings.set
+#### anura.settings.set: `void`
 
-This allows you to set a settings value.
+This allows you to set a value in the key value store.
 
 **Usage:**
 
@@ -46,13 +48,19 @@ You can find the documentation for the preinstalled libraries [here](./appdevt.m
 
 This API provides access to Anura's x86 backend; Which is used to create PTYs, write directly to serial terminals (not recommended) or access v86 itself.
 
-**Usage:**
+### Properties
 
-```js
-anura.x86.emulator; // Get v86 emulator object
-```
+#### anura.x86.emulator: `V86Emulator`
 
-### anura.x86.openpty
+This is the v86 emulator object, you can find more documentation on it [here](https://github.com/copy/v86).
+
+#### anura.x86.screen_container: `HTMLDivElement`
+
+This is a element containing a canvas with the emulated v86 screen.
+
+### Functions
+
+#### anura.x86.openpty: `number`
 
 This allows you to open a PTY and run commands inside of it. It returns the number of the PTY and is used in other interactions.
 
@@ -60,7 +68,7 @@ This allows you to open a PTY and run commands inside of it. It returns the numb
 
 ```js
 const pty = await anura.x86.openpty(
-    "TERM=xterm DISPLAY=:0 bash",
+    "/bin/bash",
     screenSize.width,
     screenSize.height,
     (data) => {
@@ -69,7 +77,7 @@ const pty = await anura.x86.openpty(
 );
 ```
 
-### anura.x86.writepty
+#### anura.x86.writepty: `void`
 
 This allows you to send data to a PTY. This data should be a string or converted to one.
 
@@ -77,7 +85,7 @@ This allows you to send data to a PTY. This data should be a string or converted
 
 ```js
 const pty = await anura.x86.openpty(
-    "TERM=xterm DISPLAY=:0 bash",
+    "/bin/bash",
     screenSize.width,
     screenSize.height,
     (data) => {
@@ -87,9 +95,9 @@ const pty = await anura.x86.openpty(
 anura.x86.writepty(pty, "Hello World!");
 ```
 
-### anura.x86.resizepty
+#### anura.x86.resizepty: `void`
 
-This allows you to send resize a PTY.
+This allows you to resize a PTY.
 
 **Usage:**
 
@@ -109,17 +117,15 @@ anura.x86.resizepty(pty, screenSize.height, screenSize.width);
 
 This api allows you to interact with the v86 virtual hard disk.
 
-### anura.x86hdd.size
+### Properties
 
-This returns the size of the v86 hard disk in bytes.
+#### anura.x86hdd.size: `number`
 
-**Usage:**
+This is the size of the v86 hard disk in bytes.
 
-```js
-console.log("v86 hard disk size: " + anura.x86hdd.size);
-```
+### Functions
 
-### anura.x86hdd.loadfile
+#### anura.x86hdd.loadfile: `void`
 
 This allows you to load a image into the x86 hard disk.
 
@@ -133,14 +139,14 @@ await anura.x86hdd.loadfile(blob);
 
 // split into multiple files
 const files = [];
-let file_1 = await fetch(anura.config.x86[x86image].rootfs["1"]);
-files["1"] = await file_1.blob();
-let file_2 = await fetch(anura.config.x86[x86image].rootfs["2"]);
-files["2"] = await file_2.blob();
+let file_1 = await fetch(anura.config.x86[x86image].rootfs[0]);
+files[0] = await file_1.blob();
+let file_2 = await fetch(anura.config.x86[x86image].rootfs[1]);
+files[1] = await file_2.blob();
 await anura.x86hdd.loadfile(new Blob(files));
 ```
 
-### anura.x86hdd.delete
+#### anura.x86hdd.delete: `void`
 
 Deletes the x86 hard disk and refreshes the page. This is a destructive action!
 
@@ -151,9 +157,9 @@ console.log("deleting hard disk");
 await anura.x86hdd.delete();
 ```
 
-### anura.x86hdd.resize
+#### anura.x86hdd.resize: `void`
 
-Resizes the x86 hard disk by adding empty bytes to the image.
+Resizes the x86 hard disk by adding empty bytes to the image. The
 
 **Usage:**
 
@@ -252,7 +258,7 @@ emulator.add_listener(
 );
 ```
 
-### anura.x86hdd.save
+#### anura.x86hdd.save: `void`
 
 This allows you to save the v86 hard disk and sends a notification to the user.
 
@@ -265,7 +271,15 @@ await anura.x86hdd.save();
 
 ## anura.wm
 
-### anura.wm.create
+### Properties
+
+#### anura.wm.windows: `Array<WeakRef<WMWindow>>`
+
+This is an array of WeakRefs that contain WMWindows that are in the anura wm.
+
+### Functions
+
+#### anura.wm.create: `WMWindow`
 
 This api allows you to create a window that will be displayed in the DE.
 
@@ -281,7 +295,7 @@ let win = anura.wm.create(instance, {
 // do things with the window that gets returned
 ```
 
-### anura.wm.createGeneric
+#### anura.wm.createGeneric: `WMWindow`
 
 This is is the same as the `anura.wm.create` api but creates a window under the Generic App instance.
 
@@ -302,11 +316,17 @@ let win = anura.wm.createGeneric("Example Window");
 
 ## anura.net
 
-This API provides access to Anura's networking backend, for routing your requests through a [Wisp](https://github.com/MercuryWorkshop/wisp-protocol) compatible backend using [libcurl.js](https://github.com/ading2210/libcurl.js).
+This API provides access to Anura's networking backend, for routing your requests through a [Wisp](https://github.com/MercuryWorkshop/wisp-protocol) compatible backend using [libcurl.js](https://github.com/ading2210/libcurl.js).\
 
-**Usage:**
+### Properties
 
-### anura.net.fetch
+#### anura.net.libcurl
+
+This part of the api gives you full access to the libcurl.js APIs directly. You can learn more on how to use them [here](https://github.com/ading2210/libcurl.js?tab=readme-ov-file#javascript-api).
+
+### Functions
+
+#### anura.net.fetch: `Response`
 
 This has the same functionality as the DOM fetch function. It returns a `Response` and takes in a URL with options or a Request object.
 
@@ -317,7 +337,9 @@ let response = await anura.net.fetch("https://anura.pro/MILESTONE");
 console.log(await response.text());
 ```
 
-### anura.net.WebSocket
+### Constructors
+
+#### anura.net.WebSocket: `WebSocket`
 
 This has the same functionality as the built in DOM function and works identically as the regular `WebSocket` constructor.
 
@@ -334,17 +356,17 @@ ws.addEventListener("message", (event) => {
 });
 ```
 
-### anura.net.libcurl
-
-This part of the api gives you full access to the libcurl.js APIs directly. You can learn more on how to use them [here](https://github.com/ading2210/libcurl.js?tab=readme-ov-file#javascript-api).
-
 ## anura.fs
 
 This API provides access the Anura's internal filesystem, loosely following the node filesystem spec(slightly out of date).
 
 The best documentation on the usage of this API can probably be found [Here](https://github.com/filerjs/filer).
 
-The FS API also allows for the registration of virtual filesystems. These must extend the AFSProvider class and implement all of the filesystem methods. Here is an example for registering an instance of the built in LocalFS provider.
+### Functions
+
+#### anura.fs.installProvider: `void`
+
+This function allows for the registration of virtual filesystems. These must extend the AFSProvider class and implement all of the filesystem methods. Here is an example for registering an instance of the built in LocalFS provider.
 
 **Usage:**
 
@@ -361,7 +383,9 @@ anura.fs.installProvider(new LocalFS(dirHandle, anuraPath));
 
 This API provides access to Anura's file service, it is useful for handling the opening of files and setting file handlers.
 
-### anura.files.open
+### Functions
+
+#### anura.files.open `void`
 
 This method takes a file path and then opens this file using the file handler for the file, falling back to the default if it doesnt have a handler for it.
 
@@ -371,7 +395,7 @@ This method takes a file path and then opens this file using the file handler fo
 anura.files.open("/config_cached.json"); // uses file handler to open json
 ```
 
-### anura.files.getIcon
+#### anura.files.getIcon: `string`
 
 This method takes a path and returns an icon based on the file extension using a file handler.
 
@@ -381,7 +405,7 @@ This method takes a path and returns an icon based on the file extension using a
 anura.files.getIcon("/config_cached.json"); // returns icon for json
 ```
 
-### anura.files.getFileType
+#### anura.files.getFileType: `string`
 
 This method takes a path and returns a human readable file type based on the file extension using a file handler.
 
@@ -391,7 +415,7 @@ This method takes a path and returns a human readable file type based on the fil
 anura.files.getFileType("/config_cached.json"); // returns icon for json
 ```
 
-### anura.files.setModule
+#### anura.files.setModule: `void`
 
 This method takes an anura library that has an `openFile` function that takes a `path`.
 
@@ -405,7 +429,9 @@ anura.files.setModule("anura.fileviewer", "png"); // set anura.fileviewer librar
 
 This API provides access to Anura's URI handler. It is useful for handling the opening of URIs and setting URI handlers.
 
-### anura.uri.handle
+### Functions
+
+#### anura.uri.handle: `void`
 
 This method takes a URI and then opens this URI using the handlers that have been registered for it.
 
@@ -415,7 +441,7 @@ This method takes a URI and then opens this URI using the handlers that have bee
 anura.uri.handle("https://google.com"); // opens google.com in the default browser
 ```
 
-### anura.uri.set
+#### anura.uri.set: `void`
 
 This method takes a protocol and a URIHandlerOptions interface and sets the handler for the protocol.
 
@@ -440,7 +466,7 @@ anura.uri.set("https", {
 });
 ```
 
-### anura.uri.remove
+#### anura.uri.remove: `void`
 
 This method takes a protocol and removes the handler for the protocol.
 
@@ -450,7 +476,7 @@ This method takes a protocol and removes the handler for the protocol.
 anura.uri.remove("https");
 ```
 
-### anura.uri.has
+#### anura.uri.has: `boolean`
 
 This method takes a protocol and returns a boolean indicating if the protocol has a handler.
 
@@ -464,7 +490,9 @@ anura.uri.has("https"); // Should always return true because the browser registe
 
 This API provides access to Anura's notification service, useful if you need to display an alert to the user.
 
-### anura.notifications.add
+### Functions
+
+#### anura.notifications.add: `void`
 
 This api allows you to add a notification to the notification service and have a callback that executes along with it.
 
@@ -487,14 +515,18 @@ anura.notifications.add({
 
 This API allows you to manage processes running in anura.
 
-### anura.processes.procs
+### Properties
+
+#### anura.processes.procs
 
 Returns a list of all the processes running in anura, as a dreamland stateful
 array of WeakRefs to the processes.
 
 Note: You should never directly mutate this array, use the provided APIs instead.
 
-### anura.processes.remove
+### Functions
+
+#### anura.processes.remove: `void`
 
 This API allows you to remove a process from the process list. This is usually ran as
 the last function of a processes kill function.
@@ -507,7 +539,7 @@ function kill() {
 }
 ```
 
-### anura.processes.register
+#### anura.processes.register: `void`
 
 This API allows you to register a process with the process list. This is usually ran
 by the constructor of a process.
@@ -521,7 +553,7 @@ const process = new SpecialProcess();
 anura.processes.register(process);
 ```
 
-### anura.processes.create
+#### anura.processes.create: `IframeProcess`
 
 This API allows you to create a process from the given script and type.
 
@@ -531,14 +563,14 @@ This API allows you to create a process from the given script and type.
 anura.processes.create("print('Hello, ' + await readln())", "module");
 ```
 
-### anura.processes.execute
+#### anura.processes.execute: `IframeProcess`
 
 This API allows you to execute a process from the given script file path
 
 **Usage:**
 
 ```js
-await anura.processes.execute("/path/to/script.js");
+await anura.processes.execute("/path/to/script.ajs");
 ```
 
 ## anura.sw
@@ -560,7 +592,16 @@ shebang-like header like so:
 #! {"lang":"module"}
 ```
 
-### anura.anurad.addInitScript
+### Properties
+
+#### anura.anurad.initScripts: `IframeProcess[]`
+
+This is an array of running init scripts, which are a special process type.
+This array is not stateful and direct mutations are allowed.
+
+### Functions
+
+#### anura.anurad.addInitScript: `void`
 
 This API allows you to add an init script to the anura daemon.
 
@@ -579,14 +620,15 @@ export start = async () => {
 await anura.anurad.addInitScript(script);
 ```
 
-### anura.anurad.initScripts
-
-This is an array of running init scripts, which are a special process type.
-This array is not stateful and direct mutations are allowed.
-
-### anura.anurad.kill
+### anura.anurad.kill: `void`
 
 This function kills the anura daemon and all running init scripts.
+
+**Usage:**
+
+```js
+anura.anurad.kill();
+```
 
 ## anura.wsproxyURL
 
@@ -674,7 +716,9 @@ contextmenu.hide();
 
 This API provides dialogs for Anura. For app developers, these should be used instead of using native browser dialogs to keep the user inside of the desktop environment and to make your app integrate better with Anura.
 
-### anura.dialog.alert
+### Functions
+
+#### anura.dialog.alert
 
 This creates a alert dialog window.
 
@@ -684,7 +728,7 @@ This creates a alert dialog window.
 anura.dialog.alert("Hello World!");
 ```
 
-### anura.dialog.confirm
+#### anura.dialog.confirm: `boolean`
 
 This creates a dialog window that gives the user a prompt to confirm an action. This function returns a `boolean` you can use.
 
@@ -697,7 +741,7 @@ if (confirm) {
 }
 ```
 
-### anura.dialog.prompt
+#### anura.dialog.prompt: `string | null`
 
 This gives a user a dialog prompt where the user can enter text. If the user decides to not input text and a default value exists, it returns that instead or returns null if none of those are met.
 
@@ -720,7 +764,9 @@ if (input) {
 
 This API provides information about the platform that Anura is running on.
 
-### anura.platform.type: `string`
+### Properties
+
+#### anura.platform.type: `string`
 
 This property returns the type of platform that Anura is running on. This can be one of the following values:
 
@@ -728,7 +774,7 @@ This property returns the type of platform that Anura is running on. This can be
 -   `mobile` - Anura is running on a mobile phone.
 -   `tablet` - Anura is running on a tablet.
 
-### anura.platform.touchInput: `boolean`
+#### anura.platform.touchInput: `boolean`
 
 This property returns a boolean indicating whether the platform supports touch input.
 
