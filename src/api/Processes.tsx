@@ -1,4 +1,9 @@
 class Processes {
+    processesDiv = (<div id="processes"></div>);
+    constructor() {
+        document.body.appendChild(this.processesDiv);
+    }
+
     get procs() {
         return this.state.procs;
     }
@@ -105,7 +110,7 @@ class IframeProcess extends Process {
             ></iframe>
         ) as HTMLIFrameElement;
 
-        document.body.appendChild(this.frame);
+        anura.processes.processesDiv.appendChild(this.frame);
 
         Object.assign(this.frame.contentWindow!, {
             anura,

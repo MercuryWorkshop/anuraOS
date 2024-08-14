@@ -78,7 +78,8 @@ class AnuradInitScript implements Process {
             `}
             />
         ) as InitScriptFrame;
-        document.body.appendChild(this.frame);
+
+        anura.processes.processesDiv.appendChild(this.frame);
         this.window = this.frame.contentWindow!;
 
         Object.assign(this.frame.contentWindow!, {
