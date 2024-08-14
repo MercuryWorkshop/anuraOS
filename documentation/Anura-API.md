@@ -718,9 +718,6 @@ if (input) {
 
 ## anura.platform
 
-> [!IMPORTANT]
-> This API is still in development and is subject to change at any time.
-
 This API provides information about the platform that Anura is running on.
 
 ### anura.platform.type: `string`

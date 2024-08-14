@@ -62,6 +62,7 @@ class AnuradInitScript implements Process {
         this.script = script;
         this.frame = (
             <iframe
+                id={`proc-${pid}`}
                 style="display: none"
                 srcdoc={`
             <!DOCTYPE html>
