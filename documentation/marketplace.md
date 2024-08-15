@@ -194,9 +194,17 @@ After initializing your repo, there is somethings to keep in mind before using i
 
 ### Repo Version
 
-First, check if your repo is a legacy repo. you can do this by checking the `version` property of the StoreRepo that you get returned to you. If your repo returns legacy, this means that the repo does not have a manifest, which means that this repo is pre 2.0, which means that apps and libraries are identified by their names and not their package idenfitifers.
+First, check if your repo is a legacy repo. you can do this by checking the `version` property of the StoreRepo that you get returned to you. If your repo returns `"legacy"`, this means that the repo does not have a manifest, which means that this repo is pre 2.0, which means that apps and libraries are identified by their names and not their package idenfitifers.
 
-### repo.refreshRepoCache
+### Properties
+
+#### repo.manifest: `Object | undefined`
+
+This contains the manifest for the repo, this will only work on 2.0 repos and will be undefined for legacy repos.
+
+### Functions
+
+#### repo.refreshRepoCache
 
 This method flushes the repo cache and refetches it. This does not return anything.
 
@@ -210,7 +218,7 @@ button.addEventListener("click", () => {
 });
 ```
 
-### repo.refreshThumbCache
+#### repo.refreshThumbCache
 
 This method flushes the the thumbnail cache. All new thumbnail fetches will add to the new cache.
 
@@ -224,7 +232,7 @@ button.addEventListener("click", () => {
 });
 ```
 
-### repo.getRepoManifest
+#### repo.getRepoManifest
 
 This method fetches the repo manifest, and returns the repo version. The manifest is then set as repo.manifest. If the repo is legacy, this does method does not exist as legacy repos do not have a manifest. The repo manifest is already fetched at the start of a repo, which means this does not need to be rerun unless you need to fetch it again.
 
@@ -236,7 +244,7 @@ console.log(`Repo Version: ${version}`);
 console.log("Repo Manifest: ", repo.manifest);
 ```
 
-### repo.getApps
+#### repo.getApps: `Object[]`
 
 This method grabs all of the apps from the repo and returns all of them in an array.
 
@@ -247,7 +255,7 @@ apps.forEach((app) => {
 });
 ```
 
-### repo.getApp
+#### repo.getApp: `Object`
 
 This method grabs an app based on its package identifier if it is >=2.0 or takes in a package name if its legacy and then returns its app details in an object.
 
@@ -256,7 +264,7 @@ let app = await repo.getApp("anura.ide");
 console.log("App Data: ", app);
 ```
 
-### repo.installApp
+#### repo.installApp: `void`
 
 This method installs an app based on its package identifier if it is >=2.0 or takes in a package name if its legacy.
 
@@ -264,7 +272,7 @@ This method installs an app based on its package identifier if it is >=2.0 or ta
 await repo.installApp("anura.ide");
 ```
 
-### repo.getAppThumb
+#### repo.getAppThumb: `string | undefined`
 
 This method grabs a app icon based on its package identifier if it is >=2.0 or takes in a package name if its legacy and then returns a blob url of the icon.
 
@@ -275,7 +283,7 @@ element.src = icon;
 document.body.appendChild(element);
 ```
 
-### repo.getLibs
+#### repo.getLibs: `Object[]`
 
 This method grabs all of the libraries from the repo and returns all of them in an array.
 
@@ -286,7 +294,7 @@ libs.forEach((lib) => {
 });
 ```
 
-### repo.getLib
+#### repo.getLib: `Object`
 
 This method grabs an library based on its package identifier if it is >=2.0 or takes in a package name if its legacy and then returns its library details in an object.
 
@@ -295,7 +303,7 @@ let lib = await repo.getlib("anura.flash.handler");
 console.log("Library Data: ", lib);
 ```
 
-### repo.installLib
+#### repo.installLib: `void`
 
 This method installs an library based on its package identifier if it is >=2.0 or takes in a package name if its legacy.
 
@@ -303,7 +311,7 @@ This method installs an library based on its package identifier if it is >=2.0 o
 await repo.installLib("anura.flash.handler");
 ```
 
-### repo.getLibThumb
+#### repo.getLibThumb: `string | undefined`
 
 This method grabs a library icon based on its package identifier if it is >=2.0 or takes in a package name if its legacy and then returns a blob url of the icon.
 
