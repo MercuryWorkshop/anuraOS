@@ -261,7 +261,7 @@ function App() {
                         .replace("%0", state.currentRepo[0])
                         .replace("%1", state.currentItem.name);
                     back.style.display = "block";
-                    this.screen.appendChild(html`<${Owwverview} />`);
+                    this.screen.appendChild(html`<${Overview} />`);
                     break;
             }
         });
