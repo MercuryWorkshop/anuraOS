@@ -11,31 +11,57 @@ function Item() {
     }
 
     this.mount = async () => {
-        let installed;
-        if (this.type === "app") {
-            this.thumbnail.src = await repo.getAppThumb(id);
-            installed = !!anura.apps[this.data.package];
-        } else {
-            this.thumbnail.src = await repo.getLibThumb(id);
-            installed = !!anura.libs[this.data.package];
-        }
+        const thumbOnVis = async () => {
+            const isVisible = function (ele, container) {
+                // https://phuoc.ng/collection/html-dom/check-if-an-element-is-visible-in-a-scrollable-container/
+                console.log(container);
+                const eleTop = ele.offsetTop;
+                const eleBottom = eleTop + ele.clientHeight;
 
-        if (installed) {
-            this.installButton.value = "Installed";
-            this.installButton.style.backgroundColor = "var(--theme-bg)";
-            this.installButton.style.color = "#fff";
-            this.installButton.disabled = true;
-        } else {
-            this.installButton.value = "Install";
-            this.installButton.addEventListener("click", async (e) => {
-                e.stopPropagation();
+                const containerTop = container.scrollTop;
+                const containerBottom =
+                    containerTop + container.clientHeight + 750;
+
+                // The element is fully visible in the container
+                return (
+                    (eleTop >= containerTop && eleBottom <= containerBottom) ||
+                    // Some part of the element is visible in the container
+                    (eleTop < containerTop && containerTop < eleBottom) ||
+                    (eleTop < containerBottom && containerBottom < eleBottom)
+                );
+            };
+
+            if (isVisible(this.root, document.all.screen)) {
+                this.processed = true;
+                let installed;
                 if (this.type === "app") {
-                    await repo.installApp(id);
+                    this.thumbnail.src = await repo.getAppThumb(id);
+                    installed = !!anura.apps[this.data.package];
                 } else {
-                    await repo.installLib(id);
+                    this.thumbnail.src = await repo.getLibThumb(id);
+                    installed = !!anura.libs[this.data.package];
                 }
-            });
-        }
+                if (installed) {
+                    this.installButton.value = "Installed";
+                    this.installButton.style.backgroundColor =
+                        "var(--theme-bg)";
+                    this.installButton.style.color = "#fff";
+                    this.installButton.disabled = true;
+                } else {
+                    this.installButton.value = "Install";
+                    this.installButton.addEventListener("click", async (e) => {
+                        e.stopPropagation();
+                        if (this.type === "app") {
+                            await repo.installApp(id);
+                        } else {
+                            await repo.installLib(id);
+                        }
+                    });
+                }
+            }
+        };
+        document.all.screen.addEventListener("scroll", thumbOnVis);
+        window.addEventListener("scroll", thumbOnVis);
     };
 
     this.css = `
@@ -120,6 +146,7 @@ export default function ItemList() {
         libs.forEach(async (lib) => {
             this.listElem.appendChild(html`<${Item} type="lib" data=${lib} />`);
         });
+        window.dispatchEvent(new Event("scroll")); // update visible thumbnails
     };
 
     this.css = `
@@ -192,9 +219,10 @@ export default function ItemList() {
             <div id="searchContainer">
                 <input
                     placeholder="Search for items..."
-                    on:input=${() => {
+                    on:input=${async () => {
+                        //  async because this is a potentially long operation..
                         const searchQuery = this.search.value.toLowerCase();
-                        Array.from(this.listElem.children).forEach((item) => {
+                        for (const item of Array.from(this.listElem.children)) {
                             const itemName = item
                                 .querySelector("span")
                                 .innerText.toLowerCase();
@@ -205,7 +233,8 @@ export default function ItemList() {
                             } else {
                                 item.style.display = "none";
                             }
-                        });
+                        }
+                        window.dispatchEvent(new Event("scroll")); // update visible thumbnails
                     }}
                     bind:this=${use(this.search)}
                     type="text"
