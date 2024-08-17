@@ -143,15 +143,52 @@ const initResize = ({ target }) => {
     headerBeingResized.classList.add("header--being-resized");
 };
 
-// Let's populate that columns array and add listeners to the resize handles
 document.querySelectorAll("th").forEach((header) => {
     const max = columnTypeToRatioMap[header.dataset.type] + "fr";
     columns.push({
         header,
-        // The initial size value for grid-template-columns:
         size: `minmax(${min}px, ${max})`,
     });
     header
         .querySelector(".resize-handle")
         .addEventListener("mousedown", initResize);
+});
+
+document.addEventListener("contextmenu", (e) => {
+    if (e.shiftKey) {
+        return;
+    }
+    e.preventDefault();
+    const boundingRect = window.frameElement.getBoundingClientRect();
+
+    const containsApps =
+        currentlySelected
+            .map(
+                (item) =>
+                    item.getAttribute("data-path").split(".").slice("-1")[0],
+            )
+            .filter((item) => item == "app" || item == "lib").length > 0;
+
+    if (containsApps) {
+        appcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        newcontextmenu.hide();
+        emptycontextmenu.hide();
+    } else if (currentlySelected.length != 0) {
+        newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        appcontextmenu.hide();
+        emptycontextmenu.hide();
+    } else {
+        emptycontextmenu.show(
+            e.pageX + boundingRect.x,
+            e.pageY + boundingRect.y,
+        );
+        newcontextmenu.hide();
+        appcontextmenu.hide();
+    }
+});
+
+document.addEventListener("click", (e) => {
+    newcontextmenu.hide();
+    appcontextmenu.hide();
+    emptycontextmenu.hide();
 });

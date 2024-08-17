@@ -18,7 +18,7 @@ export function selectFile(options) {
             "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
         iframe.setAttribute(
             "src",
-            `/apps/fsapp.app/filemanager.html?picker=` +
+            `/apps/fsapp.app/index.html?picker=` +
                 ExternalApp.serializeArgs([
                     options.regex,
                     "file",
@@ -75,7 +75,7 @@ export function selectFolder(options) {
             "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
         iframe.setAttribute(
             "src",
-            `/apps/fsapp.app/filemanager.html?picker=` +
+            `/apps/fsapp.app/index.html?picker=` +
                 ExternalApp.serializeArgs([
                     options.regex,
                     "dir",
