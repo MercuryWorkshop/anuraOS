@@ -95,7 +95,7 @@ export function Folder() {
                 <td id="iconContainer">
                     <img class="icon" src=${use(this.icon)}></img>
                 </td>
-                <td id="name">${this.file}</td>
+                <td id="name">${this.file}/</td>
                 <td id="size">N/A</td>
                 <td id="description">${use(this.description)}</td>
                 <td id="date">${new Date(this.stats.mtime).toLocaleString()}</td>
