@@ -27,7 +27,6 @@
         -   This shell was implemented so that Anura users could have a more traditional shell experience, and if they had experience with Puter's Phoenix Shell, they could easily transfer that knowledge to Anura.
         -   Replaces the original Anura Shell, which was a modified eval-based shell.
     -   JS Framework - [dreamland.js](https://github.com/MercuryWorkshop/dreamlandjs)
-    -   Old Websocket to TCP Bridge - [WSProxy](https://github.com/herenow/wsProxy)
     -   TCP Networking support [wisp-server-node](https://github.com/MercuryWorkshop/wisp-server-node)
     -   x86 Emulation - [v86](https://copy.sh/v86/)
     -   Service worker web proxy - [Ultraviolet](https://github.com/titaniumnetwork-dev/Ultraviolet)
@@ -37,6 +36,7 @@
 
 -   Retired Libraries and applications sources
 
+    -   Old Websocket to TCP Bridge - [WSProxy](https://github.com/herenow/wsProxy)
     -   Old Filesystem HTTP bridge - [MercuryWorkshop Nohost](https://github.com/MercuryWorkshop/nohost) (Fork of [Humphd Nohost](https://github.com/humphd/nohost))
         -   Now the functionality is provided by a fully rewritten version of the original code, using the Anura Filesystem API
     -   VNC Client [noVNC](https://github.com/novnc/noVNC)
