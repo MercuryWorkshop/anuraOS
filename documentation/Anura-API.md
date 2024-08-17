@@ -677,7 +677,9 @@ element.addEventListener("contextmenu", (e) => {
 });
 ```
 
-### anura.ContextMenu.addItem
+### Functions
+
+#### anura.ContextMenu.addItem: `void`
 
 This adds an item to the context menu item with a callback thats executed on selection of that menu item.
 
@@ -688,7 +690,7 @@ contextmenu.addItem("Log to console", function () {
 });
 ```
 
-### anura.ContextMenu.show
+#### anura.ContextMenu.show: `void`
 
 This makes the context menu visible to the user, it also takes arguments on where to place it on the page.
 
@@ -700,7 +702,7 @@ contextmenu.addItem("Log to console", function () {
 contextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y); // place context menu where the mouse is
 ```
 
-### anura.ContextMenu.hide
+#### anura.ContextMenu.hide: `void`
 
 This hides the context menu from the user.
 
@@ -758,6 +760,39 @@ let input = await anura.dialog.prompt("What is your favorite number?", "3");
 if (input) {
     console.log(input);
 }
+```
+
+## anura.systray
+
+### Properties
+
+#### anura.systray.element: `HTMLSpanElement`
+
+This property contains the element that contains all of the
+
+#### anura.systray.icons: `SystrayIcon[]`
+
+This property contains alll of the icons in the systray in an array.
+
+### Functions
+
+#### anura.systray.create: `SystrayIcon`
+
+This function allows you to create an object in the systray, you can pass in an icon and a tooltip to be rendered.
+
+**Usage:**
+
+```js
+const sysicon = anura.systray.create({
+    icon: "data:image/svg+xml;base64,BASE64ICON",
+    tooltip: "Anura AdBlock Active",
+});
+sysicon.onclick = (event) => {
+    console.log("got left click event");
+};
+sysicon.onrightclick = (event) => {
+    console.log("got right click event");
+};
 ```
 
 ## anura.platform
