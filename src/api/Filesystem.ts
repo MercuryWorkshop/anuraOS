@@ -902,19 +902,10 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
     providers: Map<string, AFSProvider<any>> = new Map();
     providerCache: { [path: string]: AFSProvider<any> } = {};
     whatwgfs = {
+        fs: undefined,
         getFolder: async () => {
-            // These paths must be TS ignore'd since they are in build/
             // @ts-ignore
-            const fs = await import("/libs/nfsadapter/nfsadapter.js");
-            // @ts-ignore
-            this.whatwgfs.FileSystemDirectoryHandle =
-                fs.FileSystemDirectoryHandle;
-            // @ts-ignore
-            this.whatwgfs.FileSystemFileHandle = fs.FileSystemFileHandle;
-            // @ts-ignore
-            this.whatwgfs.FileSystemHandle = fs.FileSystemHandle;
-            // @ts-ignore
-            return await fs.getOriginPrivateDirectory(
+            return await this.whatwgfs.fs.getOriginPrivateDirectory(
                 // @ts-ignore
                 import("/libs/nfsadapter/adapters/anuraadapter.js"),
             );
@@ -955,6 +946,20 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         providers.forEach((provider) => {
             this.providers.set(provider.domain, provider);
         });
+        // These paths must be TS ignore'd since they are in build/
+
+        (async () => {
+            // @ts-ignore
+            const fs = await import("/libs/nfsadapter/nfsadapter.js");
+            // @ts-ignore
+            this.whatwgfs.FileSystemDirectoryHandle =
+                fs.FileSystemDirectoryHandle;
+            // @ts-ignore
+            this.whatwgfs.FileSystemFileHandle = fs.FileSystemFileHandle;
+            // @ts-ignore
+            this.whatwgfs.FileSystemHandle = fs.FileSystemHandle;
+            this.whatwgfs.fs = fs;
+        })();
     }
 
     clearCache() {
