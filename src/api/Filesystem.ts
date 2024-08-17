@@ -902,26 +902,37 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
     providers: Map<string, AFSProvider<any>> = new Map();
     providerCache: { [path: string]: AFSProvider<any> } = {};
     whatwgfs = {
-        async getFolder() {
+        getFolder: async () => {
             // These paths must be TS ignore'd since they are in build/
             // @ts-ignore
             const fs = await import("/libs/nfsadapter/nfsadapter.js");
+            // @ts-ignore
+            this.whatwgfs.FileSystemDirectoryHandle =
+                fs.FileSystemDirectoryHandle;
+            // @ts-ignore
+            this.whatwgfs.FileSystemFileHandle = fs.FileSystemFileHandle;
+            // @ts-ignore
+            this.whatwgfs.FileSystemHandle = fs.FileSystemHandle;
             // @ts-ignore
             return await fs.getOriginPrivateDirectory(
                 // @ts-ignore
                 import("/libs/nfsadapter/adapters/anuraadapter.js"),
             );
         },
-        async showDirectoryPicker(options: object) {
-            const picker = await anura.import("anura.filepicker");
-            const path = (await picker.selectFolder()).split("/");
+        directoryHandleFromPath: async (path: string) => {
+            const pathParts = path.split("/");
             // prettier-ignore
             let workingPath = (await anura.fs.whatwgfs.getFolder());
-            for (const dir of path) {
+            for (const dir of pathParts) {
                 if (dir !== "")
                     workingPath = await workingPath.getDirectoryHandle(dir);
             }
             return workingPath;
+        },
+        showDirectoryPicker: async (options: object) => {
+            const picker = await anura.import("anura.filepicker");
+            const path = await picker.selectFolder();
+            return this.whatwgfs.directoryHandleFromPath(path);
         },
         async showOpenFilePicker(options: object) {
             const picker = await anura.import("anura.filepicker");
