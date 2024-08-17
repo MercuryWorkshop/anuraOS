@@ -6,6 +6,7 @@ self.currentlySelected = [];
 self.clipboard = [];
 self.removeAfterPaste = false;
 self.fs = anura.fs;
+self.filePicker = false;
 self.Buffer = Filer.Buffer;
 self.sh = new anura.fs.Shell();
 
