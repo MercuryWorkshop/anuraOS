@@ -8,9 +8,9 @@ export function Selector() {
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%; /* Make sure it spans the entire width */
-    justify-content: center; /* Center the content horizontally */
-    padding: 0.5em; /* Optional padding */
+    width: 100%;
+    justify-content: flex-end;
+    padding: 0.5em;
 
     button {
         background: var(--theme-accent);
