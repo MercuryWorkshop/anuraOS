@@ -2,20 +2,22 @@ export function Folder() {
     this.mount = async () => {
         this.absolutePath = `${this.path}/${this.file}`;
         this.description = "Folder";
+        this.iconEle = anura.files.folderIcon;
         try {
             let manifestPath = `${this.absolutePath}/manifest.json`;
-            console.log(manifestPath);
 
             const data = await fs.promises.readFile(manifestPath);
             let manifest = JSON.parse(data);
             let folderExt = this.file.split(".").slice("-1")[0];
 
-            this.icon = `/fs${this.absolutePath}/${manifest.icon}`;
-            console.log(this.icon);
+            this.iconElement.src = `/fs${this.absolutePath}/${manifest.icon}`;
+            this.iconElement.onerror = () => {
+                icon.src = anura.files.folderIcon;
+            };
             this.description = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
         } catch (error) {
+            this.iconElement.src = anura.files.folderIcon;
             console.log(error);
-            this.icon = anura.files.folderIcon;
         }
     };
     return html`
@@ -93,7 +95,7 @@ export function Folder() {
                 data-path=${use(this.absolutePath)}
             >
                 <td id="iconContainer">
-                    <img class="icon" src=${use(this.icon)}></img>
+                    <img class="icon" bind:this=${use(this.iconElement)}></img>
                 </td>
                 <td id="name">${this.file}/</td>
                 <td id="size">N/A</td>
