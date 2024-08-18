@@ -910,6 +910,17 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
                 import("/libs/nfsadapter/adapters/anuraadapter.js"),
             );
         },
+        fileOrDirectoryFromPath: async (path: string) => {
+            try {
+                return await this.whatwgfs.directoryHandleFromPath(path);
+            } catch (e1) {
+                try {
+                    return await this.whatwgfs.fileHandleFromPath(path);
+                } catch (e2) {
+                    throw e1 + e2;
+                }
+            }
+        },
         directoryHandleFromPath: async (path: string) => {
             const pathParts = path.split("/");
             // prettier-ignore
@@ -920,21 +931,24 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
             }
             return workingPath;
         },
+        fileHandleFromPath: async (givenPath: string) => {
+            let path: string | string[] = givenPath.split("/");
+            const file = path.pop();
+            path = path.join("/");
+
+            // prettier-ignore
+            const workingPath = (await anura.fs.whatwgfs.directoryHandleFromPath(path));
+            return await workingPath.getFileHandle(file);
+        },
         showDirectoryPicker: async (options: object) => {
             const picker = await anura.import("anura.filepicker");
             const path = await picker.selectFolder();
-            return this.whatwgfs.directoryHandleFromPath(path);
+            return await this.whatwgfs.directoryHandleFromPath(path);
         },
-        async showOpenFilePicker(options: object) {
+        showOpenFilePicker: async (options: object) => {
             const picker = await anura.import("anura.filepicker");
-            const path = (await picker.selectFile()).split("/");
-            // prettier-ignore
-            let workingPath = (await anura.fs.whatwgfs.getFolder());
-            for (const dir of path) {
-                if (dir !== "")
-                    workingPath = await workingPath.getFileHandle(dir);
-            }
-            return workingPath;
+            const path = await picker.selectFile();
+            return await this.whatwgfs.fileHandleFromPath(path);
         },
     };
 
