@@ -47,7 +47,7 @@ class Networking {
             else requestObj = new Request(url);
         }
         const urlObj = new URL(requestObj.url);
-        if (urlObj.hostname == "localhost") {
+        if (urlObj.hostname === "localhost") {
             // we will assume if theres no port, its 80, god forbid it being 443
             const port = Number(urlObj.port) || 80;
 

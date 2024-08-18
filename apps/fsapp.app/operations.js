@@ -5,7 +5,7 @@ async function selectAction(selected) {
     currentlySelected = [];
     if (selected.length == 1) {
         var fileSelected = selected[0];
-        if (fileSelected.getAttribute("data-type") == filePicker.type) {
+        if (fileSelected.getAttribute("data-type") === filePicker.type) {
             let fileData = {
                 message: "FileSelected",
                 id: filePicker.id,
@@ -33,8 +33,8 @@ async function selectAction(selected) {
             filePath: dataPaths,
         };
         window.callback({ data: fileData });
-    } else if (selected.length == 0) {
-        if (filePicker.type == "dir") {
+    } else if (selected.length === 0) {
+        if (filePicker.type === "dir") {
             let fileData = {
                 message: "FileSelected",
                 id: filePicker.id,
@@ -49,18 +49,18 @@ async function selectAction(selected) {
 }
 
 async function fileAction(selected) {
-    if (selected.length == 1) {
+    if (selected.length === 1) {
         // SINGLE FILE SELECTION //
 
         var fileSelected = selected[0];
-        if (fileSelected.getAttribute("data-type") == "file") {
+        if (fileSelected.getAttribute("data-type") === "file") {
             console.debug("Clicked on file");
             if (
                 fileSelected
                     .getAttribute("data-path")
                     .split(".")
                     .slice("-2")
-                    .join(".") == "app.zip"
+                    .join(".") === "app.zip"
             ) {
                 console.log("App Archive detected, extracting");
 
@@ -214,7 +214,7 @@ async function fileAction(selected) {
                     .getAttribute("data-path")
                     .split(".")
                     .slice("-2")
-                    .join(".") == "lib.zip"
+                    .join(".") === "lib.zip"
             ) {
                 console.log("Library Archive detected, extracting");
                 const data = await fs.promises.readFile(
@@ -293,7 +293,7 @@ async function fileAction(selected) {
                                     }
                                     filesRemaining--;
                                     console.log(filesRemaining);
-                                    if (filesRemaining == 0) {
+                                    if (filesRemaining === 0) {
                                         await anura.registerExternalLib(
                                             `/fs/${path}`.replace("//", "/"),
                                         );
@@ -343,7 +343,7 @@ async function fileAction(selected) {
                                     }
                                     filesRemaining--;
                                     console.log(filesRemaining);
-                                    if (filesRemaining == 0) {
+                                    if (filesRemaining === 0) {
                                         await anura.registerExternalLib(
                                             `/fs${anura.settings.get("directories")["libs"]}/${path.split("/").slice("-1")[0]}`.replace(
                                                 "//",
@@ -377,12 +377,12 @@ async function fileAction(selected) {
             } else {
                 anura.files.open(fileSelected.getAttribute("data-path"));
             }
-        } else if (fileSelected.getAttribute("data-type") == "dir") {
+        } else if (fileSelected.getAttribute("data-type") === "dir") {
             if (
                 fileSelected
                     .getAttribute("data-path")
                     .split(".")
-                    .slice("-1")[0] == "app"
+                    .slice("-1")[0] === "app"
             ) {
                 try {
                     let data;
@@ -506,7 +506,7 @@ async function fileAction(selected) {
                 fileSelected
                     .getAttribute("data-path")
                     .split(".")
-                    .slice("-1")[0] == "lib"
+                    .slice("-1")[0] === "lib"
             ) {
                 try {
                     let data;
@@ -658,9 +658,9 @@ function setBreadcrumbs(path) {
     breadcrumbs.setAttribute("data-current-path", path);
     breadcrumbs.innerHTML = "";
     if (
-        pathSplit.length == 2 &&
-        pathSplit[0] == "My files" &&
-        pathSplit[1] == ""
+        pathSplit.length === 2 &&
+        pathSplit[0] === "My files" &&
+        pathSplit[1] === ""
     ) {
         var breadcrumb = document.createElement("button");
         breadcrumb.innerText = "My files";
@@ -779,7 +779,7 @@ async function paste() {
         .getAttribute("data-current-path");
     if (!removeAfterPaste) {
         for (item of clipboard) {
-            if (item.attributes["data-type"].value == "dir") {
+            if (item.attributes["data-type"].value === "dir") {
                 //INPUT
                 let newPath = path;
                 let oldPath = item.attributes["data-path"].value;
@@ -866,21 +866,12 @@ async function rename() {
 }
 
 function installSession() {
-    if (currentlySelected.length == 0) {
-        anura.notifications.add({
-            title: "Filesystem app",
-            description:
-                "BUG: You have no files selected, right clicking does not select files",
-            timeout: 5000,
-        });
-        return;
-    }
     currentlySelected.forEach(async (item) => {
         const path = item.getAttribute("data-path");
         const ext = path.split(".").slice("-1")[0];
         fs.stat(path, async function (err, stats) {
             if (stats.isDirectory()) {
-                if (ext == "app") {
+                if (ext === "app") {
                     try {
                         await anura.registerExternalApp(
                             `/fs${path}`.replace("//", "/"),
@@ -900,7 +891,7 @@ function installSession() {
                         );
                     }
                 }
-                if (ext == "lib") {
+                if (ext === "lib") {
                     try {
                         await anura.registerExternalLib(
                             `/fs${path}`.replace("//", "/"),
@@ -926,22 +917,13 @@ function installSession() {
 }
 
 function installPermanent() {
-    if (currentlySelected.length == 0) {
-        anura.notifications.add({
-            title: "Filesystem app",
-            description:
-                "BUG: You have no files selected, right clicking does not select files",
-            timeout: 5000,
-        });
-        return;
-    }
     currentlySelected.forEach(async (item) => {
         const path = item.getAttribute("data-path");
         const ext = path.split(".").slice("-1")[0];
 
         fs.stat(path, async function (err, stats) {
             if (stats.isDirectory()) {
-                if (ext == "app") {
+                if (ext === "app") {
                     const destination =
                         anura.settings.get("directories")["apps"];
                     try {
@@ -963,7 +945,7 @@ function installPermanent() {
                         });
                     }
                 }
-                if (ext == "lib") {
+                if (ext === "lib") {
                     const destination =
                         anura.settings.get("directories")["libs"];
                     try {

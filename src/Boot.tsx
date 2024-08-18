@@ -143,7 +143,7 @@ window.addEventListener("load", async () => {
     initComlink();
 
     navigator.serviceWorker.addEventListener("message", (event) => {
-        if (event.data.anura_target == "anura.sw.reinit") initComlink(); // this could accidentally be run twice but realistically there aren't any consequences for doing so
+        if (event.data.anura_target === "anura.sw.reinit") initComlink(); // this could accidentally be run twice but realistically there aren't any consequences for doing so
     });
 
     // Create "Process" that controls the service worker
@@ -157,7 +157,7 @@ window.addEventListener("load", async () => {
     if (milestone) {
         const stored = anura.settings.get("milestone");
         if (!stored) await anura.settings.set("milestone", milestone);
-        else if (stored != milestone) {
+        else if (stored !== milestone) {
             await anura.settings.set("milestone", milestone);
             if (anura.settings.get("use-sw-cache")) {
                 const tracker = document.getElementById("systemstatus")!;
@@ -361,7 +361,7 @@ window.addEventListener("load", async () => {
 
     oobeview = new OobeView();
 
-    if (anura.platform.type == "mobile" || anura.platform.type == "tablet") {
+    if (anura.platform.type === "mobile" || anura.platform.type === "tablet") {
         bootsplash.remove();
         document.body.appendChild(bootsplashMobile);
     } else {
@@ -513,7 +513,7 @@ document.addEventListener("anura-login-completed", async () => {
     await launcher.init();
     await taskbar.init();
 
-    if (anura.platform.type == "mobile") {
+    if (anura.platform.type === "mobile") {
         // Adjust styles for Taskbar right
         const tright: HTMLDivElement =
             taskbar.element.querySelector("#taskbar-right")!;
@@ -550,7 +550,7 @@ document.addEventListener("anura-login-completed", async () => {
         launcher.state.active = true;
     }
 
-    if (anura.platform.type == "tablet") {
+    if (anura.platform.type === "tablet") {
         // Adjust styles for Taskbar right
         const tright: HTMLDivElement =
             taskbar.element.querySelector("#taskbar-right")!;
@@ -624,7 +624,7 @@ document.addEventListener("anura-login-completed", async () => {
     });
 
     document.addEventListener("keydown", (e) => {
-        if (e.shiftKey && e.key.toLowerCase() == "tab") {
+        if (e.shiftKey && e.key.toLowerCase() === "tab") {
             e.preventDefault();
             alttab.onComboPress();
         }
@@ -732,7 +732,7 @@ async function bootUserCustomizations() {
     // Load all persistent sideloaded libs
     try {
         const files = await anura.fs.promises.readdir(directories["libs"]);
-        if (files == undefined) return;
+        if (files === undefined) return;
         for (const file of files) {
             try {
                 await anura.registerExternalLib(

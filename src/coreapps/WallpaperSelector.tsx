@@ -202,7 +202,7 @@ class WallpaperSelector extends App {
                                 value="cover"
                                 selected={
                                     // Hacky fix but it works
-                                    anura.settings.get("wallpaper-fit") ==
+                                    anura.settings.get("wallpaper-fit") ===
                                     "cover"
                                 }
                             >
@@ -211,7 +211,7 @@ class WallpaperSelector extends App {
                             <option
                                 value="contain"
                                 selected={
-                                    anura.settings.get("wallpaper-fit") ==
+                                    anura.settings.get("wallpaper-fit") ===
                                     "contained"
                                 }
                             >
@@ -220,7 +220,7 @@ class WallpaperSelector extends App {
                             <option
                                 value="auto"
                                 selected={
-                                    anura.settings.get("wallpaper-fit") ==
+                                    anura.settings.get("wallpaper-fit") ===
                                     "auto"
                                 }
                             >
@@ -269,7 +269,7 @@ class WallpaperSelector extends App {
                                             app: this,
                                         })
                                         .then((filename: any) => {
-                                            if (filename == undefined) return;
+                                            if (filename === undefined) return;
                                             const wallpaperName = filename
                                                 .split("/")
                                                 .pop();
@@ -303,7 +303,7 @@ class WallpaperSelector extends App {
                                 on:click={() => {
                                     this.setNewWallpaper(wallpaper);
                                 }}
-                                class={`wallpaper-list-item ${this.getCurrentWallpaper().name == wallpaper.name ? "selected" : ""}`}
+                                class={`wallpaper-list-item ${this.getCurrentWallpaper().name === wallpaper.name ? "selected" : ""}`}
                                 id={`wallpaper-${wallpaper.name.replace(" ", "-")}`}
                             >
                                 <img
@@ -337,10 +337,10 @@ class WallpaperSelector extends App {
         let currWallpaper = anura.settings.get("wallpaper");
         let currWallpaperName = anura.settings.get("wallpaper-name");
         if (
-            currWallpaper == undefined ||
-            currWallpaper == null ||
-            currWallpaperName == undefined ||
-            currWallpaperName == null
+            currWallpaper === undefined ||
+            currWallpaper === null ||
+            currWallpaperName === undefined ||
+            currWallpaperName === null
         ) {
             currWallpaper = "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg";
             currWallpaperName = "Nocturne";
@@ -371,7 +371,7 @@ class WallpaperSelector extends App {
             "curr-wallpaper-name",
         )[0];
 
-        if (currWallpaperImage == undefined || currWallpaperName == undefined)
+        if (currWallpaperImage === undefined || currWallpaperName === undefined)
             return;
         currWallpaperImage.setAttribute("src", currWallpaper.url);
         (currWallpaperName as HTMLHeadingElement).innerText =
@@ -407,7 +407,7 @@ class WallpaperSelector extends App {
             height: `${(720 * window.innerHeight) / 1080}px`,
         });
 
-        if (this.libfilepicker == undefined) {
+        if (this.libfilepicker === undefined) {
             // Lazy load the filepicker library.
             this.libfilepicker = await anura.import("anura.filepicker");
         }

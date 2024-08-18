@@ -63,7 +63,7 @@ class NotificationService {
     remove(notification: AnuraNotification, rendererOnly = false) {
         if (!rendererOnly) {
             this.state.notifications = this.state.notifications.filter(
-                (n) => n != notification,
+                (n) => n !== notification,
             );
         }
 

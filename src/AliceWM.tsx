@@ -101,7 +101,7 @@ class WMWindow extends EventTarget implements Process {
             title: wininfo.title,
         });
         this.resizable = wininfo.resizable;
-        if (this.resizable == undefined) {
+        if (this.resizable === undefined) {
             // This happens when resizable isn't passed in.
             this.resizable = true;
         }
@@ -113,7 +113,7 @@ class WMWindow extends EventTarget implements Process {
                 style={`
                     width: ${wininfo.width};
                     height: ${wininfo.height};
-                    ${anura.platform.type == "mobile" || anura.platform.type == "tablet" ? "top: 5px!important; left: 5px!important;" : ""}
+                    ${anura.platform.type === "mobile" || anura.platform.type === "tablet" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
                 on:pointerover={() => {
                     this.mouseover = true;
@@ -306,8 +306,8 @@ class WMWindow extends EventTarget implements Process {
                 (e: PointerEvent) => {
                     e.preventDefault();
                     if (
-                        anura.platform.type == "mobile" ||
-                        anura.platform.type == "tablet"
+                        anura.platform.type === "mobile" ||
+                        anura.platform.type === "tablet"
                     )
                         return;
                     original_width = parseFloat(
@@ -341,7 +341,7 @@ class WMWindow extends EventTarget implements Process {
                             );
                             // TODO: Sometimes attempting to resize just does nothing?
                             // This if statement blocks against an error being spit out, but there is a bug here
-                            if (typeof this.onresize == "function") {
+                            if (typeof this.onresize === "function") {
                                 this.onresize(this.width, this.height);
                                 sentResize = true;
                             }
@@ -370,9 +370,9 @@ class WMWindow extends EventTarget implements Process {
                         original_width,
                     );
                     if (
-                        (direction == "left" &&
+                        (direction === "left" &&
                             !currentResizer.classList.contains("right")) ||
-                        (direction == "right" &&
+                        (direction === "right" &&
                             !currentResizer.classList.contains("left"))
                     ) {
                         return;
@@ -464,8 +464,8 @@ class WMWindow extends EventTarget implements Process {
             this.element.classList.add("scaletransition");
 
         if (
-            anura.platform.type == "mobile" ||
-            anura.platform.type == "tablet"
+            anura.platform.type === "mobile" ||
+            anura.platform.type === "tablet"
         ) {
             this.maximize();
         }
@@ -497,7 +497,7 @@ class WMWindow extends EventTarget implements Process {
             this.element.style.left = newOffsetX + "px";
             this.element.style.top = newOffsetY + "px";
 
-            if (offsetX != newOffsetX || offsetY != newOffsetY) {
+            if (offsetX !== newOffsetX || offsetY !== newOffsetY) {
                 this.dragForceX = Math.abs(offsetX - newOffsetX);
                 this.dragForceY = Math.abs(offsetY - newOffsetY);
                 const snapDirection = this.getSnapDirection(
@@ -512,7 +512,7 @@ class WMWindow extends EventTarget implements Process {
                         );
                     } else {
                         const direction = preview.classList[0]?.split("-")[1];
-                        if (direction != snapDirection) {
+                        if (direction !== snapDirection) {
                             preview.remove();
                             document.body.appendChild(
                                 this.snapPreview(snapDirection),
@@ -631,7 +631,7 @@ class WMWindow extends EventTarget implements Process {
             this.snapped = false;
 
             const thisSnappedWindow = snappedWindows.find(
-                (x) => x.window == this,
+                (x) => x.window === this,
             );
 
             snappedWindows.splice(
@@ -727,7 +727,7 @@ class WMWindow extends EventTarget implements Process {
         console.log(this.snapped);
         if (this.snapped) {
             const thisSnappedWindow = snappedWindows.find(
-                (x) => x.window == this,
+                (x) => x.window === this,
             );
             console.log(thisSnappedWindow);
 
@@ -747,14 +747,14 @@ class WMWindow extends EventTarget implements Process {
     }
     unminimize() {
         if (
-            this.element.style.display != "none" ||
+            this.element.style.display !== "none" ||
             !this.element.classList.contains("opacity0")
         ) {
             return;
         }
         if (this.snapped) {
             const thisSnappedWindow = minimizedSnappedWindows.find(
-                (x) => x.window == this,
+                (x) => x.window === this,
             );
 
             if (!thisSnappedWindow) {
@@ -768,16 +768,16 @@ class WMWindow extends EventTarget implements Process {
             );
 
             const leftSnappedWindows = snappedWindows.filter(
-                (x) => x.direction == "left",
+                (x) => x.direction === "left",
             );
 
             const rightSnappedWindows = snappedWindows.filter(
-                (x) => x.direction == "right",
+                (x) => x.direction === "right",
             );
 
-            if (thisSnappedWindow.direction == "left") {
+            if (thisSnappedWindow.direction === "left") {
                 const otherLeftSnappedWindows = leftSnappedWindows.filter(
-                    (x) => x.window != this,
+                    (x) => x.window !== this,
                 );
 
                 otherLeftSnappedWindows.forEach((x) => {
@@ -813,16 +813,16 @@ class WMWindow extends EventTarget implements Process {
                 }
             }
 
-            if (thisSnappedWindow.direction == "right") {
+            if (thisSnappedWindow.direction === "right") {
                 const otherRightSnappedWindows = rightSnappedWindows.filter(
-                    (x) => x.window != this,
+                    (x) => x.window !== this,
                 );
 
                 otherRightSnappedWindows.forEach((x) => {
                     x.window.minimize();
                 });
 
-                if (leftSnappedWindows.length == 1) {
+                if (leftSnappedWindows.length === 1) {
                     WMSplitBar.prototype.cleanup(); // Just in case
 
                     const bar = new WMSplitBar(
@@ -873,10 +873,10 @@ class WMWindow extends EventTarget implements Process {
 
         let scaledWidth = width;
 
-        if (snapDirection != "top") {
+        if (snapDirection !== "top") {
             scaledWidth = width / 2;
             snappedWindows.forEach((x) => {
-                if (x.direction == snapDirection) {
+                if (x.direction === snapDirection) {
                     x.window.minimize();
                 }
             });
@@ -887,14 +887,14 @@ class WMWindow extends EventTarget implements Process {
         }
 
         if (
-            snappedWindows.length == 2 &&
+            snappedWindows.length === 2 &&
             !splitBar &&
-            snapDirection != "top" &&
-            snappedWindows[0]?.direction != snappedWindows[1]?.direction
+            snapDirection !== "top" &&
+            snappedWindows[0]?.direction !== snappedWindows[1]?.direction
         ) {
             const bar = new WMSplitBar(
-                snappedWindows.find((x) => x.direction == "left")!.window,
-                snappedWindows.find((x) => x.direction == "right")!.window,
+                snappedWindows.find((x) => x.direction === "left")!.window,
+                snappedWindows.find((x) => x.direction === "right")!.window,
             );
 
             bar.splitWindowsAround(width / 2);
@@ -985,13 +985,13 @@ class WMWindow extends EventTarget implements Process {
         forceY: number,
     ): "left" | "right" | "top" | "ne" | "nw" | "se" | "sw" | null {
         if (forceX > 20 && forceY > 20) {
-            if (this.element.offsetLeft == 0 && this.element.offsetTop == 0) {
+            if (this.element.offsetLeft === 0 && this.element.offsetTop === 0) {
                 return "nw";
             }
             if (
-                this.element.offsetLeft + this.element.clientWidth ==
+                this.element.offsetLeft + this.element.clientWidth ===
                     window.innerWidth &&
-                this.element.offsetTop == 0
+                this.element.offsetTop === 0
             ) {
                 return "ne";
             }
@@ -1032,14 +1032,14 @@ class WMWindow extends EventTarget implements Process {
         left: number,
         width: number,
     ): "left" | "right" | "top" | "ne" | "nw" | "se" | "sw" | null {
-        if (left == 0) {
+        if (left === 0) {
             return "left";
         }
         const windowWidth =
             window.innerWidth ||
             document.documentElement.clientWidth ||
             document.body.clientWidth;
-        if (left + width == windowWidth) {
+        if (left + width === windowWidth) {
             return "right";
         }
         console.log(left, width, windowWidth);
@@ -1059,7 +1059,7 @@ class WMWindow extends EventTarget implements Process {
         let scaledWidth = width;
         let scaledHeight = height;
 
-        if (side != "top") {
+        if (side !== "top") {
             scaledWidth = width / 2;
         }
 
@@ -1238,8 +1238,8 @@ let AliceWM = {
         document.body.appendChild(win.element);
         win.focus();
         if (
-            anura.platform.type != "mobile" &&
-            anura.platform.type != "tablet"
+            anura.platform.type !== "mobile" &&
+            anura.platform.type !== "tablet"
         ) {
             center(win.element);
         }

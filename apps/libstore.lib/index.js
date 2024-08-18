@@ -54,7 +54,7 @@ export class Store {
         let repo = new StoreRepo(this.client, this.hooks, url, name);
         let manifestVersion = await repo.getRepoManifest();
         repo.version = manifestVersion;
-        if (manifestVersion == "legacy") {
+        if (manifestVersion === "legacy") {
             repo = new StoreRepoLegacy(this.client, this.hooks, url, name);
         }
         await repo.refreshRepoCache();
@@ -205,7 +205,7 @@ export class StoreRepo {
             for (const lib of app.dependencies) {
                 let hasDep =
                     Object.keys(anura.libs).filter(
-                        (x) => anura.libs[x].package == lib,
+                        (x) => anura.libs[x].package === lib,
                     ).length > 0;
                 if (hasDep) continue;
                 this.hooks.onDepInstallStart(app.name, lib);
@@ -242,7 +242,7 @@ export class StoreRepo {
                 if (relativePath.endsWith("/")) {
                     fs.mkdir(`${path}/${relativePath}`);
                 } else {
-                    if (relativePath == "manifest.json") {
+                    if (relativePath === "manifest.json") {
                         let manifest = new TextDecoder().decode(content);
                         manifest = JSON.parse(manifest);
                         manifest.marketplace = {};
@@ -302,7 +302,7 @@ export class StoreRepo {
                 if (relativePath.endsWith("/")) {
                     fs.mkdir(`${path}/${relativePath}`);
                 } else {
-                    if (relativePath == "manifest.json") {
+                    if (relativePath === "manifest.json") {
                         let manifest = new TextDecoder().decode(content);
                         manifest = JSON.parse(manifest);
                         manifest.marketplace = {};
@@ -441,7 +441,7 @@ export class StoreRepoLegacy {
             for (const lib of app.dependencies) {
                 let hasDep =
                     Object.keys(anura.libs).filter(
-                        (x) => anura.libs[x].name == lib,
+                        (x) => anura.libs[x].name === lib,
                     ).length > 0;
                 if (hasDep) continue;
                 this.hooks.onDepInstallStart(appName, lib);

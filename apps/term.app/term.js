@@ -15,7 +15,7 @@ window.addEventListener("load", async () => {
         t.setBackgroundColor("#141516");
         t.setCursorColor("#bbb");
 
-        if (anura.x86 == undefined) {
+        if (anura.x86 === undefined) {
             io.print(
                 "\u001b[33mThe Anura x86 subsystem is not enabled. Please enable it in Settings.\u001b[0m",
             );

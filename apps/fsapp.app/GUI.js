@@ -161,13 +161,13 @@ document.addEventListener("contextmenu", (e) => {
                 (item) =>
                     item.getAttribute("data-path").split(".").slice("-1")[0],
             )
-            .filter((item) => item == "app" || item == "lib").length > 0;
+            .filter((item) => item === "app" || item === "lib").length > 0;
 
     if (containsApps) {
         appcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
         newcontextmenu.hide();
         emptycontextmenu.hide();
-    } else if (currentlySelected.length != 0) {
+    } else if (currentlySelected.length !== 0) {
         newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
         appcontextmenu.hide();
         emptycontextmenu.hide();

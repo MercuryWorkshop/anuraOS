@@ -43,7 +43,7 @@ function RepoItem() {
 
     const contextMenu = new anura.ContextMenu();
     contextMenu.addItem("Remove", () => {
-        saved.repos = saved.repos.filter(([name]) => name != this.reponame);
+        saved.repos = saved.repos.filter(([name]) => name !== this.reponame);
     });
 
     return html`
@@ -51,7 +51,7 @@ function RepoItem() {
             class=${[
                 "repoItem",
                 use(state.currentRepo, (repo) =>
-                    (repo || Array(3))[0] == this.reponame
+                    (repo || Array(3))[0] === this.reponame
                         ? "selected"
                         : "inactive",
                 ),
@@ -223,7 +223,7 @@ export default function RepoList() {
                                     let res = await fetch(
                                         url + "manifest.json",
                                     );
-                                    // if (res.status != 200); throw "Repo missing manifest.json file, this is a repo maintainer skill issue.";
+                                    // if (res.status !== 200); throw "Repo missing manifest.json file, this is a repo maintainer skill issue.";
                                     let json = await res.text();
                                     console.log(json);
                                     json = JSON.parse(json);
@@ -241,7 +241,7 @@ export default function RepoList() {
                                 }
 
                                 if (
-                                    saved.repos.filter(([n]) => n == url)
+                                    saved.repos.filter(([n]) => n === url)
                                         .length > 0
                                 ) {
                                     anura.dialog.alert(

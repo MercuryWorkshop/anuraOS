@@ -24,7 +24,7 @@ class Taskbar {
         activeApps: [],
         showBar: false,
         rounded:
-            anura.platform.type == "mobile" || anura.platform.type == "tablet"
+            anura.platform.type === "mobile" || anura.platform.type === "tablet"
                 ? false
                 : true,
         time: "",
@@ -70,7 +70,7 @@ class Taskbar {
                                 "applist",
                                 anura.settings
                                     .get("applist")
-                                    .filter((p: string) => p != app.package),
+                                    .filter((p: string) => p !== app.package),
                             );
                             this.updateTaskbar();
                         } else {
@@ -108,7 +108,7 @@ class Taskbar {
                                     ...anura.settings
                                         .get("applist")
                                         .filter(
-                                            (p: string) => p != app.package,
+                                            (p: string) => p !== app.package,
                                         ),
                                 ]);
                             }
@@ -128,7 +128,7 @@ class Taskbar {
                     }}
                     class="showDialog"
                     on:click={(e: MouseEvent) => {
-                        if (app.windows.length == 1) {
+                        if (app.windows.length === 1) {
                             app.windows[0]!.unminimize();
                             app.windows[0]!.focus();
                         } else {
@@ -145,7 +145,7 @@ class Taskbar {
                             class="lightbar"
                             style={
                                 "position: relative; bottom: 0px; background-color:#FFF; width:30%; left:50%; transform:translateX(-50%)" +
-                                (app.windows?.length == 0
+                                (app.windows?.length === 0
                                     ? ";visibility:hidden"
                                     : "")
                             }
@@ -165,14 +165,14 @@ class Taskbar {
                     const potentialFuture = app.open();
                     console.log(potentialFuture);
                     if (
-                        typeof potentialFuture != "undefined" &&
+                        typeof potentialFuture !== "undefined" &&
                         //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
                         // Typescript doesn't like this, so we have to ignore it.
-                        typeof potentialFuture.then == "function"
+                        typeof potentialFuture.then === "function"
                     ) {
                         // @ts-ignore - Same as above
                         potentialFuture.then((win) => {
-                            if (typeof win == "undefined") return;
+                            if (typeof win === "undefined") return;
                             this.updateRadius();
                         });
                     }
@@ -203,7 +203,7 @@ class Taskbar {
                             "applist",
                             anura.settings
                                 .get("applist")
-                                .filter((p: string) => p != app.package),
+                                .filter((p: string) => p !== app.package),
                         );
                     } else {
                         anura.settings.set("applist", [
@@ -236,14 +236,14 @@ class Taskbar {
             const potentialFuture = app.open();
             console.log(potentialFuture);
             if (
-                typeof potentialFuture != "undefined" &&
+                typeof potentialFuture !== "undefined" &&
                 //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
                 // Typescript doesn't like this, so we have to ignore it.
-                typeof potentialFuture.then == "function"
+                typeof potentialFuture.then === "function"
             ) {
                 // @ts-ignore - Same as above
                 potentialFuture.then((win) => {
-                    if (typeof win == "undefined") return;
+                    if (typeof win === "undefined") return;
                     this.updateRadius();
                 });
             }
@@ -255,7 +255,7 @@ class Taskbar {
         setInterval(() => {
             const date = new Date();
             this.state.date = this.dateformat.format(date);
-            if (this.timeformat.resolvedOptions().hour12 == false) {
+            if (this.timeformat.resolvedOptions().hour12 === false) {
                 this.state.time = this.timeformat.format(date);
             } else {
                 this.state.time = this.timeformat.format(date).slice(0, -3);
@@ -298,7 +298,7 @@ class Taskbar {
                         return;
                     } else {
                         const bat_bars = Math.round(battery.level * 7) - 1;
-                        if (bat_bars == -1) {
+                        if (bat_bars === -1) {
                             this.state.bat_icon = `battery_alert`;
                             return;
                         }
@@ -319,7 +319,7 @@ class Taskbar {
                     return;
                 }
                 const bat_bars = Math.round(battery.level * 7) - 1;
-                if (bat_bars == -1) {
+                if (bat_bars === -1) {
                     this.state.bat_icon = `battery_alert`;
                     return;
                 }
@@ -458,8 +458,8 @@ class Taskbar {
             this.state.rounded = false;
         } else {
             if (
-                anura.platform.type != "mobile" &&
-                anura.platform.type != "tablet"
+                anura.platform.type !== "mobile" &&
+                anura.platform.type !== "tablet"
             )
                 this.state.rounded = true;
         }

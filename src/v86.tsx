@@ -77,7 +77,7 @@ async function InitV86Hdd(): Promise<FakeFile> {
                     Math.max(0, start - i * SLICE_SIZE),
                     end - i * SLICE_SIZE,
                 );
-                if (buf == null) {
+                if (buf === null) {
                     buf = slice;
                 } else {
                     buf = catBufs(buf, slice);

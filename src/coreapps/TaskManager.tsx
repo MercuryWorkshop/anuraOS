@@ -167,7 +167,7 @@ class TaskManager extends App {
                                     id={`taskmgr-proc-${proc.deref()?.pid}`}
                                     class:selected={use(
                                         this.state.selected,
-                                        (num) => num == proc.deref()?.pid,
+                                        (num) => num === proc.deref()?.pid,
                                     )}
                                     on:click={() => {
                                         // console.log("setting");
@@ -223,13 +223,16 @@ class TaskManager extends App {
             </div>
             <div class="controls">
                 <button
-                    bind:disabled={use(this.state.selected, (num) => num == -1)}
+                    bind:disabled={use(
+                        this.state.selected,
+                        (num) => num === -1,
+                    )}
                     class="matter-button-contained"
                     on:click={() => {
                         const proc = anura.processes.state.procs.find(
                             (proc) =>
                                 proc &&
-                                proc.deref()?.pid == this.state.selected,
+                                proc.deref()?.pid === this.state.selected,
                         );
                         if (proc) {
                             proc.deref()?.kill();

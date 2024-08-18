@@ -16,7 +16,7 @@ class AltTabView {
                         this.state.index,
                         (stateIndex) =>
                             "alttab-window " +
-                            (index == stateIndex
+                            (index === stateIndex
                                 ? "alttab-window-selected"
                                 : ""),
                     )}

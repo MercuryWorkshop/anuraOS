@@ -9,7 +9,7 @@ export function openFile(path) {
             fileView.content.style.overflow = "auto";
             fileView.content.style.background = "black";
             let bloburl = URL.createObjectURL(new Blob([data]));
-            if (mimetype == "image/svg+xml") {
+            if (mimetype === "image/svg+xml") {
                 let doc = new DOMParser().parseFromString(
                     data,
                     "image/svg+xml",
@@ -176,7 +176,7 @@ export function openFile(path) {
 
 export function getIcon(path) {
     let ext = path.split(".").slice("-1")[0];
-    let iconObject = icons.files.find((icon) => icon.ext == ext);
+    let iconObject = icons.files.find((icon) => icon.ext === ext);
     if (iconObject) {
         return localPathToURL(iconObject.icon);
     }
@@ -185,7 +185,7 @@ export function getIcon(path) {
 
 export function getFileType(path) {
     let ext = path.split(".").slice("-1")[0];
-    let iconObject = icons.files.find((icon) => icon.ext == ext);
+    let iconObject = icons.files.find((icon) => icon.ext === ext);
     if (iconObject) {
         return iconObject.type;
     }

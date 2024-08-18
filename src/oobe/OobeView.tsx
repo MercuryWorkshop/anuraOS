@@ -47,8 +47,8 @@ class OobeView {
 
         #content {
             padding: 79.6px 40px 23.8px 40px;
-            width: ${anura.platform.type == "mobile" ? "100vw;" : "1040px;"};
-            height: ${anura.platform.type == "mobile" ? "100vh;" : "680px;"};
+            width: ${anura.platform.type === "mobile" ? "100vw;" : "1040px;"};
+            height: ${anura.platform.type === "mobile" ? "100vh;" : "680px;"};
             box-sizing: border-box;
 
             &:has(#features) {
@@ -132,7 +132,7 @@ class OobeView {
             grid-column: 2 / span 1;
             grid-row: 1 / span 2;
             margin-left: auto;
-            display: ${anura.platform.type == "mobile" ? "none;" : "unset;"};
+            display: ${anura.platform.type === "mobile" ? "none;" : "unset;"};
         }
 
         .material-symbols-outlined {
@@ -351,14 +351,14 @@ async function installx86() {
         let done = false;
         let doneSoFar = 0;
         const doWhenAvail = function () {
-            if (limit == 0) return;
+            if (limit === 0) return;
             limit--;
             const assigned = i;
             i++;
 
             fetch(anura.config.x86[x86image].rootfs[assigned])
                 .then(async (response) => {
-                    if (response.status != 200) {
+                    if (response.status !== 200) {
                         console.error("Status code bad on chunk " + assigned);
                         console.error(
                             anura.config.x86[x86image].rootfs[assigned],
@@ -383,7 +383,9 @@ async function installx86() {
                     if (i < anura.config.x86[x86image].rootfs.length) {
                         doWhenAvail();
                     }
-                    if (doneSoFar == anura.config.x86[x86image].rootfs.length) {
+                    if (
+                        doneSoFar === anura.config.x86[x86image].rootfs.length
+                    ) {
                         done = true;
                     }
                     console.log(

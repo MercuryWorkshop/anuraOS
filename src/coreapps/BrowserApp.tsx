@@ -95,7 +95,7 @@ class BrowserApp extends App {
             height: "500px",
         });
         browser.onclose = () => {
-            if (this.lastWindow == browser) {
+            if (this.lastWindow === browser) {
                 this.lastWindow = undefined;
             }
         };

@@ -65,7 +65,7 @@ export function Folder() {
                         e.currentTarget.classList.add("selected");
                         currentlySelected.push(e.currentTarget);
                     } else {
-                        if (currentlySelected.length == 0) {
+                        if (currentlySelected.length === 0) {
                             e.currentTarget.classList.add("selected");
                             currentlySelected.push(e.currentTarget);
                         } else {

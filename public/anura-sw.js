@@ -372,7 +372,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     /^(?!.*(\/config.json|\/MILESTONE|\/x86images\/|\/service\/))/,
     async ({ url }) => {
-        if (cacheenabled == undefined) {
+        if (cacheenabled === undefined) {
             console.log("retrieving cache value");
             let result = await idbKeyval.get("cacheenabled");
             if (result !== undefined || result !== null) {

@@ -66,7 +66,7 @@ class XFrogApp extends App {
 
         const sfocus = async () => {
             let isNew = false;
-            if (this.activeWin && this.activeWin != win) {
+            if (this.activeWin && this.activeWin !== win) {
                 const newImg = document.createElement("img");
 
                 const blob: any = await new Promise((resolve) =>

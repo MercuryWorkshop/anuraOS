@@ -50,7 +50,7 @@ class ExternalLib extends Lib {
         if (
             this.manifest.cache &&
             this.cache[version] &&
-            this.installedLibs == Object.keys(anura.libs)
+            this.installedLibs === Object.keys(anura.libs)
         ) {
             return this.cache[version];
         }

@@ -684,9 +684,9 @@ class QuickSettingsNotification {
                             buttons.map((button) => (
                                 <button
                                     class={[
-                                        button.style == "contained"
+                                        button.style === "contained"
                                             ? "matter-button-contained"
-                                            : button.style == "outlined"
+                                            : button.style === "outlined"
                                               ? "matter-button-outlined"
                                               : "matter-button-text",
                                         "nbutton",

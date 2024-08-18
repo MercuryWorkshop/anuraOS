@@ -121,12 +121,12 @@ titlebar.insertBefore(back, titlebar.children[1]);
 const url = new URL(window.location.href);
 let fullArgs = ExternalApp.deserializeArgs(url.searchParams.get("args"));
 
-if (fullArgs[0] == "URI") {
+if (fullArgs[0] === "URI") {
     fullArgs.shift();
     let newArgs = [];
     for (let i = 0; i < fullArgs.length; i++) {
         let current = fullArgs[i];
-        if (i == 0) {
+        if (i === 0) {
             current = current.replace("//", "");
         }
         if (current === "view") {

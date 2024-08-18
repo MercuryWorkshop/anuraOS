@@ -191,7 +191,7 @@ class ExploreApp extends App {
                 </a>
                 ), which lets you run real Linux within Anura.
                 {$if(
-                    anura.x86 == undefined,
+                    anura.x86 === undefined,
                     <p>
                         {" "}
                         It seems like you dont have the subsystem enabled. You
@@ -209,7 +209,7 @@ class ExploreApp extends App {
                     </p>,
                 )}
                 {$if(
-                    anura.x86 != undefined,
+                    anura.x86 !== undefined,
                     <p>
                         You can open a terminal using the{" "}
                         <span>
@@ -325,7 +325,7 @@ class ExploreApp extends App {
                     }}
                     class:selected={use(
                         this.state.screen,
-                        (sc) => sc == this.welcome,
+                        (sc) => sc === this.welcome,
                     )}
                 >
                     <span class="material-symbols-outlined">kid_star</span>
@@ -337,7 +337,7 @@ class ExploreApp extends App {
                     }}
                     class:selected={use(
                         this.state.screen,
-                        (sc) => sc == this.whatsnew,
+                        (sc) => sc === this.whatsnew,
                     )}
                 >
                     <span class="material-symbols-outlined">history</span>
@@ -349,7 +349,7 @@ class ExploreApp extends App {
                     }}
                     class:selected={use(
                         this.state.screen,
-                        (sc) => sc == this.v86,
+                        (sc) => sc === this.v86,
                     )}
                 >
                     <span class="material-symbols-outlined">memory</span>

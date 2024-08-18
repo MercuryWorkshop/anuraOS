@@ -251,7 +251,7 @@ class ExternalApp extends App {
             console.log(this.source);
             let encoded = "";
             for (let i = 0; i < this.manifest.src!.length; i++) {
-                if (i % 2 == 0) {
+                if (i % 2 === 0) {
                     encoded += this.manifest.src![i];
                 } else {
                     encoded += String.fromCharCode(
