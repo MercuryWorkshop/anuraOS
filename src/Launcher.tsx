@@ -323,45 +323,40 @@ const LauncherShortcut: Component<
     }
     contextmenu.addItem(
         "Delete",
-        function () {
-            (async () => {
-                if (
-                    anura.apps[app.package].source &&
-                    anura.apps[app.package].source.includes("/fs")
-                ) {
-                    try {
-                        const sh = new anura.fs.Shell();
-                        const path = (app as ExternalApp).source.replace(
-                            /^\/fs\//,
-                            "",
-                        );
-                        await sh.rm(
-                            path,
-                            {
-                                recursive: true,
-                            },
-                            function (err) {
-                                if (err) throw err;
-                            },
-                        );
-                        // FIXME: it doesnt get removed from the launcher
-                        delete anura.apps[app.package];
-                        // FIXME: DUMB HACK
-                        location.reload();
-                    } catch (e) {
-                        console.error(e);
-                        anura.dialog.alert(
-                            "Could not delete app. Please try again later: " +
-                                e,
-                        );
-                    }
-                } else {
-                    console.error("App not found");
+        async () => {
+            if (
+                anura.apps[app.package].source &&
+                anura.apps[app.package].source.includes("/fs")
+            ) {
+                try {
+                    const sh = new anura.fs.Shell();
+                    const path = (app as ExternalApp).source.replace(
+                        /^\/fs\//,
+                        "",
+                    );
+                    await sh.rm(
+                        path,
+                        {
+                            recursive: true,
+                        },
+                        function (err) {
+                            if (err) throw err;
+                        },
+                    );
+                    delete anura.apps[app.package];
+                    this.root.remove();
+                } catch (e) {
+                    console.error(e);
                     anura.dialog.alert(
-                        "App not found. Either it's a system app or something has gone terribly wrong.",
+                        "Could not delete app. Please try again later: " + e,
                     );
                 }
-            })();
+            } else {
+                console.error("App not found");
+                anura.dialog.alert(
+                    "App not found. Either it's a system app or something has gone terribly wrong.",
+                );
+            }
         },
         "delete",
     );
