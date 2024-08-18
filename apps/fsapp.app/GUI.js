@@ -35,17 +35,14 @@ addContextMenuItem("Refresh", function () {
 });
 
 appcontextmenu.addItem("Install (Session)", function () {
-    // While this is the same as double clicking, it's still useful to have the verbosely named option
     installSession();
 });
 
 appcontextmenu.addItem("Install (Permanent)", function () {
-    // This is not the same as double clicking, as it will install the app permanently
     installPermanent();
 });
 
 appcontextmenu.addItem("Navigate", function () {
-    // Normally, double clicking a folder will navigate into it, but for apps and libs, this is not the case
     navigate();
 });
 
@@ -66,7 +63,6 @@ emptycontextmenu.addItem("Refresh", function () {
 });
 
 const min = 150;
-// The max (fr) values for grid-template-columns
 const columnTypeToRatioMap = {
     icon: 0.1,
     name: 3,
@@ -123,7 +119,6 @@ const onMouseMove = (e) =>
             .join(" ");
     });
 
-// Clean up event listeners, classes, etc.
 const onMouseUp = () => {
     console.log("onMouseUp");
 
@@ -133,7 +128,6 @@ const onMouseUp = () => {
     headerBeingResized = null;
 };
 
-// Get ready, they're about to resize
 const initResize = ({ target }) => {
     console.log("initResize");
 

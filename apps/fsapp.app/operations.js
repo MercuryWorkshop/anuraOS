@@ -14,7 +14,6 @@ async function selectAction(selected) {
                     .replace(/(\/)\1+/g, "$1"),
             };
             window.callback({ data: fileData });
-            // window.parent.postMessage(fileData, "*");
         }
     } else if (selected.length > 1 && filePicker.multiple) {
         let dataPaths = [];
@@ -34,7 +33,6 @@ async function selectAction(selected) {
             filePath: dataPaths,
         };
         window.callback({ data: fileData });
-        // window.parent.postMessage(fileData, "*");
     } else if (selected.length == 0) {
         if (filePicker.type == "dir") {
             let fileData = {
@@ -731,14 +729,6 @@ function reload() {
     );
 }
 
-function reload() {
-    loadPath(
-        document
-            .querySelector(".breadcrumbs")
-            .getAttribute("data-current-path"),
-    );
-}
-
 function upload() {
     let fauxput = document.createElement("input"); // fauxput - fake input that isn't shown or ever added to page TODO: think of a better name for this variable
     fauxput.type = "file";
@@ -759,14 +749,6 @@ function upload() {
 }
 
 function deleteFile() {
-    if (currentlySelected.length == 0) {
-        anura.notifications.add({
-            title: "Filesystem app",
-            description:
-                "BUG: You have no files selected, right clicking does not select files",
-            timeout: 5000,
-        });
-    }
     currentlySelected.forEach(async (item) => {
         await sh.rm(
             item.getAttribute("data-path"),
@@ -862,16 +844,6 @@ async function rename() {
     const path = document
         .querySelector(".breadcrumbs")
         .getAttribute("data-current-path");
-    if (currentlySelected.length == 0) {
-        anura.notifications.add({
-            title: "Filesystem app",
-            description:
-                "BUG: You have no files selected, right clicking does not select files",
-            timeout: 5000,
-        });
-
-        return;
-    }
     if (currentlySelected.length > 1) {
         anura.notifications.add({
             title: "Filesystem app",

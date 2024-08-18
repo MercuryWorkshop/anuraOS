@@ -35,13 +35,10 @@ export function selectFile(options) {
                 let receivedData = event.data;
                 let filePath = receivedData.filePath;
 
-                // parent.removeEventListener("message", handleMessage);
-
                 resolve(filePath);
                 picker.close();
             }
         }
-        // parent.addEventListener("message", handleMessage);
         picker.content.appendChild(iframe);
         Object.assign(iframe.contentWindow, {
             anura,
@@ -92,13 +89,10 @@ export function selectFolder(options) {
                 let receivedData = event.data;
                 let filePath = receivedData.filePath;
 
-                // parent.removeEventListener("message", handleMessage);
-
                 resolve(filePath);
                 picker.close();
             }
         }
-        // parent.addEventListener("message", handleMessage);
         picker.content.appendChild(iframe);
         Object.assign(iframe.contentWindow, {
             anura,
