@@ -34,7 +34,6 @@ class WMAPI {
         });
 
         win.addEventListener("snap", (event: MessageEvent) => {
-            console.log(snappedWindows);
             taskbar.updateRadius();
         });
 
@@ -79,7 +78,6 @@ class WMAPI {
         });
 
         win.addEventListener("snap", (event: MessageEvent) => {
-            console.log(snappedWindows);
             taskbar.updateRadius();
         });
 

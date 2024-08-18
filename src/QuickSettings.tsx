@@ -225,17 +225,11 @@ class QuickSettings {
     updateClickoffChecker: (show: boolean) => void;
 
     open() {
-        console.log("reading and assigning");
         // reason for this is otherwise dreamland doesn't run the use() dunno why
         const pinnedSettings = this.state.pinnedSettings;
         for (let i = 0; i < pinnedSettings.length; i++) {
-            console.log("reading: " + pinnedSettings[i]!.registry);
-
             pinnedSettings[i]!.value = anura.settings.get(
                 pinnedSettings[i]!.registry,
-            );
-            console.log(
-                "assigned: " + anura.settings.get(pinnedSettings[i]!.registry),
             );
         }
 
@@ -380,14 +374,10 @@ class QuickSettings {
                                             );
                                             this.state.pinnedSettings =
                                                 pinnedSettings;
-                                            console.log(
-                                                this.state.pinnedSettings[i]!,
-                                            );
                                             if (
                                                 this.state.pinnedSettings[i]!
                                                     .onChange
                                             ) {
-                                                console.log("Calling onChange");
                                                 new Function(
                                                     "value",
                                                     this.state.pinnedSettings[
@@ -410,18 +400,6 @@ class QuickSettings {
                                                         i
                                                     ]!.value,
                                                     (value) => {
-                                                        console.log(
-                                                            "Hold on let me cook: " +
-                                                                this.state
-                                                                    .pinnedSettings[
-                                                                    i
-                                                                ]!.registry +
-                                                                " " +
-                                                                this.state
-                                                                    .pinnedSettings[
-                                                                    i
-                                                                ]!.value,
-                                                        );
                                                         if (value)
                                                             return "enabled";
                                                         else return "disabled";
@@ -516,7 +494,6 @@ class QuickSettings {
                 description: "Remove background blur",
                 value: false,
                 onChange: `
-                    console.log("Blur disable changed to", value);
                     if (value === true) {
                         document.body.classList.add("blur-disable");
                     } else {

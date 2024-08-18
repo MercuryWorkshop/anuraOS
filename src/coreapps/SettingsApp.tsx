@@ -597,11 +597,6 @@ class SettingsApp extends App {
                                                             },
                                                         ],
                                                     );
-                                                    console.log(
-                                                        anura.settings.get(
-                                                            "user-xapps",
-                                                        ),
-                                                    );
                                                     anura.notifications.add({
                                                         title: "Shortcut Created",
                                                         description:

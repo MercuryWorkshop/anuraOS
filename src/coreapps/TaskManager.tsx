@@ -170,12 +170,10 @@ class TaskManager extends App {
                                         (num) => num === proc.deref()?.pid,
                                     )}
                                     on:click={() => {
-                                        // console.log("setting");
                                         if (proc.deref()) {
                                             this.state.selected =
                                                 proc.deref()!.pid;
                                         }
-                                        // console.log(this.state.selected);
                                     }}
                                 >
                                     <td>
@@ -300,7 +298,6 @@ class TaskManager extends App {
                     if (allRows.includes(row)) {
                         delete allRows[allRows.indexOf(row)];
                     }
-                    // console.log(row);
                 }
                 for (const row of allRows) {
                     if (row) {

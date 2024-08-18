@@ -127,7 +127,6 @@ function Item() {
 
 export default function ItemList() {
     this.mount = async () => {
-        console.log(state.currentRepo);
         const apps = await state.currentRepo[2].getApps();
         const libs = await state.currentRepo[2].getLibs();
 

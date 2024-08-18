@@ -106,7 +106,7 @@ window.addEventListener("load", async () => {
         conf = await (await fetch("/config.json")).json();
         milestone = await (await fetch("/MILESTONE")).text();
 
-        console.log("writing config??");
+        console.debug("writing config??");
         Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
     } catch (e) {
         conf = JSON.parse(
@@ -170,11 +170,11 @@ window.addEventListener("load", async () => {
                         recursive: true,
                     });
                 } catch {
-                    console.log("cache already invalidated");
+                    console.debug("cache already invalidated");
                 }
                 await preloadFiles(tracker);
             }
-            console.log("invalidated cache");
+            console.debug("invalidated cache");
             window.location.reload();
         }
     }
@@ -395,8 +395,8 @@ window.addEventListener("load", async () => {
         // This is a one-time migration
         const extHandlers = anura.settings.get("FileExts") || {};
 
-        console.log("migrating file handlers");
-        console.log(extHandlers);
+        console.debug("migrating file handlers");
+        console.debug(extHandlers);
 
         for (const ext in extHandlers) {
             const handler = extHandlers[ext];
@@ -672,14 +672,14 @@ async function bootx86() {
     anura.settings
         .get("user-xapps")
         .forEach((stub: { name: string; cmd: string; id: string }) => {
-            console.log("registering user xapp", stub);
+            console.debug("registering user xapp", stub);
             anura.registerApp(new XAppStub(stub.name, stub.id, "", stub.cmd));
         });
     AnuradHelpers.setStage("anura.bootx86");
 }
 async function bootUserCustomizations() {
     const directories = anura.settings.get("directories");
-    console.log("directories", directories);
+    console.debug("directories", directories);
     if ((await fetch("/fs/")).status === 404) {
         // Safe mode
         // Register recovery helper app

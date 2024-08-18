@@ -17,7 +17,7 @@ export function Folder() {
             this.description = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
         } catch (error) {
             this.iconElement.src = anura.files.folderIcon;
-            console.log(error);
+            console.error(error);
         }
     };
     return html`

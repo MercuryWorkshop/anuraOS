@@ -62,8 +62,6 @@ async function fileAction(selected) {
                     .slice("-2")
                     .join(".") === "app.zip"
             ) {
-                console.log("App Archive detected, extracting");
-
                 let data = await fs.promises.readFile(
                     fileSelected.getAttribute("data-path"),
                 );
@@ -129,7 +127,6 @@ async function fileAction(selected) {
                                     if (relativePath.endsWith("/")) {
                                         fs.mkdir(`${path}/${relativePath}`);
                                     } else {
-                                        console.log(`${path}/${relativePath}`);
                                         fs.writeFile(
                                             `${path}/${relativePath}`,
                                             await Buffer.from(content),
@@ -216,7 +213,6 @@ async function fileAction(selected) {
                     .slice("-2")
                     .join(".") === "lib.zip"
             ) {
-                console.log("Library Archive detected, extracting");
                 const data = await fs.promises.readFile(
                     fileSelected.getAttribute("data-path"),
                 );
@@ -228,7 +224,6 @@ async function fileAction(selected) {
                     .join(".");
 
                 const zip = await unzip(new Uint8Array(data));
-                console.log(zip);
                 const manifest = JSON.parse(
                     new TextDecoder().decode(zip["manifest.json"]),
                 );
@@ -292,7 +287,6 @@ async function fileAction(selected) {
                                         );
                                     }
                                     filesRemaining--;
-                                    console.log(filesRemaining);
                                     if (filesRemaining === 0) {
                                         await anura.registerExternalLib(
                                             `/fs/${path}`.replace("//", "/"),
@@ -342,7 +336,6 @@ async function fileAction(selected) {
                                         );
                                     }
                                     filesRemaining--;
-                                    console.log(filesRemaining);
                                     if (filesRemaining === 0) {
                                         await anura.registerExternalLib(
                                             `/fs${anura.settings.get("directories")["libs"]}/${path.split("/").slice("-1")[0]}`.replace(
@@ -671,7 +664,6 @@ function setBreadcrumbs(path) {
         return;
     }
     for (var i = 0; i < pathSplit.length; i++) {
-        console.log(i);
         var breadcrumb = document.createElement("button");
         breadcrumb.innerText = pathSplit[i];
         var index = i;
@@ -795,7 +787,6 @@ async function paste() {
                 const files = await sh.promises.ls(oldPath, {
                     recursive: true,
                 });
-                console.log(files);
                 // Apply
                 for (file of files) {
                     // Creating the relative path string
@@ -1005,12 +996,6 @@ function installPermanent() {
                                             dirs[dir].slice(numberToSubBy),
                                     );
                                 }
-                                console.log("initials");
-                                console.log(items);
-                                console.log("destinations");
-                                console.log(destItems);
-                                console.log("directories to mkdir -p ");
-                                console.log(destDirs);
                                 for (dir in destDirs) {
                                     await new Promise((resolve, reject) => {
                                         sh.mkdirp(
@@ -1046,8 +1031,6 @@ function installPermanent() {
                                         );
                                     });
                                 }
-
-                                console.log("finished copying files???");
 
                                 await anura.registerExternalLib(
                                     `/fs${destination}/${path.split("/").slice("-1")[0]}`.replace(

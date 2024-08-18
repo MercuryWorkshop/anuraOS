@@ -200,7 +200,6 @@ class Anura {
                     `${searchPath}/${scope}/${name}/package.json`,
                 );
                 const pkg = JSON.parse(data);
-                console.log("pkg", pkg);
                 if (pkg.main) {
                     filename = pkg.main;
                 } else {

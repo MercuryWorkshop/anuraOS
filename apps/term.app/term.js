@@ -8,7 +8,6 @@ window.addEventListener("load", async () => {
         let e = document
             .querySelector("iframe")
             .contentDocument.querySelector("x-screen");
-        console.log(e);
         e.style.overflow = "hidden";
         let io = t.io.push();
 
@@ -60,6 +59,5 @@ window.addEventListener("load", async () => {
         t.installKeyboard();
 
         htermNode.querySelector("iframe").style.position = "relative";
-        console.log("wtf");
     };
 });

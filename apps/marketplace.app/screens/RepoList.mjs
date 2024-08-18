@@ -1,6 +1,5 @@
 function RepoItem() {
     this.mount = async () => {
-        console.log("Mounting RepoItem");
         try {
             const repo = await marketplace.getRepo(this.repourl, this.reponame);
             this.root.onclick = () => {
@@ -219,13 +218,11 @@ export default function RepoList() {
                                 }
 
                                 try {
-                                    console.log(url + "manifest.json");
                                     let res = await fetch(
                                         url + "manifest.json",
                                     );
                                     // if (res.status !== 200); throw "Repo missing manifest.json file, this is a repo maintainer skill issue.";
                                     let json = await res.text();
-                                    console.log(json);
                                     json = JSON.parse(json);
                                     if (!json.name)
                                         throw "Repo missing name in manifest.json file, this is a repo maintainer skill issue.";

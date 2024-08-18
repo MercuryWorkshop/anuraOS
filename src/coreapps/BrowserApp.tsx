@@ -15,7 +15,6 @@ class BrowserApp extends App {
                     this.lastWindow || this.windows[this.windows.length - 1];
 
                 if (typeof win === "undefined") {
-                    console.log("No active browser window. Launching new one.");
                     this.open().then((win) => {
                         const iframe = win?.content.querySelector("iframe");
                         iframe?.addEventListener("load", () => {
@@ -23,8 +22,6 @@ class BrowserApp extends App {
                             const browserDocument =
                                 iframe?.contentDocument ||
                                 iframe?.contentWindow?.document;
-
-                            console.log("New browser window", browserDocument);
 
                             const config = {
                                 attributes: true,
@@ -63,7 +60,6 @@ class BrowserApp extends App {
 
                     return;
                 }
-                console.log("Active browser window", win);
                 const iframe = win.content.querySelector("iframe");
                 const browserWindow = iframe?.contentWindow;
                 win.focus();
@@ -114,9 +110,7 @@ class BrowserApp extends App {
             const doc =
                 iframe.contentDocument || iframe.contentWindow?.document;
             doc?.addEventListener("click", () => {
-                console.log("Active browser window", this.lastWindow);
                 this.lastWindow = browser;
-                console.log("New active browser window", this.lastWindow);
             });
         });
 

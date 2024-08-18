@@ -92,7 +92,6 @@ export class StoreRepo {
                 await this.client.fetch(this.baseUrl + "list.json")
             ).json();
             let repoCache = {};
-            console.log(list);
             for (const category in list) {
                 repoCache[`${category}`] = [];
                 await Promise.all(
@@ -107,7 +106,7 @@ export class StoreRepo {
 
             this.repoCache = repoCache;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw error;
         }
     }
@@ -174,7 +173,6 @@ export class StoreRepo {
             await this.refreshRepoCache();
         }
         let app = this.repoCache.apps.find((app) => app.package === appName);
-        console.log(app);
         return app;
     }
 
@@ -190,7 +188,6 @@ export class StoreRepo {
             await this.refreshRepoCache();
         }
         let lib = this.repoCache.libs.find((lib) => lib.package === libName);
-        console.log(lib);
         return lib;
     }
 
@@ -219,7 +216,6 @@ export class StoreRepo {
             ).arrayBuffer(),
         );
         let zip = await unzip(zipFile);
-        console.log(zip);
 
         const path = `${this.directories["apps"]}/${appName}.app`;
 
@@ -287,7 +283,6 @@ export class StoreRepo {
             ).arrayBuffer(),
         );
         let zip = await unzip(zipFile);
-        console.log(zip);
 
         const path = `${this.directories["libs"]}/${libName}.lib`;
 
@@ -455,7 +450,6 @@ export class StoreRepoLegacy {
             ).arrayBuffer(),
         );
         let zip = await unzip(zipFile);
-        console.log(zip);
 
         const path = `${this.directories["apps"]}/${appName}.app`;
 
@@ -504,7 +498,6 @@ export class StoreRepoLegacy {
             ).arrayBuffer(),
         );
         let zip = await unzip(zipFile);
-        console.log(zip);
 
         const path = `${this.directories["libs"]}/${libName}.lib`;
 

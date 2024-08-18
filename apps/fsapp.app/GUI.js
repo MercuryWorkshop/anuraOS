@@ -84,8 +84,6 @@ let headerBeingResized;
 // Where the magic happens. I.e. when they're actually resizing
 const onMouseMove = (e) =>
     requestAnimationFrame(() => {
-        console.log("onMouseMove");
-
         (window.getSelection
             ? window.getSelection()
             : document.selection
@@ -120,8 +118,6 @@ const onMouseMove = (e) =>
     });
 
 const onMouseUp = () => {
-    console.log("onMouseUp");
-
     window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", onMouseUp);
     headerBeingResized.classList.remove("header--being-resized");
@@ -129,8 +125,6 @@ const onMouseUp = () => {
 };
 
 const initResize = ({ target }) => {
-    console.log("initResize");
-
     headerBeingResized = target.parentNode;
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);

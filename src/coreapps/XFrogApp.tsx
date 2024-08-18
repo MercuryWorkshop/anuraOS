@@ -15,7 +15,7 @@ class XFrogApp extends App {
     }
 
     async startup() {
-        console.log("Starting Xfrog Client");
+        console.debug("Starting Xfrog Client");
         let buf: string[] = [];
         await anura.x86!.openpty(
             `/bin/ash -c 'while true; do DISPLAY=:0 xdotool search --maxdepth 1 ".*" 2>/dev/null; echo EOF; sleep 2; done'`,
@@ -40,7 +40,7 @@ class XFrogApp extends App {
     }
 
     async proc_xwids(wids: string[]) {
-        console.log("xwids: " + wids);
+        console.debug("xwids: " + wids);
 
         for (const wid of wids) {
             if (!this.xwindows[wid]) {
@@ -123,8 +123,6 @@ class XFrogApp extends App {
                         sfocus();
                     };
                     win.onresize = async (w, h) => {
-                        // onResize
-                        console.log(w, h);
                         await anura.x86!.runcmd(
                             `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                                 win!.width

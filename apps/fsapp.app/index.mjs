@@ -104,7 +104,6 @@ self.loadPath = async (path) => {
     const table = document.querySelector("tbody");
     table.innerHTML = "";
     for (const file of files) {
-        console.log(file);
         const stats = await fs.promises.stat(`${path}/${file}`);
         if (stats.isDirectory()) {
             const element = html`<${Folder} path=${path} file=${file} stats=${stats}></${File}>`;
@@ -113,7 +112,6 @@ self.loadPath = async (path) => {
         } else {
             const ext = file.split("/").pop().split(".").pop();
             const element = html`<${File} path=${path} file=${file} stats=${stats}></${File}>`;
-            console.log(element);
             if (
                 self.filePicker &&
                 self.filePicker.type !== "dir" &&
@@ -121,7 +119,6 @@ self.loadPath = async (path) => {
             ) {
                 table.appendChild(element.children[1].children[0]);
             } else if (!self.filePicker) {
-                console.log(element.children[1].children[0]);
                 table.appendChild(element.children[1].children[0]);
             }
         }

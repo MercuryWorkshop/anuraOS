@@ -22,7 +22,7 @@ class Networking {
                 Socket: this.libcurl.WispConnection,
                 TLSSocket: this.libcurl.TLSSocket,
             });
-            console.log("libcurl.js ready!");
+            console.debug("libcurl.js ready!");
         });
     }
     loopback = {
@@ -85,7 +85,6 @@ class Networking {
                             async (data) => {
                                 try {
                                     buffer += data;
-                                    // console.log("got data " + data);
                                     if (buffer.endsWith(endMarker)) {
                                         buffer = buffer.replace(endMarker, ""); // Get rid of endmarker from buffer
                                         const binaryData = Filer.Buffer.from(

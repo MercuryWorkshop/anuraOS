@@ -102,10 +102,6 @@ class AltTabView {
     }
 
     onComboPress() {
-        console.log("comboPress");
-        console.log("index", this.state.index, "windows", {
-            windows: this.state.windows,
-        });
         if (!this.state.active) {
             this.state.index = 1 % this.state.windows.length;
             this.state.active = true;
@@ -115,7 +111,6 @@ class AltTabView {
     }
 
     onModRelease() {
-        console.log("modRelease");
         if (this.state.active) {
             this.state.active = false;
             const appWin = this.state.windows[this.state.index]!;

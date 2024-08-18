@@ -51,7 +51,6 @@ class NotificationService {
         });
 
         useChange(use(notif.state.timedOut), (timedOut) => {
-            console.log("timedOut", timedOut);
             if (timedOut) this.remove(notif, true);
         });
 

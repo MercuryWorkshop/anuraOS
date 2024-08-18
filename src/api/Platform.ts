@@ -22,10 +22,8 @@ class Platform {
 
         if (typeof ua === "string") {
             if (mobileRE.test(ua) && !notMobileRE.test(ua)) {
-                console.log("Mobile detected");
                 platform = "mobile";
             } else if (tabletRE.test(ua)) {
-                console.log("Tablet detected");
                 platform = "tablet";
             }
 
@@ -36,7 +34,6 @@ class Platform {
                 ua.indexOf("Macintosh") !== -1 &&
                 ua.indexOf("Safari") !== -1
             ) {
-                console.log("Mobile detected");
                 platform = "mobile";
             }
         }

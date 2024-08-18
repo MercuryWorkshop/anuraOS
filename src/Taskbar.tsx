@@ -86,7 +86,6 @@ class Taskbar {
 
                             icons.forEach((icn) => {
                                 const rect = icn.getBoundingClientRect();
-                                console.log(rect.left, rect.right);
                                 rects.push(rect);
                             });
 
@@ -163,7 +162,6 @@ class Taskbar {
                 "New Window",
                 () => {
                     const potentialFuture = app.open();
-                    console.log(potentialFuture);
                     if (
                         typeof potentialFuture !== "undefined" &&
                         //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
@@ -230,11 +228,8 @@ class Taskbar {
             // HACK HACK DUMB HACK
             c.style.top = "";
             c.style.bottom = "69px";
-
-            console.log(c);
         } else {
             const potentialFuture = app.open();
-            console.log(potentialFuture);
             if (
                 typeof potentialFuture !== "undefined" &&
                 //@ts-ignore - In App.tsx, open() returns a void, but in nearly every other case it returns a Promise<WMWindow> | undefined
@@ -271,7 +266,6 @@ class Taskbar {
         });
 
         document.addEventListener("anura-force-taskbar-update", () => {
-            console.log("got upd event");
             this.updateTaskbar();
         });
 
@@ -448,12 +442,9 @@ class Taskbar {
         this.state.showBar =
             this.state.pinnedApps.length > 0 &&
             this.state.activeApps.length > 0;
-
-        console.log(this.state.activeApps);
     }
 
     updateRadius() {
-        console.log(snappedWindows);
         if (this.maximizedWins.length > 0 || snappedWindows.length > 0) {
             this.state.rounded = false;
         } else {
@@ -463,7 +454,6 @@ class Taskbar {
             )
                 this.state.rounded = true;
         }
-        console.log("max:", this.maximizedWins.length);
     }
     // removeShortcuts() {
     //     for (const name in this.shortcuts) {

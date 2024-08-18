@@ -371,7 +371,6 @@ const LauncherShortcut: Component<
             class="app"
             on:click={this.onclick}
             on:contextmenu={(e: PointerEvent) => {
-                console.log("ctx event fired");
                 e.preventDefault();
 
                 const rect = document.body.getBoundingClientRect();

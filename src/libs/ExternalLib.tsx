@@ -34,7 +34,6 @@ class ExternalLib extends Lib {
 
         Object.keys(manifest.versions).forEach((version) => {
             this.versions[version] = source + "/" + manifest.versions[version];
-            console.log(this.versions[version]);
         });
 
         if (manifest.installHook) {

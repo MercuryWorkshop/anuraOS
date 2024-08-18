@@ -16,12 +16,7 @@ class ContextMenuAPI {
     }
     #isShown = false;
     constructor(large = false) {
-        console.log("creating context menu");
-
-        console.log("large", large);
         this.large = large;
-        console.log("this.large", this.large);
-        console.log(this.#element.classList);
         if (this.large) {
             this.#element.classList.add("large"); // why
         }
@@ -75,9 +70,6 @@ class ContextMenuAPI {
         this.#isShown = true;
         this.#element.focus();
 
-        // Check for bounding and fix if necessary
-        console.log(this.#element.getBoundingClientRect());
-        console.log(document.body.getBoundingClientRect());
         if (
             this.#element.getBoundingClientRect().bottom >=
             document.body.getBoundingClientRect().bottom

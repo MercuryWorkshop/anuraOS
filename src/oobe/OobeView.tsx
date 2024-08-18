@@ -10,7 +10,6 @@ class OobeView {
 
     constructor() {
         useChange([this.state.offlineEnabled, this.state.v86Enabled], () => {
-            console.log(this.state.offlineEnabled, this.state.v86Enabled);
             this.state.dlsize = "0MB";
 
             if (this.state.offlineEnabled) {
@@ -285,7 +284,7 @@ class OobeView {
                     await installx86();
                 }
                 if (anura.settings.get("use-sw-cache")) await preloadFiles();
-                console.log("Cached important files");
+                console.debug("Cached important files");
 
                 this.complete();
             },
@@ -323,7 +322,7 @@ class OobeView {
 
 async function installx86() {
     const tracker = document.getElementById("tracker");
-    console.log("installing x86");
+    console.debug("installing x86");
     const x86image = anura.settings.get("x86-image");
     tracker!.innerText = "Downloading x86 kernel";
     const bzimage = await fetch(anura.config.x86[x86image].bzimage);
@@ -340,7 +339,7 @@ async function installx86() {
     } else if (anura.config.x86[x86image].rootfs) {
         // TODO: add batching, this will bottleneck and OOM if the rootfs is too large
 
-        console.log("fetching");
+        console.debug("fetching");
         // const files = await Promise.all(
         //     anura.config.x86[x86image].rootfs.map((part: string) => fetch(part)),
         // );
@@ -388,7 +387,7 @@ async function installx86() {
                     ) {
                         done = true;
                     }
-                    console.log(
+                    console.debug(
                         anura.config.x86[x86image].rootfs.length -
                             doneSoFar +
                             " chunks to go",
@@ -415,14 +414,13 @@ async function installx86() {
             await sleep(200);
         }
 
-        console.log(files);
-        console.log("constructing blobs...");
+        console.debug("constructing blobs...");
         tracker!.innerText = "Concatenating and installing x86 rootfs";
         //@ts-ignore
         await anura.x86hdd.loadfile(new Blob(files));
     }
 
-    console.log("done");
+    console.debug("done");
 }
 async function preloadFiles(tracker = document.getElementById("tracker")) {
     try {

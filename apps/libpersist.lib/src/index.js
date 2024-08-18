@@ -20,9 +20,7 @@ export class PersistenceProvider {
         this.anura = anura;
     }
 
-    async init() {
-        console.log("init");
-    }
+    async init() {}
 
     async get(prop) {
         return this.cache[prop];

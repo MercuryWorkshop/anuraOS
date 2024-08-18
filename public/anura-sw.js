@@ -61,7 +61,7 @@ async function currentFs() {
     ]);
 
     if (winner.fallback) {
-        console.log("Falling back to Filer");
+        console.debug("Falling back to Filer");
         // unset isConnected so that we don't hold up future requests
         self.isConnected = undefined;
     }
@@ -116,39 +116,9 @@ addEventListener("message", (event) => {
     }
 });
 
-async function handleRequests({ url, request, event, params }) {
-    let clients = (await self.clients.matchAll()).filter(
-        (v) => new URL(v.url).pathname === "/",
-    ); // clients that aren't at a v86able url are completely useless
-    if (clients.length < 1)
-        return new Response("no clients were available to take your request");
-    let client = clients[0];
-
-    let uuid = crypto.randomUUID();
-
-    console.log(request);
-
-    client.postMessage({
-        anura_target: "anura.x86.proxy",
-        id: uuid,
-        value: {
-            url: request.url.substring(request.url.indexOf("/x86/") + 5),
-            headers: Object.fromEntries(request.headers.entries()),
-            method: request.method,
-        },
-    });
-
-    console.log("want uuid" + uuid);
-    let resp = await new Promise((resolve) => {
-        callbacks[uuid] = resolve;
-    });
-
-    return new Response(JSON.stringify(resp.files));
-}
-
 workbox.routing.registerRoute(/\/extension\//, async ({ url }) => {
     const { fs } = await currentFs();
-    console.log("Caught a aboutbrowser extension request");
+    console.debug("Caught a aboutbrowser extension request");
     try {
         return new Response(await fs.promises.readFile(url.pathname));
     } catch (e) {
@@ -373,7 +343,7 @@ workbox.routing.registerRoute(
     /^(?!.*(\/config.json|\/MILESTONE|\/x86images\/|\/service\/))/,
     async ({ url }) => {
         if (cacheenabled === undefined) {
-            console.log("retrieving cache value");
+            console.debug("retrieving cache value");
             let result = await idbKeyval.get("cacheenabled");
             if (result !== undefined || result !== null) {
                 cacheenabled = result;
@@ -464,7 +434,7 @@ methods.forEach((method) => {
     workbox.routing.registerRoute(
         /\/service\//,
         async (event) => {
-            console.log("Got UV req");
+            console.debug("Got UV req");
             return await uv.fetch(event);
         },
         method,
@@ -505,7 +475,6 @@ function offlineError() {
 }
 
 async function initSw() {
-    console.log("initing");
     for (const client of await self.clients.matchAll()) {
         client.postMessage({
             anura_target: "anura.sw.reinit",

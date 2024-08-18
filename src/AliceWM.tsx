@@ -584,7 +584,6 @@ class WMWindow extends EventTarget implements Process {
         this.dispatchEvent(new Event("maximize"));
         this.onmaximize();
         this.oldstyle = this.element.getAttribute("style");
-        console.log(this.oldstyle);
         const width =
             window.innerWidth ||
             document.documentElement.clientWidth ||
@@ -656,7 +655,6 @@ class WMWindow extends EventTarget implements Process {
 
         this.dispatchEvent(new Event("unmaximize"));
         this.onunmaximize();
-        console.log("restoring");
         if (!anura.settings.get("disable-animation"))
             this.element.classList.add("maxtransition");
         this.element.classList.add("scaletransition");
@@ -724,13 +722,10 @@ class WMWindow extends EventTarget implements Process {
             }, 200);
     }
     minimize() {
-        console.log(this.snapped);
         if (this.snapped) {
             const thisSnappedWindow = snappedWindows.find(
                 (x) => x.window === this,
             );
-            console.log(thisSnappedWindow);
-
             minimizedSnappedWindows.push(thisSnappedWindow!);
             snappedWindows.splice(
                 snappedWindows.indexOf(thisSnappedWindow!),
@@ -903,15 +898,12 @@ class WMWindow extends EventTarget implements Process {
                     bar.leftWindow.element.classList.remove("remaxtransitionx");
                 }, 200);
         }
-
-        console.log("calling onSnap", this.onsnap);
         this.dispatchEvent(
             new MessageEvent("snap", {
                 data: { snapDirection: snapDirection },
             }),
         );
         this.onsnap(snapDirection);
-        console.log(snapDirection);
         switch (snapDirection) {
             case "left":
                 this.element.style.width = scaledWidth - 4 + "px";
@@ -959,16 +951,6 @@ class WMWindow extends EventTarget implements Process {
                 break;
         }
 
-        console.log(
-            this,
-            snapDirection,
-            this.element.style.top,
-            height,
-            this.element.style.left,
-            width,
-            this.element.style.width,
-            this.element.style.height,
-        );
         this.dispatchEvent(
             new MessageEvent("resize", {
                 data: { width: this.width, height: this.height },
@@ -1042,7 +1024,6 @@ class WMWindow extends EventTarget implements Process {
         if (left + width === windowWidth) {
             return "right";
         }
-        console.log(left, width, windowWidth);
         return null;
     }
 

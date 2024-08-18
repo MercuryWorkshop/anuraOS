@@ -10,7 +10,7 @@ class Settings {
                 anura_target: "anura.cache",
                 value: this.cache["use-sw-cache"],
             });
-            console.log(
+            console.debug(
                 "ANURA-SW: For this boot, cache will be " +
                     (this.cache["use-sw-cache"] ? "enabled" : "disabled"),
             );
