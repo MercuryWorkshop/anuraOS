@@ -4,18 +4,24 @@ class SystrayIcon {
     onrightclick = (event: MouseEvent) => {};
     constructor(template: any) {
         this.element.onclick = (event) => {
-            try {
-                this.onclick(event);
-            } catch (e) {
-                this.destroy();
+            event.preventDefault();
+            if (this.onclick) {
+                try {
+                    this.onclick(event);
+                } catch (e) {
+                    this.destroy();
+                }
             }
             event.stopPropagation();
         };
         this.element.oncontextmenu = (event) => {
-            try {
-                this.onrightclick(event);
-            } catch (e) {
-                this.destroy();
+            event.preventDefault();
+            if (this.onrightclick) {
+                try {
+                    this.onrightclick(event);
+                } catch (e) {
+                    this.destroy();
+                }
             }
             event.stopPropagation();
         };
