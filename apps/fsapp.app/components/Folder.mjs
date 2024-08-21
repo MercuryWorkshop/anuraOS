@@ -2,7 +2,7 @@ export function Folder() {
     this.mount = async () => {
         this.absolutePath = `${this.path}/${this.file}`;
         this.description = "Folder";
-        this.iconEle = anura.files.folderIcon;
+        this.iconElement.src = anura.files.folderIcon;
         try {
             let manifestPath = `${this.absolutePath}/manifest.json`;
 
@@ -12,12 +12,12 @@ export function Folder() {
 
             this.iconElement.src = `/fs${this.absolutePath}/${manifest.icon}`;
             this.iconElement.onerror = () => {
-                icon.src = anura.files.folderIcon;
+                this.iconElement.src = anura.files.folderIcon;
+                this.description = "Folder";
             };
             this.description = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
         } catch (error) {
             this.iconElement.src = anura.files.folderIcon;
-            console.error(error);
         }
     };
     return html`
