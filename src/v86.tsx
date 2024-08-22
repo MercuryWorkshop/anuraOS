@@ -390,6 +390,49 @@ class V86Backend {
             this.ptyNum++;
         });
     }
+    openBinaryPty(
+        command: string,
+        cols: number,
+        rows: number,
+        onData: (data: Uint8Array) => void,
+    ): Promise<number> {
+        if (!anura.x86!.ready) {
+            throw new Error("PTY driver has not started");
+        }
+
+        this.sendWispFrame({
+            type: "CONNECT",
+            streamID: this.ptyNum,
+            command: command,
+            dataCallback: (data: Uint8Array) => {
+                onData(data);
+            },
+            closeCallback: (data: number) => {
+                console.log(data);
+            },
+        });
+        const ptyNumberStatic = this.ptyNum; // this.ptyNum changes and to avoid a race condition this is needed;
+        setTimeout(() => {
+            console.log(`pty ${this} reizing to ${rows}x${cols}`);
+            this.resizepty(ptyNumberStatic, cols, rows);
+        }, 0);
+
+        return new Promise((resolve) => {
+            resolve(this.ptyNum);
+            this.ptyNum++;
+        });
+    }
+    writeBinaryPTY(TTYn: number, data: Uint8Array) {
+        if (TTYn === -1) {
+            return;
+        }
+
+        this.sendWispFrame({
+            type: "DATA",
+            streamID: TTYn,
+            data: data,
+        });
+    }
 
     writepty(TTYn: number, data: string) {
         if (TTYn === -1) {
