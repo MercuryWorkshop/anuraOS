@@ -61,7 +61,6 @@ export function SideBar() {
                     }
 
                     await sh.promises.mkdirp(path);
-                    if (err) console.error(error);
                     await LocalFS.new(path);
                     reload();
                 }}
