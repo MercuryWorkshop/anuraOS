@@ -59,11 +59,11 @@ export function SideBar() {
                         );
                         return;
                     }
-                    sh.mkdirp(path, async function (err) {
-                        if (err) console.error(error);
-                        await LocalFS.new(path);
-                        reload();
-                    });
+
+                    await sh.promises.mkdirp(path);
+                    if (err) console.error(error);
+                    await LocalFS.new(path);
+                    reload();
                 }}
             >
                 <i class="material-symbols-outlined">usb</i>Mount local drive
