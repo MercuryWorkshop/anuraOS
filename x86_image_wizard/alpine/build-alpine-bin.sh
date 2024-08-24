@@ -46,6 +46,8 @@ sudo mount "$loop" "$OUT_ROOTFS_MNT"
 
 sudo tar -xf "$OUT_ROOTFS_TAR" -C "$OUT_ROOTFS_MNT"
 sudo rm -f "$OUT_ROOTFS_MNT/.dockerenv"
+sudo cp resolv.conf "$OUT_ROOTFS_MNT/etc/resolv.conf"
+sudo cp hostname "$OUT_ROOTFS_MNT/etc/hostname"
 
 sudo cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/alpine-boot"
 sudo umount "$loop"

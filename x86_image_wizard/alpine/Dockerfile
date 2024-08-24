@@ -33,7 +33,6 @@ RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY twisp-service /etc/init.d/
 COPY anura-boot /etc/init.d/
 RUN chmod +x /etc/init.d/twisp-service /etc/init.d/anura-boot
-RUN printf "nameserver 192.168.86.1\n" > /etc/resolv.conf
 
 # setup init system
 COPY rc.conf /etc/rc.conf
