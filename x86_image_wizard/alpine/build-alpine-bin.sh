@@ -8,7 +8,11 @@ else
     echo "You aren't in the docker group, please run usermod -a -G docker $USER && newgrp docker"
     exit 2
 fi
-
+# good for debugging
+pause() {
+    while read -r -t 0.001; do :; done
+    read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n'
+}
 
 IMAGES="$(dirname "$0")"/../../build/x86images
 OUT_ROOTFS_TAR="$IMAGES"/alpine-rootfs.tar
@@ -41,9 +45,9 @@ mkdir -p "$OUT_ROOTFS_MNT"
 sudo mount "$loop" "$OUT_ROOTFS_MNT"
 
 sudo tar -xf "$OUT_ROOTFS_TAR" -C "$OUT_ROOTFS_MNT"
+sudo rm -f "$OUT_ROOTFS_MNT/.dockerenv"
 
 sudo cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/alpine-boot"
-
 sudo umount "$loop"
 sudo losetup -d "$loop"
 rm "$OUT_ROOTFS_TAR"

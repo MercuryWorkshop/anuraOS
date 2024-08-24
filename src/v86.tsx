@@ -482,11 +482,15 @@ class V86Backend {
             return result;
         }
         let pointer = "";
-        const pty = await this.openpty("/bin/anuramouse", 100, 100, (data) => {
-            pointer = data.slice(0, -2);
-            console.log(pointer);
-            ready = true;
-        });
+        const pty = await this.openpty(
+            "/bin/ash -c 'env DISPLAY=:0 /bin/anuramouse'",
+            100,
+            100,
+            (data) => {
+                pointer = data.slice(0, -2);
+                ready = true;
+            },
+        );
         function write_uint(i: number, addr: number) {
             // I have to redefine this here because "this" breaks
             const bytes = [i, i >> 8, i >> 16, i >> 24].map((a) => a % 256);
