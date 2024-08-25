@@ -19,7 +19,6 @@ app.use((req, res, next) => {
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/build"));
 app.use("/apps", express.static(__dirname + "/apps"));
-app.use("/bin", express.static(__dirname + "/bin"));
 app.use(express.static(__dirname + "/aboutproxy/static"));
 
 const server = app.listen(port, () => console.log("Listening on port: ", port));
