@@ -540,7 +540,10 @@ class SettingsApp extends App {
                                             Resize Disk
                                         </button>
                                     </div>
-
+                                    <SettingText
+                                        title="Memory Size (MB)"
+                                        setting="x86-memory"
+                                    />
                                     <div class="settings-item">
                                         <span>
                                             <span style="margin-left: 10px; margin-right: 10px;">

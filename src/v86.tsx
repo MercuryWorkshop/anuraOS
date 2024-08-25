@@ -275,7 +275,7 @@ class V86Backend {
 
         this.emulator = new V86Starter({
             wasm_path: "/lib/v86.wasm",
-            memory_size: 512 * 1024 * 1024,
+            memory_size: anura.settings.get("x86-memory") * 1024 * 1024,
             vga_memory_size: 8 * 1024 * 1024,
             screen_container: this.screen_container,
             initrd: {

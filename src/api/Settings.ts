@@ -39,12 +39,8 @@ class Settings {
             initial["wisp-url"] = url;
         }
 
-        if (!initial["bare-url"]) {
-            initial["bare-url"] = location.origin + "/bare/";
-        }
-
-        if (!initial["relay-url"]) {
-            alert("figure this out later");
+        if (!initial["x86-memory"]) {
+            initial["x86-memory"] = 512;
         }
 
         if (!initial["wallpaper-fit"]) {
