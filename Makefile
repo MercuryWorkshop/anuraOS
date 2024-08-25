@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
+all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons build/bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
 
 full: all rootfs-alpine
 
@@ -120,11 +120,11 @@ build/assets/matter.css:
 apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 	cd apps/libfileview.lib; bash geticons.sh
 
-bin/chimerix.ajs: chimerix/*
-	mkdir -p bin
+build/bin/chimerix.ajs: chimerix/src/*
+	mkdir -p build/bin
 	cd chimerix; npm i
 	cd chimerix; npx rollup -c rollup.config.js
-	cp chimerix/dist/chimerix.ajs bin/chimerix.ajs
+	cp chimerix/dist/chimerix.ajs build/bin/chimerix.ajs
 
 clean:
 	rm -rf build
