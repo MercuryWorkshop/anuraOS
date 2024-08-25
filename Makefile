@@ -182,8 +182,7 @@ static: all
 	cp -r aboutproxy/static/* static/
 	cp -r apps/ static/apps/
 	cp -r build/* static/
-	cp -r public/* static/ 
-	cp -r bin/ static/bin/
+	cp -r public/* static/
 
 server: FORCE
 	cd server; npx ts-node server.ts
