@@ -38,6 +38,7 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 -   A recent version of `java` (11+)
 -   `inotifytools`
 -   `rustup`
+-   `wasm-opt`
 -   `make`
 -   `gcc`
 -   `clang`
