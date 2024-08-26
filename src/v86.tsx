@@ -316,6 +316,18 @@ class V86Backend {
             event.preventDefault();
             await this.virt_hda.save();
         });
+        let data = "";
+        this.emulator.add_listener(
+            "serial0-output-byte",
+            function (byte: number) {
+                const char = String.fromCharCode(byte);
+                data += char;
+                if (char === "\n") {
+                    console.log("SERIAL0: " + data);
+                    data = "";
+                }
+            },
+        );
         this.twispinit();
     }
 
@@ -427,11 +439,32 @@ class V86Backend {
             return;
         }
 
-        this.sendWispFrame({
-            type: "DATA",
-            streamID: TTYn,
-            data: data,
-        });
+        // Through much torture, trial, and error, I determined that if you send above 2071 bytes it crashes
+        const sendChunks = (tty: number, typedArray: Uint8Array) => {
+            let remaining = typedArray.byteLength;
+            let offset = 0;
+            while (remaining !== 0) {
+                const frameLength = Math.min(remaining, 2071);
+                const frame = new Uint8Array(
+                    typedArray.buffer,
+                    offset + typedArray.byteOffset,
+                    frameLength,
+                );
+                this.writeBinaryPTY(tty, frame);
+                offset += frameLength;
+                remaining -= frameLength;
+            }
+        };
+
+        if (data.byteLength <= 2071) {
+            this.sendWispFrame({
+                type: "DATA",
+                streamID: TTYn,
+                data: data,
+            });
+        } else {
+            sendChunks(TTYn, data);
+        }
     }
 
     writepty(TTYn: number, data: string) {
@@ -539,6 +572,7 @@ class V86Backend {
                     data,
                 );
             } else {
+                console.log("congested!");
                 connections[streamID].congested = true;
                 congestedBuffer.push({ data: data, type: type });
             }
