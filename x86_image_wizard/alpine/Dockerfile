@@ -8,7 +8,7 @@ RUN  apk add --update \
         htop vim nano \
     && \
     setup-xorg-base xhost xterm xcalc xdotool xkill || true && \
-    setup-devd udev || true && \
+    setup-devd mdevd || true && \
     touch /root/.Xdefaults && \
     rm /etc/motd /etc/issue && \
     setup-hostname anura && \
@@ -16,6 +16,7 @@ RUN  apk add --update \
     chsh -s /bin/bash && \
     echo "host9p /root 9p defaults 0 0" >> /etc/fstab
 
+ENV CACHE_BUST=123
 COPY xorg.conf /etc/X11/
 COPY X11/* /etc/X11/
 

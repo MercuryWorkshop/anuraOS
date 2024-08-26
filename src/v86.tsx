@@ -292,7 +292,7 @@ class V86Backend {
             },
 
             cmdline:
-                "rw init=/sbin/init root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off mitigations=off",
+                "rw init=/sbin/init root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off mitigations=off ipv6.disable=1",
             filesystem: { fs, sh, Path, Buffer },
 
             bios: { url: "/bios/seabios.bin" },
