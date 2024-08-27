@@ -204,6 +204,7 @@ const SettingText: Component<
         setting: string;
         callback?: any;
         value?: string;
+        type?: string;
     },
     {
         //
@@ -216,7 +217,26 @@ const SettingText: Component<
                 id={this.setting}
                 class="settings-item-text-input"
                 on:change={(event: any) => {
-                    anura.settings.set(this.setting, event.target.value);
+                    switch (this.type) {
+                        case "number":
+                            anura.settings.set(
+                                this.setting,
+                                parseInt(event.target.value),
+                            );
+                            break;
+                        case "string":
+                            anura.settings.set(
+                                this.setting,
+                                event.target.value,
+                            );
+                            break;
+                        default:
+                            anura.settings.set(
+                                this.setting,
+                                event.target.value,
+                            );
+                            break;
+                    }
                     if (this.callback) this.callback();
                 }}
                 placeholder={anura.settings.get(this.setting)}
@@ -543,6 +563,7 @@ class SettingsApp extends App {
                                     <SettingText
                                         title="Memory Size (MB)"
                                         setting="x86-memory"
+                                        type="number"
                                     />
                                     <div class="settings-item">
                                         <span>
