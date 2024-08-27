@@ -1,20 +1,20 @@
 FROM i386/alpine:edge
 
-RUN  apk add --update \
-        alpine-base openrc alpine-conf bash ncurses shadow curl \
+RUN apk add --update \
+        alpine-base alpine-conf openrc bash ncurses shadow curl \
         linux-lts linux-firmware-none linux-firmware-sb16 linux-headers \
         gcc make gcompat musl-dev libx11-dev xinit \
-        bind-tools \
-        htop vim nano \
-    && \
-    setup-xorg-base xhost xterm xcalc xdotool xkill || true && \
-    setup-devd mdevd || true && \
-    touch /root/.Xdefaults && \
-    rm /etc/motd /etc/issue && \
-    setup-hostname anura && \
-    passwd -d root && \
-    chsh -s /bin/bash && \
-    echo "host9p /root 9p defaults 0 0" >> /etc/fstab
+        curl bind-tools \
+        htop vim nano
+
+RUN setup-xorg-base xhost xterm xcalc xdotool xkill || true
+RUN setup-devd udev || true
+RUN touch /root/.Xdefaults
+RUN rm /etc/motd /etc/issue
+RUN setup-hostname anura
+RUN passwd -d root
+RUN chsh -s /bin/bash
+RUN echo "host9p /root 9p defaults 0 0" >> /etc/fstab
 
 ENV CACHE_BUST=123
 COPY xorg.conf /etc/X11/
