@@ -8,7 +8,7 @@ class GenericApp extends App {
     }
 
     async open(args: string[] = []): Promise<WMWindow | undefined> {
-        alert(
+        anura.dialog.alert(
             "This app is not supposed to be opened as it is a placeholder for other apps.",
         );
         return;

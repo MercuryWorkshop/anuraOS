@@ -85,9 +85,6 @@ workbox.core.clientsClaim();
 importScripts("/libs/idb-keyval/idb-keyval.js");
 
 var cacheenabled;
-workbox.routing.registerRoute(/\/x86\/(.*)/, (req) => {
-    return handleRequests(req); // need to do this because of the dumb way workbox handles async
-});
 
 const callbacks = {};
 const filepickerCallbacks = {};
