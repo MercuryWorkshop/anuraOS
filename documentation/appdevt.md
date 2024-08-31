@@ -6,7 +6,7 @@ See [this document](./templates/template.app/README.md) for instructions on how 
 
 AnuraOS apps are simple creatures. They live inside folders with the suffix `.app` and the resources specific to each app are contained within that folder.
 
-## Manifest
+### Manifest
 
 Each app contains a `manifest.json`, which defines the functionality of the app. See [`manifest.json.example`](./manifest.json.example).
 
@@ -29,7 +29,7 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
     -   `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
     -   `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
 
-## Tips and Tricks
+### Tips and Tricks
 
 -   In iframed apps, Anura still gives you full access to the APIs through the `anura` object and also gives you access to your app instance and the Window in the Window Manager. You can access the WMWindow using `instanceWindow` and access your anura app instance using `instance` in your javascript. This could be used to manipulate the window or invoke actions on your app instance. An example is shown below where a back arrow is drawn on the window decorations in the marketplace app.
 
@@ -159,8 +159,8 @@ if (instance.manifest.marketplace) {
     } else {
         repoApp = marketplaceRepo.getApp(instance.package);
     }
-    if (instance.manifest.version !=== repoApp.version) {
-        repo.installApp(instance.package)
+    if (instance.manifest.version !== repoApp.version) {
+        repo.installApp(instance.package);
     }
 }
 ```
@@ -218,11 +218,11 @@ document.body.appendChild(<App />);
 
 A demo app using dreamland can be found [here](/apps/dreamlanddemo.app/index.js). This app is the same as the `$store` example above, but using the `html` tag function instead of JSX to demonstrate that dreamland can be used without a build step.
 
-# AnuraOS Libraries
+## AnuraOS Libraries
 
 AnuraOS libraries are just like apps but contain utilities or functionality that other apps could import and use. They live inside folders with the suffix `.lib` and the resources specific to each app are contained within that folder.
 
-## Manifest
+### Manifest
 
 -   You write a library that consists of a `manifest.json` file and an ES module. An example of the manifest file is below.
     ```json
@@ -245,7 +245,7 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
     -   `installHook` is a file that is run when the library is installed. It should have a default export that is a function that takes the anura instance as an argument.
     -   `currentVersion` is the current version of the library, which will be used as the default version when using the [`anura.import`](./Anura-API.md#anuraimport) api.
 
-## Usage
+### Usage
 
 -   Libraries can be imported using the [`anura.import`](./Anura-API.md#anuraimport) api. This api takes the package id of the library and an optional version number. The version number is specified by appending `@<version>` to the package id. If no version is specified, the current version of the library is used.
 
@@ -260,11 +260,11 @@ let lib = await anura.import("anura.examplelib");
 // Do stuff with the library.
 ```
 
-# System Libraries
+## System Libraries
 
 Anura has a assortment of preinstalled system libraries to streamline the developer experience. This part of the documentation outlines how to use them in your application using the [`anura.import`](./Anura-API.md#anuraimport) api.
 
-## libbrowser
+### libbrowser
 
 This library allows you to interact with Anura's browser. Instead of using `window.open` in your anura apps, using this API will ensure that the webpage will open up in the Anura Browser.
 
@@ -276,9 +276,9 @@ const browser = await anura.import("anura.libbrowser");
 browser.openTab("https://google.com/");
 ```
 
-## libfilepicker
+### libfilepicker
 
-This library allows you to select files from inside of anura's filesystem. It returns a path and supports both files and folders.
+This library allows you to select files from inside of anura's filesystem. It returns a path(s) and supports both files and folders.
 
 ```js
 let picker = await anura.import("anura.filepicker");
@@ -295,7 +295,7 @@ let multipleFiles = await picker.selectFile({
 let folder = await picker.selectFolder();
 ```
 
-## libpersist
+### libpersist
 
 This library allows you to create and manage persistent data stores. It uses the anura filesystem to store data.
 
@@ -329,9 +329,9 @@ proxy.key = "value";
 let value = await proxy.key;
 ```
 
-## File Handlers
+### File Handlers
 
-Libraries can also be setup to handle files. A file handler library at the least requires a `openFile` function inside of the file handler, but can be extended. An example is shown below for a simple text editor.
+Libraries can also be setup to handle files. A file handler library at the least requires a `openFile` function inside of the file handler, but can be extended. An example is shown below for a simple text editor that is integrated by default in anura.
 
 ```js
 export function openFile(path) {

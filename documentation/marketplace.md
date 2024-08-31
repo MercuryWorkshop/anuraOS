@@ -89,8 +89,8 @@ Each app is supposed to have its own manifest that lists details about the app.
 -   `screenshots`: `Array [{ path, desc }]` - Array of all the screenshots of an app. Optional.
 -   `screenshots.path`: `String` - Path (from app directory) to the screenshots. Required if object is present.
 -   `screenshots.desc`: `String` - Description of the screenshots. Optional.
--   `version`: `String` - Version of the program. Used in the future for the anura update api. Optional.
--   `dependencies`: `Array [ String ]` - Array of all the screenshots of all the dependencies of an app. Will be installed alongside your app. Optional.
+-   `version`: `String` - Version of the program. Optional.
+-   `dependencies`: `Array [ String ]` - Array of of all the dependencies of an app. Will be installed alongside your app. Optional.
 -   `category`: `String` - Program category. Required.
 
 Here is an example of a manifest.json
