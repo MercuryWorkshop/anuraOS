@@ -73,7 +73,9 @@ class RegEdit extends App {
 
     css = css`
         display: flex;
-        border-top: 1px solid var(--theme-border) #pane-left {
+        border-top: 1px solid var(--theme-border);
+
+        #pane-left {
             width: max(10%, 200px);
             border-right: 1px solid var(--theme-border);
             overflow: scroll;
