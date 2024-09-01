@@ -34,13 +34,23 @@ class RecoveryApp extends App {
         }
 
         .recovery-app-content {
-            display: flex;
+            display: grid;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
             padding: 1rem;
             gap: 1rem;
+            grid-template-columns: 10em 10em;
+        }
+
+        button {
+            width: 10em;
+        }
+
+        #return {
+            grid-column: span 2;
+            width: 21em;
         }
 
         .recovery-app-content p {
@@ -158,12 +168,24 @@ class RecoveryApp extends App {
                 <button
                     style="background: #1B5E20"
                     class="matter-button-contained"
+                    title="Open Registry Editor"
+                    on:click={() => {
+                        anura.apps["anura.regedit"].open();
+                    }}
+                >
+                    Registry Editor
+                </button>
+
+                <button
+                    style="background: #1B5E20"
+                    class="matter-button-contained"
                     title="Return to normal mode"
+                    id="return"
                     on:click={() => {
                         window.location.reload();
                     }}
                 >
-                    Return
+                    Return to normal mode
                 </button>
             </div>
         </div>
