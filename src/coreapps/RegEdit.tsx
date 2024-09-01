@@ -200,9 +200,10 @@ class RegEdit extends App {
                                                     )
                                                     .then((value) => {
                                                         if (value !== null) {
-                                                            const val2 = parseInt(
-                                                                value as string,
-                                                            );
+                                                            const val2 =
+                                                                parseInt(
+                                                                    value as string,
+                                                                );
                                                             sel[item[0]] = val2;
                                                             anura.settings.save();
                                                         }
