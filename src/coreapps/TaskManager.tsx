@@ -3,7 +3,7 @@ class TaskManager extends App {
     constructor() {
         super();
         this.name = "Task Manager";
-        this.icon = "/assets/icons/generic.png";
+        this.icon = "/assets/icons/system-monitor.svg";
         this.package = "anura.taskmgr";
     }
 
