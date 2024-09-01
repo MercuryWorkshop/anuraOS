@@ -16,14 +16,22 @@ const DisclosureGroup: Component<{
     if (!this.level) this.level = 1;
 
     this.css = `
-    margin-left: ${0.8 * this.level!}em;
+    padding-left: ${0.8 * this.level!}em;
     `;
 
     return (
-        <div>
+        <div
+            class:selected={use(this.sel, (sel) => sel === this.entry[1])}
+            class={this.css}
+        >
             {hasChildren(this.entry) ? (
                 <details>
-                    <summary>
+                    <summary
+                        class:selected={use(
+                            this.sel,
+                            (sel) => sel === this.entry[1],
+                        )}
+                    >
                         <span
                             on:click={(e: MouseEvent) => {
                                 e.preventDefault();
@@ -54,6 +62,10 @@ const DisclosureGroup: Component<{
                     on:click={() => {
                         this.sel = this.entry[1];
                     }}
+                    class:selected={use(
+                        this.sel,
+                        (sel) => sel === this.entry[1],
+                    )}
                 >
                     {this.entry[0]}
                 </span>
@@ -113,6 +125,14 @@ class RegEdit extends App {
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
+        .selected {
+            background-color: var(--theme-secondary-bg);
+        }
+
+        .selected details {
+            background-color: var(--theme-bg);
+        }
     `;
     state = $state({
         selected: anura.settings.cache,
@@ -132,7 +152,12 @@ class RegEdit extends App {
             <div id="pane-left">
                 <div id="detail">
                     <details open>
-                        <summary>
+                        <summary
+                            class:selected={use(
+                                this.state.selected,
+                                (sel) => sel === anura.settings.cache,
+                            )}
+                        >
                             <span
                                 on:click={(e: MouseEvent) => {
                                     e.preventDefault();
