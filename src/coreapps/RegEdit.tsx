@@ -214,11 +214,25 @@ class RegEdit extends App {
                                             const elements =
                                                 event.srcElement.parentElement
                                                     .children;
+                                            try {
+                                                anura.settings.cache[
+                                                    elements[0].innerText
+                                                ] = JSON.parse(
+                                                    elements[2].value,
+                                                );
+                                                anura.settings.save();
+                                            } catch (e) {
+                                                elements[2].value =
+                                                    anura.settings.cache[
+                                                        elements[0].innerText
+                                                    ];
+                                                anura.notifications.add({
+                                                    title: "RegEdit Error",
+                                                    description: `Failed to set value for ${elements[0].innerText}, invalid input`,
+                                                    timeout: 50000,
+                                                });
+                                            }
 
-                                            anura.settings.cache[
-                                                elements[0].innerText
-                                            ] = JSON.parse(elements[2].value);
-                                            anura.settings.save();
                                             // console.log(JSON.parse(event.srcElement.value));
                                             console.log("blur", event);
                                         }}
