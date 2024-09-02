@@ -100,6 +100,7 @@ class RegEdit extends App {
             width: calc(100% - max(10%, 200px));
             min-width: 400px;
             padding-inline: 0.5em;
+            overflow: scroll;
         }
 
         #detail {
@@ -116,7 +117,9 @@ class RegEdit extends App {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            max-width: 8em;
+            width: 100%;
+            background-color: var(--theme-bg);
+            outline: none;
         }
 
         .name {
@@ -202,71 +205,25 @@ class RegEdit extends App {
                                 );
                             })
                             .map((item: any) => (
-                                <tr
-                                    on:dblclick={() => {
-                                        switch (typeof item[1]) {
-                                            case "boolean":
-                                                anura.dialog
-                                                    .confirm(
-                                                        `The key will be set to ${!item[1]}`,
-                                                        `Change value of ${item[0]}?`,
-                                                    )
-                                                    .then((value) => {
-                                                        if (value) {
-                                                            sel[item[0]] =
-                                                                !item[1];
-                                                            anura.settings.save();
-                                                        }
-                                                    });
-                                                break;
-                                            case "number":
-                                                anura.dialog
-                                                    .prompt(
-                                                        `Enter new value for ${item[0]}`,
-                                                        item[1],
-                                                    )
-                                                    .then((value) => {
-                                                        if (value !== null) {
-                                                            const val2 =
-                                                                parseInt(
-                                                                    value as string,
-                                                                );
-                                                            sel[item[0]] = val2;
-                                                            anura.settings.save();
-                                                        }
-                                                    });
-                                                break;
-                                            case "object":
-                                                // anura.dialog.prompt(`Enter new value for ${item[0]}`, item[1])
-                                                // .then((value) => {
-                                                //     if (value !== null) {
-                                                //         let val2 = JSON.parse(value as string);
-                                                //         sel[item[0]] = val2;
-                                                //         anura.settings.save();
-                                                //     }
-                                                // });
-                                                break;
-                                            default:
-                                                anura.dialog
-                                                    .prompt(
-                                                        `Enter new value for ${item[0]}`,
-                                                        item[1],
-                                                    )
-                                                    .then((value) => {
-                                                        if (value !== null) {
-                                                            const val2 =
-                                                                value as string;
-                                                            sel[item[0]] = val2;
-                                                            anura.settings.save();
-                                                        }
-                                                    });
-                                                break;
-                                        }
-                                    }}
-                                >
+                                <tr>
                                     <td class="name">{item[0]}</td>
                                     <td class="type">{typeof item[1]}</td>
-                                    <td class="value">{item[1]}</td>
+                                    <input
+                                        class="value matter-textfield-outlined"
+                                        on:blur={function (event: any) {
+                                            const elements =
+                                                event.srcElement.parentElement
+                                                    .children;
+
+                                            anura.settings.cache[
+                                                elements[0].innerText
+                                            ] = JSON.parse(elements[2].value);
+                                            anura.settings.save();
+                                            // console.log(JSON.parse(event.srcElement.value));
+                                            console.log("blur", event);
+                                        }}
+                                        value={JSON.stringify(item[1])}
+                                    ></input>
                                 </tr>
                             )),
                     )}
