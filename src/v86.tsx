@@ -513,16 +513,18 @@ class V86Backend {
         binaryType = "arraybuffer";
         constructor(hostname: string, port: string) {
             super();
-            this.pty = anura.x86!.ptyNum++;
+            console.log("creating socket: " + hostname);
+
             (async () => {
-                this.pty = await anura.x86!.sendWispFrame({
+                this.pty = anura.x86!.ptyNum++;
+                await anura.x86!.sendWispFrame({
                     type: "CONNECT",
                     streamType: 0x01,
                     streamID: this.pty,
                     port: port,
                     command: hostname,
                     dataCallback: (data: Uint8Array) => {
-                        this.onmessage(data);
+                        this.onmessage({ data: data.buffer });
 
                         this.dispatchEvent(
                             //@ts-expect-error idk why?
@@ -530,12 +532,14 @@ class V86Backend {
                         );
                     },
                     closeCallback: (data: number) => {
-                        this.onclose();
+                        if (this.onclose) {
+                            this.onclose();
+                        }
                         this.dispatchEvent(new CustomEvent("close"));
                     },
                 });
+                this.dispatchEvent(new CustomEvent("open"));
                 if (this.onopen) {
-                    console.log("calling onopen");
                     this.onopen();
                 }
             })();
@@ -682,7 +686,6 @@ class V86Backend {
             //console.log(frame);
             const view = new DataView(frame.buffer);
             const streamID = view.getUint32(1, true);
-            console.log("Got packet type " + frame[0]);
             switch (frame[0]) {
                 case 1: // CONNECT
                     // The server should never send this actually
@@ -700,7 +703,6 @@ class V86Backend {
 
                     break;
                 case 3: // CONTINUE
-                    console.log("Got continue!");
                     if (connections[streamID]) {
                         console.log(
                             `setting congestion for ${streamID} to ${view.getUint32(5, true)}`,
@@ -712,7 +714,6 @@ class V86Backend {
                     }
 
                     if (connections[streamID].congested) {
-                        console.log("Continuing transmission");
                         for (const packet of congestedBuffer) {
                             sendPacket(packet.data, packet.type, streamID);
                         }
@@ -777,16 +778,15 @@ class V86Backend {
                         frameObj.command,
                     );
                     fullPacket = new Uint8Array(
-                        4 + 5 + 1 + 1 + commandBuffer.length,
+                        4 + 5 + 1 + 2 + commandBuffer.length,
                     );
                     view = new DataView(fullPacket.buffer);
                     view.setUint32(0, fullPacket.length - 4, true); // Packet size
                     view.setUint8(4, 0x01); // FRAME TYPE (CONNECT)
                     view.setUint32(5, frameObj.streamID, true); // Stream ID
                     view.setUint8(9, frameObj.streamType || 0x03); // TCP
-                    view.setUint16(10, frameObj.port || 10); // PORT (unused, hardcoded to 10)
-                    fullPacket.set(commandBuffer, 11); // command
-
+                    view.setUint16(10, frameObj.port || 10, true); // PORT (unused, hardcoded to 10)
+                    fullPacket.set(commandBuffer, 12); // command
                     // Setting callbacks
                     connections[frameObj.streamID] = {
                         dataCallback: frameObj.dataCallback,
