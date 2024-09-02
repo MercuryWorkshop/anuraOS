@@ -21,8 +21,8 @@
     },
     "x86": {
         "alpine": {
-            "bzimage": "/x86images/alpine-boot/vmlinuz-lts",
-            "initrd": "/x86images/alpine-boot/initramfs-lts",
+            "bzimage": "/x86images/alpine-boot/vmlinuz-virt",
+            "initrd": "/x86images/alpine-boot/initramfs-virt",
             "rootfs": [
                 "x86images/alpine-rootfs/aa",
                 "x86images/alpine-rootfs/ab",
