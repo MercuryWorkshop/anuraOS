@@ -44,27 +44,9 @@ class RecoveryApp extends App {
             grid-template-columns: 10em 10em;
         }
 
-        button {
-            width: 10em;
-        }
-
-        #return {
-            grid-column: span 2;
-            width: 21em;
-        }
-
         .recovery-app-content p {
             margin: 0;
         }
-
-        /* .recovery-app-content button {
-            background: #202124;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-        } */
     `;
 
     page = async () => (
@@ -137,33 +119,31 @@ class RecoveryApp extends App {
                     Anura Shell
                 </button>
                 {/* Invalidate Cache Button */}
-                <div>
-                    {$if(
-                        anura.settings.get("use-sw-cache"),
-                        <button
-                            style="background: #1B5E20;"
-                            class="matter-button-contained"
-                            title="Clear the service worker cache. This requires an internet connection on your next boot."
-                            on:click={() => {
-                                anura.settings.set("milestone", "__INVALID");
-                                anura.dialog.alert(
-                                    "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
-                                    "Cache invalidated",
-                                );
-                            }}
-                        >
-                            Invalidate Cache
-                        </button>,
-                        <button
-                            style="background: #1B5E20; cursor: not-allowed;"
-                            class="matter-button-contained"
-                            title="The cache is disabled, so you cannot invalidate it."
-                            disabled
-                        >
-                            Invalidate Cache
-                        </button>,
-                    )}
-                </div>
+                {$if(
+                    anura.settings.get("use-sw-cache"),
+                    <button
+                        style="background: #1B5E20;"
+                        class="matter-button-contained"
+                        title="Clear the service worker cache. This requires an internet connection on your next boot."
+                        on:click={() => {
+                            anura.settings.set("milestone", "__INVALID");
+                            anura.dialog.alert(
+                                "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
+                                "Cache invalidated",
+                            );
+                        }}
+                    >
+                        Invalidate Cache
+                    </button>,
+                    <button
+                        style="background: #1B5E20; cursor: not-allowed;"
+                        class="matter-button-contained"
+                        title="The cache is disabled, so you cannot invalidate it."
+                        disabled
+                    >
+                        Invalidate Cache
+                    </button>,
+                )}
 
                 <button
                     style="background: #1B5E20"
@@ -177,7 +157,10 @@ class RecoveryApp extends App {
                 </button>
 
                 <button
-                    style="background: #1B5E20"
+                    style={{
+                        background: "#1B5E20",
+                        gridColumn: "span 2",
+                    }}
                     class="matter-button-contained"
                     title="Return to normal mode"
                     id="return"
