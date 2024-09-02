@@ -507,6 +507,58 @@ class V86Backend {
     runcmd(cmd: string) {
         this.writepty(this.runpty, `( ${cmd} ) & \n`);
     }
+    v86InternalTCPSocket = class v86InternalTCPSocket extends EventTarget {
+        pty = -1;
+        readyState = "open";
+        binaryType = "arraybuffer";
+        constructor(hostname: string, port: string) {
+            super();
+            this.pty = anura.x86!.ptyNum++;
+            (async () => {
+                this.pty = await anura.x86!.sendWispFrame({
+                    type: "CONNECT",
+                    streamType: 0x01,
+                    streamID: this.pty,
+                    port: port,
+                    command: hostname,
+                    dataCallback: (data: Uint8Array) => {
+                        this.onmessage(data);
+
+                        this.dispatchEvent(
+                            //@ts-expect-error idk why?
+                            new CustomEvent("message", { data: data.buffer }),
+                        );
+                    },
+                    closeCallback: (data: number) => {
+                        this.onclose();
+                        this.dispatchEvent(new CustomEvent("close"));
+                    },
+                });
+                if (this.onopen) {
+                    console.log("calling onopen");
+                    this.onopen();
+                }
+            })();
+        }
+
+        protocol = "";
+
+        close() {
+            anura.x86!.closepty(this.pty);
+        }
+
+        send(data: any) {
+            anura.x86!.writeBinaryPTY(this.pty, data);
+        }
+
+        onopen() {}
+
+        onclose() {}
+
+        onmessage(data: any) {}
+
+        onerror() {}
+    };
 
     async startMouseDriver() {
         let ready = false;
@@ -729,10 +781,10 @@ class V86Backend {
                     );
                     view = new DataView(fullPacket.buffer);
                     view.setUint32(0, fullPacket.length - 4, true); // Packet size
-                    view.setUint8(4, 0x01); // TYPE
+                    view.setUint8(4, 0x01); // FRAME TYPE (CONNECT)
                     view.setUint32(5, frameObj.streamID, true); // Stream ID
-                    view.setUint8(9, 0x03); // TCP
-                    view.setUint16(10, 10); // PORT (unused, hardcoded to 10)
+                    view.setUint8(9, frameObj.streamType || 0x03); // TCP
+                    view.setUint16(10, frameObj.port || 10); // PORT (unused, hardcoded to 10)
                     fullPacket.set(commandBuffer, 11); // command
 
                     // Setting callbacks
