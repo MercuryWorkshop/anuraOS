@@ -16,7 +16,7 @@ RUN passwd -d root
 RUN chsh -s /bin/bash
 RUN echo "host9p /root 9p defaults 0 0" >> /etc/fstab
 
-ENV CACHE_BUST=123
+ENV CACHE_BUST=1234
 COPY xorg.conf /etc/X11/
 COPY X11/* /etc/X11/
 
@@ -27,9 +27,10 @@ RUN chmod 644 /etc/profile
 
 COPY anuramouse/* /etc/anuramouse/
 COPY interfaces /etc/network/interfaces
-COPY twisp /bin/twisp
+COPY epoxy-server /bin/epoxy-server
+COPY epoxyconf.toml /etc/epoxyconf.toml
 
-RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/twisp
+RUN chmod u+x /bin/xfrog /bin/xsetrandr /bin/epoxy-server
 RUN gcc /etc/anuramouse/mouse.c -o /bin/anuramouse -lX11
 COPY twisp-service /etc/init.d/
 COPY anura-boot /etc/init.d/

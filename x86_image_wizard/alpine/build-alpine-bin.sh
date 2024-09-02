@@ -27,8 +27,8 @@ rm -rf $OUT_ROOTFS_BIN || :
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
 cp -r ../anuramouse .
-cd ../twisp; RUSTFLAGS="-C target-feature=+crt-static" cargo +nightly b -r --target i686-unknown-linux-gnu --no-default-features; cp target/i686-unknown-linux-gnu/release/twisp ../alpine/;
-cd ../alpine;
+cd ../epoxy/server; RUSTFLAGS="-C target-feature=+crt-static" cargo +nightly b -F twisp -r --target i686-unknown-linux-gnu; cp ../target/i686-unknown-linux-gnu/release/epoxy-server ../../alpine/;
+cd ../../alpine;
 
 mkdir -p "$IMAGES"
 docker build . --platform linux/386 --rm --tag "$IMAGE_NAME"
@@ -56,8 +56,7 @@ rm "$OUT_ROOTFS_TAR"
 rm -rf "$OUT_ROOTFS_MNT"
 rm xfrog.sh
 rm xsetrandr.sh
-rm twisp
-rm -rf whisper
+rm epoxy-server
 rm -rf anuramouse
 
 echo "done! created"

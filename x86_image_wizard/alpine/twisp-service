@@ -1,8 +1,8 @@
 #!/sbin/openrc-run
 
 description="Anura PTY Daemon"
-command="/bin/twisp"
-command_args="--pty /dev/hvc0"
+command="/bin/epoxy-server"
+command_args="/etc/epoxyconf.toml"
 command_background="yes"
 pidfile="/var/run/twisp.pid"
 start_stop_daemon_args="--background --make-pidfile"

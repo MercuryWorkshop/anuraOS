@@ -630,7 +630,7 @@ class V86Backend {
             //console.log(frame);
             const view = new DataView(frame.buffer);
             const streamID = view.getUint32(1, true);
-
+            console.log("Got packet type " + frame[0]);
             switch (frame[0]) {
                 case 1: // CONNECT
                     // The server should never send this actually
@@ -648,7 +648,11 @@ class V86Backend {
 
                     break;
                 case 3: // CONTINUE
+                    console.log("Got continue!");
                     if (connections[streamID]) {
+                        console.log(
+                            `setting congestion for ${streamID} to ${view.getUint32(5, true)}`,
+                        );
                         connections[streamID].congestion = view.getUint32(
                             5,
                             true,
@@ -656,6 +660,7 @@ class V86Backend {
                     }
 
                     if (connections[streamID].congested) {
+                        console.log("Continuing transmission");
                         for (const packet of congestedBuffer) {
                             sendPacket(packet.data, packet.type, streamID);
                         }
