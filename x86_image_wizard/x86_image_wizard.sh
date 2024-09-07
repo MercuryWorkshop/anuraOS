@@ -1,5 +1,13 @@
 #!/bin/sh
 
+if [ -w /var/run/docker.sock ]
+then
+    true
+else 
+    echo "You aren't in the docker group, please run usermod -a -G docker $USER && newgrp docker"
+    exit 2
+fi
+
 build_alpine() {
     cd alpine
     sh build-alpine-bin.sh

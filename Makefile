@@ -22,7 +22,7 @@ hooks: FORCE
 	chmod +x .git/hooks/pre-commit
 
 submodules: .gitmodules
-	git submodule update
+#	git submodule update
 
 # Each dependency should have a similar structure to the following:
 #   build/libs/<libname>/<bundle>.min.js

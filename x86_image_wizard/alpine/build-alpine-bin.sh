@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -veu
 
-if [ -w /var/run/docker.sock ]
-then
-    echo true
-else 
-    echo "You aren't in the docker group, please run usermod -a -G docker $USER && newgrp docker"
-    exit 2
-fi
 # good for debugging
 pause() {
     while read -r -t 0.001; do :; done
