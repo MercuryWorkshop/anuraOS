@@ -31,3 +31,16 @@ const gangstaBootsplash = (
         </span>
     </div>
 );
+
+const TNBootSplash = (
+    <div class="bootsplash">
+        <img src="/assets/images/bootsplash.png" />
+
+        <br id="systemstatus-br" style="display: none;" />
+        <h2 id="systemstatus" style="display: none;"></h2>
+        <span style="position: absolute; bottom: 1rem; left: 1rem; text-align: left;">
+            More mirrors and links at Titanium Network<br></br>
+            discord.gg/unblock
+        </span>
+    </div>
+);
