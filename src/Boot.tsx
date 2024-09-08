@@ -371,6 +371,19 @@ window.addEventListener("load", async () => {
         } else if (anura.config.tnbranding === true) {
             bootsplash.remove();
             document.body.appendChild(TNBootSplash);
+            const TNMark = document.createElement("span");
+            TNMark.setAttribute(
+                "style",
+                "position: absolute; bottom: 70px; right: 10px",
+            );
+            TNMark.innerHTML =
+                "Instance hosted by Titanium Network.<br>More mirrors at discord.gg/unblock";
+            TNMark.onclick = () => {
+                anura.apps["anura.browser"].open([
+                    "https://discord.gg/unblock",
+                ]);
+            };
+            document.body.appendChild(TNMark);
         }
     }
 
