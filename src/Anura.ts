@@ -26,6 +26,7 @@ class Anura {
     dialog: Dialog;
     sw: SWProcess;
     anurad: Anurad;
+    activation: Activation;
 
     private constructor(
         fs: AnuraFilesystem,
@@ -44,6 +45,7 @@ class Anura {
 
         this.notifications = new NotificationService();
         this.processes = new Processes();
+        this.activation = new Activation(settings);
         document.body.appendChild(this.notifications.element);
     }
 

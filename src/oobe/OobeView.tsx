@@ -9,6 +9,8 @@ class OobeView {
         productKey: "",
     });
 
+    activation = new Activation();
+
     constructor() {
         useChange([this.state.offlineEnabled, this.state.v86Enabled], () => {
             this.state.dlsize = "0MB";
@@ -173,6 +175,10 @@ class OobeView {
         .matter-textfield-standard > textarea {
             border-bottom: solid 1px gray;
         }
+
+        .matter-checkbox:has(input:disabled) {
+            filter: grayscale(1) contrast(0.25);
+        }
     `;
 
     steps = [
@@ -249,49 +255,19 @@ class OobeView {
                             <button
                                 on:click={() => {
                                     try {
-                                        // Split the key into parts based on the hyphen
-                                        const parts =
-                                            this.state.productKey.split("-");
-                                        if (parts.length !== 2)
-                                            throw "Condition failed: key does not have 1 hyphen";
-
-                                        const prefix = parts[0];
-                                        const suffix = parts[1];
-
-                                        // Validate prefix: 3 digits, not starting with '0'
-                                        if (
-                                            prefix!.length !== 3 ||
-                                            isNaN(Number(prefix)) ||
-                                            prefix!.startsWith("0")
-                                        )
-                                            throw "Condition failed: prefix != 3 digits, not starting with '0'";
-
-                                        // Validate suffix: 7 digits
-                                        if (
-                                            suffix!.length !== 7 ||
-                                            isNaN(Number(suffix))
-                                        )
-                                            throw "Condition failed: suffix is not 7 digits";
-
-                                        // Calculate sum of digits in the suffix
-                                        let sum = 0;
-                                        for (
-                                            let i = 0;
-                                            i < suffix!.length;
-                                            i++
-                                        ) {
-                                            sum += parseInt(suffix![i]!, 10);
-                                        }
-
                                         // The sum of the digits should be divisible by 7
-                                        if (sum % 7 === 0) {
+                                        if (
+                                            this.activation.validate(
+                                                this.state.productKey,
+                                            )
+                                        ) {
                                             anura.settings.set(
                                                 "product-key",
                                                 this.state.productKey,
                                             );
                                             this.nextStep();
                                         } else {
-                                            throw "Invalid key! Does not divide by 7";
+                                            throw "Invalid key!";
                                         }
                                     } catch (e) {
                                         console.error(e);
@@ -343,13 +319,16 @@ class OobeView {
                         <input
                             type="checkbox"
                             bind:checked={use(this.state.v86Enabled)}
+                            disabled={!this.activation.activated}
                         />
                         <span>Linux Emulation</span>
                     </label>
                     <div class="sub">
                         <span class="material-symbols-outlined">info</span>
-                        &nbsp;This allows you to run Linux applications on
-                        AnuraOS.
+                        &nbsp;
+                        {this.activation.activated
+                            ? "This allows you to run Linux applications on AnuraOS."
+                            : "The x86 subsystem is not available because you have not activated AnuraOS."}
                     </div>
                     <br></br>
                     <div id="size" class="sub">

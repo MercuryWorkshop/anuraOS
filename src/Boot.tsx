@@ -384,7 +384,7 @@ window.addEventListener("load", async () => {
                 ]);
             };
             document.body.appendChild(TNMark);
-        } else if (anura.settings.get("product-key") == undefined) {
+        } else if (anura.activation.activated === false) {
             const ActivateMark = document.createElement("span");
             ActivateMark.setAttribute(
                 "style",

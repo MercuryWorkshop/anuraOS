@@ -323,6 +323,52 @@ class SettingsApp extends App {
                 >
                     <div id="general" class="general settings-category">
                         <h3 class="settings-category-name">General</h3>
+                        {!anura.activation.activated ? (
+                            <div>
+                                <div class="settings-group">
+                                    <button
+                                        class="matter-button-contained"
+                                        on:click={async () => {
+                                            const key = await anura.dialog.prompt(
+                                                "Enter your product key",
+                                            );
+
+                                            if (
+                                                anura.activation.validate(key)
+                                            ) {
+                                                anura.settings.set(
+                                                    "product-key",
+                                                    key,
+                                                );
+                                                anura.activation.refreshActivationState();
+                                                anura.notifications.add({
+                                                    title: "Product key activated",
+                                                    description:
+                                                        "AnuraOS has been activated with the provided key. Restarting in 5 seconds...",
+                                                    timeout: 5000,
+                                                });
+                                                setTimeout(() => {
+                                                    window.location.reload();
+                                                }, 5000);
+                                            } else {
+                                                anura.notifications.add({
+                                                    title: "Invalid product key",
+                                                    description:
+                                                        "The provided product key is invalid",
+                                                    timeout: 5000,
+                                                });
+                                            }
+                                        }}
+                                    >
+                                        Activate AnuraOS
+                                    </button>
+                                </div>
+
+                                <br></br>
+                            </div>
+                        ) : (
+                            <div></div>
+                        )}
                         <div class="settings-group">
                             <SettingSwitch
                                 title="Allow offline use"
@@ -376,6 +422,7 @@ class SettingsApp extends App {
                             {this.state.show_x86_install ? (
                                 <div>
                                     <button
+                                        disabled={!anura.activation.activated}
                                         on:click={async () => {
                                             this.state.x86_installing = true;
                                             anura.settings.set(
