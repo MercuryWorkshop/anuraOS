@@ -6,6 +6,7 @@ class OobeView {
         offlineEnabled: true,
         v86Enabled: false,
         dlsize: "0MB",
+        productKey: "",
     });
 
     constructor() {
@@ -134,6 +135,10 @@ class OobeView {
             display: ${anura.platform.type === "mobile" ? "none;" : "unset;"};
         }
 
+        #activation #subtitle {
+            margin-bottom: 0.25rem;
+        }
+
         .material-symbols-outlined {
             font-size: 1rem;
         }
@@ -151,6 +156,11 @@ class OobeView {
         #features #subtitle {
             margin-bottom: 2rem;
         }
+
+        .matter-textfield-standard > input,
+        .matter-textfield-standard > textarea {
+            border-bottom: solid 1px gray;
+        }
     `;
 
     steps = [
@@ -167,6 +177,124 @@ class OobeView {
                                 class="preferredButton"
                             >
                                 Get Started
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ),
+            on: () => {},
+        },
+
+        {
+            elm: (
+                <div class="screen" id="activation">
+                    <h1>Activate AnuraOS</h1>
+                    <div id="subtitle">
+                        Locate your 10-digit product key and type it in the
+                        space below. Then click Next to continue.
+                    </div>
+                    <div id="gridContent">
+                        <div>
+                            <label class="matter-textfield-standard">
+                                <input
+                                    placeholder=" "
+                                    type="text"
+                                    pattern="[0-9]{3}-[0-9]{7}"
+                                    bind:value={use(this.state.productKey)}
+                                    on:keypress={() => {
+                                        if (this.state.productKey.length > 11) {
+                                            this.state.productKey =
+                                                this.state.productKey.slice(
+                                                    0,
+                                                    11,
+                                                );
+                                        } else if (
+                                            this.state.productKey.length === 3
+                                        ) {
+                                            this.state.productKey += "-";
+                                        }
+                                    }}
+                                />
+                                <span>Product Key</span>
+                            </label>
+                            <br></br>
+                            <div
+                                class="sub"
+                                style={{
+                                    marginTop: "1rem",
+                                }}
+                            >
+                                <span class="material-symbols-outlined">
+                                    info
+                                </span>
+                                &nbsp;Any Windows 95 retail key will work.
+                            </div>
+                        </div>
+                        <div id="bottomButtons">
+                            <button
+                                on:click={() => {
+                                    try {
+                                        // Split the key into parts based on the hyphen
+                                        const parts =
+                                            this.state.productKey.split("-");
+                                        if (parts.length !== 2)
+                                            throw "Condition failed: key does not have 1 hyphen";
+
+                                        const prefix = parts[0];
+                                        const suffix = parts[1];
+
+                                        // Validate prefix: 3 digits, not starting with '0'
+                                        if (
+                                            prefix!.length !== 3 ||
+                                            isNaN(Number(prefix)) ||
+                                            prefix!.startsWith("0")
+                                        )
+                                            throw "Condition failed: prefix != 3 digits, not starting with '0'";
+
+                                        // Validate suffix: 7 digits
+                                        if (
+                                            suffix!.length !== 7 ||
+                                            isNaN(Number(suffix))
+                                        )
+                                            throw "Condition failed: suffix is not 7 digits";
+
+                                        // Calculate sum of digits in the suffix
+                                        let sum = 0;
+                                        for (
+                                            let i = 0;
+                                            i < suffix!.length;
+                                            i++
+                                        ) {
+                                            sum += parseInt(suffix![i]!, 10);
+                                        }
+
+                                        // The sum of the digits should be divisible by 7
+                                        if (sum % 7 === 0) {
+                                            this.nextStep();
+                                        } else {
+                                            throw "Invalid key! Does not divide by 7";
+                                        }
+                                    } catch (e) {
+                                        console.error(e);
+                                        alert(
+                                            "Invalid key! Please check the key and try again.",
+                                        );
+                                    }
+                                }}
+                                class="preferredButton"
+                            >
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        fontSize: "0.7rem!important",
+                                    }}
+                                >
+                                    <span>Next</span>
+                                    <span class="material-symbols-outlined">
+                                        chevron_right
+                                    </span>
+                                </div>
                             </button>
                         </div>
                     </div>
