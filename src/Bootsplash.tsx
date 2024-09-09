@@ -44,3 +44,7 @@ const TNBootSplash = (
         </span>
     </div>
 );
+
+const gangstaSound = (
+    <audio autoplay loop src="/assets/audio/gangsta.opus"></audio>
+);

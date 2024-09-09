@@ -368,6 +368,7 @@ window.addEventListener("load", async () => {
         if (anura.settings.get("i-am-a-true-gangsta") === true) {
             bootsplash.remove();
             document.body.appendChild(gangstaBootsplash);
+            document.body.appendChild(gangstaSound);
         } else if (anura.config.tnbranding === true) {
             bootsplash.remove();
             document.body.appendChild(TNBootSplash);
