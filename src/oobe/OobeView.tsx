@@ -106,6 +106,18 @@ class OobeView {
             filter: brightness(1.1);
         }
 
+        .screen .unpreferredButton {
+            background-color: transparent;
+            border: 1px solid rgb(26, 115, 232);
+            border-radius: 16px;
+            border-style: none;
+            color: white;
+            height: 2em;
+            padding-left: 1em;
+            padding-right: 1em;
+            transition: 0s;
+        }
+
         .screen button {
             background-color: var(--oobe-bg);
             border-radius: 16px;
@@ -231,6 +243,9 @@ class OobeView {
                             </div>
                         </div>
                         <div id="bottomButtons">
+                            <button on:click={() => this.nextStep()}>
+                                I don't have a key
+                            </button>
                             <button
                                 on:click={() => {
                                     try {
@@ -270,6 +285,10 @@ class OobeView {
 
                                         // The sum of the digits should be divisible by 7
                                         if (sum % 7 === 0) {
+                                            anura.settings.set(
+                                                "product-key",
+                                                this.state.productKey,
+                                            );
                                             this.nextStep();
                                         } else {
                                             throw "Invalid key! Does not divide by 7";
