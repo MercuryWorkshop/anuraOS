@@ -388,10 +388,13 @@ window.addEventListener("load", async () => {
             const ActivateMark = document.createElement("span");
             ActivateMark.setAttribute(
                 "style",
-                "position: absolute; bottom: 70px; right: 30px; color: white; opacity: 0.8",
+                "position: absolute; bottom: 70px; right: 30px; color: white; opacity: 0.8; z-index: 99999999; user-select: none; webkit-user-select: none; pointer-events: none;",
             );
             ActivateMark.innerHTML =
-                "<h2>Activate AnuraOS</h2><p>Enter your product key to activate AnuraOS.</p>";
+                "<h2 style='margin-bottom: 0;'>Activate AnuraOS</h2><p style='margin-top: 0.5rem;'>Open Settings to activate AnuraOS.</p>";
+            // ActivateMark.onclick = () => {
+            //     anura.apps["anura.settings"].open();
+            // }
             document.body.appendChild(ActivateMark);
         }
     }
