@@ -380,7 +380,7 @@ window.addEventListener("load", async () => {
                 "Instance hosted by Titanium Network.<br>More mirrors at discord.gg/unblock";
             TNMark.onclick = () => {
                 anura.apps["anura.browser"].open([
-                    "https://discord.gg/unblock",
+                    "https://discord.com/invite/unblock/login",
                 ]);
             };
             document.body.appendChild(TNMark);
