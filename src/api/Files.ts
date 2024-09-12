@@ -156,6 +156,10 @@ class FilesAPI {
         return "Anura File";
     }
 
+    setFolderIcon(path: string) {
+        this.folderIcon = path;
+    }
+
     set(path: string, extension: string) {
         const extHandlers = anura.settings.get("FileExts") || {};
         extHandlers[extension] = {
