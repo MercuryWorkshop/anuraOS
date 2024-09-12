@@ -1,5 +1,5 @@
 class Fflate extends Lib {
-    icon = "/assets/icons/generic.png";
+    icon = "/assets/icons/generic.svg";
     package = "npm:fflate";
     name = "fflate";
 

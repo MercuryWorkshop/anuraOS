@@ -1,7 +1,7 @@
 class ExternalApp extends App {
     manifest: AppManifest;
     source: string;
-    icon = "/assets/icons/generic.png";
+    icon = "/assets/icons/generic.svg";
 
     constructor(manifest: AppManifest, source: string) {
         super();

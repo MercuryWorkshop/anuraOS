@@ -3,7 +3,7 @@
 class Dialog extends App {
     name = "Anura Dialog";
     package = "anura.dialog";
-    icon = "/assets/icons/generic.png";
+    icon = "/assets/icons/generic.svg";
     source: string;
     hidden = true;
     css = css`

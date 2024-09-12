@@ -154,7 +154,7 @@ class ThemeEditor extends App {
     constructor() {
         super();
         this.name = "Theme Editor";
-        this.icon = "/assets/icons/themeeditor.png";
+        this.icon = "/assets/icons/theme.png";
         this.package = "anura.ui.themeeditor";
     }
 

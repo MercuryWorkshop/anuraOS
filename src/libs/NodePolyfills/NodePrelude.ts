@@ -1,7 +1,7 @@
 // This polyfill provides the globals that are expected to be available
 // in a Node.js environment, but are not available in a browser environment.
 class NodePrelude extends Lib {
-    icon = "/assets/icons/generic.png";
+    icon = "/assets/icons/generic.svg";
     package = "node:prelude";
     name = "Node Prelude";
 

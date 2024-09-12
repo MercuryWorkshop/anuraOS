@@ -3,7 +3,7 @@ class ExploreApp extends App {
     constructor() {
         super();
         this.name = "Explore";
-        this.icon = "/assets/icons/explore2.png";
+        this.icon = "/assets/icons/explore.png";
         this.package = "anura.explore";
     }
 
@@ -143,7 +143,7 @@ class ExploreApp extends App {
                 <span>
                     <a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
                         <img
-                            src="/assets/icons/themeeditor.png"
+                            src="/assets/icons/theme.png"
                             alt="Theme Editor Icon"
                         />{" "}
                         Theme Editor
@@ -296,7 +296,7 @@ class ExploreApp extends App {
                 <span>
                     <a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
                         <img
-                            src="/assets/icons/themeeditor.png"
+                            src="/assets/icons/theme.png"
                             alt="Theme Editor Icon"
                         />{" "}
                         Theme Editor

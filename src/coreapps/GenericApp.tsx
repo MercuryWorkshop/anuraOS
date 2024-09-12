@@ -3,7 +3,7 @@ class GenericApp extends App {
     constructor() {
         super();
         this.name = "Generic App";
-        this.icon = "/assets/icons/generic.png";
+        this.icon = "/assets/icons/generic.svg";
         this.package = "anura.generic";
     }
 
