@@ -1,3 +1,4 @@
+// this app should be refactored again, (someday?) but im not doing it rn so
 async function selectAction(selected) {
     currentlySelected.forEach((row) => {
         row.classList.remove("selected");
@@ -725,7 +726,8 @@ function reload() {
 }
 
 function upload() {
-    let fauxput = document.createElement("input"); // fauxput - fake input that isn't shown or ever added to page TODO: think of a better name for this variable
+    // TODO: think of a better name for this variable
+    const fauxput = document.createElement("input"); // fauxput - fake input that isn't shown or ever added to page
     fauxput.type = "file";
     fauxput.onchange = async (e) => {
         const file = await e.target.files[0];
@@ -741,6 +743,30 @@ function upload() {
         );
     };
     fauxput.click();
+}
+
+async function download() {
+    for (const selected of currentlySelected) {
+        if (selected.getAttribute("data-type") !== "file") {
+            return;
+        }
+        const filePath = selected.getAttribute("data-path");
+        const fileData = await fs.promises.readFile(filePath);
+        const file = await fs.promises.stat(filePath);
+        // keeping up the bad names
+        // TODO: this name is horrible, fix it
+        const fauxnchor = document.createElement("a");
+        fauxnchor.style.display = "none";
+        document.body.appendChild(fauxnchor);
+        const blob = new Blob([fileData], { type: "application/octet-stream" });
+        const url = window.URL.createObjectURL(blob);
+        fauxnchor.href = url;
+        fauxnchor.download = file.name;
+        fauxnchor.click();
+
+        window.URL.revokeObjectURL(url);
+        fauxnchor.remove();
+    }
 }
 
 function deleteFile() {
