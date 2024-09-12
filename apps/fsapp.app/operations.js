@@ -1,8 +1,8 @@
 // this app should be refactored again, (someday?) but im not doing it rn so
-async function selectAction(selected) {
-    currentlySelected.forEach((row) => {
+async function filePickerAction(selected) {
+    for (const row of currentlySelected) {
         row.classList.remove("selected");
-    });
+    }
     currentlySelected = [];
     if (selected.length == 1) {
         var fileSelected = selected[0];
@@ -746,11 +746,11 @@ function upload() {
 }
 
 async function download() {
-    for (const selected of currentlySelected) {
-        if (selected.getAttribute("data-type") !== "file") {
+    for (const item of currentlySelected) {
+        if (item.getAttribute("data-type") !== "file") {
             return;
         }
-        const filePath = selected.getAttribute("data-path");
+        const filePath = item.getAttribute("data-path");
         const fileData = await fs.promises.readFile(filePath);
         const file = await fs.promises.stat(filePath);
         // keeping up the bad names
@@ -769,8 +769,8 @@ async function download() {
     }
 }
 
-function deleteFile() {
-    currentlySelected.forEach(async (item) => {
+async function deleteFile() {
+    for (item of currentlySelected) {
         await sh.rm(
             item.getAttribute("data-path"),
             {
@@ -781,7 +781,7 @@ function deleteFile() {
                 reload();
             },
         );
-    });
+    }
 }
 
 function copy() {
@@ -882,8 +882,8 @@ async function rename() {
     }
 }
 
-function installSession() {
-    currentlySelected.forEach(async (item) => {
+async function installSession() {
+    for (item of currentlySelected) {
         const path = item.getAttribute("data-path");
         const ext = path.split(".").slice("-1")[0];
         const stats = await fs.promises.stat(path);
@@ -929,11 +929,11 @@ function installSession() {
                 }
             }
         }
-    });
+    }
 }
 
-function installPermanent() {
-    currentlySelected.forEach(async (item) => {
+async function installPermanent() {
+    for (const item of currentlySelected) {
         const path = item.getAttribute("data-path");
         const ext = path.split(".").slice("-1")[0];
         const stats = await fs.promises.stat(path);
@@ -1075,7 +1075,7 @@ function installPermanent() {
                 }
             }
         }
-    });
+    }
 }
 
 // Context menu version of the loadPath function
