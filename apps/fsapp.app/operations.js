@@ -647,15 +647,11 @@ async function fileAction(selected) {
 function setBreadcrumbs(path) {
     path = path.replace(/(\/)\1+/g, "$1");
     var pathSplit = path.split("/");
-    pathSplit[0] = "My files";
+    pathSplit[0] = "/";
     var breadcrumbs = document.querySelector(".breadcrumbs");
     breadcrumbs.setAttribute("data-current-path", path);
     breadcrumbs.innerHTML = "";
-    if (
-        pathSplit.length === 2 &&
-        pathSplit[0] === "My files" &&
-        pathSplit[1] === ""
-    ) {
+    if (pathSplit.length === 2 && pathSplit[0] === "/" && pathSplit[1] === "") {
         var breadcrumb = document.createElement("button");
         breadcrumb.innerText = "My files";
         breadcrumb.addEventListener("click", () => {
@@ -667,10 +663,14 @@ function setBreadcrumbs(path) {
     for (var i = 0; i < pathSplit.length; i++) {
         var breadcrumb = document.createElement("button");
         breadcrumb.innerText = pathSplit[i];
-        var index = i;
+        if (pathSplit[i] === "/") {
+            breadcrumb.innerText = "My files";
+        }
+        let index = i;
 
-        breadcrumb.addEventListener("click", () => {
-            loadPath("/" + pathSplit.slice(1, index).join("/"));
+        breadcrumb.addEventListener("click", function () {
+            let path = pathSplit.slice(0, index + 1).join("/");
+            loadPath(path);
         });
         breadcrumbs.appendChild(breadcrumb);
         if (pathSplit[i] !== pathSplit[pathSplit.length - 1]) {
