@@ -122,7 +122,7 @@ Here is an example of a manifest.json
 
 This is mostly the same for libraries, minus the `dependencies` and `installHook` sections.
 
-### Publishing
+## Publishing
 
 To make a repo accessible via the Store Library you can use the utility [create-anura-repo](https://github.com/MercuryWorkshop/create-anura-repo). It's as simple as running a command in your terminal.
 
@@ -130,7 +130,7 @@ To make a repo accessible via the Store Library you can use the utility [create-
 $ npx create-anura-repo
 ```
 
-After doing this you can add host the repo statically and be able to use it in libstore. Keep in mind you will have to rerun this command whenever a change is made to the repo as this takes all of your individual app manifests and packages it into `list.json` to make repos fast to resolve.
+After doing this you can add host the repo statically and be able to use it in libstore. Keep in mind you will have to rerun this command whenever a change is made to the repo as this takes all of your individual app manifests and packages it into `list.json` to make repos fast to resolve. Another thing to take note of is package identifiers. Your folder name for your apps and libraries should match the package identifier that is given to it as this is how the marketplace finds your
 
 # libstore
 

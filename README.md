@@ -62,7 +62,6 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 -   Make sure you have `Docker` installed and running.
 -   Run `make rootfs`
 -   Make sure to add yourself to the Docker group using `usermod -a -G docker $USER`
--   (Special Use Case) In the event that you should need to override/manually add the initrd and kernel, remember to keep track of the file names of initrd and vmlinuz in build/images/(rootfs)-boot/. Then, copy them to the Anura root directory and rename them to initrd.img and bzimage respectively.(See the extended instructions [here](./documentation/Kernel_Override.md).)
 
 ### Running Anura Locally
 
