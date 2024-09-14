@@ -35,12 +35,12 @@
         "jsx": "react",
         "jsxFactory": "h",
         "jsxFragmentFactory": "Fragment",
-        "types": ["dreamland", "@types/wicg-file-system-access"],
+        "types": ["dreamland", "@types/wicg-file-system-access"]
 
         // "reso"
     },
     "include": ["./src/**/*.ts", "./src/**/*.tsx", "./src/**/*.css"],
     // "types":"./src/libv86.js",
     // "typeAcquisition": {"enable": true},
-    "exclude": ["/**/node_modules/**/*"],
+    "exclude": ["/**/node_modules/**/*"]
 }

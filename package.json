@@ -36,7 +36,7 @@
         "@types/node": "^22.5.4",
         "@types/wicg-file-system-access": "^2023.10.5",
         "dreamland": "^0.0.24",
-        "prettier": "3.2.4",
+        "prettier": "3.3.3",
         "rollup": "^4.21.3",
         "workbox-cli": "7.1.0"
     }
