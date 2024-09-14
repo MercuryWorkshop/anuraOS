@@ -20,12 +20,12 @@ class AnuraUI {
      * @param element - A function component that returns an HTMLElement.
      */
     async registerComponent<
-        TPublic,
-        TPrivate,
-        TConstructed extends string | number | symbol = never,
+        TProps extends object,
+        TPrivate extends object,
+        TPublic extends object,
     >(
         component: string,
-        element: Component<TPublic, TPrivate, TConstructed>,
+        element: Component<TProps, TPrivate, TPublic>,
     ): Promise<void> {
         this.builtins.set(component, element);
     }
@@ -62,10 +62,10 @@ class AnuraUI {
      * @returns A promise that resolves to a function component that returns an HTMLElement.
      */
     async get<
-        TPublic,
-        TPrivate,
-        TConstructed extends string | number | symbol = never,
-    >(name: string): Promise<Component<TPublic, TPrivate, TConstructed>> {
+        TProps extends object,
+        TPrivate extends object,
+        TPublic extends object,
+    >(name: string): Promise<Component<TProps, TPrivate, TPublic>> {
         const comp = this.components.get(name);
 
         if (!comp) {
@@ -123,14 +123,14 @@ class AnuraUI {
      * ```
      */
     async use<
-        TPublic,
-        TPrivate,
-        TConstructed extends string | number | symbol = never,
+        TProps extends object,
+        TPrivate extends object,
+        TPublic extends object,
     >(
         components: string[] | string | "*" = [],
-    ): Promise<{ [key: string]: Component<TPublic, TPrivate, TConstructed> }> {
+    ): Promise<{ [key: string]: Component<TProps, TPrivate, TPublic> }> {
         const result: {
-            [key: string]: Component<TPublic, TPrivate, TConstructed>;
+            [key: string]: Component<TProps, TPrivate, TPublic>;
         } = {};
 
         if (components === "*") {
@@ -151,8 +151,7 @@ class AnuraUI {
     }
 
     /**
-     * This function initializes the UI API with the list of components.
-     * It is called on boot, and should not be called manually.
+     * Install internal components
      */
     init() {
         const components = anura.settings.get("anura.ui.components");
@@ -164,17 +163,14 @@ class AnuraUI {
                 this.components = new Map();
             }
         }
-        // dont ask about the random a string, dreamland types are fucked up, will fix later
-        const AnuraVersion: Component<{ product: string }, Empty, "a"> =
-            function () {
-                this.product ||= "Anura";
-                return (
-                    <span>
-                        {this.product} version: {anura.version.pretty}
-                    </span>
-                );
-            };
-        // dont ask about the random a string, dreamland types are fucked up, will fix later
+        const AnuraVersion: Component<{ product: string }> = function () {
+            this.product ||= "Anura";
+            return (
+                <span>
+                    {this.product} version: {anura.version.pretty}
+                </span>
+            );
+        };
         const Panel: Component<
             {
                 width?: string;
@@ -185,8 +181,7 @@ class AnuraUI {
                 class?: string | (string | DLPointer<any>)[];
                 id?: string;
             },
-            { children: HTMLElement[] },
-            "a"
+            { children: HTMLElement[] }
         > = function () {
             this.style ||= {};
             this.class ||= [];
