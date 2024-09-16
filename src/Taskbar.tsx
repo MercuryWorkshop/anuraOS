@@ -248,7 +248,7 @@ class Taskbar {
     // shortcuts: { [key: string]: Shortcut } = {};
     constructor() {
         setInterval(() => {
-            const date = new Date();
+            const date = Date.now();
             this.state.date = this.dateformat.format(date);
             if (this.timeformat.resolvedOptions().hour12 === false) {
                 this.state.time = this.timeformat.format(date);

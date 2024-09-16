@@ -258,7 +258,7 @@ class QuickSettings {
         });
 
         setInterval(() => {
-            this.state.date = this.dateformat.format(new Date());
+            this.state.date = this.dateformat.format(Date.now());
         }, 1000);
 
         this.clickoffChecker = clickoffChecker;
