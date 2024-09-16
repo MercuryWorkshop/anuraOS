@@ -464,46 +464,43 @@ class SettingsApp extends App {
                                                             ).value,
                                                         ) * 1000000,
                                                     );
-                                                    const emulator =
-                                                        new V86Starter({
-                                                            wasm_path:
-                                                                "/lib/v86.wasm",
-                                                            memory_size:
-                                                                512 *
-                                                                1024 *
-                                                                1024,
-                                                            vga_memory_size:
-                                                                8 * 1024 * 1024,
-                                                            screen_container:
-                                                                anura.x86!
-                                                                    .screen_container,
+                                                    const emulator = new V86({
+                                                        wasm_path:
+                                                            "/lib/v86.wasm",
+                                                        memory_size:
+                                                            512 * 1024 * 1024,
+                                                        vga_memory_size:
+                                                            8 * 1024 * 1024,
+                                                        screen_container:
+                                                            anura.x86!
+                                                                .screen_container,
 
-                                                            initrd: {
-                                                                url: "/x86images/resizefs.img",
-                                                            },
+                                                        initrd: {
+                                                            url: "/x86images/resizefs.img",
+                                                        },
 
-                                                            bzimage: {
-                                                                url: "/x86images/bzResize",
-                                                                async: false,
-                                                            },
-                                                            hda: {
-                                                                buffer: anura.x86hdd,
-                                                                async: true,
-                                                            },
+                                                        bzimage: {
+                                                            url: "/x86images/bzResize",
+                                                            async: false,
+                                                        },
+                                                        hda: {
+                                                            buffer: anura.x86hdd,
+                                                            async: true,
+                                                        },
 
-                                                            cmdline:
-                                                                "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
+                                                        cmdline:
+                                                            "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
 
-                                                            bios: {
-                                                                url: "/bios/seabios.bin",
-                                                            },
-                                                            vga_bios: {
-                                                                url: "/bios/vgabios.bin",
-                                                            },
-                                                            autostart: true,
-                                                            uart1: true,
-                                                            uart2: true,
-                                                        });
+                                                        bios: {
+                                                            url: "/bios/seabios.bin",
+                                                        },
+                                                        vga_bios: {
+                                                            url: "/bios/vgabios.bin",
+                                                        },
+                                                        autostart: true,
+                                                        uart1: true,
+                                                        uart2: true,
+                                                    });
                                                     let s0data = "";
                                                     emulator.add_listener(
                                                         "serial0-output-byte",

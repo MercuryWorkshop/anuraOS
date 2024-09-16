@@ -1,7 +1,7 @@
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
-V86Starter.prototype.serial1_send = function (a: string) {
+V86.prototype.serial1_send = function (a: string) {
     for (let b = 0; b < a.length; b++)
         this.bus.send("serial1-input", a.charCodeAt(b));
 };
@@ -273,7 +273,7 @@ class V86Backend {
         const Buffer = Filer.Buffer;
         const sh = new fs.Shell();
 
-        this.emulator = new V86Starter({
+        this.emulator = new V86({
             wasm_path: "/lib/v86.wasm",
             memory_size: anura.settings.get("x86-memory") * 1024 * 1024,
             vga_memory_size: 8 * 1024 * 1024,
