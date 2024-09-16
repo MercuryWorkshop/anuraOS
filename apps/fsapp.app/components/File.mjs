@@ -10,6 +10,22 @@ function formatBytes(bytes, decimals = 2) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
 
+function onMouseEnter(e) {
+    e.currentTarget.classList.add("hover");
+}
+
+function onMouseLeave(e) {
+    e.currentTarget.classList.remove("hover");
+}
+
+function onContextMenu(e) {
+    if (currentlySelected.length > 0) {
+        return;
+    }
+    e.currentTarget.classList.add("selected");
+    currentlySelected = [e.currentTarget];
+}
+
 function onClick(e) {
     if (currentlySelected.includes(e.currentTarget)) {
         if (
@@ -83,22 +99,10 @@ export function File() {
         <thead></thead>
         <tbody>
             <tr
-                on:mouseenter=${(e) => {
-                    e.currentTarget.classList.add("hover");
-                }}
-                on:mouseleave=${(e) => {
-                    e.currentTarget.classList.remove("hover");
-                }}
-                on:contextmenu=${(e) => {
-                    if (currentlySelected.length > 0) {
-                        return;
-                    }
-                    e.currentTarget.classList.add("selected");
-                    currentlySelected = [e.currentTarget];
-                }}
-                on:click=${(e) => {
-                    onClick(e);
-                }}
+                on:mouseenter=${(e) => onMouseEnter(e)}
+                on:mouseleave=${(e) => onMouseLeave(e)}
+                on:contextmenu=${(e) => onContextMenu(e)}
+                on:click=${(e) => onClick(e)}
                 data-type="file"
                 data-path=${use(this.absolutePath)}
             >
@@ -142,22 +146,10 @@ export function Folder() {
         <thead></thead>
         <tbody>
             <tr
-                on:mouseenter=${(e) => {
-                    e.currentTarget.classList.add("hover");
-                }}
-                on:mouseleave=${(e) => {
-                    e.currentTarget.classList.remove("hover");
-                }}
-                on:contextmenu=${(e) => {
-                    if (self.currentlySelected.length > 0) {
-                        return;
-                    }
-                    e.currentTarget.classList.add("selected");
-                    self.currentlySelected = [e.currentTarget];
-                }}
-                on:click=${(e) => {
-                    onClick(e);
-                }}
+                on:mouseenter=${(e) => onMouseEnter(e)}
+                on:mouseleave=${(e) => onMouseLeave(e)}
+                on:contextmenu=${(e) => onContextMenu(e)}
+                on:click=${(e) => onClick(e)}
                 data-type="dir"
                 data-path=${use(this.absolutePath)}
             >
