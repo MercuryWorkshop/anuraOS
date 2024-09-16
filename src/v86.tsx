@@ -297,9 +297,13 @@ class V86Backend {
 
             bios: { url: "/bios/seabios.bin" },
             vga_bios: { url: "/bios/vgabios.bin" },
-            network_relay_url: anura.wsproxyURL
-                .replace("ws://", "wisp://")
-                .replace("wss://", "wisps://"),
+            net_device: {
+                relay_url: anura.wsproxyURL
+                    .replace("ws://", "wisp://")
+                    .replace("wss://", "wisps://"),
+                type: "virtio",
+            },
+
             // initial_state: { url: "/images/v86state.bin" },
             autostart: true,
             uart1: true,
