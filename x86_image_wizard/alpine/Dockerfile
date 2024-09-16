@@ -2,7 +2,7 @@ FROM i386/alpine:edge
 
 RUN apk add --update \
         alpine-base alpine-conf openrc bash ncurses shadow curl \
-        linux-virt linux-firmware-none linux-firmware-sb16 linux-headers \
+        linux-virt=6.6.51-r0 linux-headers=6.6-r0 linux-firmware-none=20240909-r0 linux-firmware-sb16=20240909-r0 \
         gcc make gcompat musl-dev libx11-dev xinit \
         curl bind-tools \
         htop vim nano
