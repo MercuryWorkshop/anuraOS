@@ -320,8 +320,7 @@ class OobeView {
     }
 }
 
-async function installx86() {
-    const tracker = document.getElementById("tracker");
+async function installx86(tracker = document.getElementById("tracker")) {
     console.debug("installing x86");
     const x86image = anura.settings.get("x86-image");
     tracker!.innerText = "Downloading x86 kernel";
@@ -422,6 +421,7 @@ async function installx86() {
 
     console.debug("done");
 }
+
 async function preloadFiles(tracker = document.getElementById("tracker")) {
     try {
         const list = await (await fetch("cache-load.json")).json();

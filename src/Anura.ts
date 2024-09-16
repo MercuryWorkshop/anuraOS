@@ -26,6 +26,11 @@ class Anura {
     dialog: Dialog;
     sw: SWProcess;
     anurad: Anurad;
+    systray: Systray;
+    uri = new URIHandlerAPI();
+    files = new FilesAPI();
+    wm = new WMAPI();
+    ContextMenu = ContextMenuAPI;
 
     private constructor(
         fs: AnuraFilesystem,
@@ -75,8 +80,6 @@ class Anura {
         );
         return anuraPartial;
     }
-
-    wm = new WMAPI();
 
     apps: any = {};
     libs: any = {};
@@ -163,7 +166,6 @@ class Anura {
         await anura.registerLib(lib); // This will let us capture error messages
         return lib;
     }
-    ContextMenu = ContextMenuAPI;
     removeStaleApps() {
         for (const appName in anura.apps) {
             const app = anura.apps[appName];
@@ -176,7 +178,6 @@ class Anura {
         taskbar.updateTaskbar();
         alttab.update();
     }
-    systray: Systray;
     async import(packageName: string, searchPath?: string) {
         if (searchPath) {
             // Using node-style module resolution
@@ -219,8 +220,6 @@ class Anura {
         const version = splitName[1] || null;
         return await this.libs[pkg].getImport(version);
     }
-    uri = new URIHandlerAPI();
-    files = new FilesAPI();
     get wsproxyURL() {
         return this.settings.get("wisp-url");
     }
