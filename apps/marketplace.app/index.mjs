@@ -24,7 +24,7 @@ window.saved = $state({
         anura.settings.get("workstore-repos") || {
             "Anura App Repository":
                 "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
-            "Anura Games": "https://anura.games/",
+            "Anura Games": "https://games.anura.pro/",
             "BomberFish's Extras":
                 "https://raw.githubusercontent.com/BomberFish/anura-repo/master/",
         },
