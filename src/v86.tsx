@@ -686,6 +686,18 @@ class V86Backend {
             },
         );
 
+        let evalBuffer = "";
+        this.emulator.add_listener(
+            "virtio-console1-output-bytes",
+            async (data: Uint8Array) => {
+                evalBuffer += new TextDecoder().decode(data);
+                if (evalBuffer.endsWith("\0")) {
+                    const jsrun = evalBuffer.slice(0, -1);
+                    evalBuffer = "";
+                    window.eval(jsrun);
+                }
+            },
+        );
         function processIncomingWispFrame(frame: Uint8Array) {
             //console.log(frame);
             const view = new DataView(frame.buffer);
