@@ -66,6 +66,7 @@ async function fileAction(selected) {
                 fileSelected.getAttribute("data-path").endsWith(".lib.zip")
             ) {
                 anura.files.open(fileSelected.getAttribute("data-path"));
+                return;
             }
 
             if (fileSelected.getAttribute("data-path").endsWith(".zip")) {
@@ -100,10 +101,6 @@ async function fileAction(selected) {
                     }
                 }
                 const sh = new fs.Shell();
-                // for (const folder of folders) {
-                //     await sh.promises.mkdirp(root + folder);
-                // }
-
                 for (const file of files) {
                     const container =
                         file[0].split("/").slice(0, -1).join("/") + "/";
