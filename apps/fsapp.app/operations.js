@@ -1,4 +1,6 @@
 // this app should be refactored again, (someday?) but im not doing it rn so
+// Note from Rafflesia: What the fuck?
+
 async function filePickerAction(selected) {
     for (const row of currentlySelected) {
         row.classList.remove("selected");
@@ -369,7 +371,56 @@ async function fileAction(selected) {
                     iframe.contentDocument.head.appendChild(matter);
                 });
             } else {
-                anura.files.open(fileSelected.getAttribute("data-path"));
+                if (fileSelected.getAttribute("data-path").endsWith(".zip")) {
+                    const data = await unzip(
+                        await anura.fs.promises.readFile(
+                            fileSelected.getAttribute("data-path"),
+                        ),
+                    );
+                    const root =
+                        fileSelected
+                            .getAttribute("data-path")
+                            .split("/")
+                            .slice(0, -1)
+                            .join("/") +
+                        "/" +
+                        fileSelected
+                            .getAttribute("data-path")
+                            .split("/")
+                            .pop()
+                            .split(".")
+                            .slice(0, -1)
+                            .join(".") +
+                        "/";
+                    // const folders = [];
+                    const files = [];
+                    for (const item in data) {
+                        console.log(item);
+                        if (item.endsWith("/")) {
+                            // folders.push(item);
+                        } else {
+                            files.push([item, data[item]]);
+                        }
+                    }
+                    const sh = new fs.Shell();
+                    // for (const folder of folders) {
+                    //     await sh.promises.mkdirp(root + folder);
+                    // }
+
+                    for (const file of files) {
+                        const container =
+                            file[0].split("/").slice(0, -1).join("/") + "/";
+                        await sh.promises.mkdirp(root + container);
+
+                        await fs.promises.writeFile(
+                            root + file[0],
+                            Buffer.from(file[1]),
+                        );
+                    }
+                    reload();
+                } else {
+                    anura.files.open(fileSelected.getAttribute("data-path"));
+                }
             }
         } else if (fileSelected.getAttribute("data-type") === "dir") {
             if (
