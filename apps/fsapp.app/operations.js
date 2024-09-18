@@ -833,6 +833,7 @@ async function deleteFile() {
             },
         );
     }
+    currentlySelected = [];
 }
 
 function copy() {
