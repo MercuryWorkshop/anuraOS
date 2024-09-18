@@ -47,6 +47,7 @@ RUN rc-update add twisp-service default
 COPY mkinitfs.conf /etc/mkinitfs/mkinitfs.conf
 RUN mkdir -p /etc/apk/commit_hooks.d/
 COPY anura-apk /etc/apk/commit_hooks.d/anura-linux.sh
+COPY anura-run /sbin/anura-run
 RUN chmod +x /etc/apk/commit_hooks.d/anura-linux.sh
 RUN mkinitfs -c /etc/mkinitfs/mkinitfs.conf -b / $(cat /usr/share/kernel/virt/kernel.release)
 RUN bash
