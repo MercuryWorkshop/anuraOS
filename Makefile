@@ -5,7 +5,7 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons build/bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
+all: submodules build/bootstrap v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons build/bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
 
 full: all rootfs-alpine
 
@@ -146,9 +146,6 @@ libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v86/Cargo.toml
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
-
-v86dirty: 
-	touch v86timestamp # makes it "dirty" and forces recompilation
 
 build/cache-load.json: FORCE
 	(find apps/ -type f && cd build/ && find lib/ -type f && find libs/ -type f && find uv/ -type f && find assets/ -type f && find bundle.css -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e \.map -e \.d\.ts -e "/\." -e "uv/" -e "workbox/" | jq -Rnc '[inputs]' > build/cache-load.json
