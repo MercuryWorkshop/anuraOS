@@ -1,5 +1,10 @@
 // this app should be refactored again, (someday?) but im not doing it rn so
+
 // Note from Rafflesia: What the fuck?
+// If you're new here, this is the one file which you really don't want to touch, fsapp has been around since well, forever.
+// The code is the definition of growth-rot and messy, this is a 1k+ line file with almost all of the code for this app.
+// Frankly, it's terrible, don't touch it, and if it works, don't refactor anything unless you're willing to break it and rewrite the entire thing
+// You've been warned
 
 async function filePickerAction(selected) {
     for (const row of currentlySelected) {
