@@ -37,17 +37,17 @@ function onClick(e) {
         } else {
             fileAction(currentlySelected);
         }
-        for (row of currentlySelected) {
+        currentlySelected.forEach((row) => {
             row.classList.remove("selected");
-        }
+        });
         currentlySelected = [];
         return;
     }
     if (!e.shiftKey) {
         if (!e.ctrlKey) {
-            for (const row of currentlySelected) {
+            currentlySelected.forEach((row) => {
                 row.classList.remove("selected");
-            }
+            });
             currentlySelected = [];
         }
         e.currentTarget.classList.add("selected");
