@@ -1,3 +1,5 @@
+import { createAppView } from "./pages/appview/appview.js";
+
 const icons = await (await fetch(localPathToURL("icons.json"))).json();
 
 export function openFile(path) {
@@ -117,7 +119,16 @@ export function openFile(path) {
         iframe.srcdoc = data;
         fileView.content.appendChild(iframe);
     }
-
+    switch (path.split(".").slice("-2").join(".")) {
+        case "app.zip":
+            createAppView(path, "app");
+            return;
+        case "lib.zip":
+            createAppView(path, "lib");
+            return;
+        default:
+            break;
+    }
     let ext = path.split(".").slice("-1")[0];
     switch (ext) {
         case "txt":

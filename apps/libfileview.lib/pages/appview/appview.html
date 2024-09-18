@@ -1,0 +1,289 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>App Info Viewer</title>
+        <style>
+            @font-face {
+                font-family: Roboto;
+                src: url("/assets/fonts/Roboto-Regular.ttf") format("truetype");
+            }
+
+            html {
+                height: 100%;
+                width: 100%;
+            }
+            .app-info-mnt {
+                display: none;
+            }
+
+            body {
+                background-color: #202124;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                margin: 0;
+                font-family: Roboto, sans-serif;
+                overflow: scroll;
+            }
+
+            ::-webkit-scrollbar {
+                display: none;
+            }
+
+            #app-title {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                width: 100%;
+            }
+
+            #app-name {
+                font-size: 2rem;
+                margin: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 100%;
+            }
+
+            #app-version {
+                font-size: 1rem;
+                margin: 0;
+            }
+
+            #app-top-info {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                width: calc(100% - 56px);
+                gap: 1rem;
+            }
+            #install-button-strip {
+                position: absolute;
+                bottom: 5px;
+            }
+            #install-button-strip > button {
+                margin: 10px;
+            }
+
+            #app-logo {
+                height: 128px;
+                width: 128px;
+                flex-shrink: 0;
+            }
+
+            #app-logo img {
+                height: 100%;
+                width: 100%;
+            }
+
+            #app-divider {
+                margin: 1rem 0;
+                height: 1px;
+                background-color: #9ca3af;
+                flex-shrink: 0;
+                width: calc(100% - 56px);
+            }
+
+            #app-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                padding-bottom: 1rem;
+                width: calc(100% - 56px);
+            }
+
+            .mono {
+                font-family:
+                    Roboto Mono,
+                    monospace;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            td,
+            th {
+                padding: 0.5rem;
+                border: 1px solid #555;
+                text-align: left;
+            }
+
+            tr {
+                background-color: #2d2f33;
+            }
+        </style>
+        <script>
+            const url = new URL(window.location.href);
+            const args = ExternalApp.deserializeArgs(
+                url.searchParams.get("manifest"),
+            );
+            if (!args) {
+                console.error("No args found");
+                instanceWindow.close();
+            }
+            console.log(args);
+            window.manifest = JSON.parse(args[0]);
+            window.iconurl = args[1];
+            window.isLib = args[2] === "lib";
+        </script>
+    </head>
+    <body>
+        <div id="app-top-info">
+            <div id="app-logo"></div>
+            <div id="app-title">
+                <h1 id="app-name"></h1>
+                <span id="app-version"></span>
+            </div>
+        </div>
+        <div id="app-divider"></div>
+        <div id="app-info">
+            <span id="button-strip"
+                ><button
+                    class="matter-button-contained"
+                    id="manifestButton"
+                    onclick="manifestShow()"
+                >
+                    Manifest
+                </button></span
+            >
+            <table id="app-info-mnt" style=""></table>
+        </div>
+        <span id="install-button-strip"></span>
+        <script>
+            let currentlyShowingMenu = document.getElementById("app-info-mnt");
+            let currentlyShowingButton =
+                document.getElementById("manifestButton");
+            function manifestShow() {
+                const appInfoTable = document.getElementById("app-info-mnt");
+                const appInfoButton = document.getElementById("manifestButton");
+                if (appInfoTable !== currentlyShowingMenu) {
+                    currentlyShowingMenu.style.display = "none";
+                    appInfoTable.style.display = "";
+                    currentlyShowingMenu = appInfoTable;
+                    currentlyShowingButton.className = "matter-button-text";
+                    appInfoButton.className = "matter-button-contained";
+                    currentlyShowingButton = appInfoButton;
+                }
+            }
+
+            const appName = document.querySelector("#app-name");
+            appName.innerText = manifest.name;
+
+            const appVersion = document.querySelector("#app-version");
+            if (isLib) {
+                appVersion.innerText =
+                    "v" + (manifest.currentVersion || "0.0.0");
+
+                if (!manifest.currentVersion) {
+                    appVersion.title =
+                        "No version information found in manifest.";
+                    // This library is not compliant if this happens.
+                }
+            } else {
+                appVersion.innerText = "v" + (manifest.version || "0.0.0");
+
+                if (!manifest.version) {
+                    appVersion.title =
+                        "No version information found in manifest.";
+                }
+            }
+
+            const appLogo = document.querySelector("#app-logo");
+
+            const img = document.createElement("img");
+            img.src = iconurl;
+            img.alt = manifest.name;
+            appLogo.appendChild(img);
+
+            const appInfoMnt = document.querySelector("#app-info-mnt");
+
+            appInfoMnt.classList.add("mono");
+
+            function parseObject(table, object) {
+                let headerRow = document.createElement("tr");
+                let headerKey = document.createElement("th");
+                let headerValue = document.createElement("th");
+                headerKey.innerText = "Key";
+                headerValue.innerText = "Value";
+                headerRow.appendChild(headerKey);
+                headerRow.appendChild(headerValue);
+                table.appendChild(headerRow);
+                Object.entries(object).forEach(([key, value]) => {
+                    if (typeof value === "object") {
+                        const subTable = document.createElement("table");
+                        parseObject(subTable, value);
+                        subTable.style.display = "none";
+
+                        const subTableTitle = document.createElement("button");
+                        subTableTitle.className = "matter-button-text";
+                        subTableTitle.innerText = key;
+                        subTableTitle.onclick = () => {
+                            if (subTable !== currentlyShowingMenu) {
+                                currentlyShowingMenu.style.display = "none";
+                                subTable.style.display = "";
+                                currentlyShowingMenu = subTable;
+                                currentlyShowingButton.className =
+                                    "matter-button-text";
+                                subTableTitle.className =
+                                    "matter-button-contained";
+                                currentlyShowingButton = subTableTitle;
+                            }
+                        };
+
+                        document
+                            .getElementById("button-strip")
+                            .appendChild(subTableTitle);
+                        document
+                            .getElementById("app-info")
+                            .appendChild(subTable);
+                    } else {
+                        const tr = document.createElement("tr");
+                        const tdKey = document.createElement("td");
+                        const tdValue = document.createElement("td");
+                        tdKey.innerText = key;
+                        tdValue.innerText = value;
+                        tr.appendChild(tdKey);
+                        tr.appendChild(tdValue);
+                        table.appendChild(tr);
+                    }
+                });
+            }
+
+            parseObject(appInfoMnt, window.manifest);
+
+            if (window.install) {
+                if (window.install.session) {
+                    const button = document.createElement("button");
+                    button.innerText = "Install For Session";
+                    button.classList.add("matter-button-contained");
+                    button.style.backgroundColor = "#4f46e5";
+                    button.onclick = window.install.session;
+                    document
+                        .getElementById("install-button-strip")
+                        .appendChild(button);
+                }
+                if (window.install.permanent) {
+                    const button = document.createElement("button");
+                    button.innerText = "Install Permanently";
+                    button.classList.add("matter-button-contained");
+                    button.style.backgroundColor = "#22b30f";
+                    button.onclick = window.install.permanent;
+                    document
+                        .getElementById("install-button-strip")
+                        .appendChild(button);
+                }
+            }
+        </script>
+    </body>
+</html>
