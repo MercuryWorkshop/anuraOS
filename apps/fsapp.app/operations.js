@@ -1,3 +1,4 @@
+// note from perc:
 // this app should be refactored again, (someday?) but im not doing it rn so
 
 // Note from Rafflesia: What the fuck?
@@ -123,6 +124,111 @@ async function fileAction(selected) {
                     .slice("-1")[0] === "app"
             ) {
                 try {
+                    let data;
+                    try {
+                        data = await fs.promises.readFile(
+                            `${fileSelected.getAttribute("data-path")}/manifest.json`,
+                        );
+                    } catch {
+                        console.debug(
+                            "Changing folder to ",
+                            fileSelected.getAttribute("data-path"),
+                        );
+                        loadPath(fileSelected.getAttribute("data-path"));
+                        return;
+                    }
+                    const manifest = JSON.parse(data);
+                    if (anura.apps[manifest.package]) {
+                        anura.apps[manifest.package].open();
+                        return;
+                    }
+                    const iconData = await fs.promises.readFile(
+                        `${fileSelected.getAttribute("data-path")}/${manifest.icon}`,
+                    );
+                    const icon = new Blob([iconData]);
+                    const win = anura.wm.create(instance, {
+                        title: "",
+                        width: "450px",
+                        height: "525px",
+                    });
+                    const iframe = document.createElement("iframe");
+                    iframe.setAttribute(
+                        "src",
+                        document.location.href
+                            .split("/")
+                            .slice(0, -1)
+                            .join("/") +
+                            "/appview.html?manifest=" +
+                            ExternalApp.serializeArgs([
+                                data.toString(),
+                                URL.createObjectURL(icon),
+                                "app",
+                            ]),
+                    );
+                    iframe.style =
+                        "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
+                    win.content.appendChild(iframe);
+                    Object.assign(iframe.contentWindow, {
+                        anura,
+                        ExternalApp,
+                        instance,
+                        instanceWindow: win,
+                        install: {
+                            session: async () => {
+                                await anura.registerExternalApp(
+                                    `/fs${fileSelected.getAttribute("data-path")}`.replace(
+                                        "//",
+                                        "/",
+                                    ),
+                                );
+                                anura.notifications.add({
+                                    title: "Application Installed for Session",
+                                    description: `Application ${fileSelected
+                                        .getAttribute("data-path")
+                                        .replace(
+                                            "//",
+                                            "/",
+                                        )} has been installed temporarily, it will go away on refresh`,
+                                    timeout: 50000,
+                                });
+                                win.close();
+                            },
+                            permanent: async () => {
+                                await fs.promises.rename(
+                                    fileSelected.getAttribute("data-path"),
+                                    anura.settings.get("directories")["apps"] +
+                                        "/" +
+                                        fileSelected
+                                            .getAttribute("data-path")
+                                            .split("/")
+                                            .slice("-1")[0],
+                                );
+                                await anura.registerExternalApp(
+                                    `/fs${anura.settings.get("directories")["apps"]}/${fileSelected.getAttribute("data-path").split("/").slice("-1")[0]}`.replace(
+                                        "//",
+                                        "/",
+                                    ),
+                                );
+                                anura.notifications.add({
+                                    title: "Application Installed",
+                                    description: `Application ${fileSelected
+                                        .getAttribute("data-path")
+                                        .replace(
+                                            "//",
+                                            "/",
+                                        )} has been installed permanently`,
+                                    timeout: 50000,
+                                });
+                                win.close();
+                            },
+                        },
+                    });
+                    iframe.contentWindow.addEventListener("load", () => {
+                        const matter = document.createElement("link");
+                        matter.setAttribute("rel", "stylesheet");
+                        matter.setAttribute("href", "/assets/matter.css");
+                        iframe.contentDocument.head.appendChild(matter);
+                    });
                 } catch (e) {
                     anura.dialog.alert(
                         `There was an error: ${e}`,
