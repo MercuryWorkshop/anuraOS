@@ -83,6 +83,15 @@ class XFrogApp extends App {
             if (timeout) clearTimeout(timeout);
             timeout = setTimeout(() => {
                 // DISPLAY=:0 xdotool windowmap $(xwininfo -children -id ${xwid} | grep -o '^ \\+0x[0-9a-f]\\+');
+                for (const winRef in anura.wm.windows) {
+                    try {
+                        if (anura.wm.windows[winRef]!.deref() === win) {
+                            console.log(winRef);
+                        }
+                    } catch (e) {
+                        console.log("xfrog lost reference too quick");
+                    }
+                }
                 if (isNew)
                     anura.x86!.runcmd(
                         `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
@@ -114,25 +123,32 @@ class XFrogApp extends App {
                         .replaceAll("\r", "")
                         .replaceAll("\n", "")
                         .split("x");
-                    win = anura.wm.create(this, {
-                        title: "X window",
-                        width: `${dimensions[0]}px`,
-                        height: `${Number(dimensions[1]!) + 28}px`,
-                    });
-                    win.onfocus = () => {
-                        sfocus();
-                    };
-                    win.onresize = async (w, h) => {
-                        await anura.x86!.runcmd(
-                            `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
-                                win!.width
-                            } ${win!.height - 28}`,
-                        );
-                    };
-                    win.onclose = () => {
-                        anura.x86!.runcmd(`DISPLAY=:0 xkill -id ${xwid}`);
-                    };
-                    this.xwindows[xwid] = win;
+                    console.log(`x dimen ${dimensions[0]}x${dimensions[1]}`);
+                    if (
+                        Number(dimensions[0]) > 5 &&
+                        Number(dimensions[1]) > 5
+                    ) {
+                        win = anura.wm.create(this, {
+                            title: "X window",
+                            width: `${dimensions[0]}px`,
+                            height: `${Number(dimensions[1]!) + 28}px`,
+                        });
+                        win.onfocus = () => {
+                            sfocus();
+                        };
+                        win.onresize = async (w, h) => {
+                            await anura.x86!.runcmd(
+                                `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
+                                    win!.width
+                                } ${win!.height - 28}`,
+                            );
+                        };
+                        win.onclose = () => {
+                            anura.x86!.runcmd(`DISPLAY=:0 xkill -id ${xwid}`);
+                        };
+                        this.xwindows[xwid] = win;
+                        win.content.style.cursor = "none";
+                    }
                 } else {
                     const name = data.replaceAll("\r", "").replaceAll("\n", "");
                     if (name.includes("of failed request")) {
@@ -141,9 +157,6 @@ class XFrogApp extends App {
                         win.state.title = "X window: " + name;
                     }
                 }
-                // Hide cursor when hovering over XFrog app
-                // to prevent multiple cursors from displaying on screen
-                win.content.style.cursor = "none";
             },
         );
     }
