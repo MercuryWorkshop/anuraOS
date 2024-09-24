@@ -16,10 +16,10 @@
     "dependencies": {
         "@types/express": "^4.17.21",
         "@types/ws": "^8.5.12",
-        "express": "^4.19.2",
+        "express": "^4.21.0",
         "ts-node": "^10.9.2",
         "typescript": "^5.6.2",
-        "wisp-server-node": "^1.1.4",
+        "wisp-server-node": "^1.1.5",
         "ws": "^8.18.0"
     }
 }
