@@ -1,6 +1,6 @@
 import express from "express";
 import path from "path";
-import wisp from "wisp-server-node";
+import { server as wisp } from "@mercuryworkshop/wisp-js";
 import { Socket } from "node:net";
 __dirname = path.join(process.cwd(), "..");
 
