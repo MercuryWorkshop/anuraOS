@@ -1,8 +1,9 @@
 import express from "express";
 import path from "path";
-import { server as wisp } from "@mercuryworkshop/wisp-js";
+import wisp from "wisp-server-node";
 import { Socket } from "node:net";
-__dirname = path.join(process.cwd(), "..");
+
+const __dirname = path.join(process.cwd(), "..");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -24,5 +25,5 @@ app.use(express.static(__dirname + "/aboutproxy/static"));
 const server = app.listen(port, () => console.log("Listening on port: ", port));
 
 server.on("upgrade", (request, socket, head) => {
-    wisp.routeRequest(request, socket as Socket, head);
+    wisp.routeRequest(request, socket, head);
 });

@@ -182,7 +182,7 @@ static: all
 	cp -r public/* static/
 
 server: FORCE
-	cd server; npx ts-node server.ts
+	cd server; node server.js
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 
