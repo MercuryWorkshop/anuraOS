@@ -169,7 +169,7 @@ if (instance.manifest.marketplace) {
 
 dreamland.js is a reactive JSX-inspired rendering library with no virtual dom and no build step. You can find the source code [here](https://github.com/MercuryWorkshop/dreamlandjs) and the documentation [here](https://dreamland.js.org/).
 
-AnuraOS itself uses dreamland for the desktop environment and core system apps, and you can use it in your apps as well. To include dreamland in your app, you can add the following to the `head` section of your `index.html` file:
+AnuraOS itself uses dreamland for the desktop environment and core system apps, and you can use it in your apps as well. To include dreamland in your app without a bundler, you can add the following to the `head` section of your `index.html` file:
 
 ```html
 <script src="/libs/dreamland/all.js"></script>

@@ -76,7 +76,7 @@
     width: 8px;
     position: fixed;
     transition: background 0.2s;
-    z-index: 9999;
+    z-index: 0;
     cursor: ew-resize;
     display: flex;
     align-items: center;

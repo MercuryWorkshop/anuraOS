@@ -5,8 +5,8 @@ self.mime = await anura.import("npm:mime");
 self.currentlySelected = [];
 self.clipboard = [];
 self.removeAfterPaste = false;
-self.fs = anura.fs;
 self.filePicker = false;
+self.fs = anura.fs;
 self.Buffer = Filer.Buffer;
 self.sh = new anura.fs.Shell();
 
