@@ -1,8 +1,5 @@
 {
     "name": "anuraos-server",
-    "scripts": {
-        "start": "ts-node server.ts"
-    },
     "type": "module",
     "repository": {
         "type": "git",
@@ -15,11 +12,7 @@
     },
     "homepage": "https://github.com/MercuryWorkshop/AnuraOS#readme",
     "dependencies": {
-        "@types/express": "^4.17.21",
-        "@types/ws": "^8.5.12",
         "express": "^4.21.0",
-        "ts-node": "^10.9.2",
-        "typescript": "^5.6.2",
         "wisp-server-node": "^1.1.7",
         "ws": "^8.18.0"
     }
