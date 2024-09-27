@@ -1142,6 +1142,7 @@ class WMSplitBar {
             document.documentElement.clientWidth ||
             document.body.clientWidth;
         this.element.style.left = width / 2 - 4 + "px";
+        this.element.style.zIndex = getHighestZindex() + "";
         document.body.appendChild(this.element);
         setTimeout(() => {
             this.element.style.removeProperty("background-color");
