@@ -48,12 +48,10 @@ class AboutApp extends App {
                 <p>
                     This product is licensed under the{" "}
                     <button
-                        on:click={async () => {
-                            const browser =
-                                await anura.import("anura.libbrowser");
-                            browser.openTab(
+                        on:click={() => {
+                            anura.apps["anura.browser"].open([
                                 "https://github.com/MercuryWorkshop/anuraOS/blob/main/LICENSE",
-                            );
+                            ]);
                         }}
                         class="aboutapp-link-button"
                     >

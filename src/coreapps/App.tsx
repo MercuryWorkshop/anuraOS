@@ -1,7 +1,7 @@
 class App {
-    icon: string;
-    package: string;
     name: string;
+    package: string;
+    icon: string;
     /**
      * This should be set to false by default because apps should
      * only be hidden if there is an explicit reason to do so

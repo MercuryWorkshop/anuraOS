@@ -6,6 +6,7 @@ class Dialog extends App {
     icon = "/assets/icons/generic.svg";
     source: string;
     hidden = true;
+
     css = css`
         margin: 16px;
         h2 {
@@ -25,10 +26,6 @@ class Dialog extends App {
             margin-left: 5px;
         }
     `;
-
-    constructor() {
-        super();
-    }
 
     alert(message: string, title = "Alert") {
         const dialog = this as object;

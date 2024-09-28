@@ -1,17 +1,13 @@
 class XFrogApp extends App {
-    manifest: AppManifest;
-
-    activeWin: WMWindow;
-
+    name = "XFrog86";
+    package = "anura.xfrog";
+    icon = "/assets/icons/xfrog.png";
     hidden = true;
-
+    activeWin: WMWindow;
     xwindows: { [wid: string]: WMWindow } = {};
 
     constructor() {
         super();
-        this.name = "XFrog86";
-        this.package = "anura.xfrog";
-        this.icon = "/assets/icons/xfrog.png";
     }
 
     async startup() {
