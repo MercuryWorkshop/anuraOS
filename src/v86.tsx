@@ -292,7 +292,7 @@ class V86Backend {
             },
 
             cmdline:
-                "rw init=/sbin/init root=/dev/sda rootfstype=ext4 random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off mitigations=off ipv6.disable=1",
+                "rw init=/sbin/init root=/dev/sda rootfstype=ext4 cma=164M random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off mitigations=off ipv6.disable=1",
             filesystem: { fs, sh, Path, Buffer },
 
             bios: { url: "/bios/seabios.bin" },
@@ -345,23 +345,68 @@ class V86Backend {
             timeout: 5000,
         });
 
+        const width = 1024;
+        const height = 768;
+        const depth = 16;
+
+        const t = document.createElement("canvas");
+        t.width = width;
+        t.height = height;
+        document.body.appendChild(t);
+
         this.xpty = await this.openpty(
-            "/bin/ash -c 'startx /bin/xfrog'",
+            `/bin/ash -c 'Xvfb -fbdir /tmp/ -screen 0 ${width}x${height}x${depth}'`,
             1,
             1,
             async (data) => {
                 console.debug("XFROG " + data);
-                if (data.includes("XFROG-INIT")) {
-                    anura.apps["anura.xfrog"].startup();
-                    this.startMouseDriver();
-                    anura.notifications.add({
-                        title: "x86 Subsystem",
-                        description: "Started XFrog Window Manager",
-                        timeout: 5000,
-                    });
-                }
+                // if (data.includes("XFROG-INIT")) {
+                //     anura.apps["anura.xfrog"].startup();
+                //     this.startMouseDriver();
+                //     anura.notifications.add({
+                //         title: "x86 Subsystem",
+                //         description: "Started XFrog Window Manager",
+                //         timeout: 5000,
+                //     });
+                // }
             },
         );
+
+        await new Promise((r) => setTimeout(r, 1000));
+
+        let ready = false;
+        function pack(value1: number, value2: number) {
+            const result = (value1 << 16) + value2;
+            return result;
+        }
+        let pointer = "";
+        const pty = await this.openpty(
+            "/bin/ash -c 'env DISPLAY=:0 /bin/anuramouse'",
+            100,
+            100,
+            (data) => {
+                pointer = data.slice(0, -2);
+                ready = true;
+            },
+        );
+        function write_uint(i: number, addr: number) {
+            // I have to redefine this here because "this" breaks
+            const bytes = [i, i >> 8, i >> 16, i >> 24].map((a) => a % 256);
+            anura.x86!.emulator.write_memory(bytes, addr);
+        }
+        function movemouse(x: number, y: number) {
+            if (!ready) return;
+            write_uint(pack(x, y), Number(pointer));
+        }
+
+        const vgacanvas = t;
+        function mouseHandler(event: MouseEvent) {
+            const rect = vgacanvas.getBoundingClientRect();
+            const x = event.clientX - rect.x;
+            const y = event.clientY - rect.y;
+            movemouse(x, y);
+        }
+        t.onmousemove = mouseHandler;
 
         this.runpty = await this.openpty("/bin/bash --login", 1, 1, (data) => {
             console.debug("RUNPTY" + data);
