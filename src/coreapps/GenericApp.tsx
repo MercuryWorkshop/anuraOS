@@ -1,10 +1,10 @@
 class GenericApp extends App {
+    name = "Generic App";
+    package = "anura.generic";
+    icon = "/assets/icons/generic.svg";
     hidden = true;
     constructor() {
         super();
-        this.name = "Generic App";
-        this.icon = "/assets/icons/generic.svg";
-        this.package = "anura.generic";
     }
 
     async open(args: string[] = []): Promise<WMWindow | undefined> {

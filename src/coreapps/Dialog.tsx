@@ -6,6 +6,7 @@ class Dialog extends App {
     icon = "/assets/icons/generic.svg";
     source: string;
     hidden = true;
+
     css = css`
         margin: 16px;
         h2 {

@@ -250,6 +250,11 @@ class SettingsApp extends App {
     name = "Settings";
     package = "anura.settings";
     icon = "/assets/icons/settings.png";
+    win: WMWindow;
+
+    constructor() {
+        super();
+    }
 
     state = $state({
         show_x86_install: anura.settings.get("x86-disabled"),
@@ -257,7 +262,6 @@ class SettingsApp extends App {
         resizing: false,
         settingsBody: undefined as unknown as HTMLDivElement,
     });
-    win: WMWindow;
 
     page = async () => (
         <div
@@ -767,10 +771,6 @@ class SettingsApp extends App {
             </div>
         </div>
     );
-
-    constructor() {
-        super();
-    }
 
     async open(): Promise<WMWindow | undefined> {
         if (this.win?.element?.parentElement) {

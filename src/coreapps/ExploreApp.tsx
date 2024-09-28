@@ -1,11 +1,8 @@
 class ExploreApp extends App {
+    name = "Explore";
+    package = "anura.explore";
+    icon = "/assets/icons/explore.png";
     hidden = false;
-    constructor() {
-        super();
-        this.name = "Explore";
-        this.icon = "/assets/icons/explore.png";
-        this.package = "anura.explore";
-    }
 
     css = css`
         background-color: var(--theme-bg);
@@ -133,6 +130,10 @@ class ExploreApp extends App {
             display: none;
         }
     `;
+
+    constructor() {
+        super();
+    }
 
     whatsnew = (
         <div id="body">

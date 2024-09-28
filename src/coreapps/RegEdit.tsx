@@ -16,7 +16,7 @@ const DisclosureGroup: Component<{
     if (!this.level) this.level = 1;
 
     this.css = `
-    padding-left: ${0.8 * this.level!}em;
+        padding-left: ${0.8 * this.level!}em;
     `;
 
     return (
@@ -75,13 +75,9 @@ const DisclosureGroup: Component<{
 };
 
 class RegEdit extends App {
-    hidden = false;
-    constructor() {
-        super();
-        this.name = "Registry Editor";
-        this.icon = "/assets/icons/regedit.svg";
-        this.package = "anura.regedit";
-    }
+    name = "Registry Editor";
+    package = "anura.regedit";
+    icon = "/assets/icons/regedit.svg";
 
     css = css`
         display: flex;
@@ -137,6 +133,11 @@ class RegEdit extends App {
             background-color: var(--theme-bg);
         }
     `;
+
+    constructor() {
+        super();
+    }
+
     state = $state({
         selected: anura.settings.cache,
     });

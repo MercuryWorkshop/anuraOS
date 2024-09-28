@@ -6,6 +6,7 @@ class x86MgrApp extends App {
     constructor() {
         super();
     }
+
     async open(): Promise<WMWindow | undefined> {
         const win = anura.wm.create(this, {
             title: "x86",
