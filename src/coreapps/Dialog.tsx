@@ -27,6 +27,10 @@ class Dialog extends App {
         }
     `;
 
+    constructor() {
+        super();
+    }
+
     alert(message: string, title = "Alert") {
         const dialog = this as object;
         (dialog as any).title = "";
