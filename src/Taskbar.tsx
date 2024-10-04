@@ -154,7 +154,8 @@ class Taskbar {
             </li>
         ));
     }
-    #contextMenu = new ContextMenuAPI(true); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
+
+    #contextMenu = new ContextMenu(true); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
     showcontext(app: App, e: MouseEvent) {
         if (app.windows.length > 0) {
             this.#contextMenu.removeAllItems();

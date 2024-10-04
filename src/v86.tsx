@@ -9,6 +9,14 @@ V86.prototype.serial1_send = function (a: string) {
 const SLICE_SIZE = 2 ** 17 * 32;
 const BUF_SIZE = 256;
 
+interface FakeFile {
+    slice: (start: number, end: number) => Promise<Blob>;
+    save: (emulator?: any) => Promise<void>;
+    delete: () => Promise<void>;
+    resize: (size: number) => Promise<void>;
+    size: number;
+}
+
 async function InitV86Hdd(): Promise<FakeFile> {
     // all right! time to explain what goes on here
 
@@ -844,12 +852,4 @@ class V86Backend {
             sendPacket(fullPacket, frameObj.type, frameObj.streamID);
         };
     }
-}
-
-interface FakeFile {
-    slice: (start: number, end: number) => Promise<Blob>;
-    save: (emulator?: any) => Promise<void>;
-    delete: () => Promise<void>;
-    resize: (size: number) => Promise<void>;
-    size: number;
 }

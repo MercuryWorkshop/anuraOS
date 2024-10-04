@@ -15,27 +15,18 @@ type SnappedWindow = {
     direction: "left" | "right" | "ne" | "nw" | "se" | "sw";
 };
 
-let splitBar: WMSplitBar | null = null;
-
 const minimizedSnappedWindows: SnappedWindow[] = [];
 
 const snappedWindows: SnappedWindow[] = [];
 
-/**
- * to show a floating dialog displaying the given dom element
- * @param {Object} title "title of the dialog"
- */
-
-const windowInformation = {};
-const windowID = 0;
+let splitBar: WMSplitBar | null = null;
 
 class WindowInformation {
     title: string;
+    height: string;
     width: string;
     minwidth: number;
-    height: string;
     minheight: number;
-    allowMultipleInstance = false;
     resizable: boolean;
 }
 
@@ -1206,7 +1197,6 @@ let AliceWM = {
             minwidth: 40,
             width: "1000px",
             height: "500px",
-            allowMultipleInstance: false,
             resizable: true,
         };
         // Param given in argument

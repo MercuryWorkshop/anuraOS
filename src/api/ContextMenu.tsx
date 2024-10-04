@@ -1,4 +1,4 @@
-class ContextMenuAPI {
+class ContextMenu {
     large = false;
     #element = (
         <div class={`custom-menu${this.large ? " large" : ""}`} style=""></div>
