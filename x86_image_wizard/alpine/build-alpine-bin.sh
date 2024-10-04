@@ -20,6 +20,8 @@ rm -rf $OUT_ROOTFS_BIN || :
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
 cp -r ../anuramouse .
+cp anura-run .
+cp anura-
 cd ../epoxy/server; RUSTFLAGS="-C target-feature=+crt-static" cargo +nightly b -F twisp -r --target i686-unknown-linux-gnu; cp ../target/i686-unknown-linux-gnu/release/epoxy-server ../../alpine/;
 cd ../../alpine;
 
