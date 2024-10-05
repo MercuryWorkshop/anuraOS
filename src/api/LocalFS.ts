@@ -30,12 +30,12 @@ class LocalFSStats {
     constructor(data: Partial<LocalFSStats>) {
         this.name = data.name!;
         this.size = data.size || 0;
-        this.atime = data.atime || new Date();
-        this.mtime = data.mtime || new Date();
-        this.ctime = data.ctime || new Date();
         this.atimeMs = data.atimeMs || Date.now();
         this.mtimeMs = data.mtimeMs || Date.now();
         this.ctimeMs = data.ctimeMs || Date.now();
+        this.atime = new Date(this.atimeMs);
+        this.mtime = new Date(this.mtimeMs);
+        this.ctime = new Date(this.ctimeMs);
         this.node = data.node || crypto.randomUUID();
         this.nlinks = data.nlinks || 1;
         this.mode = data.mode || 0o100777;
@@ -51,7 +51,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
     domain: string;
     name = "LocalFS";
     version = "1.0.0";
-
+    stats: Map<string, any> = new Map();
     fds: FileSystemHandle[] = [];
     cursors: number[] = [];
 
@@ -89,6 +89,19 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         }
         const fs = new LocalFS(dirHandle, anuraPath);
         anura.fs.installProvider(fs);
+        const textde = new TextDecoder();
+        try {
+            fs.stats = new Map(
+                JSON.parse(
+                    textde.decode(
+                        await fs.promises.readFile(anuraPath + "/.anura_stats"),
+                    ),
+                ),
+            );
+        } catch (e: any) {
+            console.log("Error on mount, probably first mount ", e);
+        }
+
         return fs;
     }
     static async new(anuraPath: string) {
@@ -116,7 +129,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         anura.fs.installProvider(fs);
         return fs;
     }
-
     readdir(
         path: string,
         _options?: any,
@@ -238,6 +250,13 @@ class LocalFS extends AFSProvider<LocalFSStats> {
     }
 
     promises = {
+        saveStats: async () => {
+            const jsonStats = JSON.stringify(Array.from(this.stats.entries()));
+            await this.promises.writeFile(
+                this.domain + "/.anura_stats",
+                jsonStats,
+            );
+        },
         writeFile: async (
             path: string,
             data: Uint8Array | string,
@@ -332,6 +351,11 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         },
         stat: async (path: string) => {
             path = this.relativizePath(path);
+
+            let statPath = path; // when accessing this.stats dont have a trailing slash
+            if (statPath.endsWith("/")) statPath = statPath.slice(0, -1);
+            const currStats = this.stats.get(statPath) || {};
+
             let handle;
             try {
                 if (path === "") {
@@ -350,8 +374,13 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     if (!path) rootName = this.domain.split("/").pop();
                     return new LocalFSStats({
                         name: rootName || handle.name,
-                        mode: 0o40777,
+                        mode: currStats.mode || 0o40777,
                         type: "DIRECTORY",
+                        atimeMs: currStats.atimeMs || Date.now(),
+                        mtimeMs: currStats.mtimeMs || Date.now(),
+                        ctimeMs: currStats.ctimeMs || Date.now(),
+                        uid: currStats.uid || 0,
+                        gid: currStats.gid || 0,
                     });
                 } catch (e) {
                     throw {
@@ -368,6 +397,13 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             return new LocalFSStats({
                 name: file.name,
                 size: file.size,
+                type: "FILE",
+                mode: currStats.mode || 0o100777,
+                atimeMs: currStats.atimeMs || Date.now(),
+                mtimeMs: currStats.mtimeMs || Date.now(),
+                ctimeMs: currStats.ctimeMs || Date.now(),
+                uid: currStats.uid || 0,
+                gid: currStats.gid || 0,
             });
         },
         truncate: async (path: string, len: number) => {
@@ -382,9 +418,14 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             console.error("Not implemented: chown");
             throw new Error("Not implemented");
         },
-        chmod: () => {
-            console.error("Not implemented: chmod");
-            throw new Error("Not implemented");
+        chmod: async (fullPath: string, mode: number) => {
+            let path = this.relativizePath(fullPath);
+            if (path.endsWith("/")) path = path.slice(0, -1);
+            const currStats = this.stats.get(path) || {};
+            if (mode > 0o777) currStats.mode = mode;
+            else currStats.mode = 0o100000 + mode;
+            this.stats.set(path, currStats);
+            await this.promises.saveStats();
         },
         getxattr: () => {
             console.error("Not implemented: getxattr");
@@ -532,9 +573,11 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         throw new Error("Method not implemented.");
     }
 
-    chmod() {
-        console.error("Not implemented: chmod");
-        throw new Error("Method not implemented.");
+    chmod(path: string, mode: number, callback?: (err: Error | null) => void) {
+        this.promises
+            .chmod(path, mode)
+            .then(() => callback!(null))
+            .catch(callback);
     }
 
     fchmod() {
