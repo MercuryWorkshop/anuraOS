@@ -269,7 +269,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             path = this.relativizePath(path);
             const stats = this.stats.get(path);
 
-            if (stats && stats.isSymbolicLink()) {
+            if (stats && stats.isSymbolicLink) {
                 const target = stats.target;
                 if (this.stats.has(target)) {
                     path = target; // Follow symlink to the target path
@@ -303,7 +303,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             path = this.relativizePath(path);
             const stats = this.stats.get(path);
 
-            if (stats && stats.isSymbolicLink()) {
+            if (stats && stats.isSymbolicLink) {
                 const target = stats.target;
                 if (this.stats.has(target)) {
                     path = target; // Follow symlink to the target path
@@ -624,7 +624,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             path = this.relativizePath(path);
             const stats = this.stats.get(path);
 
-            if (stats && stats.isSymbolicLink()) {
+            if (stats && stats.isSymbolicLink) {
                 const target = stats.target;
                 if (this.stats.has(target)) {
                     path = target; // Follow symlink to the target path
@@ -667,7 +667,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 }
 
                 // Ensure the path is a symlink
-                if (!stats.isSymbolicLink()) {
+                if (!stats.isSymbolicLink) {
                     return reject({
                         name: "EINVAL",
                         code: "EINVAL",
@@ -712,9 +712,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     mtimeMs: Date.now(),
                     ctimeMs: Date.now(),
                     birthtimeMs: Date.now(),
-                    isDirectory: () => false,
-                    isFile: () => false,
-                    isSymbolicLink: () => true, // Add a flag to indicate it's a symlink
+                    isDirectory: false,
+                    isFile: false,
+                    isSymbolicLink: true, // Add a flag to indicate it's a symlink
                     target, // Store the target path
                 });
 
