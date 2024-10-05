@@ -289,6 +289,12 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 create: true,
             });
             const writer = await handle.createWritable();
+            const fileStats = this.stats.get(path) || {};
+            if (fileStats) {
+                fileStats.mtimeMs = Date.now();
+                fileStats.ctimeMs = Date.now();
+                this.stats.set(path, fileStats);
+            }
             writer.write(data);
             writer.close();
         },
@@ -315,6 +321,12 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 path = finalFile!;
             }
             const handle = await parentHandle.getFileHandle(path);
+            const fileStats = this.stats.get(path) || {};
+            if (fileStats) {
+                fileStats.atimeMs = Date.now();
+                this.stats.set(path, fileStats);
+            }
+
             return new Filer.Buffer(
                 await (await handle.getFile()).arrayBuffer(),
             );
@@ -737,8 +749,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             // Update the times in the file stats
             fileStats.atimeMs = accessTime.getTime();
             fileStats.mtimeMs = modifiedTime.getTime();
-            fileStats.atime = accessTime;
-            fileStats.mtime = modifiedTime;
 
             // Save the updated stats back into the stats map
             this.stats.set(path, fileStats);
