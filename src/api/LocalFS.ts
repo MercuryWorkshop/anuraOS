@@ -439,10 +439,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             console.error("Not implemented: mkdtemp");
             throw new Error("Not implemented");
         },
-        mknod: () => {
-            console.error("Not implemented: mknod");
-            throw new Error("Not implemented");
-        },
         open: async (
             path: string,
             _flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
@@ -538,11 +534,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 
     readlink() {
         console.error("Not implemented: readlink");
-        throw new Error("Method not implemented.");
-    }
-
-    mknod() {
-        console.error("Not implemented: mknod");
         throw new Error("Method not implemented.");
     }
 

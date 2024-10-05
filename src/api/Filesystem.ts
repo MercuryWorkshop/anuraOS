@@ -72,12 +72,6 @@ abstract class AnuraFSOperations<TStats> {
 
     abstract unlink(path: string, callback?: (err: Error | null) => void): void;
 
-    abstract mknod(
-        path: string,
-        mode: number,
-        callback?: (err: Error | null) => void,
-    ): void;
-
     abstract rmdir(path: string, callback?: (err: Error | null) => void): void;
 
     abstract mkdir(
@@ -243,7 +237,6 @@ abstract class AnuraFSOperations<TStats> {
             prefix: string,
             options?: { encoding: string },
         ): Promise<string>;
-        mknod(path: string, mode: number): Promise<void>;
         open(
             path: string,
             flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
