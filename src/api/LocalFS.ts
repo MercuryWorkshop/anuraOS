@@ -559,7 +559,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             // @ts-ignore - This is just here for compat with v86
             return this.promises.stat(...args);
         },
-        mkdtemp(template: string): Promise<string> {
+        mkdtemp: (template: string): Promise<string> => {
             return new Promise((resolve, reject) => {
                 // Check if template has 'XXXXXX'
                 if (!template.includes("XXXXXX")) {
@@ -578,17 +578,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 // Replace 'XXXXXX' in the template with the random suffix
                 const newDir = template.replace("XXXXXX", randomSuffix);
 
-                // Check if directory already exists (edge case)
-                if (this.stats.has(newDir)) {
-                    return reject({
-                        name: "EEXIST",
-                        code: "EEXIST",
-                        errno: -17,
-                        message: `Directory already exists: ${newDir}`,
-                        stack: "Error: Directory exists",
-                    } as Error);
-                }
-
                 // Add the new directory to stats
                 this.stats.set(newDir, {
                     dev: 1,
@@ -605,10 +594,10 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     mtimeMs: Date.now(),
                     ctimeMs: Date.now(),
                     birthtimeMs: Date.now(),
-                    isDirectory: () => true,
-                    isFile: () => false,
+                    isDirectory: true,
+                    isFile: false,
                 });
-
+                this.promises.mkdir(newDir);
                 // Save the new stats
                 this.promises
                     .saveStats()
