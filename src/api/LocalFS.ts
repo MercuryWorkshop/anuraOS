@@ -427,10 +427,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             this.stats.set(path, currStats);
             await this.promises.saveStats();
         },
-        getxattr: () => {
-            console.error("Not implemented: getxattr");
-            throw new Error("Not implemented");
-        },
         link: () => {
             console.error("Not implemented: link");
             throw new Error("Not implemented");
@@ -470,14 +466,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         },
         readlink: () => {
             console.error("Not implemented: readlink");
-            throw new Error("Not implemented");
-        },
-        removexattr: () => {
-            console.error("Not implemented: removexattr");
-            throw new Error("Not implemented");
-        },
-        setxattr: () => {
-            console.error("Not implemented: setxattr");
             throw new Error("Not implemented");
         },
         symlink: () => {
@@ -643,36 +631,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 
     read() {
         console.error("Not implemented: read");
-        throw new Error("Method not implemented.");
-    }
-
-    setxattr() {
-        console.error("Not implemented: setxattr");
-        throw new Error("Method not implemented.");
-    }
-
-    fsetxattr() {
-        console.error("Not implemented: fsetxattr");
-        throw new Error("Method not implemented.");
-    }
-
-    getxattr() {
-        console.error("Not implemented: getxattr");
-        throw new Error("Method not implemented.");
-    }
-
-    fgetxattr() {
-        console.error("Not implemented: fgetxattr");
-        throw new Error("Method not implemented.");
-    }
-
-    removexattr() {
-        console.error("Not implemented: removexattr");
-        throw new Error("Method not implemented.");
-    }
-
-    fremovexattr() {
-        console.error("Not implemented: fremovexattr");
         throw new Error("Method not implemented.");
     }
 
