@@ -267,6 +267,18 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             }
             let parentHandle = this.dirHandle;
             path = this.relativizePath(path);
+            const stats = this.stats.get(path);
+
+            if (stats && stats.isSymbolicLink()) {
+                const target = stats.target;
+                if (this.stats.has(target)) {
+                    path = target; // Follow symlink to the target path
+                } else {
+                    throw new Error(
+                        `ENOENT: No such file or directory, symlink target not found: ${target}`,
+                    );
+                }
+            }
             if (path.includes("/")) {
                 const parts = path.split("/");
                 const finalFile = parts.pop();
@@ -283,6 +295,19 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         readFile: async (path: string) => {
             let parentHandle = this.dirHandle;
             path = this.relativizePath(path);
+            const stats = this.stats.get(path);
+
+            if (stats && stats.isSymbolicLink()) {
+                const target = stats.target;
+                if (this.stats.has(target)) {
+                    path = target; // Follow symlink to the target path
+                } else {
+                    throw new Error(
+                        `ENOENT: No such file or directory, symlink target not found: ${target}`,
+                    );
+                }
+            }
+
             if (path.includes("/")) {
                 const parts = path.split("/");
                 const finalFile = parts.pop();
@@ -300,7 +325,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             );
             const nodes: string[] = [];
             for await (const entry of dirHandle.values()) {
-                nodes.push(entry.name);
+                if (entry.name !== ".anura_stats")
+                    // internal file shouldn't appear on fs methods
+                    nodes.push(entry.name);
             }
             return nodes;
         },
@@ -465,9 +492,56 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             this.stats.set(path, currStats);
             await this.promises.saveStats();
         },
-        link: () => {
-            console.error("Not implemented: link");
-            throw new Error("Not implemented");
+        link: (existingPath: string, newPath: string): Promise<void> => {
+            existingPath = this.relativizePath(existingPath);
+            newPath = this.relativizePath(newPath);
+            return new Promise((resolve, reject) => {
+                // Check if existingPath exists in the stats
+                const existingStats = this.stats.get(existingPath);
+                if (!existingStats) {
+                    return reject({
+                        name: "ENOENT",
+                        code: "ENOENT",
+                        errno: -2,
+                        message: `No such file or directory: ${existingPath}`,
+                        stack: "Error: No such file",
+                    } as Error);
+                }
+
+                // Ensure it's not a directory (as link() doesn't work for directories)
+                if (existingStats.isDirectory()) {
+                    return reject({
+                        name: "EPERM",
+                        code: "EPERM",
+                        errno: -1,
+                        message: `Operation not permitted: ${existingPath} is a directory`,
+                        stack: "Error: Operation not permitted",
+                    } as Error);
+                }
+
+                // Check if newPath already exists
+                if (this.stats.has(newPath)) {
+                    return reject({
+                        name: "EEXIST",
+                        code: "EEXIST",
+                        errno: -17,
+                        message: `File already exists: ${newPath}`,
+                        stack: "Error: File exists",
+                    } as Error);
+                }
+
+                // Create a hard link by sharing the same stats object (inode)
+                this.stats.set(newPath, existingStats);
+
+                // Increment the link count for the existing file
+                existingStats.nlink++;
+
+                // Save stats and resolve the promise
+                this.promises
+                    .saveStats()
+                    .then(() => resolve())
+                    .catch(reject);
+            });
         },
         lstat: (...args: any[]) => {
             // @ts-ignore - This is just here for compat with v86
@@ -536,6 +610,19 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             _mode?: any,
         ) => {
             path = this.relativizePath(path);
+            const stats = this.stats.get(path);
+
+            if (stats && stats.isSymbolicLink()) {
+                const target = stats.target;
+                if (this.stats.has(target)) {
+                    path = target; // Follow symlink to the target path
+                } else {
+                    throw new Error(
+                        `ENOENT: No such file or directory, symlink target not found: ${target}`,
+                    );
+                }
+            }
+
             let parentHandle = this.dirHandle;
             if (path.includes("/")) {
                 const parts = path.split("/");
@@ -553,13 +640,78 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 [AnuraFDSymbol]: this.domain,
             };
         },
-        readlink: () => {
-            console.error("Not implemented: readlink");
-            throw new Error("Not implemented");
+        readlink(path: string): Promise<string> {
+            return new Promise((resolve, reject) => {
+                // Check if the path exists in stats
+                const stats = this.stats.get(path);
+                if (!stats) {
+                    return reject({
+                        name: "ENOENT",
+                        code: "ENOENT",
+                        errno: -2,
+                        message: `No such file or directory: ${path}`,
+                        stack: "Error: No such file",
+                    } as Error);
+                }
+
+                // Ensure the path is a symlink
+                if (!stats.isSymbolicLink()) {
+                    return reject({
+                        name: "EINVAL",
+                        code: "EINVAL",
+                        errno: -22,
+                        message: `Invalid argument: ${path} is not a symlink`,
+                        stack: "Error: Invalid argument",
+                    } as Error);
+                }
+
+                // Return the target path
+                resolve(stats.target);
+            });
         },
-        symlink: () => {
-            console.error("Not implemented: symlink");
-            throw new Error("Not implemented");
+        symlink(target: string, path: string): Promise<void> {
+            return new Promise((resolve, reject) => {
+                target = this.relativizePath(target);
+                path = this.relativizePath(path);
+                // Check if the symlink destination already exists
+                if (this.stats.has(path)) {
+                    return reject({
+                        name: "EEXIST",
+                        code: "EEXIST",
+                        errno: -17,
+                        message: `File already exists: ${path}`,
+                        stack: "Error: File exists",
+                    } as Error);
+                }
+
+                // Add a new entry in the stats for the symlink, with a custom handler for symlink
+                this.stats.set(path, {
+                    dev: 1,
+                    ino: Math.floor(Math.random() * 100000),
+                    mode: 0o777, // Full permissions (as symlink permissions aren't usually enforced)
+                    nlink: 1,
+                    uid: 1000,
+                    gid: 1000,
+                    rdev: 0,
+                    size: target.length, // Size of the path to the target
+                    blksize: 4096,
+                    blocks: 1,
+                    atimeMs: Date.now(),
+                    mtimeMs: Date.now(),
+                    ctimeMs: Date.now(),
+                    birthtimeMs: Date.now(),
+                    isDirectory: () => false,
+                    isFile: () => false,
+                    isSymbolicLink: () => true, // Add a flag to indicate it's a symlink
+                    target, // Store the target path
+                });
+
+                // Save stats and resolve the promise
+                this.promises
+                    .saveStats()
+                    .then(() => resolve())
+                    .catch(reject);
+            });
         },
         utimes: async (
             path: string,
@@ -666,19 +818,37 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         return this.stat(...args);
     }
 
-    link() {
-        console.error("Not implemented: link");
-        throw new Error("Method not implemented.");
+    link(
+        existingPath: string,
+        newPath: string,
+        callback?: (err: Error | null) => void,
+    ) {
+        callback ||= () => {};
+        this.promises
+            .link(existingPath, newPath)
+            .then(() => callback(null))
+            .catch(callback);
     }
 
-    symlink() {
-        console.error("Not implemented: symlink");
-        throw new Error("Method not implemented.");
+    symlink(
+        target: string,
+        path: string,
+        type: any,
+        callback?: (err: Error | null) => void,
+    ) {
+        callback ||= () => {};
+        this.promises
+            .symlink(target, path)
+            .then(() => callback(null))
+            .catch(callback);
     }
 
-    readlink() {
-        console.error("Not implemented: readlink");
-        throw new Error("Method not implemented.");
+    readlink(path: any, callback?: any) {
+        callback ||= () => {};
+        this.promises
+            .readlink(path)
+            .then((linkString) => callback(null, linkString))
+            .catch(callback);
     }
 
     access(path: string, mode: any, callback?: (err: Error | null) => void) {
@@ -869,6 +1039,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             );
             return;
         }
+        // Resolve symbolic link, if necessary
 
         const fileHandle = handle as FileSystemFileHandle;
         fileHandle.getFile().then((file) => {
