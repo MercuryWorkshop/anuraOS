@@ -410,13 +410,51 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             const data = await this.promises.readFile(path);
             await this.promises.writeFile(path, data.slice(0, len));
         },
-        access: () => {
-            console.error("Not implemented: access");
-            throw new Error("Not implemented");
+        access(path: string, mode: number): Promise<void> {
+            path = this.relativizePath(path);
+
+            return new Promise((resolve, reject) => {
+                this.promises
+                    .stat(path)
+                    .then(() => resolve()) // File exists
+                    .catch(() =>
+                        reject({
+                            name: "ENOENT",
+                            code: "ENOENT",
+                            errno: -2,
+                            message: `No such file or directory: ${path}`,
+                            stack: "Error: No such file or directory",
+                        } as Error),
+                    ); // File doesn't exist
+            });
         },
-        chown: () => {
-            console.error("Not implemented: chown");
-            throw new Error("Not implemented");
+        chown(path: string, uid: number, gid: number): Promise<void> {
+            path = this.relativizePath(path);
+
+            return new Promise((resolve, reject) => {
+                // Check if the file exists
+                const stats = this.stats.get(path);
+                if (!stats) {
+                    return reject({
+                        name: "ENOENT",
+                        code: "ENOENT",
+                        errno: -2,
+                        message: `No such file or directory: ${path}`,
+                        stack: "Error: No such file or directory",
+                    } as Error);
+                }
+
+                // Update ownership in stats
+                stats.uid = uid;
+                stats.gid = gid;
+
+                // Save updated stats
+                this.stats.set(path, stats);
+                this.promises
+                    .saveStats()
+                    .then(() => resolve())
+                    .catch(reject);
+            });
         },
         chmod: async (fullPath: string, mode: number) => {
             let path = this.relativizePath(fullPath);
@@ -435,15 +473,69 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             // @ts-ignore - This is just here for compat with v86
             return this.promises.stat(...args);
         },
-        mkdtemp: () => {
-            console.error("Not implemented: mkdtemp");
-            throw new Error("Not implemented");
+        mkdtemp(template: string): Promise<string> {
+            return new Promise((resolve, reject) => {
+                // Check if template has 'XXXXXX'
+                if (!template.includes("XXXXXX")) {
+                    return reject({
+                        name: "EINVAL",
+                        code: "EINVAL",
+                        errno: -22,
+                        message: "Invalid template, must contain 'XXXXXX'.",
+                        stack: "Error: Invalid template",
+                    } as Error);
+                }
+
+                // Generate a random suffix
+                const randomSuffix = Math.random().toString(36).slice(2, 8); // 6-character random string
+
+                // Replace 'XXXXXX' in the template with the random suffix
+                const newDir = template.replace("XXXXXX", randomSuffix);
+
+                // Check if directory already exists (edge case)
+                if (this.stats.has(newDir)) {
+                    return reject({
+                        name: "EEXIST",
+                        code: "EEXIST",
+                        errno: -17,
+                        message: `Directory already exists: ${newDir}`,
+                        stack: "Error: Directory exists",
+                    } as Error);
+                }
+
+                // Add the new directory to stats
+                this.stats.set(newDir, {
+                    dev: 1,
+                    ino: Math.floor(Math.random() * 100000),
+                    mode: 0o777,
+                    nlink: 1,
+                    uid: 1000,
+                    gid: 1000,
+                    rdev: 0,
+                    size: 4096,
+                    blksize: 4096,
+                    blocks: 1,
+                    atimeMs: Date.now(),
+                    mtimeMs: Date.now(),
+                    ctimeMs: Date.now(),
+                    birthtimeMs: Date.now(),
+                    isDirectory: () => true,
+                    isFile: () => false,
+                });
+
+                // Save the new stats
+                this.promises
+                    .saveStats()
+                    .then(() => resolve(newDir)) // Return the new directory path
+                    .catch(reject);
+            });
         },
         open: async (
             path: string,
             _flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
             _mode?: any,
         ) => {
+            path = this.relativizePath(path);
             let parentHandle = this.dirHandle;
             if (path.includes("/")) {
                 const parts = path.split("/");
@@ -454,6 +546,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             const handle = await parentHandle.getFileHandle(path, {
                 create: true,
             });
+            (handle as any).path = path; // Hack
             this.fds.push(handle);
             return {
                 fd: this.fds.length - 1,
@@ -468,15 +561,66 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             console.error("Not implemented: symlink");
             throw new Error("Not implemented");
         },
-        utimes: () => {
-            console.error("Not implemented: utimes");
-            throw new Error("Not implemented");
+        utimes: async (
+            path: string,
+            atime: Date | number,
+            mtime: Date | number,
+        ) => {
+            // Ensure path is relative
+            path = this.relativizePath(path);
+
+            // If the times are provided as numbers (timestamps), convert them to dates
+            const accessTime =
+                typeof atime === "number" ? new Date(atime) : atime;
+            const modifiedTime =
+                typeof mtime === "number" ? new Date(mtime) : mtime;
+
+            // Fetch the current stats for the file, or initialize them if not present
+            let fileStats = this.stats.get(path);
+            if (!fileStats) {
+                // Try to stat the file if not present in stats map
+                fileStats = await this.promises.stat(path);
+            }
+
+            // Update the times in the file stats
+            fileStats.atimeMs = accessTime.getTime();
+            fileStats.mtimeMs = modifiedTime.getTime();
+            fileStats.atime = accessTime;
+            fileStats.mtime = modifiedTime;
+
+            // Save the updated stats back into the stats map
+            this.stats.set(path, fileStats);
+            await this.promises.saveStats();
         },
     };
 
-    ftruncate() {
-        console.error("Not implemented: ftruncate");
-        throw new Error("Method not implemented.");
+    ftruncate(
+        fd: AnuraFD,
+        len: number,
+        callback?: (err: Error | null, fd: AnuraFD) => void,
+    ) {
+        callback ||= () => {};
+        const handle = this.fds[fd.fd];
+        if (!handle) {
+            callback(
+                {
+                    name: "EBADF",
+                    code: "EBADF",
+                    errno: 9,
+                    message: "bad file descriptor",
+                    stack: "Error: bad file descriptor",
+                } as Error,
+                fd,
+            );
+            return;
+        }
+        const path = (handle as any).path;
+        this.promises
+            .truncate(path, len)
+            .then(() => callback!(null, fd))
+            .catch((err) => {
+                callback(err, fd);
+            });
     }
 
     fstat(fd: AnuraFD, callback: (err: Error | null, stats: any) => void) {
@@ -537,19 +681,54 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         throw new Error("Method not implemented.");
     }
 
-    access() {
-        console.error("Not implemented: access");
-        throw new Error("Method not implemented.");
+    access(path: string, mode: any, callback?: (err: Error | null) => void) {
+        callback ||= () => {};
+
+        this.promises
+            .access(path, mode)
+            .then(() => callback(null))
+            .catch(callback);
     }
 
-    mkdtemp() {
-        console.error("Not implemented: mkdtemp");
-        throw new Error("Method not implemented.");
+    mkdtemp(
+        prefix: string,
+        options: any,
+        callback?: (err: Error | null, path: string) => void,
+    ): void {
+        callback ||= () => {};
+
+        this.promises
+            .mkdtemp(prefix)
+            .then((folder) => callback(null, folder))
+            .catch((err) => {
+                callback(err, null!);
+            });
     }
 
-    fchown() {
-        console.error("Not implemented: fchown");
-        throw new Error("Method not implemented.");
+    fchown(
+        fd: AnuraFD,
+        uid: number,
+        gid: number,
+        callback?: (err: Error | null) => void,
+    ) {
+        callback ||= () => {};
+
+        const handle = this.fds[fd.fd];
+        if (!handle) {
+            callback({
+                name: "EBADF",
+                code: "EBADF",
+                errno: 9,
+                message: "bad file descriptor",
+                stack: "Error: bad file descriptor",
+            } as Error);
+            return;
+        }
+
+        const path = (handle as any).path; // Retrieve the file path
+
+        // Reuse the chown logic to update ownership by path
+        this.chown(path, uid, gid, callback);
     }
 
     chmod(path: string, mode: number, callback?: (err: Error | null) => void) {
@@ -559,14 +738,42 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             .catch(callback);
     }
 
-    fchmod() {
-        console.error("Not implemented: fchmod");
-        throw new Error("Method not implemented.");
+    fchmod(fd: AnuraFD, mode: number, callback?: (err: Error | null) => void) {
+        callback ||= () => {};
+        const handle = this.fds[fd.fd];
+        if (!handle) {
+            callback({
+                name: "EBADF",
+                code: "EBADF",
+                errno: 9,
+                message: "bad file descriptor",
+                stack: "Error: bad file descriptor",
+            } as Error);
+            return;
+        }
+
+        const path = (handle as any).path; // Retrieve the file path
+        this.promises
+            .chmod(path, mode)
+            .then(() => callback!(null))
+            .catch(callback);
     }
 
-    fsync() {
-        console.error("Not implemented: fsync");
-        throw new Error("Method not implemented.");
+    fsync(fd: AnuraFD, callback?: (err: Error | null) => void) {
+        callback ||= () => {};
+        const handle = this.fds[fd.fd];
+        if (!handle) {
+            callback({
+                name: "EBADF",
+                code: "EBADF",
+                errno: 9,
+                message: "bad file descriptor",
+                stack: "Error: bad file descriptor",
+            } as Error);
+            return;
+        }
+        // In the OPFS API, data is automatically flushed to disk, so fsync can be a no-op.
+        callback(null);
     }
 
     write(
@@ -620,24 +827,114 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         });
     }
 
-    read() {
-        console.error("Not implemented: read");
-        throw new Error("Method not implemented.");
+    read(
+        fd: AnuraFD,
+        buffer: Uint8Array,
+        offset: number,
+        length: number,
+        position: number | null,
+        callback?: (
+            err: Error | null,
+            bytesRead: number,
+            buffer: Uint8Array,
+        ) => void,
+    ) {
+        callback ||= () => {};
+        const handle = this.fds[fd.fd];
+        if (handle === undefined) {
+            callback(
+                {
+                    name: "EBADF",
+                    code: "EBADF",
+                    errno: 9,
+                    message: "bad file descriptor",
+                    stack: "Error: bad file descriptor",
+                } as Error,
+                0,
+                null!,
+            );
+            return;
+        }
+        if (handle.kind === "directory") {
+            callback(
+                {
+                    name: "EISDIR",
+                    code: "EISDIR",
+                    errno: 21,
+                    message: "Is a directory",
+                    stack: "Error: Is a directory",
+                } as Error,
+                0,
+                null!,
+            );
+            return;
+        }
+
+        const fileHandle = handle as FileSystemFileHandle;
+        fileHandle.getFile().then((file) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const data = new Uint8Array(reader.result as ArrayBuffer);
+                buffer.set(data.slice(offset, offset + length));
+                callback(null, data.length, buffer);
+            };
+            reader.onerror = (e) => {
+                callback(new Error("Failed to read file"), 0, null!);
+            };
+            reader.readAsArrayBuffer(
+                file.slice(position || 0, (position || 0) + length),
+            );
+        });
     }
 
-    utimes() {
-        console.error("Not implemented: utimes");
-        throw new Error("Method not implemented.");
+    utimes(
+        path: string,
+        atime: Date | number,
+        mtime: Date | number,
+        callback?: (err: Error | null) => void,
+    ) {
+        callback ||= () => {};
+        this.promises
+            .utimes(path, atime, mtime)
+            .then(() => callback!(null))
+            .catch(callback);
     }
 
-    futimes() {
-        console.error("Not implemented: futimes");
-        throw new Error("Method not implemented.");
+    futimes(
+        fd: AnuraFD,
+        atime: Date,
+        mtime: Date,
+        callback?: (err: Error | null) => void,
+    ) {
+        callback ||= () => {};
+        const handle = this.fds[fd.fd];
+        if (!handle) {
+            callback({
+                name: "EBADF",
+                code: "EBADF",
+                errno: 9,
+                message: "bad file descriptor",
+                stack: "Error: bad file descriptor",
+            } as Error);
+            return;
+        }
+
+        const path = (handle as any).path; // Retrieve the file path
+        this.utimes(path, atime, mtime, callback);
     }
 
-    chown() {
-        console.error("Not implemented: chown");
-        throw new Error("Method not implemented.");
+    chown(
+        path: string,
+        uid: number,
+        gid: number,
+        callback?: (err: Error | null) => void,
+    ) {
+        callback ||= () => {};
+
+        this.promises
+            .chown(path, uid, gid)
+            .then(() => callback(null))
+            .catch(callback);
     }
 
     close(fd: AnuraFD, callback: (err: Error | null) => void) {
@@ -663,7 +960,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         mode?: any,
         callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
     ): void {
-        path = this.relativizePath(path);
         if (typeof mode === "function") {
             callback = mode;
         }
