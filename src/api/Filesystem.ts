@@ -1031,7 +1031,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
     mkdtemp(...args: any[]) {
         // Temp directories should remain in the root filesystem for now
         // @ts-ignore - Overloaded methods are scary
-        this.providers.get("/")!.mkdtemp(...args);
+        this.processPath(path).mkdtemp(...args);
     }
 
     readdir(path: string, ...rest: any[]) {
@@ -1186,7 +1186,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         mkdir: (path: string, mode?: number) =>
             this.processPath(path).promises.mkdir(path, mode),
         mkdtemp: (prefix: string, options?: { encoding: string }) =>
-            this.providers.get("/")!.promises.mkdtemp(prefix, options),
+            this.processPath(prefix).promises.mkdtemp(prefix, options),
         open: async (
             path: string,
             flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
