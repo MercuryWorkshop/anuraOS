@@ -346,8 +346,10 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             } catch (e) {
                 try {
                     const handle = await this.getChildDirHandle(path);
+                    let rootName;
+                    if (!path) rootName = this.domain.split("/").pop();
                     return new LocalFSStats({
-                        name: handle.name,
+                        name: rootName || handle.name,
                         mode: 0o40777,
                         type: "DIRECTORY",
                     });
