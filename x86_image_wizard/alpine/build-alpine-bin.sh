@@ -48,6 +48,7 @@ sudo umount "$loop"
 sudo losetup -d "$loop"
 rm "$OUT_ROOTFS_TAR"
 rm -rf "$OUT_ROOTFS_MNT"
+rm anura-run
 rm xfrog.sh
 rm xsetrandr.sh
 rm epoxy-server

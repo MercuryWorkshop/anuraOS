@@ -7,6 +7,6 @@ elif [ "$1" = "post-commit" ]; then
     cp /boot/vmlinuz-virt /root/bzimage
     cp /boot/initramfs-virt /root/initrd.img
     echo Queuing virtual hda save...
-    echo -ne "anura.x86.virt_hda.save()\0" > /dev/hvc1
+    echo -ne "anura.x86.virt_hda.save();\0" > /dev/hvc1
 fi
 exit 0

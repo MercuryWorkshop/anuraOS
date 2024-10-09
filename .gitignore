@@ -29,7 +29,7 @@ package-lock.json
 result
 public/config.json
 static/
-x86_image_wizard/alpine/anurad.c
+x86_image_wizard/apline/anura-run
 x86_image_wizard/alpine/xfrog.sh
 x86_image_wizard/alpine/xsetrandr.sh
 x86_image_wizard/alpine/anuramouse

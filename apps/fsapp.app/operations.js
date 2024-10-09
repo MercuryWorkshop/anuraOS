@@ -12,7 +12,7 @@ async function filePickerAction(selected) {
         row.classList.remove("selected");
     }
     currentlySelected = [];
-    if (selected.length == 1) {
+    if (selected.length === 1) {
         var fileSelected = selected[0];
         if (fileSelected.getAttribute("data-type") === filePicker.type) {
             let fileData = {
@@ -113,9 +113,10 @@ async function fileAction(selected) {
                     );
                 }
                 reload();
-            } else {
-                anura.files.open(fileSelected.getAttribute("data-path"));
+                return;
             }
+
+            anura.files.open(fileSelected.getAttribute("data-path"));
         } else if (fileSelected.getAttribute("data-type") === "dir") {
             if (
                 fileSelected

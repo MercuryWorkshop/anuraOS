@@ -4,7 +4,6 @@ description="Run Anura Boot Scripts"
 
 start() {
   ebegin "Running Anura Boot Scripts"
-  modprobe ne2k-pci
   ifupdown ifup eth0
   ip link set lo up
   eend $?
