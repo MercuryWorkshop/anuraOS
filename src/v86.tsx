@@ -390,13 +390,13 @@ class V86Backend {
                 resolve(-1);
             });
         }
-
+        const streamDecoder = new TextDecoder(); // needs its own for stream: true option
         this.sendWispFrame({
             type: "CONNECT",
             streamID: this.ptyNum,
             command: command,
             dataCallback: (data: Uint8Array) => {
-                const string = decoder.decode(data);
+                const string = streamDecoder.decode(data, { stream: true });
                 onData(string);
             },
             closeCallback: (data: number) => {
@@ -698,7 +698,7 @@ class V86Backend {
         this.emulator.add_listener(
             "virtio-console1-output-bytes",
             async (data: Uint8Array) => {
-                evalBuffer += new TextDecoder().decode(data);
+                evalBuffer += decoder.decode(data);
                 if (evalBuffer.endsWith("\0")) {
                     const jsrun = evalBuffer.slice(0, -1);
                     evalBuffer = "";
