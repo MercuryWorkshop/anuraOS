@@ -162,10 +162,22 @@ watch: bundle FORCE
 bundle: tsc css lint milestone
 	mkdir -p build/artifacts
 
+DTS = $(shell cd build; find lib -type f -name "*.d.ts")
+TYPE_FOLDERS = $(shell cd build; find lib -type d)
+ANURA_VERSION = $(shell jq -r '.version' package.json)
+
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
 	npx tsc
+	mkdir -p anuraos-types
+	cd anuraos-types/; \
+	mkdir -p $(TYPE_FOLDERS)
+	cd build/; \
+	cp --parents $(DTS) ../anuraos-types/
+	echo $(DTS) | sed 's/ \+/\n/g' | sed 's/.*/\/\/\/ <reference path="&" \/>/' > anuraos-types/index.d.ts
+	jq '.version = "$(ANURA_VERSION)"' types-package.json > anuraos-types/package.json
+	
 css: src/*.css
 	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
