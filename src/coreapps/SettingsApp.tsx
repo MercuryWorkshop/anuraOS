@@ -165,17 +165,12 @@ const settingsCSS = css`
     }
 `;
 
-const SettingSwitch: Component<
-    {
-        title: string;
-        setting: string;
-        callback?: any;
-        on?: boolean;
-    },
-    {
-        //
-    }
-> = function () {
+const SettingSwitch: Component<{
+    title: string;
+    setting: string;
+    callback?: any;
+    on?: boolean;
+}> = function () {
     this.mount = () => {
         this.on = anura.settings.get(this.setting);
     };
@@ -198,18 +193,13 @@ const SettingSwitch: Component<
     );
 };
 
-const SettingText: Component<
-    {
-        title: string;
-        setting: string;
-        callback?: any;
-        value?: string;
-        type?: string;
-    },
-    {
-        //
-    }
-> = function () {
+const SettingText: Component<{
+    title: string;
+    setting: string;
+    callback?: any;
+    value?: string;
+    type?: string;
+}> = function () {
     return (
         <div class="settings-item">
             <span class="settings-item-name">{use(this.title)}</span>
