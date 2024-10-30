@@ -632,25 +632,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 // Replace 'XXXXXX' in the template with the random suffix
                 const newDir = template.replace("XXXXXX", randomSuffix);
 
-                // Add the new directory to stats
-                this.stats.set(newDir, {
-                    dev: 1,
-                    ino: Math.floor(Math.random() * 100000),
-                    mode: 0o777,
-                    nlink: 1,
-                    uid: 1000,
-                    gid: 1000,
-                    rdev: 0,
-                    size: 4096,
-                    blksize: 4096,
-                    blocks: 1,
-                    atimeMs: Date.now(),
-                    mtimeMs: Date.now(),
-                    ctimeMs: Date.now(),
-                    birthtimeMs: Date.now(),
-                    isDirectory: true,
-                    isFile: false,
-                });
                 this.promises.mkdir(newDir);
                 // Save the new stats
                 this.promises
