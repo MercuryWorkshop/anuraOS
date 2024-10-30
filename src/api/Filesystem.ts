@@ -1205,7 +1205,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         rmdir: (path: string) => this.processPath(path).promises.rmdir(path),
         stat: (path: string) => this.processPath(path).promises.stat(path),
         symlink: (srcPath: string, dstPath: string, type?: string) =>
-            this.processPath(srcPath).promises.symlink(srcPath, dstPath, type),
+            this.processPath(dstPath).promises.symlink(srcPath, dstPath, type),
         truncate: (path: string, len: number) =>
             this.processPath(path).promises.truncate(path, len),
         unlink: (path: string) => this.processPath(path).promises.unlink(path),

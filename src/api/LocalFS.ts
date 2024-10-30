@@ -70,6 +70,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         path: string,
         recurseCounter = 0,
     ): Promise<[FileSystemDirectoryHandle, string]> {
+        console.log("Fetching dir handle for " + path);
         if (recurseCounter > 20) {
             throw {
                 name: "ELOOP",
@@ -89,6 +90,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         let acc = this.dirHandle;
         let curr = "";
         for await (const part of path.split("/")) {
+            if (part === "") continue;
             curr += "/" + part;
             if ((this.stats.get(curr)?.mode & 0o170000) === 0o120000) {
                 // We ran into a path symlink, we're storing symlinks of all types as files who's content is the target.
@@ -106,7 +108,12 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     );
                 }
             }
-
+            console.log(
+                "Getting dir handle " +
+                    part +
+                    " on " +
+                    curr.split("/").slice(0, -1).join("/"),
+            );
             acc = await acc.getDirectoryHandle(part);
         }
         return [acc, curr];
@@ -116,6 +123,10 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         options?: FileSystemGetFileOptions,
         recurseCounter = 0,
     ): Promise<[FileSystemFileHandle, string]> {
+        if (!path.includes("/")) {
+            path = "/" + path;
+        }
+
         const parentFolder = path.slice(0, path.lastIndexOf("/"));
         const [parentHandle, realPath] =
             await this.getChildDirHandle(parentFolder);
@@ -660,9 +671,12 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         readlink: async (path: string) => {
             // Check if the path exists in stats
             path = this.relativizePath(path);
-            path = Filer.Path.normalize(path);
+            const fileName = path.slice(path.lastIndexOf("/") + 1);
+            const [parentHandle, realParent] = await this.getChildDirHandle(
+                path.slice(0, path.lastIndexOf("/")),
+            );
+            const stats = this.stats.get(realParent + "/" + fileName);
 
-            const stats = this.stats.get(path);
             if (!stats) {
                 throw {
                     name: "ENOENT",
@@ -672,13 +686,49 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     stack: "Error: No such file",
                 } as Error;
             }
+            if (!((stats.mode & 0o170000) === 0o120000)) {
+                throw {
+                    // I think this is the wrong error type
+                    name: "EINVAL",
+                    code: "EINVAL",
+                    errno: -22,
+                    message: `Is not a symbolic link: ${path}`,
+                    stack: "Error: Is not a symbolic link",
+                } as Error;
+            }
 
             // Return the target path
-            return stats.target;
+            return await (
+                await (await parentHandle.getFileHandle(fileName)).getFile()
+            ).text();
         },
         symlink: async (target: string, path: string) => {
             // await this.promises.stat(path);
             // Save stats and resolve the promise
+            path = this.relativizePath(path);
+            if (target.startsWith("/")) {
+                target = this.relativizePath(target);
+            }
+
+            const fileName = path.slice(path.lastIndexOf("/") + 1);
+            const [parentHandle, realParent] = await this.getChildDirHandle(
+                path.slice(0, path.lastIndexOf("/")),
+            );
+            const fileHandleWritable = await (
+                await parentHandle.getFileHandle(fileName, { create: true })
+            ).createWritable();
+            fileHandleWritable.write(target);
+            fileHandleWritable.close();
+
+            const fullPath = realParent + "/" + fileName;
+            const fileStats = this.stats.get(fullPath) || {};
+            if (fullPath) {
+                fileStats.mode = 41380;
+                fileStats.ctimeMs = Date.now();
+                fileStats.mtimeMs = Date.now();
+                this.stats.set(path, fileStats);
+            }
+
             await this.promises.saveStats();
             return;
         },
