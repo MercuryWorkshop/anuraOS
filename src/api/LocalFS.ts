@@ -402,15 +402,23 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         },
         mkdir: async (path: string) => {
             let parentHandle = this.dirHandle;
+            let realParentPath = "";
             path = this.relativizePath(path);
             if (path.includes("/")) {
                 const parts = path.split("/");
                 const finalDir = parts.pop();
-                parentHandle = (
-                    await this.getChildDirHandle(parts.join("/"))
-                )[0];
+                [parentHandle, realParentPath] = await this.getChildDirHandle(
+                    parts.join("/"),
+                );
                 path = finalDir!;
             }
+            const fullPath = realParentPath + "/" + path;
+            const fileStats = this.stats.get(fullPath) || {};
+            if (fileStats) {
+                fileStats.ctimeMs = Date.now();
+                this.stats.set(fullPath, fileStats);
+            }
+
             await parentHandle.getDirectoryHandle(path, { create: true });
         },
         rmdir: async (path: string) => {
@@ -541,10 +549,13 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         chmod: async (fullPath: string, mode: number) => {
             let path = this.relativizePath(fullPath);
             if (path.endsWith("/")) path = path.slice(0, -1);
+
             const currStats = this.stats.get(path) || {};
             if (mode > 0o777) currStats.mode = mode;
             else currStats.mode = 0o100000 + mode;
+
             this.stats.set(path, currStats);
+
             await this.promises.saveStats();
         },
         link: (existingPath: string, newPath: string): Promise<void> => {
