@@ -24,7 +24,7 @@ class LocalFSStats {
     }
 
     isSymbolicLink() {
-        return false;
+        return (this.mode & 0o170000) === 0o120000;
     }
 
     constructor(data: Partial<LocalFSStats>) {
@@ -66,18 +66,87 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         return path.replace(this.domain, "").replace(/^\/+/, "");
     }
 
-    async getChildDirHandle(path: string) {
+    async getChildDirHandle(
+        path: string,
+        recurseCounter = 0,
+    ): Promise<[FileSystemDirectoryHandle, string]> {
+        if (recurseCounter > 20) {
+            throw {
+                name: "ELOOP",
+                code: "ELOOP",
+                errno: -40,
+                message: "no such file or directory",
+                path: (this.domain + "/" + path).replace("//", "/"),
+            };
+        }
+
         if (path === "") {
-            return this.dirHandle;
+            return [this.dirHandle, path];
         }
         if (path.endsWith("/")) {
             path = path.substring(0, path.length - 1);
         }
         let acc = this.dirHandle;
+        let curr = "";
         for await (const part of path.split("/")) {
+            curr += "/" + part;
+            if ((this.stats.get(curr)?.mode & 0o170000) === 0o120000) {
+                // We ran into a path symlink, we're storing symlinks of all types as files who's content is the target.
+                const newPart = await (
+                    await (await acc.getFileHandle(path)).getFile()
+                ).text();
+                if (newPart.startsWith("/")) {
+                    // absolute
+                    return this.getChildDirHandle(newPart, recurseCounter + 1);
+                } else {
+                    // relative
+                    return this.getChildDirHandle(
+                        Filer.Path.resolve(curr, newPart),
+                        recurseCounter + 1,
+                    );
+                }
+            }
+
             acc = await acc.getDirectoryHandle(part);
         }
-        return acc;
+        return [acc, curr];
+    }
+    async getFileHandle(
+        path: string,
+        options?: FileSystemGetFileOptions,
+        recurseCounter = 0,
+    ): Promise<[FileSystemFileHandle, string]> {
+        const parentFolder = path.slice(0, path.lastIndexOf("/"));
+        const [parentHandle, realPath] =
+            await this.getChildDirHandle(parentFolder);
+
+        const fileName = path.slice(path.lastIndexOf("/") + 1);
+        if (
+            this.stats.has(realPath + "/" + fileName) &&
+            (this.stats.get(realPath + "/" + fileName).mode & 0o170000) ===
+                0o120000
+        ) {
+            // is symlink
+            const realPath = await (
+                await (await parentHandle.getFileHandle(fileName)).getFile()
+            ).text();
+            if (realPath.startsWith("/")) {
+                // absolute
+                return this.getFileHandle(
+                    realPath,
+                    options,
+                    recurseCounter + 1,
+                );
+            } else {
+                // relative
+                return this.getFileHandle(
+                    Filer.Path.resolve(parentFolder, realPath),
+                    options,
+                    recurseCounter + 1,
+                );
+            }
+        }
+        return [await parentHandle.getFileHandle(fileName, options), path];
     }
     static async newOPFS(anuraPath: string) {
         const dirHandle = await navigator.storage.getDirectory();
@@ -265,29 +334,13 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             if (typeof data === "string") {
                 data = new TextEncoder().encode(data);
             }
-            let parentHandle = this.dirHandle;
+            const parentHandle = this.dirHandle;
             path = this.relativizePath(path);
-            const stats = this.stats.get(path);
 
-            if (stats && stats.isSymbolicLink) {
-                const target = stats.target;
-                if (this.stats.has(target)) {
-                    path = target; // Follow symlink to the target path
-                } else {
-                    throw new Error(
-                        `ENOENT: No such file or directory, symlink target not found: ${target}`,
-                    );
-                }
-            }
-            if (path.includes("/")) {
-                const parts = path.split("/");
-                const finalFile = parts.pop();
-                parentHandle = await this.getChildDirHandle(parts.join("/"));
-                path = finalFile!;
-            }
-            const handle = await parentHandle.getFileHandle(path, {
+            const [handle, realPath] = await this.getFileHandle(path, {
                 create: true,
             });
+
             const writer = await handle.createWritable();
             const fileStats = this.stats.get(path) || {};
             if (fileStats) {
@@ -299,28 +352,12 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             writer.close();
         },
         readFile: async (path: string) => {
-            let parentHandle = this.dirHandle;
+            const parentHandle = this.dirHandle;
             path = this.relativizePath(path);
             const stats = this.stats.get(path);
 
-            if (stats && stats.isSymbolicLink) {
-                const target = stats.target;
-                if (this.stats.has(target)) {
-                    path = target; // Follow symlink to the target path
-                } else {
-                    throw new Error(
-                        `ENOENT: No such file or directory, symlink target not found: ${target}`,
-                    );
-                }
-            }
+            const [handle, realPath] = await this.getFileHandle(path);
 
-            if (path.includes("/")) {
-                const parts = path.split("/");
-                const finalFile = parts.pop();
-                parentHandle = await this.getChildDirHandle(parts.join("/"));
-                path = finalFile!;
-            }
-            const handle = await parentHandle.getFileHandle(path);
             const fileStats = this.stats.get(path) || {};
             if (fileStats) {
                 fileStats.atimeMs = Date.now();
@@ -332,7 +369,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             );
         },
         readdir: async (path: string) => {
-            const dirHandle = await this.getChildDirHandle(
+            const [dirHandle, realPath] = await this.getChildDirHandle(
                 this.relativizePath(path),
             );
             const nodes: string[] = [];
@@ -356,7 +393,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             if (path.includes("/")) {
                 const parts = path.split("/");
                 const finalFile = parts.pop();
-                parentHandle = await this.getChildDirHandle(parts.join("/"));
+                parentHandle = (
+                    await this.getChildDirHandle(parts.join("/"))
+                )[0];
                 path = finalFile!;
             }
             await parentHandle.removeEntry(path);
@@ -367,7 +406,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             if (path.includes("/")) {
                 const parts = path.split("/");
                 const finalDir = parts.pop();
-                parentHandle = await this.getChildDirHandle(parts.join("/"));
+                parentHandle = (
+                    await this.getChildDirHandle(parts.join("/"))
+                )[0];
                 path = finalDir!;
             }
             await parentHandle.getDirectoryHandle(path, { create: true });
@@ -378,7 +419,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             if (path.includes("/")) {
                 const parts = path.split("/");
                 const finalDir = parts.pop();
-                parentHandle = await this.getChildDirHandle(parts.join("/"));
+                parentHandle = (
+                    await this.getChildDirHandle(parts.join("/"))
+                )[0];
                 path = finalDir!;
             }
             await parentHandle.removeEntry(path);
@@ -389,6 +432,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             await this.promises.unlink(oldPath);
         },
         stat: async (path: string) => {
+            console.log("statting: " + path);
             path = this.relativizePath(path);
 
             let statPath = path; // when accessing this.stats dont have a trailing slash
@@ -400,15 +444,14 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 if (path === "") {
                     handle = await this.dirHandle.getFileHandle(path);
                 } else {
-                    handle = await (
-                        await this.getChildDirHandle(
-                            path.substring(0, path.lastIndexOf("/")),
-                        )
-                    ).getFileHandle(path.substring(path.lastIndexOf("/") + 1));
+                    [handle, path] = await this.getFileHandle(path);
                 }
             } catch (e) {
                 try {
-                    const handle = await this.getChildDirHandle(path);
+                    const handleAndPath = await this.getChildDirHandle(path);
+                    const handle = handleAndPath[0];
+                    path = handleAndPath[1];
+
                     let rootName;
                     if (!path) rootName = this.domain.split("/").pop();
                     return new LocalFSStats({
@@ -425,7 +468,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     throw {
                         name: "ENOENT",
                         code: "ENOENT",
-                        errno: 34,
+                        errno: -2,
                         message: "no such file or directory",
                         path: (this.domain + "/" + path).replace("//", "/"),
                         stack: e,
@@ -613,27 +656,8 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             path = this.relativizePath(path);
             const stats = this.stats.get(path);
 
-            if (stats && stats.isSymbolicLink) {
-                const target = stats.target;
-                if (this.stats.has(target)) {
-                    path = target; // Follow symlink to the target path
-                } else {
-                    throw new Error(
-                        `ENOENT: No such file or directory, symlink target not found: ${target}`,
-                    );
-                }
-            }
-
-            let parentHandle = this.dirHandle;
-            if (path.includes("/")) {
-                const parts = path.split("/");
-                const finalFile = parts.pop();
-                parentHandle = await this.getChildDirHandle(parts.join("/"));
-                path = finalFile!;
-            }
-            const handle = await parentHandle.getFileHandle(path, {
-                create: true,
-            });
+            const parentHandle = this.dirHandle;
+            const [handle] = await this.getFileHandle(path, { create: true });
             (handle as any).path = path; // Hack
             this.fds.push(handle);
             return {
@@ -641,78 +665,30 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 [AnuraFDSymbol]: this.domain,
             };
         },
-        readlink(path: string): Promise<string> {
-            return new Promise((resolve, reject) => {
-                // Check if the path exists in stats
-                const stats = this.stats.get(path);
-                if (!stats) {
-                    return reject({
-                        name: "ENOENT",
-                        code: "ENOENT",
-                        errno: -2,
-                        message: `No such file or directory: ${path}`,
-                        stack: "Error: No such file",
-                    } as Error);
-                }
+        readlink: async (path: string) => {
+            // Check if the path exists in stats
+            path = this.relativizePath(path);
+            path = Filer.Path.normalize(path);
 
-                // Ensure the path is a symlink
-                if (!stats.isSymbolicLink) {
-                    return reject({
-                        name: "EINVAL",
-                        code: "EINVAL",
-                        errno: -22,
-                        message: `Invalid argument: ${path} is not a symlink`,
-                        stack: "Error: Invalid argument",
-                    } as Error);
-                }
+            const stats = this.stats.get(path);
+            if (!stats) {
+                throw {
+                    name: "ENOENT",
+                    code: "ENOENT",
+                    errno: -2,
+                    message: `No such file or directory: ${path}`,
+                    stack: "Error: No such file",
+                } as Error;
+            }
 
-                // Return the target path
-                resolve(stats.target);
-            });
+            // Return the target path
+            return stats.target;
         },
-        symlink(target: string, path: string): Promise<void> {
-            return new Promise((resolve, reject) => {
-                target = this.relativizePath(target);
-                path = this.relativizePath(path);
-                // Check if the symlink destination already exists
-                if (this.stats.has(path)) {
-                    return reject({
-                        name: "EEXIST",
-                        code: "EEXIST",
-                        errno: -17,
-                        message: `File already exists: ${path}`,
-                        stack: "Error: File exists",
-                    } as Error);
-                }
-
-                // Add a new entry in the stats for the symlink, with a custom handler for symlink
-                this.stats.set(path, {
-                    dev: 1,
-                    ino: Math.floor(Math.random() * 100000),
-                    mode: 0o777, // Full permissions (as symlink permissions aren't usually enforced)
-                    nlink: 1,
-                    uid: 1000,
-                    gid: 1000,
-                    rdev: 0,
-                    size: target.length, // Size of the path to the target
-                    blksize: 4096,
-                    blocks: 1,
-                    atimeMs: Date.now(),
-                    mtimeMs: Date.now(),
-                    ctimeMs: Date.now(),
-                    birthtimeMs: Date.now(),
-                    isDirectory: false,
-                    isFile: false,
-                    isSymbolicLink: true, // Add a flag to indicate it's a symlink
-                    target, // Store the target path
-                });
-
-                // Save stats and resolve the promise
-                this.promises
-                    .saveStats()
-                    .then(() => resolve())
-                    .catch(reject);
-            });
+        symlink: async (target: string, path: string) => {
+            // await this.promises.stat(path);
+            // Save stats and resolve the promise
+            await this.promises.saveStats();
+            return;
         },
         utimes: async (
             path: string,
@@ -803,7 +779,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 {
                     name: "EISDIR",
                     code: "EISDIR",
-                    errno: 21,
+                    errno: -21,
                     message: "Is a directory",
                     stack: "Error: Is a directory",
                 } as Error,
@@ -978,7 +954,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 {
                     name: "EISDIR",
                     code: "EISDIR",
-                    errno: 21,
+                    errno: -21,
                     message: "Is a directory",
                     stack: "Error: Is a directory",
                 } as Error,
@@ -1029,7 +1005,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 {
                     name: "EISDIR",
                     code: "EISDIR",
-                    errno: 21,
+                    errno: -21,
                     message: "Is a directory",
                     stack: "Error: Is a directory",
                 } as Error,

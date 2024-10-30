@@ -1002,7 +1002,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 
     symlink(path: string, ...rest: any[]) {
         // @ts-ignore - Overloaded methods are scary
-        this.processPath(path).symlink(path, ...rest);
+        this.processPath(rest[0]).symlink(path, ...rest);
     }
 
     readlink(
