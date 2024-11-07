@@ -22,7 +22,7 @@
         "filer": "^1.4.1",
         "fs-readdir-recursive": "^1.1.0",
         "idb-keyval": "^6.2.1",
-        "libcurl.js": "^0.6.17",
+        "libcurl.js": "^0.6.19",
         "mime": "^4.0.4",
         "onchange": "^7.1.0",
         "postcss": "^8.4.45",
