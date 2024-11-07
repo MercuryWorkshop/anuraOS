@@ -128,10 +128,20 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         }
 
         const parentFolder = path.slice(0, path.lastIndexOf("/"));
-        const [parentHandle, realPath] =
+        // eslint-disable-next-line prefer-const
+        let [parentHandle, realPath] =
             await this.getChildDirHandle(parentFolder);
 
         const fileName = path.slice(path.lastIndexOf("/") + 1);
+        if (realPath[0] === "/") {
+            realPath = realPath.slice(1);
+        }
+        console.log(
+            "filename: ",
+            fileName,
+            "\nrealPath: ",
+            realPath + "/" + fileName,
+        );
         if (
             this.stats.has(realPath + "/" + fileName) &&
             (this.stats.get(realPath + "/" + fileName).mode & 0o170000) ===
