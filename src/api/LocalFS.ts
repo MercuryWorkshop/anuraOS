@@ -70,7 +70,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         path: string,
         recurseCounter = 0,
     ): Promise<[FileSystemDirectoryHandle, string]> {
-        console.log("Fetching dir handle for " + path);
         if (recurseCounter > 20) {
             throw {
                 name: "ELOOP",
@@ -108,12 +107,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     );
                 }
             }
-            console.log(
-                "Getting dir handle " +
-                    part +
-                    " on " +
-                    curr.split("/").slice(0, -1).join("/"),
-            );
             acc = await acc.getDirectoryHandle(part);
         }
         return [acc, curr];
@@ -136,12 +129,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         if (realPath[0] === "/") {
             realPath = realPath.slice(1);
         }
-        console.log(
-            "filename: ",
-            fileName,
-            "\nrealPath: ",
-            realPath + "/" + fileName,
-        );
         if (
             this.stats.has(realPath + "/" + fileName) &&
             (this.stats.get(realPath + "/" + fileName).mode & 0o170000) ===
@@ -461,8 +448,8 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             await this.promises.unlink(oldPath);
         },
         stat: async (path: string) => {
-            console.log("statting: " + path);
             path = this.relativizePath(path);
+            const requestPath = path;
 
             let statPath = path; // when accessing this.stats dont have a trailing slash
             if (statPath.endsWith("/")) statPath = statPath.slice(0, -1);
@@ -506,7 +493,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             }
             const file = await handle.getFile();
             return new LocalFSStats({
-                name: file.name,
+                name: Filer.Path.basename(requestPath),
                 size: file.size,
                 type: "FILE",
                 mode: currStats.mode || 0o100777,
@@ -630,9 +617,71 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     .catch(reject);
             });
         },
-        lstat: (...args: any[]) => {
-            // @ts-ignore - This is just here for compat with v86
-            return this.promises.stat(...args);
+        lstat: async (path: string) => {
+            path = this.relativizePath(path);
+
+            let statPath = path; // when accessing this.stats dont have a trailing slash
+            if (statPath.endsWith("/")) statPath = statPath.slice(0, -1);
+            const currStats = this.stats.get(statPath) || {};
+
+            let handle;
+            try {
+                if (path === "") {
+                    handle = await this.dirHandle.getFileHandle(path);
+                } else {
+                    const parent = await this.getChildDirHandle(
+                        path.slice(0, path.lastIndexOf("/")),
+                    );
+                    handle = parent[0];
+                    const parentPath = parent[1];
+                    handle = await handle.getFileHandle(
+                        path.slice(path.lastIndexOf("/") + 1),
+                    );
+                    path += path.lastIndexOf("/");
+                    path = parentPath + path.slice(path.lastIndexOf("/") + 1);
+                    // [handle, path] = await this.getFileHandle(path);
+                }
+            } catch (e) {
+                try {
+                    const handleAndPath = await this.getChildDirHandle(path);
+                    const handle = handleAndPath[0];
+                    path = handleAndPath[1];
+
+                    let rootName;
+                    if (!path) rootName = this.domain.split("/").pop();
+                    return new LocalFSStats({
+                        name: rootName || handle.name,
+                        mode: currStats.mode || 0o40777,
+                        type: "DIRECTORY",
+                        atimeMs: currStats.atimeMs || Date.now(),
+                        mtimeMs: currStats.mtimeMs || Date.now(),
+                        ctimeMs: currStats.ctimeMs || Date.now(),
+                        uid: currStats.uid || 0,
+                        gid: currStats.gid || 0,
+                    });
+                } catch (e) {
+                    throw {
+                        name: "ENOENT",
+                        code: "ENOENT",
+                        errno: -2,
+                        message: "no such file or directory",
+                        path: (this.domain + "/" + path).replace("//", "/"),
+                        stack: e,
+                    };
+                }
+            }
+            const file = await handle.getFile();
+            return new LocalFSStats({
+                name: file.name,
+                size: file.size,
+                type: "FILE",
+                mode: currStats.mode || 0o100777,
+                atimeMs: currStats.atimeMs || Date.now(),
+                mtimeMs: currStats.mtimeMs || Date.now(),
+                ctimeMs: currStats.ctimeMs || Date.now(),
+                uid: currStats.uid || 0,
+                gid: currStats.gid || 0,
+            });
         },
         mkdtemp: (template: string): Promise<string> => {
             return new Promise((resolve, reject) => {
@@ -682,11 +731,14 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             // Check if the path exists in stats
             path = this.relativizePath(path);
             const fileName = path.slice(path.lastIndexOf("/") + 1);
-            const [parentHandle, realParent] = await this.getChildDirHandle(
+            // eslint-disable-next-line prefer-const
+            let [parentHandle, realParent] = await this.getChildDirHandle(
                 path.slice(0, path.lastIndexOf("/")),
             );
+            if (realParent.startsWith("/")) {
+                realParent = realParent.slice(1);
+            }
             const stats = this.stats.get(realParent + "/" + fileName);
-
             if (!stats) {
                 throw {
                     name: "ENOENT",
@@ -840,9 +892,15 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         }
     }
 
-    lstat(...args: any[]) {
-        // @ts-ignore - This is just here for compat with v86
-        return this.stat(...args);
+    lstat(
+        path: string,
+        callback?: (err: Error | null, stats: any) => void,
+    ): void {
+        callback ||= () => {};
+        this.promises
+            .lstat(path)
+            .then((stats) => callback!(null, stats))
+            .catch((e) => callback!(e, null));
     }
 
     link(
