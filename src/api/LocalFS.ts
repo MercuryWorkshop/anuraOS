@@ -567,55 +567,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             await this.promises.saveStats();
         },
         link: (existingPath: string, newPath: string): Promise<void> => {
-            existingPath = this.relativizePath(existingPath);
-            newPath = this.relativizePath(newPath);
-            return new Promise((resolve, reject) => {
-                // Check if existingPath exists in the stats
-                const existingStats = this.stats.get(existingPath);
-                if (!existingStats) {
-                    return reject({
-                        name: "ENOENT",
-                        code: "ENOENT",
-                        errno: -2,
-                        message: `No such file or directory: ${existingPath}`,
-                        stack: "Error: No such file",
-                    } as Error);
-                }
-
-                // Ensure it's not a directory (as link() doesn't work for directories)
-                if (existingStats.isDirectory()) {
-                    return reject({
-                        name: "EPERM",
-                        code: "EPERM",
-                        errno: -1,
-                        message: `Operation not permitted: ${existingPath} is a directory`,
-                        stack: "Error: Operation not permitted",
-                    } as Error);
-                }
-
-                // Check if newPath already exists
-                if (this.stats.has(newPath)) {
-                    return reject({
-                        name: "EEXIST",
-                        code: "EEXIST",
-                        errno: -17,
-                        message: `File already exists: ${newPath}`,
-                        stack: "Error: File exists",
-                    } as Error);
-                }
-
-                // Create a hard link by sharing the same stats object (inode)
-                this.stats.set(newPath, existingStats);
-
-                // Increment the link count for the existing file
-                existingStats.nlink++;
-
-                // Save stats and resolve the promise
-                this.promises
-                    .saveStats()
-                    .then(() => resolve())
-                    .catch(reject);
-            });
+            return this.promises.symlink(existingPath, newPath);
         },
         lstat: async (path: string) => {
             path = this.relativizePath(path);
