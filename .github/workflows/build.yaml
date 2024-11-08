@@ -58,3 +58,27 @@ jobs:
                   body: "${{ github.event.head_commit.url }} ${{ github.event.head_commit.message }}"
                   artifacts: "anura.zip"
                   prerelease: true
+
+    pages:
+        name: Upload to Github Pages
+        runs-on: ubuntu-latest
+        needs: build
+        if: github.ref == 'refs/heads/main'
+        steps:
+            - name: Get artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  name: Anura Static Build
+                  path: .
+
+            - name: unzip artifact
+              run: mkdir ./staticbuild && unzip anura.zip -d ./staticbuild
+
+            - name: upload pages artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: "./staticbuild"
+
+            - name: deploy to github
+              id: deployment
+              uses: actions/deploy-pages@v4
