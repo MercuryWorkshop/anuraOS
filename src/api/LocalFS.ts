@@ -51,6 +51,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
     domain: string;
     name = "LocalFS";
     version = "1.0.0";
+    path: any = Filer.Path; // replace with another polyfill
     stats: Map<string, any> = new Map();
     fds: FileSystemHandle[] = [];
     cursors: number[] = [];
@@ -102,7 +103,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 } else {
                     // relative
                     return this.getChildDirHandle(
-                        Filer.Path.resolve(curr, newPart),
+                        this.path.resolve(curr, newPart),
                         recurseCounter + 1,
                     );
                 }
@@ -120,12 +121,14 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             path = "/" + path;
         }
 
-        const parentFolder = path.slice(0, path.lastIndexOf("/"));
+        const parentFolder = this.path.dirname(path);
+
         // eslint-disable-next-line prefer-const
         let [parentHandle, realPath] =
             await this.getChildDirHandle(parentFolder);
 
-        const fileName = path.slice(path.lastIndexOf("/") + 1);
+        const fileName = this.path.basename(path);
+
         if (realPath[0] === "/") {
             realPath = realPath.slice(1);
         }
@@ -148,7 +151,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             } else {
                 // relative
                 return this.getFileHandle(
-                    Filer.Path.resolve(parentFolder, realPath),
+                    this.path.resolve(parentFolder, realPath),
                     options,
                     recurseCounter + 1,
                 );
@@ -493,7 +496,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             }
             const file = await handle.getFile();
             return new LocalFSStats({
-                name: Filer.Path.basename(requestPath),
+                name: this.path.basename(requestPath),
                 size: file.size,
                 type: "FILE",
                 mode: currStats.mode || 0o100777,
@@ -582,15 +585,15 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                     handle = await this.dirHandle.getFileHandle(path);
                 } else {
                     const parent = await this.getChildDirHandle(
-                        path.slice(0, path.lastIndexOf("/")),
+                        this.path.dirname(path),
                     );
                     handle = parent[0];
                     const parentPath = parent[1];
                     handle = await handle.getFileHandle(
-                        path.slice(path.lastIndexOf("/") + 1),
+                        this.path.basename(path),
                     );
                     path += path.lastIndexOf("/");
-                    path = parentPath + path.slice(path.lastIndexOf("/") + 1);
+                    path = parentPath + this.path.basename(path);
                     // [handle, path] = await this.getFileHandle(path);
                 }
             } catch (e) {
@@ -682,10 +685,10 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         readlink: async (path: string) => {
             // Check if the path exists in stats
             path = this.relativizePath(path);
-            const fileName = path.slice(path.lastIndexOf("/") + 1);
+            const fileName = this.path.basename(path);
             // eslint-disable-next-line prefer-const
             let [parentHandle, realParent] = await this.getChildDirHandle(
-                path.slice(0, path.lastIndexOf("/")),
+                this.path.dirname(path),
             );
             if (realParent.startsWith("/")) {
                 realParent = realParent.slice(1);
@@ -724,9 +727,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 target = this.relativizePath(target);
             }
 
-            const fileName = path.slice(path.lastIndexOf("/") + 1);
+            const fileName = this.path.basename(path);
             const [parentHandle, realParent] = await this.getChildDirHandle(
-                path.slice(0, path.lastIndexOf("/")),
+                this.path.dirname(path),
             );
             const fileHandleWritable = await (
                 await parentHandle.getFileHandle(fileName, { create: true })
