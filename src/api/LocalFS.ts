@@ -90,7 +90,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         let acc = this.dirHandle;
         let curr = "";
         for await (const part of path.split("/")) {
-            if (part === "") continue;
+            if (part === "" || part === ".") continue;
             curr += "/" + part;
             if ((this.stats.get(curr)?.mode & 0o170000) === 0o120000) {
                 // We ran into a path symlink, we're storing symlinks of all types as files who's content is the target.
@@ -138,16 +138,33 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 0o120000
         ) {
             // is symlink
-            const realPath = await (
+            let realPath = await (
                 await (await parentHandle.getFileHandle(fileName)).getFile()
             ).text();
             if (realPath.startsWith("/")) {
-                // absolute
-                return this.getFileHandle(
-                    realPath,
-                    options,
-                    recurseCounter + 1,
-                );
+                if (realPath.startsWith(this.domain)) {
+                    realPath = this.relativizePath(realPath);
+                    // absolute
+                    return this.getFileHandle(
+                        realPath,
+                        options,
+                        recurseCounter + 1,
+                    );
+                } else {
+                    // Okay so, this goes over the mount boundary, and is slightly problematic
+                    // for us since we need to handle this as an event OUTSIDE of LocalFS itself
+                    // so this is a bit of a cheat using the compatibility layer for FileSystemAccess API
+                    let handle = await anura.fs.whatwgfs.getFolder();
+                    for (const part in realPath.split("/").slice(1, -1)) {
+                        handle = await handle.getDirectoryHandle(part);
+                    }
+                    return [
+                        await handle.getFileHandle(
+                            this.path.basename(realPath),
+                        ),
+                        "foreign:" + realPath,
+                    ];
+                }
             } else {
                 // relative
                 return this.getFileHandle(
@@ -345,7 +362,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             if (typeof data === "string") {
                 data = new TextEncoder().encode(data);
             }
-            const parentHandle = this.dirHandle;
             path = this.relativizePath(path);
 
             const [handle, realPath] = await this.getFileHandle(path, {
@@ -353,8 +369,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             });
 
             const writer = await handle.createWritable();
-            const fileStats = this.stats.get(path) || {};
-            if (fileStats) {
+            const fileStats = this.stats.get(realPath) || {};
+
+            if (fileStats && !realPath.startsWith("foreign:")) {
                 fileStats.mtimeMs = Date.now();
                 fileStats.ctimeMs = Date.now();
                 this.stats.set(path, fileStats);
@@ -363,14 +380,12 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             writer.close();
         },
         readFile: async (path: string) => {
-            const parentHandle = this.dirHandle;
             path = this.relativizePath(path);
-            const stats = this.stats.get(path);
 
             const [handle, realPath] = await this.getFileHandle(path);
+            const fileStats = this.stats.get(realPath) || {};
 
-            const fileStats = this.stats.get(path) || {};
-            if (fileStats) {
+            if (fileStats && !realPath.startsWith("foreign:")) {
                 fileStats.atimeMs = Date.now();
                 this.stats.set(path, fileStats);
             }
@@ -723,9 +738,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             // await this.promises.stat(path);
             // Save stats and resolve the promise
             path = this.relativizePath(path);
-            if (target.startsWith("/")) {
-                target = this.relativizePath(target);
-            }
+            // if (target.startsWith("/")) {
+            //     target = this.relativizePath(target);
+            // }
 
             const fileName = this.path.basename(path);
             const [parentHandle, realParent] = await this.getChildDirHandle(
