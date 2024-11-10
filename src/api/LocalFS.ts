@@ -758,7 +758,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 fileStats.mode = 41380;
                 fileStats.ctimeMs = Date.now();
                 fileStats.mtimeMs = Date.now();
-                this.stats.set(path, fileStats);
+                this.stats.set(fullPath, fileStats);
             }
 
             await this.promises.saveStats();
