@@ -743,7 +743,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             // }
 
             const fileName = this.path.basename(path);
-            const [parentHandle, realParent] = await this.getChildDirHandle(
+
+            // eslint-disable-next-line prefer-const
+            let [parentHandle, realParent] = await this.getChildDirHandle(
                 this.path.dirname(path),
             );
             const fileHandleWritable = await (
@@ -751,6 +753,8 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             ).createWritable();
             fileHandleWritable.write(target);
             fileHandleWritable.close();
+
+            if (realParent.startsWith("/")) realParent = realParent.slice(1);
 
             const fullPath = realParent + "/" + fileName;
             const fileStats = this.stats.get(fullPath) || {};
