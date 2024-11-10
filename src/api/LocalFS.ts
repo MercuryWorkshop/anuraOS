@@ -438,6 +438,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 );
                 path = finalDir!;
             }
+            if (realParentPath.startsWith("/")) {
+                realParentPath = realParentPath.slice(1);
+            }
             const fullPath = realParentPath + "/" + path;
             const fileStats = this.stats.get(fullPath) || {};
             if (fileStats) {
