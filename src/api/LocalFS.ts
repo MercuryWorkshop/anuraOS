@@ -364,17 +364,21 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             }
             path = this.relativizePath(path);
 
-            const [handle, realPath] = await this.getFileHandle(path, {
+            // eslint-disable-next-line prefer-const
+            let [handle, realPath] = await this.getFileHandle(path, {
                 create: true,
             });
 
             const writer = await handle.createWritable();
+            if (realPath.startsWith("/")) {
+                realPath = realPath.slice(1);
+            }
             const fileStats = this.stats.get(realPath) || {};
 
             if (fileStats && !realPath.startsWith("foreign:")) {
                 fileStats.mtimeMs = Date.now();
                 fileStats.ctimeMs = Date.now();
-                this.stats.set(path, fileStats);
+                this.stats.set(realPath, fileStats);
             }
             writer.write(data);
             writer.close();
