@@ -744,6 +744,8 @@ class WMWindow extends EventTarget implements Process {
             );
 
             if (!thisSnappedWindow) {
+                this.snapped = false;
+                this.unminimize();
                 return;
             }
 
@@ -873,7 +875,8 @@ class WMWindow extends EventTarget implements Process {
         }
 
         if (
-            snappedWindows.length === 2 &&
+            snappedWindows.find((x) => x.direction === "left") &&
+            snappedWindows.find((x) => x.direction === "right") &&
             !splitBar &&
             snapDirection !== "top" &&
             snappedWindows[0]?.direction !== snappedWindows[1]?.direction
@@ -914,20 +917,20 @@ class WMWindow extends EventTarget implements Process {
                 return;
             case "ne":
                 this.element.style.width = width / 2 + "px";
-                this.element.style.height = height / 2 - 4 + "px";
+                this.element.style.height = (height - 49) / 2 + "px";
                 this.element.style.top = "0px";
                 this.element.style.left =
                     width - this.element.clientWidth + "px";
                 break;
             case "nw":
                 this.element.style.width = width / 2 + "px";
-                this.element.style.height = height / 2 - 49 + "px";
+                this.element.style.height = (height - 49) / 2 + "px";
                 this.element.style.top = "0px";
                 this.element.style.left = "0px";
                 break;
             case "se":
                 this.element.style.width = width / 2 + "px";
-                this.element.style.height = height / 2 - 49 + "px";
+                this.element.style.height = (height - 49) / 2 + "px";
                 this.element.style.top =
                     height - 49 - this.element.clientHeight + "px";
                 this.element.style.left =
@@ -935,7 +938,7 @@ class WMWindow extends EventTarget implements Process {
                 break;
             case "sw":
                 this.element.style.width = width / 2 + "px";
-                this.element.style.height = height / 2 - 49 + "px";
+                this.element.style.height = (height - 49) / 2 + "px";
                 this.element.style.top =
                     height - 49 - this.element.clientHeight + "px";
                 this.element.style.left = "0px";
@@ -1037,10 +1040,8 @@ class WMWindow extends EventTarget implements Process {
 
         if (["ne", "nw", "se", "sw"].includes(side)) {
             scaledWidth = width / 2;
-            scaledHeight = height / 2;
+            scaledHeight = (height - 49) / 2;
         }
-
-        scaledHeight -= 49;
 
         let previewSide = side;
 
