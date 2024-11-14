@@ -117,6 +117,7 @@ window.addEventListener("load", async () => {
     }
 
     anura = await Anura.new(conf);
+    LocalFS.newOPFS("/opfs"); // mount opfs on boot
 
     if (anura.platform.type === "mobile" || anura.platform.type === "tablet") {
         splashToRemove = bootsplashMobile;
