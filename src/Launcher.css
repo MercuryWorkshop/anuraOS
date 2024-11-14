@@ -6,10 +6,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 #launcher-button {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--theme-secondary-bg);
+    background: color-mix(
+        in srgb,
+        var(--theme-secondary-fg) 17.5%,
+        transparent
+    );
 
     border-radius: 50%;
     height: 34px;
@@ -25,4 +31,13 @@
 .hw-screen {
     height: 100%;
     width: 100%;
+}
+
+body.blur-disable #launcher {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.app-shortcut-name {
+    text-align: center;
 }

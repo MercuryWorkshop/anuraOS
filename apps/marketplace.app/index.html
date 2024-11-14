@@ -1,31 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Marketplace</title>
 
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <nav id="topbar">
-        <div><h1 id="head">Marketplace</h1><input value="Repo List" id="repoListButton" type="button"></div>
-    </span>
-    </nav>
-    <div id="repoScreen">
-        <div id="repoList">
+        <link rel="stylesheet" href="/assets/materialsymbols.css" />
+        <style>
+            html {
+                height: 100%;
+            }
 
-        </div>
-    </div>
+            body {
+                height: 100%;
+                margin: 0;
+                color: var(--theme-fg);
+                font-family:
+                    "Roboto",
+                    RobotoDraft,
+                    "Droid Sans",
+                    Arial,
+                    Helvetica,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    system-ui,
+                    sans-serif;
+            }
 
-    <div id="appListScreen" style="display: none;">
+            body::-webkit-scrollbar {
+                display: none;
+            }
 
-    </div>
-    <div id="overviewScreen" style="display: none;">
-    
-    </div>
-    <script src="index.js"></script>
-    <script src="overview.js"></script>
-    <script src="repoManager.js"></script>
-</body>
+            *::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            *::-webkit-scrollbar-thumb {
+                background-color: var(--theme-secondary-bg);
+                border-radius: 8px;
+            }
+
+            *::-webkit-scrollbar-button {
+                display: none;
+            }
+        </style>
+
+        <script src="/libs/dreamland/all.js"></script>
+        <script src="index.mjs" type="module"></script>
+    </head>
 </html>

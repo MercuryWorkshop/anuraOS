@@ -1,22 +1,37 @@
 .aliceWMwin {
-    user-select: none; /* FUCK ie and safari no one uses them anyways */
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
     height: 200px;
     width: 500px;
-    background: white;
+    background: var(--theme-bg);
     position: fixed;
     overflow: hidden;
     z-index: 91;
-    display: flex; /* FLEXBOX #2 */
+    display: flex;
+    /* FLEXBOX #2 */
     border: 2px solid var(--material-border);
     flex-direction: column;
     box-shadow:
         0 4px 8px 0 rgba(0, 0, 0, 0.2),
         0 6px 20px 0 rgba(0, 0, 0, 0.19);
     border-radius: 3px;
+    transform: scale(1);
     transition:
         visibility 0s,
-        opacity 0.2s linear;
+        opacity 0.15s cubic-bezier(0, 0, 0.4, 1);
     opacity: 1;
+}
+
+.scaletransition {
+    transition:
+        visibility 0s,
+        transform 0.15s cubic-bezier(0, 0, 0.4, 1),
+        opacity 0.15s cubic-bezier(0, 0, 0.4, 1);
+}
+
+.opacity0.scaletransition {
+    transform: scale(0.9);
 }
 
 .maxtransition {
@@ -26,6 +41,7 @@
         top 0.2s,
         left 0.2s;
 }
+
 .remaxtransitionx {
     transition:
         width 0.2s,
@@ -47,6 +63,12 @@
     z-index: 9999;
 }
 
+/* super jank */
+.snapPreview-se,
+.snapPreview-sw {
+    bottom: 49px !important;
+}
+
 #snapSplitBar {
     background-color: rgba(0, 0, 0, 0.1);
     top: 0;
@@ -54,7 +76,7 @@
     width: 8px;
     position: fixed;
     transition: background 0.2s;
-    z-index: 9999;
+    z-index: 0;
     cursor: ew-resize;
     display: flex;
     align-items: center;
@@ -75,22 +97,44 @@
 
 .aliceWMwin .title {
     display: flex;
-    background-color: var(--material-bg);
+    background-color: var(--theme-bg);
     font-weight: bold;
-    color: white;
+    color: var(--theme-fg);
     height: 24px;
     padding: 2px;
     align-items: center;
     z-index: 1;
 }
+body.platform-mobile .aliceWMwin {
+    border: 0;
+    border-radius: 0px;
+}
+
+body.platform-mobile .aliceWMwin .title {
+    height: 21px; /* just big enough to hide behind taskbar */
+}
+body.platform-tablet .aliceWMwin .title {
+    height: 21px; /* just big enough to hide behind taskbar */
+}
 
 .aliceWMwin .titleContent {
     flex: 1;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .aliceWMwin .content {
     padding: 2px;
     flex: 1;
+    background-color: var(--theme-bg);
+}
+
+.aliceWMwin .content iframe {
+    color-scheme: normal; /* quirk to preserve frame bg */
 }
 
 .aliceWMwin .title:hover {
@@ -99,7 +143,8 @@
 
 .aliceWMwin .windowButton {
     background-color: transparent;
-    color: white;
+    color: var(--theme-fg);
+    fill: var(--theme-fg);
     border: none;
     border-radius: 100%;
     margin: 2px;
@@ -109,16 +154,26 @@
     z-index: 2;
 }
 
+body.platform-mobile .aliceWMwin .windowButton.maximize {
+    display: none;
+}
+
 .aliceWMwin .windowButton > span {
     font-size: 16px;
 }
 
+body.platform-mobile .aliceWMwin .windowButton > span,
+body.platform-tablet .aliceWMwin .windowButton > span {
+    font-size: 18px;
+    padding: 2px;
+}
+
 .aliceWMwin .windowButton:hover {
-    background-color: darkgray;
+    background-color: var(--theme-secondary-bg);
 }
 
 .aliceWMwin .windowButton:active {
-    background-color: gray;
+    background-color: color-mix(var(--theme-secondary-bg) var(--theme-bg) 50%);
 }
 
 .resize-corner {
@@ -128,46 +183,56 @@
     position: absolute;
     z-index: 2;
 }
+
 .resize-edge {
     position: absolute;
     z-index: 2;
     padding: 5px;
 }
+
 .resize-edge.left {
     left: -5px;
     height: 100%;
     cursor: e-resize;
 }
+
 .resize-edge.right {
     right: -5px;
     height: 100%;
     cursor: e-resize;
 }
+
 .resize-edge.top {
     top: -5px;
     width: 100%;
     cursor: s-resize;
 }
+
 .resize-edge.bottom {
     bottom: -5px;
     width: 100%;
     cursor: s-resize;
 }
+
 .resize-corner.top-left {
     left: -5px;
     top: -5px;
-    cursor: nwse-resize; /*resizer cursor*/
+    cursor: nwse-resize;
+    /*resizer cursor*/
 }
+
 .resize-corner.top-right {
     right: -5px;
     top: -5px;
     cursor: nesw-resize;
 }
+
 .resize-corner.bottom-left {
     left: -5px;
     bottom: -5px;
     cursor: nesw-resize;
 }
+
 .resize-corner.bottom-right {
     right: -5px;
     bottom: -5px;

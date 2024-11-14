@@ -1,123 +1,104 @@
-const bare = (window as any).bare;
-class TLSClient extends bare.Client {
-    queue = [];
-    canstart = true;
-    constructor() {
-        super();
-        bare.registerRemoteListener();
-        bare.setBareClientImplementation(this);
+const bare = (window as any).BareMux;
+/*
+const connection = new bare.BareMuxConnection("/libs/bare-mux/worker.js");
+*/
+
+class AnuraBareClient {
+    ready = true;
+
+    constructor() {}
+    async init() {
+        this.ready = true;
     }
+    async meta() {}
 
     async request(
-        method: any,
-        requestHeaders: any,
-        body: any,
-        remote: { href: any },
-        cache: any,
-        duplex: any,
-        signal: any,
-        arrayBufferImpl: any,
-    ) {
-        //@ts-ignore
-        return anura.net.fetch(remote.href, {
+        remote: URL,
+        method: string,
+        body: BodyInit | null,
+        headers: any,
+        signal: AbortSignal | undefined,
+    ): Promise<any> {
+        const payload = await anura.net.fetch(remote.href, {
             method,
-            headers: requestHeaders,
+            headers: headers,
             body,
             redirect: "manual",
+            duplex: "half",
         });
+
+        const respheaders = {};
+
+        //@ts-ignore
+        if (payload.raw_headers)
+            for (const [key, value] of payload.raw_headers) {
+                //@ts-ignore
+                if (!respheaders[key]) {
+                    //@ts-ignore
+                    respheaders[key] = [value];
+                } else {
+                    //@ts-ignore
+                    respheaders[key].push(value);
+                }
+            }
+
+        return {
+            body: payload.body!,
+            headers: respheaders,
+            status: payload.status,
+            statusText: payload.statusText,
+        };
     }
 
     connect(
-        remote: { toString: () => any },
-        protocols: string | Iterable<unknown> | ArrayLike<unknown> | undefined,
-        getRequestHeaders: any,
-        onMeta: any,
-        onReadyState: (arg0: number) => void,
-        webSocketImpl: any,
-        arrayBufferImpl: { prototype: any },
-    ) {
-        // this will error. that's okay
-        const ws = new WebSocket("wss:null", protocols as any);
-
-        let initalCloseHappened = false;
-        ws.addEventListener("close", (e) => {
-            if (!initalCloseHappened) {
-                // we can freely mess with the fake readyState here because there is no
-                //  readyStateChange listener for WebSockets
-                onReadyState(WebSocket.CONNECTING);
-                e.stopImmediatePropagation();
-                initalCloseHappened = true;
-            }
+        url: URL,
+        origin: string,
+        protocols: string[],
+        requestHeaders: any,
+        onopen: (protocol: string) => void,
+        onmessage: (data: Blob | ArrayBuffer | string) => void,
+        onclose: (code: number, reason: string) => void,
+        onerror: (error: string) => void,
+    ): [
+        (data: Blob | ArrayBuffer | string) => void,
+        (code: number, reason: string) => void,
+    ] {
+        //@ts-ignore
+        const socket = new anura.net.WebSocket(url.toString(), protocols, {
+            headers: requestHeaders,
         });
-        let initialErrorHappened = false;
-        ws.addEventListener("error", (e) => {
-            if (!initialErrorHappened) {
-                onReadyState(WebSocket.CONNECTING);
-                e.stopImmediatePropagation();
-                initialErrorHappened = true;
-            }
-        });
-        // coerce iframe Array type to our window array type
-        protocols = Array.from(protocols as any);
-        //@ts-ignore
-        const wsws = new window.parent.anura.net.WebSocket(
-            remote.toString(),
-            protocols,
-        );
-        wsws.onopen = (protocol: any) => {
-            onReadyState(WebSocket.OPEN);
-            // @ts-ignore yes it does
-            ws.__defineGetter__("protocol", () => {
-                return protocol;
-            });
-            Object.defineProperty(wsws, "binaryType", {
-                value: ws.binaryType,
-                writable: false,
-            });
-            ws.dispatchEvent(new Event("open"));
-        };
-        //@ts-ignore
-        wsws.onclose = (code, reason, wasClean) => {
-            onReadyState(WebSocket.CLOSED);
-            ws.dispatchEvent(
-                new CloseEvent("close", { code, reason, wasClean }),
-            );
-        };
-        //@ts-ignore
-        wsws.onerror = (message) => {
-            ws.dispatchEvent(new ErrorEvent("error", { message }));
-        };
-        //@ts-ignore
-        wsws.onmessage = (event) => {
-            const payload = event.data;
-            if (typeof payload === "string") {
-                ws.dispatchEvent(
-                    new MessageEvent("message", { data: payload }),
-                );
-            } else if (payload instanceof ArrayBuffer) {
-                // @ts-ignore yes it does
-                payload.__proto__ = arrayBufferImpl.prototype;
+        //bare client always expects an arraybuffer for some reason
+        socket.binaryType = "arraybuffer";
 
-                ws.dispatchEvent(
-                    new MessageEvent("message", { data: payload }),
-                );
-            } else if (payload instanceof Blob) {
-                console.log(payload);
-                console.log(event);
-                ws.dispatchEvent(
-                    new MessageEvent("message", { data: payload }),
-                );
-            }
+        socket.onopen = (event: Event) => {
+            onopen("");
         };
-        ws.send = (data) => {
-            wsws.send(data);
+        socket.onclose = (event: CloseEvent) => {
+            onclose(event.code, event.reason);
         };
-        ws.close = () => {
-            wsws.close();
+        socket.onerror = (event: Event) => {
+            onerror("");
         };
-        return ws;
+        socket.onmessage = (event: MessageEvent) => {
+            onmessage(event.data);
+        };
+
+        return [
+            (data) => {
+                socket.send(data);
+            },
+            (code, reason) => {
+                socket.close(code, reason);
+            },
+        ];
     }
 }
+/*
+keeping this for when we can revert to a less garbage version of this library
+connection.setRemoteTransport(new AnuraBareClient(), "AnuraBareClient");
+*/
 
-console.log("Registering BCC impl");
-bare.setBareClientImplementation(new TLSClient());
+navigator.serviceWorker.ready.then((isReady) => {
+    bare.registerRemoteListener(isReady.active);
+    bare.SetSingletonTransport(new AnuraBareClient());
+});

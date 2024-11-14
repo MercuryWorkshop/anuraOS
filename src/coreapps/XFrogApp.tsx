@@ -1,24 +1,20 @@
 class XFrogApp extends App {
-    manifest: AppManifest;
-
-    activeWin: WMWindow;
-
+    name = "XFrog86";
+    package = "anura.xfrog";
+    icon = "/assets/icons/xfrog.png";
     hidden = true;
-
+    activeWin: WMWindow;
     xwindows: { [wid: string]: WMWindow } = {};
 
     constructor() {
         super();
-        this.name = "XFrog86";
-        this.package = "anura.xfrog";
-        this.icon = "/assets/icons/xfrog.png";
     }
 
     async startup() {
-        console.log("Starting Xfrog Client");
+        console.debug("Starting Xfrog Client");
         let buf: string[] = [];
         await anura.x86!.openpty(
-            'while true; do DISPLAY=:0 xdotool search --maxdepth 1 ".*" 2>/dev/null; echo EOF;sleep 2; done',
+            `/bin/ash -c 'while true; do DISPLAY=:0 xdotool search --maxdepth 1 ".*" 2>/dev/null; echo EOF; sleep 2; done'`,
             0,
             0,
             (data) => {
@@ -40,7 +36,7 @@ class XFrogApp extends App {
     }
 
     async proc_xwids(wids: string[]) {
-        console.log("xwids: " + wids);
+        console.debug("xwids: " + wids);
 
         for (const wid of wids) {
             if (!this.xwindows[wid]) {
@@ -66,7 +62,7 @@ class XFrogApp extends App {
 
         const sfocus = async () => {
             let isNew = false;
-            if (this.activeWin && this.activeWin != win) {
+            if (this.activeWin && this.activeWin !== win) {
                 const newImg = document.createElement("img");
 
                 const blob: any = await new Promise((resolve) =>
@@ -83,14 +79,20 @@ class XFrogApp extends App {
             if (timeout) clearTimeout(timeout);
             timeout = setTimeout(() => {
                 // DISPLAY=:0 xdotool windowmap $(xwininfo -children -id ${xwid} | grep -o '^ \\+0x[0-9a-f]\\+');
+                for (const winRef in anura.wm.windows) {
+                    try {
+                        if (anura.wm.windows[winRef]!.deref() === win) {
+                            console.log(winRef);
+                        }
+                    } catch (e) {
+                        console.log("xfrog lost reference too quick");
+                    }
+                }
                 if (isNew)
-                    anura.x86!.openpty(
+                    anura.x86!.runcmd(
                         `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                             win!.width
                         } ${win!.height - 28}`,
-                        0,
-                        0,
-                        console.log,
                     );
 
                 setTimeout(() => {
@@ -101,11 +103,6 @@ class XFrogApp extends App {
                         win!.content.querySelector("img")!.remove();
                     }
                     win!.content.appendChild(anura.x86!.screen_container!);
-
-                    // anura.x86?.vgacanvas.requestPointerLock();
-                    // anura.x86?.vgacanvas.addEventListener("click", () => {
-                    // anura.x86?.vgacanvas.requestPointerLock();
-                    // });
                 }, 100);
             }, 50);
         };
@@ -113,7 +110,7 @@ class XFrogApp extends App {
         this.xwindows[xwid] = "placeholder" as any;
 
         await anura.x86?.openpty(
-            `DISPLAY=:0 xdotool getwindowgeometry ${xwid} 2>/dev/null | grep -o '[0-9]*x[0-9]*'; while true; do DISPLAY=:0 xdotool getwindowname ${xwid}; sleep 5; done`,
+            `/bin/ash -c 'DISPLAY=:0 xdotool getwindowgeometry ${xwid} 2>/dev/null | grep -o '[0-9]*x[0-9]*'; while true; do DISPLAY=:0 xdotool getwindowname ${xwid}; sleep 5; done'`,
             0,
             0,
             (data) => {
@@ -122,32 +119,32 @@ class XFrogApp extends App {
                         .replaceAll("\r", "")
                         .replaceAll("\n", "")
                         .split("x");
-                    win = anura.wm.create(
-                        this,
-                        {
+                    console.log(`x dimen ${dimensions[0]}x${dimensions[1]}`);
+                    if (
+                        Number(dimensions[0]) > 5 &&
+                        Number(dimensions[1]) > 5
+                    ) {
+                        win = anura.wm.create(this, {
                             title: "X window",
                             width: `${dimensions[0]}px`,
                             height: `${Number(dimensions[1]!) + 28}px`,
-                        },
-                        () => sfocus(),
-                        (w, h) => {
-                            // onResize
-                            console.log(w, h);
-                            anura.x86!.openpty(
+                        });
+                        win.onfocus = () => {
+                            sfocus();
+                        };
+                        win.onresize = async (w, h) => {
+                            await anura.x86!.runcmd(
                                 `DISPLAY=:0 xdotool search --maxdepth 1 --onlyvisible ".*" 2>/dev/null | while read wid; do DISPLAY=:0 xdotool windowunmap $wid; done; DISPLAY=:0 xdotool windowmap ${xwid}; DISPLAY=:0 xdotool windowmove ${xwid} 0 0; DISPLAY=:0 xdotool windowsize ${xwid} ${
                                     win!.width
                                 } ${win!.height - 28}`,
-                                0,
-                                0,
-                                console.log,
                             );
-                        },
-                        () => {
-                            anura.x86!.runcmd(`xkill -id ${xwid}`);
-                        },
-                    );
-                    this.xwindows[xwid] = win;
-                    // sfocus();
+                        };
+                        win.onclose = () => {
+                            anura.x86!.runcmd(`DISPLAY=:0 xkill -id ${xwid}`);
+                        };
+                        this.xwindows[xwid] = win;
+                        win.content.style.cursor = "none";
+                    }
                 } else {
                     const name = data.replaceAll("\r", "").replaceAll("\n", "");
                     if (name.includes("of failed request")) {
@@ -156,9 +153,6 @@ class XFrogApp extends App {
                         win.state.title = "X window: " + name;
                     }
                 }
-                // Hide cursor when hovering over XFrog app
-                // to prevent multiple cursors from displaying on screen
-                win.content.style.cursor = "none";
             },
         );
     }

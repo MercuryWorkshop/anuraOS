@@ -72,12 +72,6 @@ abstract class AnuraFSOperations<TStats> {
 
     abstract unlink(path: string, callback?: (err: Error | null) => void): void;
 
-    abstract mknod(
-        path: string,
-        mode: number,
-        callback?: (err: Error | null) => void,
-    ): void;
-
     abstract rmdir(path: string, callback?: (err: Error | null) => void): void;
 
     abstract mkdir(
@@ -223,60 +217,6 @@ abstract class AnuraFSOperations<TStats> {
         callback?: (err: Error | null) => void,
     ): void;
 
-    abstract setxattr(
-        path: string,
-        name: string,
-        value: string | object,
-        flag: "CREATE" | "REPLACE",
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract setxattr(
-        path: string,
-        name: string,
-        value: string | object,
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract fsetxattr(
-        fd: AnuraFD,
-        name: string,
-        value: string | object,
-        flag: "CREATE" | "REPLACE",
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract fsetxattr(
-        fd: AnuraFD,
-        name: string,
-        value: string | object,
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract getxattr(
-        path: string,
-        name: string,
-        callback?: (err: Error | null, value: string | object) => void,
-    ): void;
-
-    abstract fgetxattr(
-        fd: AnuraFD,
-        name: string,
-        callback?: (err: Error | null, value: string | object) => void,
-    ): void;
-
-    abstract removexattr(
-        path: string,
-        name: string,
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract fremovexattr(
-        fd: AnuraFD,
-        name: string,
-        callback?: (err: Error | null) => void,
-    ): void;
-
     /*
      * Asynchronous FS operations
      */
@@ -290,7 +230,6 @@ abstract class AnuraFSOperations<TStats> {
         access(path: string, mode?: number): Promise<void>;
         chown(path: string, uid: number, gid: number): Promise<void>;
         chmod(path: string, mode: number): Promise<void>;
-        getxattr(path: string, name: string): Promise<string | object>;
         link(srcPath: string, dstPath: string): Promise<void>;
         lstat(path: string): Promise<TStats>;
         mkdir(path: string, mode?: number): Promise<void>;
@@ -298,7 +237,6 @@ abstract class AnuraFSOperations<TStats> {
             prefix: string,
             options?: { encoding: string },
         ): Promise<string>;
-        mknod(path: string, mode: number): Promise<void>;
         open(
             path: string,
             flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
@@ -310,15 +248,8 @@ abstract class AnuraFSOperations<TStats> {
         ): Promise<string[]>;
         readFile(path: string): Promise<Uint8Array>;
         readlink(path: string): Promise<string>;
-        removexattr(path: string, name: string): Promise<void>;
         rename(oldPath: string, newPath: string): Promise<void>;
         rmdir(path: string): Promise<void>;
-        setxattr(
-            path: string,
-            name: string,
-            value: string | object,
-            flag?: "CREATE" | "REPLACE",
-        ): Promise<void>;
         stat(path: string): Promise<TStats>;
         symlink(srcPath: string, dstPath: string, type?: string): Promise<void>;
         truncate(path: string, len: number): Promise<void>;
@@ -440,7 +371,7 @@ class AFSShell {
             /**
              * Callback to execute on each file.
              */
-            exec?: (path: string, next: () => void) => void;
+            exec?: (path: string) => void;
         },
         callback?: (err: Error | null, files: string[]) => void,
     ): void;
@@ -522,15 +453,7 @@ class AFSShell {
                 );
             }
             if (options.exec) {
-                let remaining = results.length;
-                results.forEach((file) => {
-                    options.exec!(file, () => {
-                        remaining--;
-                        if (remaining === 0) {
-                            callback!(null, results);
-                        }
-                    });
-                });
+                results.forEach((file) => options.exec!(file));
             } else {
                 callback!(null, results);
             }
@@ -562,22 +485,13 @@ class AFSShell {
         const entries: any[] = [];
 
         if (options.recursive) {
-            this.find(
-                dir,
-                {
-                    exec: (path, next = () => {}) => {
-                        entries.push(path);
-                        next();
-                    },
-                },
-                (err, _) => {
-                    if (err) {
-                        callback!(err, []);
-                        return;
-                    }
-                    callback!(null, entries);
-                },
-            );
+            this.find(dir, (err, files) => {
+                if (err) {
+                    callback!(err, []);
+                    return;
+                }
+                callback!(null, files);
+            });
         } else {
             anura.fs.readdir(
                 this.#relativeToAbsolute(dir),
@@ -812,7 +726,7 @@ class AFSShell {
                 regex?: RegExp;
                 name?: string;
                 path?: string;
-                exec?: (path: string, next: () => void) => void;
+                exec?: (path: string) => void;
             },
         ) => {
             return new Promise<string[]>((resolve, reject) => {
@@ -918,6 +832,56 @@ class AFSShell {
 class AnuraFilesystem implements AnuraFSOperations<any> {
     providers: Map<string, AFSProvider<any>> = new Map();
     providerCache: { [path: string]: AFSProvider<any> } = {};
+    whatwgfs = {
+        fs: undefined,
+        getFolder: async () => {
+            // @ts-ignore
+            return await this.whatwgfs.fs.getOriginPrivateDirectory(
+                // @ts-ignore
+                import("/libs/nfsadapter/adapters/anuraadapter.js"),
+            );
+        },
+        fileOrDirectoryFromPath: async (path: string) => {
+            try {
+                return await this.whatwgfs.directoryHandleFromPath(path);
+            } catch (e1) {
+                try {
+                    return await this.whatwgfs.fileHandleFromPath(path);
+                } catch (e2) {
+                    throw e1 + e2;
+                }
+            }
+        },
+        directoryHandleFromPath: async (path: string) => {
+            const pathParts = path.split("/");
+            // prettier-ignore
+            let workingPath = (await anura.fs.whatwgfs.getFolder());
+            for (const dir of pathParts) {
+                if (dir !== "")
+                    workingPath = await workingPath.getDirectoryHandle(dir);
+            }
+            return workingPath;
+        },
+        fileHandleFromPath: async (givenPath: string) => {
+            let path: string | string[] = givenPath.split("/");
+            const file = path.pop();
+            path = path.join("/");
+
+            // prettier-ignore
+            const workingPath = (await anura.fs.whatwgfs.directoryHandleFromPath(path));
+            return await workingPath.getFileHandle(file);
+        },
+        showDirectoryPicker: async (options: object) => {
+            const picker = await anura.import("anura.filepicker");
+            const path = await picker.selectFolder();
+            return await this.whatwgfs.directoryHandleFromPath(path);
+        },
+        showOpenFilePicker: async (options: object) => {
+            const picker = await anura.import("anura.filepicker");
+            const path = await picker.selectFile();
+            return await this.whatwgfs.fileHandleFromPath(path);
+        },
+    };
 
     // Note: Intentionally aliasing the property to a class instead of an instance
     static Shell = AFSShell;
@@ -927,6 +891,20 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         providers.forEach((provider) => {
             this.providers.set(provider.domain, provider);
         });
+        // These paths must be TS ignore'd since they are in build/
+
+        (async () => {
+            // @ts-ignore
+            const fs = await import("/libs/nfsadapter/nfsadapter.js");
+            // @ts-ignore
+            this.whatwgfs.FileSystemDirectoryHandle =
+                fs.FileSystemDirectoryHandle;
+            // @ts-ignore
+            this.whatwgfs.FileSystemFileHandle = fs.FileSystemFileHandle;
+            // @ts-ignore
+            this.whatwgfs.FileSystemHandle = fs.FileSystemHandle;
+            this.whatwgfs.fs = fs;
+        })();
     }
 
     clearCache() {
@@ -1024,7 +1002,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 
     symlink(path: string, ...rest: any[]) {
         // @ts-ignore - Overloaded methods are scary
-        this.processPath(path).symlink(path, ...rest);
+        this.processPath(rest[0]).symlink(path, ...rest);
     }
 
     readlink(
@@ -1036,10 +1014,6 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 
     unlink(path: string, callback?: (err: Error | null) => void) {
         this.processPath(path).unlink(path, callback);
-    }
-
-    mknod(path: string, mode: number, callback?: (err: Error | null) => void) {
-        this.processPath(path).mknod(path, mode, callback);
     }
 
     rmdir(path: string, callback?: (err: Error | null) => void) {
@@ -1057,7 +1031,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
     mkdtemp(...args: any[]) {
         // Temp directories should remain in the root filesystem for now
         // @ts-ignore - Overloaded methods are scary
-        this.providers.get("/")!.mkdtemp(...args);
+        this.processPath(path).mkdtemp(...args);
     }
 
     readdir(path: string, ...rest: any[]) {
@@ -1163,9 +1137,12 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).readFile(path, callback);
     }
 
-    writeFile(path: string, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processPath(path).writeFile(path, ...rest);
+    writeFile(path: string, data: Uint8Array | string, ...rest: any[]) {
+        if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
+            data = Filer.Buffer.from(data);
+        }
+
+        this.processPath(path).writeFile(path, data, ...rest);
     }
 
     appendFile(
@@ -1173,68 +1150,43 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         data: Uint8Array,
         callback?: (err: Error | null) => void,
     ) {
+        if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
+            data = Filer.Buffer.from(data);
+        }
+
         this.processPath(path).appendFile(path, data, callback);
     }
 
-    setxattr(path: string, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processPath(path).setxattr(path, ...rest);
-    }
-
-    fsetxattr(fd: AnuraFD, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processFD(fd).fsetxattr(fd, ...rest);
-    }
-
-    getxattr(
-        path: string,
-        name: string,
-        callback?: (err: Error | null, value: string | object) => void,
-    ) {
-        this.processPath(path).getxattr(path, name, callback);
-    }
-
-    fgetxattr(fd: AnuraFD, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processFD(fd).fgetxattr(fd, ...rest);
-    }
-
-    removexattr(
-        path: string,
-        name: string,
-        callback?: (err: Error | null) => void,
-    ) {
-        this.processPath(path).removexattr(path, name, callback);
-    }
-
-    fremovexattr(fd: AnuraFD, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processFD(fd).fremovexattr(fd, ...rest);
-    }
     // @ts-ignore - This is still being implemented.
     promises = {
         appendFile: (
             path: string,
             data: Uint8Array,
             options: { encoding: string; mode: number; flag: string },
-        ) => this.processPath(path).promises.appendFile(path, data, options),
+        ) => {
+            if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
+                data = Filer.Buffer.from(data);
+            }
+
+            return this.processPath(path).promises.appendFile(
+                path,
+                data,
+                options,
+            );
+        },
         access: (path: string, mode?: number) =>
             this.processPath(path).promises.access(path, mode),
         chown: (path: string, uid: number, gid: number) =>
             this.processPath(path).promises.chown(path, uid, gid),
         chmod: (path: string, mode: number) =>
             this.processPath(path).promises.chmod(path, mode),
-        getxattr: (path: string, name: string) =>
-            this.processPath(path).promises.getxattr(path, name),
         link: (srcPath: string, dstPath: string) =>
             this.processPath(srcPath).promises.link(srcPath, dstPath),
         lstat: (path: string) => this.processPath(path).promises.lstat(path),
         mkdir: (path: string, mode?: number) =>
             this.processPath(path).promises.mkdir(path, mode),
         mkdtemp: (prefix: string, options?: { encoding: string }) =>
-            this.providers.get("/")!.promises.mkdtemp(prefix, options),
-        mknod: (path: string, mode: number) =>
-            this.processPath(path).promises.mknod(path, mode),
+            this.processPath(prefix).promises.mkdtemp(prefix, options),
         open: async (
             path: string,
             flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
@@ -1248,20 +1200,12 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
             this.processPath(path).promises.readFile(path),
         readlink: (path: string) =>
             this.processPath(path).promises.readlink(path),
-        removexattr: (path: string, name: string) =>
-            this.processPath(path).promises.removexattr(path, name),
         rename: (oldPath: string, newPath: string) =>
             this.processPath(oldPath).promises.rename(oldPath, newPath),
         rmdir: (path: string) => this.processPath(path).promises.rmdir(path),
-        setxattr: (
-            path: string,
-            name: string,
-            value: string | object,
-            flag?: "CREATE" | "REPLACE",
-        ) => this.processPath(path).promises.setxattr(path, name, value, flag),
         stat: (path: string) => this.processPath(path).promises.stat(path),
         symlink: (srcPath: string, dstPath: string, type?: string) =>
-            this.processPath(srcPath).promises.symlink(srcPath, dstPath, type),
+            this.processPath(dstPath).promises.symlink(srcPath, dstPath, type),
         truncate: (path: string, len: number) =>
             this.processPath(path).promises.truncate(path, len),
         unlink: (path: string) => this.processPath(path).promises.unlink(path),
@@ -1271,6 +1215,12 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
             path: string,
             data: Uint8Array | string,
             options?: { encoding: string; mode: number; flag: string },
-        ) => this.processPath(path).promises.writeFile(path, data, options),
+        ) => {
+            if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
+                data = Filer.Buffer.from(data);
+            }
+
+            this.processPath(path).promises.writeFile(path, data, options);
+        },
     };
 }

@@ -1,11 +1,13 @@
 {
-  "name": "Terminal",
-  "type": "auto",
-  "package": "anura.term",
-  "index": "term.html",
-  "icon": "term.png",
-  "wininfo":{
-    "title":"Terminal",
-    "allowMultipleInstance": "true"
-  }
+    "name": "v86 Terminal",
+    "type": "auto",
+    "package": "anura.term",
+    "index": "term.html",
+    "icon": "term.png",
+    "wininfo": {
+        "title": "Terminal",
+        "allowMultipleInstance": "true",
+        "width": "680px",
+        "height": "440px"
+    }
 }

@@ -1,6 +1,14 @@
 {
     "wallpapers": [
         {
+            "name": "Nocturne",
+            "url": "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg"
+        },
+        {
+            "name": "ChromeOS Default",
+            "url": "/assets/wallpaper/bundled_wallpapers/Default.jpg"
+        },
+        {
             "name": "Blues Dark",
             "url": "/assets/wallpaper/bundled_wallpapers/Blues Dark.png"
         },
@@ -13,8 +21,8 @@
             "url": "/assets/wallpaper/bundled_wallpapers/Child.jpg"
         },
         {
-            "name": "Default",
-            "url": "/assets/wallpaper/bundled_wallpapers/Default.jpg"
+            "name": "ChromeOS Material",
+            "url": "/assets/wallpaper/bundled_wallpapers/Material.jpg"
         },
         {
             "name": "Earth Dark",
@@ -43,10 +51,6 @@
         {
             "name": "Guest",
             "url": "/assets/wallpaper/bundled_wallpapers/Guest.jpg"
-        },
-        {
-            "name": "Nocturne",
-            "url": "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg"
         },
         {
             "name": "Reds Dark",

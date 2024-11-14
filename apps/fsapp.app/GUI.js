@@ -34,18 +34,19 @@ addContextMenuItem("Refresh", function () {
     reload();
 });
 
+newcontextmenu.addItem("Download", function () {
+    download();
+});
+
 appcontextmenu.addItem("Install (Session)", function () {
-    // While this is the same as double clicking, it's still useful to have the verbosely named option
     installSession();
 });
 
 appcontextmenu.addItem("Install (Permanent)", function () {
-    // This is not the same as double clicking, as it will install the app permanently
     installPermanent();
 });
 
 appcontextmenu.addItem("Navigate", function () {
-    // Normally, double clicking a folder will navigate into it, but for apps and libs, this is not the case
     navigate();
 });
 
@@ -57,7 +58,7 @@ emptycontextmenu.addItem("New folder", function () {
 });
 emptycontextmenu.addItem("New file", function () {
     newFile();
-})
+});
 emptycontextmenu.addItem("Paste", function () {
     paste();
 });
@@ -66,7 +67,6 @@ emptycontextmenu.addItem("Refresh", function () {
 });
 
 const min = 150;
-// The max (fr) values for grid-template-columns
 const columnTypeToRatioMap = {
     icon: 0.1,
     name: 3,
@@ -88,8 +88,6 @@ let headerBeingResized;
 // Where the magic happens. I.e. when they're actually resizing
 const onMouseMove = (e) =>
     requestAnimationFrame(() => {
-        console.log("onMouseMove");
-
         (window.getSelection
             ? window.getSelection()
             : document.selection
@@ -123,35 +121,66 @@ const onMouseMove = (e) =>
             .join(" ");
     });
 
-// Clean up event listeners, classes, etc.
 const onMouseUp = () => {
-    console.log("onMouseUp");
-
     window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", onMouseUp);
     headerBeingResized.classList.remove("header--being-resized");
     headerBeingResized = null;
 };
 
-// Get ready, they're about to resize
 const initResize = ({ target }) => {
-    console.log("initResize");
-
     headerBeingResized = target.parentNode;
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
     headerBeingResized.classList.add("header--being-resized");
 };
 
-// Let's populate that columns array and add listeners to the resize handles
 document.querySelectorAll("th").forEach((header) => {
     const max = columnTypeToRatioMap[header.dataset.type] + "fr";
     columns.push({
         header,
-        // The initial size value for grid-template-columns:
         size: `minmax(${min}px, ${max})`,
     });
     header
         .querySelector(".resize-handle")
         .addEventListener("mousedown", initResize);
+});
+
+document.addEventListener("contextmenu", (e) => {
+    if (e.shiftKey) {
+        return;
+    }
+    e.preventDefault();
+    const boundingRect = window.frameElement.getBoundingClientRect();
+
+    const containsApps =
+        currentlySelected
+            .map(
+                (item) =>
+                    item.getAttribute("data-path").split(".").slice("-1")[0],
+            )
+            .filter((item) => item === "app" || item === "lib").length > 0;
+
+    if (containsApps) {
+        appcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        newcontextmenu.hide();
+        emptycontextmenu.hide();
+    } else if (currentlySelected.length !== 0) {
+        newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+        appcontextmenu.hide();
+        emptycontextmenu.hide();
+    } else {
+        emptycontextmenu.show(
+            e.pageX + boundingRect.x,
+            e.pageY + boundingRect.y,
+        );
+        newcontextmenu.hide();
+        appcontextmenu.hide();
+    }
+});
+
+document.addEventListener("click", (e) => {
+    newcontextmenu.hide();
+    appcontextmenu.hide();
+    emptycontextmenu.hide();
 });

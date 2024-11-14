@@ -12,34 +12,25 @@
 
 type SnappedWindow = {
     window: WMWindow;
-    direction: "left" | "right";
+    direction: "left" | "right" | "ne" | "nw" | "se" | "sw";
 };
-
-let splitBar: WMSplitBar | null = null;
 
 const minimizedSnappedWindows: SnappedWindow[] = [];
 
 const snappedWindows: SnappedWindow[] = [];
 
-/**
- * to show a floating dialog displaying the given dom element
- * @param {Object} title "title of the dialog"
- */
-
-const windowInformation = {};
-const windowID = 0;
+let splitBar: WMSplitBar | null = null;
 
 class WindowInformation {
     title: string;
+    height: string;
     width: string;
     minwidth: number;
-    height: string;
     minheight: number;
-    allowMultipleInstance = false;
     resizable: boolean;
 }
 
-class WMWindow {
+class WMWindow extends EventTarget implements Process {
     element: HTMLElement;
     content: HTMLElement;
     maximized: boolean;
@@ -60,12 +51,14 @@ class WMWindow {
 
     state: { title: string };
 
-    onfocus: () => void;
-    onresize: (w: number, h: number) => void;
-    onclose: () => void;
-    onmaximize: () => void;
-    onsnap: (snapDirection: "left" | "right" | "top") => void;
-    onunmaximize: () => void;
+    onfocus: () => void = () => {};
+    onresize: (w: number, h: number) => void = () => {};
+    onclose: () => void = () => {};
+    onmaximize: () => void = () => {};
+    onsnap: (
+        snapDirection: "left" | "right" | "top" | "ne" | "nw" | "se" | "sw",
+    ) => void = () => {};
+    onunmaximize: () => void = () => {};
 
     snapped = false;
 
@@ -77,32 +70,49 @@ class WMWindow {
 
     mouseover = false;
 
+    get title() {
+        if (!this.state.title && this.app) {
+            return this.app.name;
+        }
+        return this.state.title;
+    }
+
+    set title(title: string) {
+        this.state.title = title;
+    }
+
     maximizeImg: HTMLImageElement;
-    constructor(wininfo: WindowInformation) {
+    constructor(
+        wininfo: WindowInformation,
+        public app?: App,
+    ) {
+        super();
         this.wininfo = wininfo;
-        this.state = stateful({
+        this.state = $state({
             title: wininfo.title,
         });
         this.resizable = wininfo.resizable;
-        if (this.resizable == undefined) {
+        if (this.resizable === undefined) {
             // This happens when resizable isn't passed in.
             this.resizable = true;
         }
         this.clampWindows = !!anura.settings.get("clampWindows");
+
         this.element = (
             <div
                 class="aliceWMwin opacity0"
                 style={`
                     width: ${wininfo.width};
                     height: ${wininfo.height};
+                    ${anura.platform.type === "mobile" || anura.platform.type === "tablet" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
-                on:mouseover={() => {
+                on:pointerover={() => {
                     this.mouseover = true;
                 }}
-                on:mouseout={() => {
+                on:pointerout={() => {
                     this.mouseover = false;
                 }}
-                on:mousedown={this.focus.bind(this)}
+                on:pointerdown={this.focus.bind(this)}
             >
                 {(this.resizable && (
                     <div class="resizers">
@@ -120,16 +130,21 @@ class WMWindow {
                     ""}
                 <div
                     class="title"
-                    on:mousedown={(evt: MouseEvent) => {
+                    on:pointerdown={(evt: PointerEvent) => {
                         deactivateFrames();
 
-                        this.dragging = true;
-                        this.originalLeft = this.element.offsetLeft;
-                        this.originalTop = this.element.offsetTop;
-                        this.mouseLeft = evt.clientX;
-                        this.mouseTop = evt.clientY;
+                        if (
+                            anura.platform.type !== "mobile" &&
+                            anura.platform.type !== "tablet"
+                        ) {
+                            this.dragging = true;
+                            this.originalLeft = this.element.offsetLeft;
+                            this.originalTop = this.element.offsetTop;
+                            this.mouseLeft = evt.clientX;
+                            this.mouseTop = evt.clientY;
+                        }
                     }}
-                    on:mouseup={(evt: MouseEvent) => {
+                    on:pointerup={(evt: PointerEvent) => {
                         reactivateFrames();
 
                         if (this.dragging) {
@@ -137,7 +152,10 @@ class WMWindow {
                             this.dragging = false;
                         }
                     }}
-                    on:mousemove={(evt: MouseEvent) => {
+                    on:dblclick={() => {
+                        this.maximize();
+                    }}
+                    on:pointermove={(evt: PointerEvent) => {
                         // do the dragging during the mouse move
 
                         if (this.dragging) {
@@ -148,7 +166,7 @@ class WMWindow {
                     <div class="titleContent">{use(this.state.title)}</div>
 
                     <button
-                        class="windowButton"
+                        class="windowButton minimize"
                         on:click={() => {
                             this.minimizing = true;
                             this.minimize();
@@ -160,9 +178,8 @@ class WMWindow {
                             class="windowButtonIcon"
                         />
                     </button>
-
                     <button
-                        class="windowButton"
+                        class="windowButton maximize"
                         on:click={this.maximize.bind(this)}
                     >
                         {
@@ -176,7 +193,7 @@ class WMWindow {
                         }
                     </button>
                     <button
-                        class="windowButton"
+                        class="windowButton close"
                         on:click={this.close.bind(this)}
                     >
                         <img
@@ -207,7 +224,7 @@ class WMWindow {
                 .replace("px", ""),
         );
 
-        document.addEventListener("mousemove", (evt) => {
+        document.addEventListener("pointermove", (evt: PointerEvent) => {
             if (this.dragging) {
                 this.handleDrag(evt);
             }
@@ -227,7 +244,7 @@ class WMWindow {
         });
 
         // finish the dragging when release the mouse button
-        document.addEventListener("mouseup", (evt) => {
+        document.addEventListener("pointerup", (evt: PointerEvent) => {
             reactivateFrames();
 
             const snapPreview = document.getElementById("snapPreview");
@@ -275,38 +292,61 @@ class WMWindow {
         let sentResize = false;
         for (let i = 0; i < resizers.length; i++) {
             const currentResizer = resizers[i];
-            currentResizer.addEventListener("mousedown", (e: MouseEvent) => {
-                e.preventDefault();
-                original_width = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("width")
-                        .replace("px", ""),
-                );
-                original_height = parseFloat(
-                    getComputedStyle(this.element, null)
-                        .getPropertyValue("height")
-                        .replace("px", ""),
-                );
-                deactivateFrames();
-                original_x = this.element.getBoundingClientRect().left;
-                original_y = this.element.getBoundingClientRect().top;
-                original_mouse_x = e.pageX;
-                original_mouse_y = e.pageY;
-                window.addEventListener("mousemove", resize);
+            currentResizer.addEventListener(
+                "pointerdown",
+                (e: PointerEvent) => {
+                    e.preventDefault();
+                    if (
+                        anura.platform.type === "mobile" ||
+                        anura.platform.type === "tablet"
+                    )
+                        return;
+                    original_width = parseFloat(
+                        getComputedStyle(this.element, null)
+                            .getPropertyValue("width")
+                            .replace("px", ""),
+                    );
+                    original_height = parseFloat(
+                        getComputedStyle(this.element, null)
+                            .getPropertyValue("height")
+                            .replace("px", ""),
+                    );
+                    deactivateFrames();
+                    original_x = this.element.getBoundingClientRect().left;
+                    original_y = this.element.getBoundingClientRect().top;
+                    original_mouse_x = e.pageX;
+                    original_mouse_y = e.pageY;
+                    window.addEventListener("pointermove", resize);
 
-                window.addEventListener("mouseup", () => {
-                    reactivateFrames();
-                    window.removeEventListener("mousemove", resize);
-                    if (!sentResize) {
-                        this.onresize(this.width, this.height);
-                        sentResize = true;
-                    }
-                });
-            });
+                    window.addEventListener("pointerup", () => {
+                        reactivateFrames();
+                        window.removeEventListener("pointermove", resize);
+                        if (!sentResize) {
+                            this.dispatchEvent(
+                                new MessageEvent("resize", {
+                                    data: {
+                                        width: this.width,
+                                        height: this.height,
+                                    },
+                                }),
+                            );
+                            // TODO: Sometimes attempting to resize just does nothing?
+                            // This if statement blocks against an error being spit out, but there is a bug here
+                            if (typeof this.onresize === "function") {
+                                this.onresize(this.width, this.height);
+                                sentResize = true;
+                            }
+                        }
+                    });
+                },
+            );
 
-            const resize = (e: MouseEvent) => {
+            const resize = (e: PointerEvent) => {
                 this.dragForceX = 0;
                 this.dragForceY = 0;
+
+                const pageX = e.pageX;
+                const pageY = e.pageY;
 
                 sentResize = false;
                 if (this.maximized) {
@@ -321,18 +361,17 @@ class WMWindow {
                         original_width,
                     );
                     if (
-                        (direction == "left" &&
+                        (direction === "left" &&
                             !currentResizer.classList.contains("right")) ||
-                        (direction == "right" &&
+                        (direction === "right" &&
                             !currentResizer.classList.contains("left"))
                     ) {
                         return;
                     }
                 }
                 if (currentResizer.classList.contains("bottom-right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
+                    const width = original_width + (pageX - original_mouse_x);
+                    const height = original_height + (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
@@ -340,66 +379,61 @@ class WMWindow {
                         this.element.style.height = height + "px";
                     }
                 } else if (currentResizer.classList.contains("bottom-left")) {
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
-                    const width = original_width - (e.pageX - original_mouse_x);
+                    const height = original_height + (pageY - original_mouse_y);
+                    const width = original_width - (pageX - original_mouse_x);
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                     }
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                 } else if (currentResizer.classList.contains("top-right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
-                    const height =
-                        original_height - (e.pageY - original_mouse_y);
+                    const width = original_width + (pageX - original_mouse_x);
+                    const height = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                         this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("top-left")) {
-                    const width = original_width - (e.pageX - original_mouse_x);
-                    const height =
-                        original_height - (e.pageY - original_mouse_y);
+                    const width = original_width - (pageX - original_mouse_x);
+                    const height = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                         this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("left")) {
-                    const width = original_width - (e.pageX - original_mouse_x);
+                    const width = original_width - (pageX - original_mouse_x);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                         this.element.style.left =
-                            original_x + (e.pageX - original_mouse_x) + "px";
+                            original_x + (pageX - original_mouse_x) + "px";
                     }
                 } else if (currentResizer.classList.contains("right")) {
-                    const width = original_width + (e.pageX - original_mouse_x);
+                    const width = original_width + (pageX - original_mouse_x);
                     if (width > minimum_size) {
                         this.element.style.width = width + "px";
                     }
                 } else if (currentResizer.classList.contains("top")) {
-                    const width =
-                        original_height - (e.pageY - original_mouse_y);
+                    const width = original_height - (pageY - original_mouse_y);
                     if (width > minimum_size) {
                         this.element.style.height = width + "px";
                         this.element.style.top =
-                            original_y + (e.pageY - original_mouse_y) + "px";
+                            original_y + (pageY - original_mouse_y) + "px";
                     }
                 } else if (currentResizer.classList.contains("bottom")) {
-                    const height =
-                        original_height + (e.pageY - original_mouse_y);
+                    const height = original_height + (pageY - original_mouse_y);
                     if (height > minimum_size) {
                         this.element.style.height = height + "px";
                     }
@@ -417,12 +451,28 @@ class WMWindow {
             };
         }
 
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("scaletransition");
+
+        if (
+            anura.platform.type === "mobile" ||
+            anura.platform.type === "tablet"
+        ) {
+            this.maximize();
+        }
+
         setTimeout(() => this.element.classList.remove("opacity0"), 10);
+
+        this.pid = anura.processes.state.procs.length;
+        anura.processes.register(this);
     }
 
-    handleDrag(evt: MouseEvent) {
-        const offsetX = this.originalLeft + evt.clientX! - this.mouseLeft;
-        const offsetY = this.originalTop + evt.clientY! - this.mouseTop;
+    handleDrag(evt: PointerEvent) {
+        const clientX = evt.clientX;
+        const clientY = evt.clientY;
+
+        const offsetX = this.originalLeft + clientX! - this.mouseLeft;
+        const offsetY = this.originalTop + clientY! - this.mouseTop;
 
         if (this.clampWindows) {
             const newOffsetX = Math.min(
@@ -438,7 +488,7 @@ class WMWindow {
             this.element.style.left = newOffsetX + "px";
             this.element.style.top = newOffsetY + "px";
 
-            if (offsetX != newOffsetX || offsetY != newOffsetY) {
+            if (offsetX !== newOffsetX || offsetY !== newOffsetY) {
                 this.dragForceX = Math.abs(offsetX - newOffsetX);
                 this.dragForceY = Math.abs(offsetY - newOffsetY);
                 const snapDirection = this.getSnapDirection(
@@ -453,7 +503,7 @@ class WMWindow {
                         );
                     } else {
                         const direction = preview.classList[0]?.split("-")[1];
-                        if (direction != snapDirection) {
+                        if (direction !== snapDirection) {
                             preview.remove();
                             document.body.appendChild(
                                 this.snapPreview(snapDirection),
@@ -481,8 +531,8 @@ class WMWindow {
             this.unmaximize();
             this.originalLeft = this.element.offsetLeft;
             this.originalTop = this.element.offsetTop;
-            this.mouseLeft = evt.clientX;
-            this.mouseTop = evt.clientY;
+            this.mouseLeft = clientX;
+            this.mouseTop = clientY;
         }
     }
 
@@ -492,17 +542,21 @@ class WMWindow {
             (getHighestZindex() + 1).toString(),
         );
         normalizeZindex();
-
-        if (this.onfocus) this.onfocus();
+        this.dispatchEvent(new Event("focus"));
+        this.onfocus();
     }
     close() {
+        anura.processes.remove(this.pid);
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("scaletransition");
+
+        this.dispatchEvent(new Event("close"));
+        this.onclose();
         this.element.classList.add("opacity0");
         setTimeout(() => {
             this.element.remove();
             // TODO, Remove this and make it an event
             anura.removeStaleApps();
-
-            if (this.onclose) this.onclose();
         }, 200);
     }
     togglemaximize() {
@@ -518,31 +572,42 @@ class WMWindow {
             return;
         }
 
-        if (this.onmaximize) this.onmaximize();
+        this.dispatchEvent(new Event("maximize"));
+        this.onmaximize();
         this.oldstyle = this.element.getAttribute("style");
-        console.log(this.oldstyle);
         const width =
-            (window.innerWidth ||
-                document.documentElement.clientWidth ||
-                document.body.clientWidth) - 4;
+            window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
         const height =
             window.innerHeight ||
             document.documentElement.clientHeight ||
             document.body.clientHeight;
 
-        this.element.classList.add("maxtransition");
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("maxtransition");
+        this.element.classList.add("scaletransition");
+
         this.element.style.top = "0";
         this.element.style.left = "0";
         this.element.style.width = `${width}px`;
         this.element.style.height = `${height - 49}px`;
-        setTimeout(() => {
-            this.element.classList.remove("maxtransition");
-        }, 200);
+
+        if (!anura.settings.get("disable-animation"))
+            setTimeout(() => {
+                this.element.classList.remove("maxtransition");
+                this.element.classList.remove("scaletransition");
+            }, 200);
 
         this.maximizeImg.src = "/assets/window/restore.svg";
 
         this.justresized = true;
         this.maximized = true;
+        this.dispatchEvent(
+            new MessageEvent("resize", {
+                data: { width: this.width, height: this.height },
+            }),
+        );
         this.onresize(this.width, this.height);
     }
     async unmaximize() {
@@ -556,7 +621,7 @@ class WMWindow {
             this.snapped = false;
 
             const thisSnappedWindow = snappedWindows.find(
-                (x) => x.window == this,
+                (x) => x.window === this,
             );
 
             snappedWindows.splice(
@@ -570,22 +635,36 @@ class WMWindow {
 
             this.element.setAttribute("style", this.oldstyle!);
             this.justresized = true;
+            this.dispatchEvent(
+                new MessageEvent("resize", {
+                    data: { width: this.width, height: this.height },
+                }),
+            );
             this.onresize(this.width, this.height);
             return;
         }
 
-        if (this.onunmaximize) this.onunmaximize();
-        console.log("restoring");
-        this.element.classList.add("maxtransition");
+        this.dispatchEvent(new Event("unmaximize"));
+        this.onunmaximize();
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("maxtransition");
+        this.element.classList.add("scaletransition");
         this.element.setAttribute("style", this.oldstyle!);
-        setTimeout(() => {
-            this.element.classList.remove("maxtransition");
-        }, 200);
+        if (!anura.settings.get("disable-animation"))
+            setTimeout(() => {
+                this.element.classList.remove("maxtransition");
+                this.element.classList.remove("scaletransition");
+            }, 200);
         this.maximizeImg.src = "/assets/window/maximize.svg";
 
         await sleep(10); // Race condition as a feature
         this.justresized = true;
         this.maximized = false;
+        this.dispatchEvent(
+            new MessageEvent("resize", {
+                data: { width: this.width, height: this.height },
+            }),
+        );
         this.onresize(this.width, this.height);
     }
     async remaximize() {
@@ -611,10 +690,12 @@ class WMWindow {
         // Determine if the change in size is higher than some threshold to prevent sluggish animations
 
         const animx =
-            Math.abs(oldwidth - width) > 0.1 * Math.max(oldwidth, width);
+            Math.abs(oldwidth - width) > 0.1 * Math.max(oldwidth, width) &&
+            !anura.settings.get("disable-animation");
 
         const animy =
-            Math.abs(oldheight - height) > 0.1 * Math.max(oldheight, height);
+            Math.abs(oldheight - height) > 0.1 * Math.max(oldheight, height) &&
+            !anura.settings.get("disable-animation");
 
         animx && this.element.classList.add("remaxtransitionx");
         animy && this.element.classList.add("remaxtransitiony");
@@ -632,13 +713,10 @@ class WMWindow {
             }, 200);
     }
     minimize() {
-        console.log(this.snapped);
         if (this.snapped) {
             const thisSnappedWindow = snappedWindows.find(
-                (x) => x.window == this,
+                (x) => x.window === this,
             );
-            console.log(thisSnappedWindow);
-
             minimizedSnappedWindows.push(thisSnappedWindow!);
             snappedWindows.splice(
                 snappedWindows.indexOf(thisSnappedWindow!),
@@ -655,17 +733,19 @@ class WMWindow {
     }
     unminimize() {
         if (
-            this.element.style.display != "none" ||
+            this.element.style.display !== "none" ||
             !this.element.classList.contains("opacity0")
         ) {
             return;
         }
         if (this.snapped) {
             const thisSnappedWindow = minimizedSnappedWindows.find(
-                (x) => x.window == this,
+                (x) => x.window === this,
             );
 
             if (!thisSnappedWindow) {
+                this.snapped = false;
+                this.unminimize();
                 return;
             }
 
@@ -676,23 +756,23 @@ class WMWindow {
             );
 
             const leftSnappedWindows = snappedWindows.filter(
-                (x) => x.direction == "left",
+                (x) => x.direction === "left",
             );
 
             const rightSnappedWindows = snappedWindows.filter(
-                (x) => x.direction == "right",
+                (x) => x.direction === "right",
             );
 
-            if (thisSnappedWindow.direction == "left") {
+            if (thisSnappedWindow.direction === "left") {
                 const otherLeftSnappedWindows = leftSnappedWindows.filter(
-                    (x) => x.window != this,
+                    (x) => x.window !== this,
                 );
 
                 otherLeftSnappedWindows.forEach((x) => {
                     x.window.minimize();
                 });
 
-                if (rightSnappedWindows.length == 1) {
+                if (rightSnappedWindows.length === 1) {
                     WMSplitBar.prototype.cleanup(); // Just in case
 
                     const bar = new WMSplitBar(
@@ -705,27 +785,32 @@ class WMWindow {
                         document.documentElement.clientWidth ||
                         document.body.clientWidth;
 
-                    bar.leftWindow.element.classList.add("remaxtransitionx");
-                    bar.splitWindowsAround(width / 2);
-
-                    setTimeout(() => {
-                        bar.leftWindow.element.classList.remove(
+                    if (!anura.settings.get("disable-animation"))
+                        bar.leftWindow.element.classList.add(
                             "remaxtransitionx",
                         );
-                    }, 200);
+
+                    bar.splitWindowsAround(width / 2);
+
+                    if (!anura.settings.get("disable-animation"))
+                        setTimeout(() => {
+                            bar.leftWindow.element.classList.remove(
+                                "remaxtransitionx",
+                            );
+                        }, 200);
                 }
             }
 
-            if (thisSnappedWindow.direction == "right") {
+            if (thisSnappedWindow.direction === "right") {
                 const otherRightSnappedWindows = rightSnappedWindows.filter(
-                    (x) => x.window != this,
+                    (x) => x.window !== this,
                 );
 
                 otherRightSnappedWindows.forEach((x) => {
                     x.window.minimize();
                 });
 
-                if (leftSnappedWindows.length == 1) {
+                if (leftSnappedWindows.length === 1) {
                     WMSplitBar.prototype.cleanup(); // Just in case
 
                     const bar = new WMSplitBar(
@@ -737,25 +822,32 @@ class WMWindow {
                         window.innerWidth ||
                         document.documentElement.clientWidth ||
                         document.body.clientWidth;
-
-                    bar.leftWindow.element.classList.add("remaxtransitionx");
-                    bar.splitWindowsAround(width / 2);
-
-                    setTimeout(() => {
-                        bar.leftWindow.element.classList.remove(
+                    if (!anura.settings.get("disable-animation"))
+                        bar.leftWindow.element.classList.add(
                             "remaxtransitionx",
                         );
-                    });
+                    bar.splitWindowsAround(width / 2);
+
+                    if (!anura.settings.get("disable-animation"))
+                        setTimeout(() => {
+                            bar.leftWindow.element.classList.remove(
+                                "remaxtransitionx",
+                            );
+                        });
                 }
             }
         }
         this.element.style.display = "";
+        if (!anura.settings.get("disable-animation"))
+            this.element.classList.add("scaletransition");
+
         setTimeout(() => {
             this.element.classList.remove("opacity0");
         }, 10);
     }
 
-    snap(snapDirection: "left" | "right" | "top") {
+    snap(snapDirection: "left" | "right" | "top" | "ne" | "nw" | "se" | "sw") {
+        this.dragging = false;
         this.oldstyle = this.element.getAttribute("style");
 
         const width =
@@ -769,10 +861,10 @@ class WMWindow {
 
         let scaledWidth = width;
 
-        if (snapDirection != "top") {
+        if (snapDirection !== "top") {
             scaledWidth = width / 2;
             snappedWindows.forEach((x) => {
-                if (x.direction == snapDirection) {
+                if (x.direction === snapDirection) {
                     x.window.minimize();
                 }
             });
@@ -783,32 +875,39 @@ class WMWindow {
         }
 
         if (
-            snappedWindows.length == 2 &&
+            snappedWindows.find((x) => x.direction === "left") &&
+            snappedWindows.find((x) => x.direction === "right") &&
             !splitBar &&
-            snapDirection != "top" &&
-            snappedWindows[0]?.direction != snappedWindows[1]?.direction
+            snapDirection !== "top" &&
+            snappedWindows[0]?.direction !== snappedWindows[1]?.direction
         ) {
             const bar = new WMSplitBar(
-                snappedWindows.find((x) => x.direction == "left")!.window,
-                snappedWindows.find((x) => x.direction == "right")!.window,
+                snappedWindows.find((x) => x.direction === "left")!.window,
+                snappedWindows.find((x) => x.direction === "right")!.window,
             );
 
             bar.splitWindowsAround(width / 2);
-
-            setTimeout(() => {
-                bar.leftWindow.element.classList.remove("remaxtransitionx");
-            }, 200);
+            if (!anura.settings.get("disable-animation"))
+                setTimeout(() => {
+                    bar.leftWindow.element.classList.remove("remaxtransitionx");
+                }, 200);
         }
-
-        console.log("calling onSnap", this.onsnap);
-        if (this.onsnap) this.onsnap(snapDirection);
-
+        this.dispatchEvent(
+            new MessageEvent("snap", {
+                data: { snapDirection: snapDirection },
+            }),
+        );
+        this.onsnap(snapDirection);
         switch (snapDirection) {
             case "left":
+                this.element.style.width = scaledWidth - 4 + "px";
+                this.element.style.height = height - 49 + "px";
                 this.element.style.top = "0px";
                 this.element.style.left = "0px";
                 break;
             case "right":
+                this.element.style.width = scaledWidth - 4 + "px";
+                this.element.style.height = height - 49 + "px";
                 this.element.style.top = "0px";
                 this.element.style.left = scaledWidth + "px";
                 break;
@@ -816,12 +915,42 @@ class WMWindow {
                 this.maximize();
                 this.dragging = false;
                 return;
+            case "ne":
+                this.element.style.width = width / 2 + "px";
+                this.element.style.height = (height - 49) / 2 + "px";
+                this.element.style.top = "0px";
+                this.element.style.left =
+                    width - this.element.clientWidth + "px";
+                break;
+            case "nw":
+                this.element.style.width = width / 2 + "px";
+                this.element.style.height = (height - 49) / 2 + "px";
+                this.element.style.top = "0px";
+                this.element.style.left = "0px";
+                break;
+            case "se":
+                this.element.style.width = width / 2 + "px";
+                this.element.style.height = (height - 49) / 2 + "px";
+                this.element.style.top =
+                    height - 49 - this.element.clientHeight + "px";
+                this.element.style.left =
+                    width - this.element.clientWidth + "px";
+                break;
+            case "sw":
+                this.element.style.width = width / 2 + "px";
+                this.element.style.height = (height - 49) / 2 + "px";
+                this.element.style.top =
+                    height - 49 - this.element.clientHeight + "px";
+                this.element.style.left = "0px";
+                break;
         }
 
-        this.element.style.width = scaledWidth - 4 + "px";
-        this.element.style.height = height - 49 + "px";
+        this.dispatchEvent(
+            new MessageEvent("resize", {
+                data: { width: this.width, height: this.height },
+            }),
+        );
         this.onresize(this.width, this.height);
-        this.dragging = false;
 
         this.maximizeImg.src = "/assets/window/restore.svg";
         this.snapped = true;
@@ -830,7 +959,35 @@ class WMWindow {
     getSnapDirection(
         forceX: number,
         forceY: number,
-    ): "left" | "right" | "top" | null {
+    ): "left" | "right" | "top" | "ne" | "nw" | "se" | "sw" | null {
+        if (forceX > 20 && forceY > 20) {
+            if (this.element.offsetLeft === 0 && this.element.offsetTop === 0) {
+                return "nw";
+            }
+            if (
+                this.element.offsetLeft + this.element.clientWidth ===
+                    window.innerWidth &&
+                this.element.offsetTop === 0
+            ) {
+                return "ne";
+            }
+            if (
+                this.element.offsetTop + this.element.clientHeight ==
+                    window.innerHeight - 49 &&
+                this.element.offsetLeft == 0
+            ) {
+                return "sw";
+            }
+            if (
+                this.element.offsetTop + this.element.clientHeight ==
+                    window.innerHeight - 49 &&
+                this.element.offsetLeft + this.element.clientWidth ==
+                    window.innerWidth
+            ) {
+                return "se";
+            }
+        }
+
         if (forceX > 20) {
             if (this.element.offsetLeft == 0) {
                 // Snap to left
@@ -843,28 +1000,28 @@ class WMWindow {
             // Snap to top
             return "top";
         }
+
         return null;
     }
 
     getSnapDirectionFromPosition(
         left: number,
         width: number,
-    ): "left" | "right" | null {
-        if (left == 0) {
+    ): "left" | "right" | "top" | "ne" | "nw" | "se" | "sw" | null {
+        if (left === 0) {
             return "left";
         }
         const windowWidth =
             window.innerWidth ||
             document.documentElement.clientWidth ||
             document.body.clientWidth;
-        if (left + width == windowWidth) {
+        if (left + width === windowWidth) {
             return "right";
         }
-        console.log(left, width, windowWidth);
         return null;
     }
 
-    snapPreview(side: "left" | "right" | "top") {
+    snapPreview(side: "left" | "right" | "top" | "ne" | "nw" | "se" | "sw") {
         const width =
             window.innerWidth ||
             document.documentElement.clientWidth ||
@@ -877,16 +1034,28 @@ class WMWindow {
         let scaledWidth = width;
         let scaledHeight = height;
 
-        if (side != "top") {
+        if (side !== "top") {
             scaledWidth = width / 2;
         }
-        scaledHeight = height - 49;
+
+        if (["ne", "nw", "se", "sw"].includes(side)) {
+            scaledWidth = width / 2;
+            scaledHeight = (height - 49) / 2;
+        }
+
+        let previewSide = side;
+
+        if (["ne", "se"].includes(side)) {
+            previewSide = "right";
+        } else if (["nw", "sw"].includes(side)) {
+            previewSide = "left";
+        }
 
         const elem: DLElement<any> = (
             <div
                 class={`snapPreview-${side}`}
                 id="snapPreview"
-                style={`${side}: 0px; width: ${scaledWidth}px; height: ${scaledHeight}px; opacity: 0;`}
+                style={`${previewSide}: 0px; width: ${scaledWidth}px; height: ${scaledHeight}px; opacity: 0; `}
             ></div>
         );
 
@@ -895,6 +1064,18 @@ class WMWindow {
         }, 10);
 
         return elem;
+    }
+
+    pid: number;
+
+    stdout: ReadableStream<Uint8Array> = new ReadableStream();
+    stdin: WritableStream<Uint8Array> = new WritableStream();
+    stderr: ReadableStream<Uint8Array> = new ReadableStream();
+
+    kill = this.close;
+
+    get alive() {
+        return this.element.isConnected;
     }
 }
 
@@ -915,14 +1096,14 @@ class WMSplitBar {
             on:mouseout={() => {
                 this.fadeOut();
             }}
-            on:mousedown={(evt: MouseEvent) => {
+            on:pointerdown={(evt: PointerEvent) => {
                 deactivateFrames();
 
                 this.dragging = true;
                 this.mouseLeft = evt.clientX;
                 this.originalLeft = this.element.offsetLeft;
             }}
-            on:mouseup={(evt: MouseEvent) => {
+            on:pointerup={(evt: PointerEvent) => {
                 reactivateFrames();
 
                 if (this.dragging) {
@@ -953,18 +1134,19 @@ class WMSplitBar {
             document.documentElement.clientWidth ||
             document.body.clientWidth;
         this.element.style.left = width / 2 - 4 + "px";
+        this.element.style.zIndex = getHighestZindex() + "";
         document.body.appendChild(this.element);
         setTimeout(() => {
             this.element.style.removeProperty("background-color");
         }, 10);
-        document.addEventListener("mousemove", (evt) => {
+        document.addEventListener("pointermove", (evt) => {
             if (this.dragging) {
                 this.handleDrag(evt);
             }
         });
     }
 
-    handleDrag(evt: MouseEvent) {
+    handleDrag(evt: PointerEvent) {
         this.splitWindowsAround(
             // Add 4 to account for the center of the bar
             this.originalLeft + evt.clientX - this.mouseLeft + 4,
@@ -1006,8 +1188,9 @@ class WMSplitBar {
     }
 }
 
-const AliceWM = {
-    create: function (givenWinInfo: string | WindowInformation) {
+// eslint-disable-next-line prefer-const
+let AliceWM = {
+    create: function (givenWinInfo: string | WindowInformation, app?: App) {
         // Default param
         let wininfo: WindowInformation = {
             title: "",
@@ -1015,7 +1198,6 @@ const AliceWM = {
             minwidth: 40,
             width: "1000px",
             height: "500px",
-            allowMultipleInstance: false,
             resizable: true,
         };
         // Param given in argument
@@ -1025,10 +1207,15 @@ const AliceWM = {
             // Only title given
             wininfo.title = givenWinInfo;
 
-        const win = new WMWindow(wininfo);
+        const win = new WMWindow(wininfo, app);
         document.body.appendChild(win.element);
         win.focus();
-        center(win.element);
+        if (
+            anura.platform.type !== "mobile" &&
+            anura.platform.type !== "tablet"
+        ) {
+            center(win.element);
+        }
         return win;
     },
 };
@@ -1037,7 +1224,6 @@ function deactivateFrames() {
     let i;
     const frames = document.getElementsByTagName("iframe");
     for (i = 0; i < frames.length; ++i) {
-        // anura.logger.debug(frames[i]);
         frames[i]!.style.pointerEvents = "none";
     }
 }
@@ -1054,7 +1240,6 @@ function getHighestZindex() {
     const allWindows: HTMLElement[] = Array.from(
         document.querySelectorAll<HTMLTableElement>(".aliceWMwin"),
     );
-    // anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
 
     let highestZindex = 0;
     for (const wmwindow of allWindows) {
@@ -1068,7 +1253,6 @@ async function normalizeZindex() {
     const allWindows: HTMLElement[] = Array.from(
         document.querySelectorAll<HTMLTableElement>(".aliceWMwin"),
     );
-    // anura.logger.debug(allWindows); // this line is fucking crashing edge for some reason -- fuck you go use some other browser instead of edge
 
     let lowestZindex = 9999;
     for (const wmwindow of allWindows) {
@@ -1101,8 +1285,3 @@ function center(element: HTMLElement) {
             (window.innerHeight - element.offsetHeight) / 2 + "px";
     }
 }
-
-/**
- * callback function for the dialog closed event
- * @param {Object} container
- */

@@ -4,16 +4,14 @@ class RecoveryApp extends App {
     icon = "/assets/icons/verificationoff.png";
 
     css = css`
-        self {
-            background-color: var(--material-bg);
-            height: 100%;
-            width: 100%;
-            display: flex;
-            padding: 0;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+        background-color: var(--material-bg);
+        height: 100%;
+        width: 100%;
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
 
         .recovery-app-logo {
             height: 128px;
@@ -36,31 +34,23 @@ class RecoveryApp extends App {
         }
 
         .recovery-app-content {
-            display: flex;
+            display: grid;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
             padding: 1rem;
             gap: 1rem;
+            grid-template-columns: 10em 10em;
         }
 
         .recovery-app-content p {
             margin: 0;
         }
-
-        /* .recovery-app-content button {
-            background: var(--material-bg);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-        } */
     `;
 
     page = async () => (
-        <div class={`${this.css} self`}>
+        <div class={this.css}>
             <div class="recovery-app-logo">
                 <div class="recovery-logo-img" title="Recovery"></div>
             </div>
@@ -73,20 +63,35 @@ class RecoveryApp extends App {
                     title="Reset your Anura install to factory settings. This will delete all of your data."
                     on:click={async () => {
                         if (
-                            confirm(
+                            await anura.dialog.confirm(
                                 "Are you sure you want to powerwash Anura? All of your data will be lost.",
                             )
                         ) {
-                            const sh = new anura.fs.Shell();
                             try {
+                                navigator.serviceWorker
+                                    .getRegistrations()
+                                    .then(function (registrations) {
+                                        for (const registration of registrations) {
+                                            registration.unregister();
+                                        }
+                                    });
                                 localStorage.clear();
-                                await sleep(2);
-                                await sh.promises.rm("/", {
-                                    recursive: true,
-                                });
+                                sessionStorage.clear();
+                                const databases = await indexedDB.databases();
+                                for (const database of databases) {
+                                    try {
+                                        await indexedDB.deleteDatabase(
+                                            database.name!,
+                                        );
+                                    } catch {
+                                        console.log(
+                                            `Failed to delete database ${database.name}`,
+                                        );
+                                    }
+                                }
                                 window.location.reload();
-                            } catch (error) {
-                                window.location.reload();
+                            } catch (e) {
+                                console.error("failed powerwash: ", e);
                             }
                         }
                     }}
@@ -114,45 +119,56 @@ class RecoveryApp extends App {
                     Anura Shell
                 </button>
                 {/* Invalidate Cache Button */}
-                <div>
-                    {$if(
-                        anura.settings.get("use-sw-cache"),
-                        <button
-                            style="background: #1B5E20;"
-                            class="matter-button-contained"
-                            title="Clear the service worker cache. This requires an internet connection on your next boot."
-                            on:click={() => {
-                                anura.settings.set("milestone", "__INVALID");
-                                anura.notifications.add({
-                                    title: "Cache invalidated",
-                                    description:
-                                        "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
-                                    timeout: 2000,
-                                });
-                            }}
-                        >
-                            Invalidate Cache
-                        </button>,
-                        <button
-                            style="background: #1B5E20; cursor: not-allowed;"
-                            class="matter-button-contained"
-                            title="The cache is disabled, so you cannot invalidate it."
-                            disabled
-                        >
-                            Invalidate Cache
-                        </button>,
-                    )}
-                </div>
+                {$if(
+                    anura.settings.get("use-sw-cache"),
+                    <button
+                        style="background: #1B5E20;"
+                        class="matter-button-contained"
+                        title="Clear the service worker cache. This requires an internet connection on your next boot."
+                        on:click={() => {
+                            anura.settings.set("milestone", "__INVALID");
+                            anura.dialog.alert(
+                                "The cache has been invalidated. When you reload the page, the cache will be reinstalled. This requires an internet connection.",
+                                "Cache invalidated",
+                            );
+                        }}
+                    >
+                        Invalidate Cache
+                    </button>,
+                    <button
+                        style="background: #1B5E20; cursor: not-allowed;"
+                        class="matter-button-contained"
+                        title="The cache is disabled, so you cannot invalidate it."
+                        disabled
+                    >
+                        Invalidate Cache
+                    </button>,
+                )}
 
                 <button
                     style="background: #1B5E20"
                     class="matter-button-contained"
+                    title="Open Registry Editor"
+                    on:click={() => {
+                        anura.apps["anura.regedit"].open();
+                    }}
+                >
+                    Registry Editor
+                </button>
+
+                <button
+                    style={{
+                        background: "#1B5E20",
+                        gridColumn: "span 2",
+                    }}
+                    class="matter-button-contained"
                     title="Return to normal mode"
+                    id="return"
                     on:click={() => {
                         window.location.reload();
                     }}
                 >
-                    Return
+                    Return to normal mode
                 </button>
             </div>
         </div>

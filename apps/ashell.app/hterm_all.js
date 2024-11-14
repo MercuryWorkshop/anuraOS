@@ -11828,6 +11828,10 @@ hterm.ScrollPort.prototype.decorate = function(div, callback) {
 
   div.appendChild(this.iframe_);
 
+  //https://stackoverflow.com/a/7828576
+  this.iframe_.contentDocument.open();
+  this.iframe_.contentDocument.close();
+
   const onLoad = () => {
     this.paintIframeContents_();
     if (callback) {

@@ -1,8 +1,14 @@
 /aboutproxy/**/*
-/libapps/**/*
 /v86/**/*
+/bin/
 /build/**/*
-/apps/**/*
-/nohost/**/*
+/apps/ashell.app/hterm_all.js
+/apps/term.app/hterm_all.js
+/apps/libphoenix.lib/bundle.mjs
 /public/uv/
 /static/
+/chimerix/
+/dreamlandjs/**/*
+/x86_image_wizard/twisp/**/*
+/native-file-system-adapter/**/*
+/x86_image_wizard/epoxy/**/*

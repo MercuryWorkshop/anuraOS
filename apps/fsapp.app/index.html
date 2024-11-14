@@ -1,0 +1,136 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="/assets/materialsymbols.css" />
+        <!-- these styles get used across the appo and dont need to be redefined per component -->
+        <style>
+            @font-face {
+                font-family: Roboto;
+                src: url("/assets/fonts/Roboto-Regular.ttf") format("truetype");
+            }
+            * {
+                color: var(--theme-fg);
+                font-family:
+                    "Roboto",
+                    RobotoDraft,
+                    "Droid Sans",
+                    Arial,
+                    Helvetica,
+                    -apple-system,
+                    BlinkMacSystemFont,
+                    system-ui,
+                    sans-serif;
+                user-select: none;
+            }
+            body {
+                margin: 0;
+            }
+            hr {
+                color: transparent;
+                border-bottom: 1px solid var(--theme-border);
+                opacity: 0.25;
+                width: 100%;
+            }
+            *::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            *::-webkit-scrollbar-thumb {
+                background-color: var(--theme-secondary-bg);
+                border-radius: 8px;
+            }
+
+            *::-webkit-scrollbar-button {
+                display: none;
+            }
+            .resize-handle {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                background: var(--theme-secondary-fg);
+                opacity: 0;
+                width: 2.5px;
+                cursor: col-resize;
+                transition: opacity 0.1s;
+                margin-block: 0.2em;
+            }
+
+            .hidden-resize-handle {
+                opacity: 0;
+                transition: opacity 0.1s;
+            }
+
+            .resize-handle:hover,
+            .header--being-resized .resize-handle {
+                opacity: 0.5;
+            }
+
+            th:hover .resize-handle {
+                opacity: 0.3;
+            }
+
+            table {
+                transition: background-color 0.1s;
+                flex-grow: 1;
+                overflow: scroll;
+                display: grid;
+                grid-template-columns: min-content 3fr 1fr 1fr 1fr;
+                grid-auto-rows: min-content;
+                overflow-x: hidden;
+                overflow-y: auto;
+            }
+
+            tr,
+            thead,
+            tbody {
+                display: contents;
+            }
+
+            th {
+                position: relative;
+            }
+
+            th > tr {
+                margin: 0;
+            }
+
+            tr > * {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding-top: 0.5em;
+                padding-bottom: 0.5em;
+            }
+            .selected > * {
+                transition: background-color 0.1s;
+                background-color: color-mix(
+                    in srgb,
+                    var(--theme-bg) 50%,
+                    var(--theme-accent) 50%
+                ) !important;
+            }
+
+            .hover > * {
+                transition: background-color 0.1s;
+                background-color: var(--theme-secondary-bg);
+            }
+            .iconContainer {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .icon {
+                height: 1em;
+                width: 1em;
+            }
+        </style>
+        <!-- in any sane case this wouldn't be required. This isn't a sane case, Buffer doesn't work without importing this -->
+        <script src="/libs/filer/filer.min.js"></script>
+        <script src="/libs/dreamland/all.js"></script>
+        <script src="index.mjs" type="module"></script>
+        <script src="GUI.js"></script>
+        <script src="operations.js"></script>
+    </head>
+</html>

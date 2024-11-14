@@ -1,35 +1,58 @@
 class OobeView {
-    state = stateful({
-        color: "var(--oobe-bg)",
-        text: "black",
+    state = $state({
+        color: "white",
+        text: "#202124",
         step: 0,
+        offlineEnabled: true,
+        v86Enabled: false,
+        dlsize: "0MB",
     });
 
-    css = styled.new`
-        * {
-            color: ${use(this.state.text)};
-            transition: all 1s;
-        }
+    constructor() {
+        useChange([this.state.offlineEnabled, this.state.v86Enabled], () => {
+            this.state.dlsize = "0MB";
 
-        self {
-            background-color: ${use(this.state.color)};
-            z-index: 9996;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            display: flex;
-            justify-content: center;
-            align-content: center;
-            flex-wrap: wrap;
+            if (this.state.offlineEnabled) {
+                this.state.dlsize = "~25MB";
+            }
+
+            if (this.state.v86Enabled) {
+                this.state.dlsize = "1GB";
+
+                if (this.state.offlineEnabled) {
+                    this.state.dlsize = "~1GB";
+                }
+            }
+        });
+    }
+
+    css = css`
+        color-scheme: light;
+        z-index: 9996;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: wrap;
+
+        --matter-onsurface-rgb: #121212 !important;
+        * {
+            --matter-helper-theme: 26, 115, 232 !important;
         }
 
         #content {
             padding: 79.6px 40px 23.8px 40px;
-            width: 1040px;
-            height: 680px;
+            width: ${anura.platform.type === "mobile" ? "100vw;" : "1040px;"};
+            height: ${anura.platform.type === "mobile" ? "100vh;" : "680px;"};
             box-sizing: border-box;
+
+            &:has(#features) {
+                padding-top: 28px;
+            }
         }
 
         #content .screen {
@@ -44,6 +67,8 @@ class OobeView {
         .screen #subtitle {
             margin: 16px 0 64px 0;
             font-size: 24px;
+            /* https://partnermarketinghub.withgoogle.com/brands/chromebook/visual-identity/visual-identity/color-palette/ */
+            color: #5f6368;
         }
 
         .screen #gridContent {
@@ -72,6 +97,12 @@ class OobeView {
             height: 2em;
             padding-left: 1em;
             padding-right: 1em;
+            transition: 0s;
+        }
+
+        .screen .preferredButton:hover {
+            background-color: rgb(26, 115, 232);
+            filter: brightness(1.1);
         }
 
         .screen button {
@@ -83,12 +114,42 @@ class OobeView {
             margin: 0.5em;
             padding-left: 1em;
             padding-right: 1em;
+            cursor: pointer;
+            font-family:
+                "Roboto",
+                RobotoDraft,
+                "Droid Sans",
+                Arial,
+                Helvetica,
+                -apple-system,
+                BlinkMacSystemFont,
+                system-ui,
+                sans-serif;
         }
 
-        #welcome.screen #animation {
+        .screen #animation {
             grid-column: 2 / span 1;
             grid-row: 1 / span 2;
             margin-left: auto;
+            display: ${anura.platform.type === "mobile" ? "none;" : "unset;"};
+        }
+
+        .material-symbols-outlined {
+            font-size: 1rem;
+        }
+
+        .sub {
+            color: #96969f;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            & > .material-symbols-outlined {
+                font-size: 1.1rem;
+            }
+        }
+
+        #features #subtitle {
+            margin-bottom: 2rem;
         }
     `;
 
@@ -99,27 +160,13 @@ class OobeView {
                     <h1>Welcome to AnuraOS</h1>
                     <div id="subtitle">Effortless. Modern. Powerful.</div>
                     <div id="gridContent">
-                        <div
-                            on:click={() => {
-                                const script = document.createElement("script");
-                                script.src = `/apps/eruda.app/eruda.js`;
-                                document.head.appendChild(script);
-                                script.onload = function () {
-                                    // @ts-expect-error
-                                    eruda.init();
-                                };
-                            }}
-                            id="topButtons"
-                        >
-                            <button>Enable Eruda</button>
-                        </div>
                         <img id="animation" src="assets/oobe/welcome.gif" />
                         <div id="bottomButtons">
                             <button
                                 on:click={() => this.nextStep()}
                                 class="preferredButton"
                             >
-                                Next
+                                Get Started
                             </button>
                         </div>
                     </div>
@@ -129,58 +176,84 @@ class OobeView {
         },
         {
             elm: (
-                <div class="screen">
+                <div class="screen" id="features">
                     <h1>Choose your experience</h1>
                     <div id="subtitle">What kind of Anura user are you?</div>
-
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("x86-image", "alpine");
-                            this.nextStep();
-                        }}
-                    >
-                        Alpine Linux - 1GB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("x86-image", "debian");
-                            this.nextStep();
-                        }}
-                    >
-                        Debian Linux - 2.1GB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", false);
-                            anura.settings.set("x86-image", "arch");
-                            this.nextStep();
-                        }}
-                    >
-                        Arch Linux - 2.1GB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", true);
-                            this.nextStep();
-                        }}
-                    >
-                        Normal User (disable linux) - 23.3MB download
-                    </button>
-                    <br />
-                    <button
-                        on:click={() => {
-                            anura.settings.set("x86-disabled", true);
-                            anura.settings.set("use-sw-cache", false);
-                            this.nextStep();
-                        }}
-                    >
-                        No Download (disable linux and offline functionality)
-                    </button>
+                    <label class="matter-checkbox">
+                        <input
+                            type="checkbox"
+                            bind:checked={use(this.state.offlineEnabled)}
+                        />
+                        <span>Offline Functionality</span>
+                    </label>
+                    <div class="sub">
+                        <span class="material-symbols-outlined">info</span>
+                        &nbsp;This allows you to use AnuraOS without an internet
+                        connection.
+                    </div>
+                    <br></br>
+                    <label class="matter-checkbox">
+                        <input
+                            type="checkbox"
+                            bind:checked={use(this.state.v86Enabled)}
+                        />
+                        <span>Linux Emulation</span>
+                    </label>
+                    <div class="sub">
+                        <span class="material-symbols-outlined">info</span>
+                        &nbsp;This allows you to run Linux applications on
+                        AnuraOS.
+                    </div>
+                    <br></br>
+                    <div id="size" class="sub">
+                        <span class="material-symbols-outlined">download</span>
+                        &nbsp;{use(this.state.dlsize)} download
+                    </div>
+                    <div class="sub">
+                        <span class="material-symbols-outlined">info</span>
+                        &nbsp;These features can always be enabled in Settings.
+                    </div>
+                    <div id="gridContent">
+                        <img
+                            id="animation"
+                            src="assets/oobe/checking_for_update.gif"
+                        />
+                        <div id="bottomButtons">
+                            <button
+                                on:click={() => {
+                                    anura.settings.set(
+                                        "x86-disabled",
+                                        !this.state.v86Enabled,
+                                    );
+                                    anura.settings.set(
+                                        "use-sw-cache",
+                                        this.state.offlineEnabled,
+                                    );
+                                    anura.settings.set("applist", [
+                                        ...anura.settings.get("applist"),
+                                        this.state.v86Enabled
+                                            ? "anura.term"
+                                            : "anura.ashell",
+                                    ]);
+                                    this.nextStep();
+                                }}
+                                class="preferredButton"
+                            >
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        fontSize: "0.7rem!important",
+                                    }}
+                                >
+                                    <span>Next</span>
+                                    <span class="material-symbols-outlined">
+                                        chevron_right
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             ),
             on: () => {},
@@ -190,7 +263,7 @@ class OobeView {
                 <div class="screen" id="downloadingFiles">
                     <div id="assetsDiv" style="display:none;"></div>
                     <h1>Downloading assets</h1>
-                    <div id="subtitle">
+                    <div id="subtitle" style="color: white;">
                         For the best experience, AnuraOS needs to download
                         required assets.
                     </div>
@@ -200,13 +273,18 @@ class OobeView {
                 </div>
             ),
             on: async () => {
+                await navigator.serviceWorker.controller!.postMessage({
+                    anura_target: "anura.cache",
+                    value: anura.settings.get("use-sw-cache"),
+                });
                 this.state.color = "var(--material-bg)";
                 this.state.text = "whitesmoke";
                 if (!anura.settings.get("x86-disabled")) {
+                    await anura.settings.set("x86-image", "alpine");
                     await installx86();
                 }
                 if (anura.settings.get("use-sw-cache")) await preloadFiles();
-                console.log("Cached important files");
+                console.debug("Cached important files");
 
                 this.complete();
             },
@@ -214,7 +292,13 @@ class OobeView {
     ];
 
     element = (
-        <div class={`${this.css} self`}>
+        <div
+            class={this.css}
+            style={{
+                backgroundColor: use(this.state.color),
+                color: use(this.state.text),
+            }}
+        >
             <div id="oobe-top">
                 <div id="content">
                     {use(this.state.step, (step) => this.steps[step]!.elm)}
@@ -236,9 +320,8 @@ class OobeView {
     }
 }
 
-async function installx86() {
-    const tracker = document.getElementById("tracker");
-    console.log("installing x86");
+async function installx86(tracker = document.getElementById("tracker")) {
+    console.debug("installing x86");
     const x86image = anura.settings.get("x86-image");
     tracker!.innerText = "Downloading x86 kernel";
     const bzimage = await fetch(anura.config.x86[x86image].bzimage);
@@ -255,7 +338,7 @@ async function installx86() {
     } else if (anura.config.x86[x86image].rootfs) {
         // TODO: add batching, this will bottleneck and OOM if the rootfs is too large
 
-        console.log("fetching");
+        console.debug("fetching");
         // const files = await Promise.all(
         //     anura.config.x86[x86image].rootfs.map((part: string) => fetch(part)),
         // );
@@ -266,14 +349,14 @@ async function installx86() {
         let done = false;
         let doneSoFar = 0;
         const doWhenAvail = function () {
-            if (limit == 0) return;
+            if (limit === 0) return;
             limit--;
             const assigned = i;
             i++;
 
             fetch(anura.config.x86[x86image].rootfs[assigned])
                 .then(async (response) => {
-                    if (response.status != 200) {
+                    if (response.status !== 200) {
                         console.error("Status code bad on chunk " + assigned);
                         console.error(
                             anura.config.x86[x86image].rootfs[assigned],
@@ -298,10 +381,12 @@ async function installx86() {
                     if (i < anura.config.x86[x86image].rootfs.length) {
                         doWhenAvail();
                     }
-                    if (doneSoFar == anura.config.x86[x86image].rootfs.length) {
+                    if (
+                        doneSoFar === anura.config.x86[x86image].rootfs.length
+                    ) {
                         done = true;
                     }
-                    console.log(
+                    console.debug(
                         anura.config.x86[x86image].rootfs.length -
                             doneSoFar +
                             " chunks to go",
@@ -328,16 +413,16 @@ async function installx86() {
             await sleep(200);
         }
 
-        console.log(files);
-        console.log("constructing blobs...");
+        console.debug("constructing blobs...");
         tracker!.innerText = "Concatenating and installing x86 rootfs";
         //@ts-ignore
         await anura.x86hdd.loadfile(new Blob(files));
     }
 
-    console.log("done");
+    console.debug("done");
 }
-async function preloadFiles() {
+
+async function preloadFiles(tracker = document.getElementById("tracker")) {
     try {
         const list = await (await fetch("cache-load.json")).json();
         /*
@@ -349,7 +434,6 @@ async function preloadFiles() {
          */
         const chunkSize = 10;
         const promises = [];
-        const tracker = document.getElementById("tracker");
         let i = 0;
         for (const item in list) {
             promises.push(fetch(list[item]));

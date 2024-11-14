@@ -34,12 +34,11 @@ class ExternalLib extends Lib {
 
         Object.keys(manifest.versions).forEach((version) => {
             this.versions[version] = source + "/" + manifest.versions[version];
-            console.log(this.versions[version]);
         });
 
         if (manifest.installHook) {
             import(source + "/" + manifest.installHook).then((module) => {
-                module.default(anura);
+                module.default(anura, this);
             });
         }
     }
@@ -50,7 +49,7 @@ class ExternalLib extends Lib {
         if (
             this.manifest.cache &&
             this.cache[version] &&
-            this.installedLibs == Object.keys(anura.libs)
+            this.installedLibs === Object.keys(anura.libs)
         ) {
             return this.cache[version];
         }

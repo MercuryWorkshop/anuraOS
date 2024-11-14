@@ -1,13 +1,17 @@
+html {
+    background-color: black;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
 html,
 body {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-}
-
-body {
-    --oobe-bg: #fff;
+    scrollbar-width: thin;
+    color-scheme: dark;
 }
 #overlay {
     width: 100%;
@@ -23,14 +27,27 @@ body {
 
 body {
     overflow: hidden;
-    background: url(/assets/wallpaper/wallpaper.png) no-repeat center center
-        fixed;
+    background: #000000;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
     user-select: none;
-    font-family: "Roboto", sans-serif;
+    font-family:
+        "Roboto",
+        RobotoDraft,
+        "Droid Sans",
+        Arial,
+        Helvetica,
+        -apple-system,
+        BlinkMacSystemFont,
+        system-ui,
+        sans-serif;
+}
+
+body.blur-disable #quickSettings {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 nav ul {
@@ -71,7 +88,16 @@ nav li {
     text-align: center;
     color: white;
     flex-wrap: wrap;
-    transition: 0.3s;
+    transition: 0.175s;
+    opacity: 1;
+    transform: scale(1);
+}
+
+.bootsplash.hide {
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.175s;
+    transform: scale(1.25);
 }
 
 .flex {
@@ -82,43 +108,59 @@ nav li {
     align-items: center;
 }
 
-.custom-menu {
-    position: absolute;
-    background-color: rgba(20, 20, 20);
-    padding: 5px 0;
-    width: 150px;
-    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
-
-    z-index: 10000;
-    overflow: hidden;
-}
-.custom-menu-item {
-    padding: 10px 14px;
-    color: #ffffff;
-    cursor: pointer;
-    user-select: none;
-    font-size: 13px;
-}
-.custom-menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
 .material-symbols-outlined {
     font-family: "Material Symbols Outlined", sans-serif;
 }
+
+.custom-menu {
+    position: absolute;
+    background-color: var(--theme-secondary-bg);
+    padding: 5px 0;
+    width: 150px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+
+    z-index: 10000;
+    overflow: hidden;
+
+    padding: 0;
+    border-radius: 3px;
+}
+
+.custom-menu.large {
+    padding: 5px 0;
+    width: 170px;
+    background-color: color-mix(in srgb, var(--theme-dark-bg) 85%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 10px;
+}
+
+.custom-menu-item:hover {
+    background-color: color-mix(in srgb, var(--theme-fg) 5%, transparent);
+    transition: 0.05s;
+}
+
+body.blur-disable .custom-menu {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
 .custom-menu-item {
     display: flex;
     align-items: center;
-    padding: 6px 12px;
-    color: #ffffff;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--theme-fg);
     cursor: pointer;
     user-select: none;
+    transition: 0.075s;
 }
 
 .custom-menu-item .material-symbols-outlined {
     margin-top: 0.2px;
-    margin-right: 30px;
+    margin-right: 0.5em;
     padding-left: 1px;
+    font-size: 1.5em;
 }
 
 .custom-menu .extra-menu-wrapper {

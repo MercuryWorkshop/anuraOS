@@ -1,16 +1,22 @@
-body{
-  padding: 0;
-  margin: 0;
-  width: 100vw;
-  height: 100vh;
+body {
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
 
-  position: relative;
+    position: relative;
 }
-#terminal{
-  position: relative;
-  width: 100%;
-  height: 100%;
+#terminal {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
-html *{
-  overflow: hidden;
+html * {
+    overflow: hidden;
+}
+
+x-row {
+    font-family: "Roboto Mono", "Droid Sans Mono", ui-monospace,
+        "DejaVu Sans Mono", "Noto Sans Mono", "Everson Mono", FreeMono, Menlo,
+        Terminal, monospace !important;
 }

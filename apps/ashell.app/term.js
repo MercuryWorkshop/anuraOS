@@ -1,92 +1,117 @@
-const $ = document.querySelector.bind(document);
+// const { create_shell } = await anura.import("anura.shell.phoenix");
+const shell = anura.settings.get("shell") || "/usr/bin/chimerix.ajs";
+anura.settings.set("shell", shell);
 
+const config = anura.settings.get("anura-shell-config") || {};
+anura.settings.set("anura-shell-config", config);
 
+const term = (globalThis.term = new hterm.Terminal());
+const $term = document.getElementById("terminal");
 
-window.addEventListener("load", async () => {
+const encoder = new TextEncoder();
 
-	/** @type {Anura} */
-	let anura = top.anura;
+term.decorate($term);
 
-	const t = new hterm.Terminal();
-	top.t = t;
+term.onTerminalReady = async () => {
+    $term
+        .querySelector("iframe")
+        .contentDocument.querySelector("x-screen").style.overflow = "hidden";
+    term.setBackgroundColor(anura.ui.theme.darkBackground);
+    term.setCursorColor(anura.ui.theme.foreground);
 
-	let htermNode = $("#terminal");
+    if (anura.settings.get("transparent-ashell")) {
+        frameElement.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        frameElement.parentNode.parentNode.style.backgroundColor =
+            "rgba(0, 0, 0, 0)";
+        frameElement.parentNode.parentNode.style.backdropFilter = "blur(5px)";
+        document
+            .querySelector("iframe")
+            .contentDocument.querySelector("x-screen").style.backgroundColor =
+            anura.ui.theme.background + "d9";
+        Array.from(frameElement.parentNode.parentNode.children).filter((e) =>
+            e.classList.contains("title"),
+        )[0].style.backgroundColor = anura.ui.theme.background + "d9";
+    }
 
+    let io = term.io.push();
 
+    const proc = await anura.processes.execute(shell);
 
+    const stdinWriter = proc.stdin.getWriter();
 
-	t.decorate(htermNode);
+    io.onVTKeystroke = (key) => {
+        stdinWriter.write(key);
+    };
 
+    io.sendString = (str) => {
+        stdinWriter.write(str);
+    };
 
-	const decoder = new TextDecoder("UTF-8");
-	t.onTerminalReady = async () => {
-        let currentCol;
-        let currentRow;
-		let e = document.querySelector("iframe").contentDocument.querySelector("x-screen");
-		console.log(e);
-		e.style.overflow = "hidden"
-		let io = t.io.push();
+    io.onTerminalResize = (cols, rows) => {
+        proc.window.postMessage({
+            type: "ioctl.set",
+            windowSize: {
+                rows,
+                cols,
+            },
+        });
+    };
 
-		t.setBackgroundColor("#141516");
-		t.setCursorColor("#bbb");
-        currentCol = t.screenSize.width;
-        currentRow = t.screenSize.height;
+    proc.window.addEventListener("message", (event) => {
+        if (event.data.type === "ready") {
+            io.onTerminalResize(term.screenSize.width, term.screenSize.height);
+        }
+    });
 
+    term.installKeyboard();
 
-		// if (anura.x86 == undefined) {
-		// 	io.print("\u001b[33mThe anura x86 subsystem is not enabled. Please enable it in the settings.\u001b[0m")
-		// 	return;
-		// }
+    proc.stdout.pipeTo(
+        new WritableStream({
+            write: (chunk) => {
+                io.writeUTF8(LF_to_CRLF(chunk));
+            },
+        }),
+    );
 
-		// const pty = await anura.x86.openpty("TERM=xterm DISPLAY=:0 bash", t.screenSize.width, t.screenSize.height, (data) => {
-		// 	io.print(data);
-		// });
+    proc.stderr.pipeTo(
+        new WritableStream({
+            write: (chunk) => {
+                io.writeUTF8(LF_to_CRLF(chunk));
+            },
+        }),
+    );
+    const oldProcKill = proc.kill.bind(proc);
 
+    proc.kill = () => {
+        oldProcKill();
+        instanceWindow.close();
+    };
 
-		let buffer = "";
-		/**
-		 * 
-		 * @param {string} str 
-		 */
-		
-		function cd(arg) {
+    instanceWindow.addEventListener("close", () => {
+        proc.kill();
+    });
 
-		}
-		io.print("> ")
-		function writeData(str) {
-			if (str.charCodeAt(0) == 13) {
-				try {
-					eval(buffer)
-				} catch (e) {
-					io.print(e)
-				}
-				
-				buffer = ""
-				io.print("\r\n")
-				io.print(">")
-			} else {
-				buffer += str;
-			}
-			io.print(str)
-			
-		}
+    proc.exit = proc.kill.bind(proc);
+};
 
-		io.onVTKeystroke = writeData;
-		io.sendString = writeData;
+function LF_to_CRLF(input) {
+    let lfCount = 0;
+    for (let i = 0; i < input.length; i++) {
+        if (input[i] === 0x0a) {
+            lfCount++;
+        }
+    }
 
-		io.onTerminalResize = (cols, rows) => {
-			// anura.x86.resizepty(pty, cols, rows);
-		}
+    const output = new Uint8Array(input.length + lfCount);
 
-		t.installKeyboard();
+    let outputIndex = 0;
+    for (let i = 0; i < input.length; i++) {
+        // If LF is encountered, insert CR (0x0D) before LF (0x0A)
+        if (input[i] === 0x0a) {
+            output[outputIndex++] = 0x0d;
+        }
+        output[outputIndex++] = input[i];
+    }
 
-		console.log("hi")
-		htermNode.querySelector("iframe").style.position = "relative";
-		console.log("wtf")
-		console.log = (...data) => {
-			io.print("\r\n")
-			io.print(...data)
-		};
-
-	}
-});
+    return output;
+}

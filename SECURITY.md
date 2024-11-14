@@ -1,19 +1,19 @@
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=MercuryWorkshop_anuraOS&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=MercuryWorkshop_anuraOS)
-
 # Security Policy
 
 ### Supported Versions
 
-| Version | Supported |
-| ------- | --------- |
-| 1.2.1   | ✅        |
-| 1.1.1   | :x:       |
-| 1.0.0   | :x:       |
+| Version           | Supported |
+| ----------------- | --------- |
+| 2.0.0 (Idol)      | ✅        |
+| 1.2.1             | :x:       |
+| 1.2.0 (Whalefall) | :x:       |
+| 1.1.1             | :x:       |
+| 1.1.0             | :x:       |
+| 1.0.0 (Lag Train) | :x:       |
 
 ## Reporting a Vulnerability
 
-In the case that you somehow manage to find a vulnerability in Anura please contact security@mercurywork.shop
+In the case that you somehow manage to find a vulnerability in Anura please [create a GitHub security advisory.](https://docs.github.com/en/code-security/security-advisories/working-with-repository-security-advisories/creating-a-repository-security-advisory)
 
 REMEMBER: Please DO NOT report vulnerabilities in the repository Issues tab.
 
@@ -24,7 +24,3 @@ If you are wondering what counts as a vulnerability, heres a good list:
 -   XSS in the Anura URL
 -   The ability to execute arbitrary code on the server hosting Anura (not in Anura itself, as this is an intended feature)
 -   The ability to crash Anura (As in for everyone, not just your browser session)
-
-## Implementing Security (For Project Members and Contributors)
-
-See [SECURITY-BP.md](./documentation/SECURITY-BP.md) for instructions on implementing security in your code.

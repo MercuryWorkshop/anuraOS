@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 set -veu
 
-if [ -w /var/run/docker.sock ]
-then
-    echo true
-else 
-    echo "You aren't in the docker group, please run usermod -a -G docker $USER && newgrp docker"
-    exit 2
-fi
+# good for debugging
+pause() {
+    while read -r -t 0.001; do :; done
+    read -n1 -rsp $'Press any key to continue or Ctrl+C to exit...\n'
+}
 
-
-IMAGES="$(dirname "$0")"/../../build/images
+IMAGES="$(dirname "$0")"/../../build/x86images
 OUT_ROOTFS_TAR="$IMAGES"/alpine-rootfs.tar
 OUT_ROOTFS_BIN="$IMAGES"/alpine-rootfs.bin
 OUT_ROOTFS_MNT="$IMAGES"/alpine-rootfs.mntpoint
@@ -20,11 +17,12 @@ IMAGE_NAME=i386/alpine-full
 rm -rf "$IMAGES/alpine-boot" || :
 rm -rf "$IMAGES/alpine-rootfs" || :
 rm -rf $OUT_ROOTFS_BIN || :
-cp ../anurad.c .
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
-cp ../ptynet.sh .
 cp -r ../anuramouse .
+cp ../anura-run .
+cd ../epoxy/server; RUSTFLAGS="-C target-feature=+crt-static" cargo +nightly b -F twisp -r --target i686-unknown-linux-gnu; cp ../target/i686-unknown-linux-gnu/release/epoxy-server ../../alpine/;
+cd ../../alpine;
 
 mkdir -p "$IMAGES"
 docker build . --platform linux/386 --rm --tag "$IMAGE_NAME"
@@ -41,17 +39,19 @@ mkdir -p "$OUT_ROOTFS_MNT"
 sudo mount "$loop" "$OUT_ROOTFS_MNT"
 
 sudo tar -xf "$OUT_ROOTFS_TAR" -C "$OUT_ROOTFS_MNT"
+sudo rm -f "$OUT_ROOTFS_MNT/.dockerenv"
+sudo cp resolv.conf "$OUT_ROOTFS_MNT/etc/resolv.conf"
+sudo cp hostname "$OUT_ROOTFS_MNT/etc/hostname"
 
 sudo cp -r "$OUT_ROOTFS_MNT/boot" "$IMAGES/alpine-boot"
-
 sudo umount "$loop"
 sudo losetup -d "$loop"
 rm "$OUT_ROOTFS_TAR"
 rm -rf "$OUT_ROOTFS_MNT"
-rm anurad.c
+rm anura-run
 rm xfrog.sh
 rm xsetrandr.sh
-rm ptynet.sh
+rm epoxy-server
 rm -rf anuramouse
 
 echo "done! created"
@@ -60,4 +60,4 @@ cd "$IMAGES"
 mkdir -p alpine-rootfs
 split -b50M alpine-rootfs.bin alpine-rootfs/
 cd ../
-find images/alpine-rootfs/* | jq -Rnc "[inputs]"
+find x86images/alpine-rootfs/* | jq -Rnc "[inputs]"

@@ -2,7 +2,7 @@
     "name": "File Manager",
     "type": "auto",
     "package": "anura.fsapp",
-    "index": "filemanager.html",
+    "index": "index.html",
     "icon": "files.png",
     "wininfo": {
         "title": "",

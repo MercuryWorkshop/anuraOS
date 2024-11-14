@@ -1,0 +1,55 @@
+#! {"lang":"module"}
+
+// Anura Daemon Helpers library is used for dependency management in init scripts
+const { need, after } = await anura.import("anura.daemon.helpers");
+
+// The name of the module, which will also be the name of the process
+export const name = "example";
+// The provides array lists the services provided by the module
+export const provides = ["example"];
+// The description of the module
+export const description = "Example module";
+
+// This function is called when the module is loaded, before start.
+// All dependencies should be declared here.
+export const depend = async () => {
+    // Wait for the net and notifications apis to be ready
+    await need("anura.net");
+    await need("anura.notifications");
+
+    // Wait for the boot stage to complete
+    await after("anura.boot");
+};
+
+const interval = 5;
+
+let intervalId;
+
+let iter = 0;
+
+const run = async () => {
+    const res = await anura.net.fetch(
+        "http://postman-echo.com/get?iter=" + iter,
+    );
+    const json = await res.json();
+    console.log(json);
+
+    anura.notifications.add({
+        title: "Example module",
+        description: "Received data from postman-echo " + json.args.iter,
+    });
+
+    iter++;
+};
+
+// Main start function of the module, that will be ran after all dependencies are resolved
+export const start = () => {
+    console.log("Example module is starting");
+    intervalId = setInterval(run, interval * 1000);
+};
+
+// Cleanup function
+export const stop = () => {
+    console.log("Example module is stopping");
+    clearInterval(intervalId);
+};

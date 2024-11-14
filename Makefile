@@ -5,23 +5,12 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: build/bootstrap v86dirty v86 build/nohost-sw.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons apps/chideNewNewNew.app/node_modules build/libcurl.mjs build/lib/bare.cjs build/assets/matter.css build/dreamland 
+all: submodules build/bootstrap \
+		v86 build/libs/filer/filer.min.js build/libs/mime/mime.iife.js build/libs/nfsadapter/nfsadapter.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/idb-keyval/idb-keyval.js \
+		bundle public/config.json build/cache-load.json build/libs/fflate/browser.js apps/libfileview.lib/icons \
+		build/bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/assets/matter.css build/libs/dreamland/all.js \
 
-full: all rootfs-debian rootfs-arch rootfs-alpine
-
-hooks: FORCE
-	mkdir -p .git/hooks
-	echo -e "#!/bin/sh\nmake lint\ngit add -A" > .git/hooks/pre-commit
-	chmod +x .git/hooks/pre-commit
-
-apps/libfileview.lib/icons:
-	cd apps/libfileview.lib; bash geticons.sh
-
-apps/chideNewNewNew.app/node_modules: apps/chideNewNewNew.app/package.json
-	cd apps/chideNewNewNew.app; npm i
-
-public/config.json:
-	cp config.default.json public/config.json
+full: all rootfs-alpine
 
 build/bootstrap: package.json server/package.json
 	mkdir -p build/lib
@@ -30,28 +19,119 @@ build/bootstrap: package.json server/package.json
 	make hooks
 	>build/bootstrap
 
-build/nohost-sw.js:
-	cd nohost; npm i; npm run build; cp -r dist/* ../build/
+hooks: FORCE
+	mkdir -p .git/hooks
+	echo -e "#!/bin/sh\nmake lint\ngit update-index --again" > .git/hooks/pre-commit
+	chmod +x .git/hooks/pre-commit
 
-build/libcurl.mjs: build/bootstrap
-	cp node_modules/libcurl.js/libcurl.mjs build/; cp node_modules/libcurl.js/libcurl.wasm build/
+submodules: .gitmodules
+	git submodule update
 
-build/lib/bare.cjs: build/bootstrap
-	cp node_modules/@mercuryworkshop/bare-client-custom/dist/bare.cjs build/lib/bare.cjs
+# Each dependency should have a similar structure to the following:
+#   build/libs/<libname>/<bundle>.min.js
+#   build/libs/<libname>/<bundle>.min.js.map
+#   build/libs/<libname>/version (contains version number as JSON string, e.g. "1.2.3")
+
+build/libs/libcurl/version: build/bootstrap
+	mkdir -p build/libs/libcurl
+	cp node_modules/libcurl.js/libcurl.mjs build/libs/libcurl/libcurl.mjs
+	cp node_modules/libcurl.js/libcurl.wasm build/libs/libcurl/libcurl.wasm
+	jq '.version' node_modules/libcurl.js/package.json > build/libs/libcurl/version
+
+build/libs/filer/filer.min.js: build/bootstrap
+	mkdir -p build/libs/filer
+	cp node_modules/filer/dist/filer.min.js build/libs/filer/filer.min.js
+	cp node_modules/filer/dist/filer.min.js.map build/libs/filer/filer.min.js.map
+	jq '.version' node_modules/filer/package.json > build/libs/filer/version
+
+build/libs/comlink/comlink.min.mjs: build/bootstrap
+	mkdir -p build/libs/comlink
+	cp node_modules/comlink/dist/esm/comlink.min.mjs build/libs/comlink/comlink.min.mjs
+	cp node_modules/comlink/dist/esm/comlink.min.mjs.map build/libs/comlink/comlink.min.mjs.map
+	cp node_modules/comlink/dist/umd/comlink.min.js build/libs/comlink/comlink.min.umd.js
+	cp node_modules/comlink/dist/umd/comlink.min.js.map build/libs/comlink/comlink.min.umd.js.map
+	sed -i build/libs/comlink/comlink.min.umd.js -e 's|//# sourceMappingURL=comlink.min.js.map|//# sourceMappingURL=comlink.min.umd.js.map|'
+	jq '.version' node_modules/comlink/package.json > build/libs/comlink/version
+
+build/libs/workbox/version: build/bootstrap
+	mkdir -p build/libs/workbox
+	npx workbox-cli@7.1.0 copyLibraries build/libs/workbox/
+	jq '.version' node_modules/workbox-build/package.json > build/libs/workbox/version
+
+build/libs/mime/mime.iife.js: build/bootstrap
+	mkdir -p build/libs/mime
+	cp -r node_modules/mime/dist/* build/libs/mime 
+	npx rollup -f iife build/libs/mime/src/index.js -o build/libs/mime/mime.iife.js -n mime --exports named
+	jq '.version' node_modules/mime/package.json > build/libs/mime/version
+
+build/libs/idb-keyval/idb-keyval.js: build/bootstrap
+	mkdir -p build/libs/idb-keyval
+	cp node_modules/idb-keyval/dist/umd.js build/libs/idb-keyval/idb-keyval.js
+	jq '.version' node_modules/idb-keyval/package.json > build/libs/idb-keyval/version
+
+# keeping this for when we change from this version of the library
+# build/libs/bare-mux/index.js: build/bootstrap \
+	mkdir -p build/libs/bare-mux \
+	cp node_modules/@mercuryworkshop/bare-mux/dist/index.js build/libs/bare-mux/index.js \
+	cp node_modules/@mercuryworkshop/bare-mux/dist/index.js.map build/libs/bare-mux/index.js.map \
+	cp node_modules/@mercuryworkshop/bare-mux/dist/worker.js build/libs/bare-mux/worker.js \
+	jq '.version' node_modules/@mercuryworkshop/bare-mux/package.json > build/libs/bare-mux/version
+
+build/libs/bare-mux/bare.cjs: build/bootstrap
+	mkdir -p build/libs/bare-mux
+	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs build/libs/bare-mux/bare.cjs
+	cp node_modules/@mercuryworkshop/bare-mux/dist/bare.cjs.map build/libs/bare-mux/bare.cjs.map
+	jq '.version' node_modules/@mercuryworkshop/bare-mux/package.json > build/libs/bare-mux/version
+
+build/uv/uv.bundle.js: build/bootstrap
+	mkdir -p build/uv
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.bundle.js build/uv/uv.bundle.js
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.bundle.js.map build/uv/uv.bundle.js.map
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.client.js build/uv/uv.client.js
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.client.js.map build/uv/uv.client.js.map
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.handler.js build/uv/uv.handler.js
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.handler.js.map build/uv/uv.handler.js.map
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.sw.js build/uv/uv.sw.js
+	cp node_modules/@titaniumnetwork-dev/ultraviolet/dist/uv.sw.js.map build/uv/uv.sw.js.map
+	jq '.version' node_modules/@titaniumnetwork-dev/ultraviolet/package.json > build/uv/version
+
+build/libs/fflate/browser.js: build/bootstrap
+	mkdir -p build/libs/fflate
+	cp node_modules/fflate/esm/browser.js build/libs/fflate/browser.js
+	jq '.version' node_modules/fflate/package.json > build/libs/fflate/version
+
+build/libs/dreamland/all.js: dreamlandjs/src/*
+	mkdir -p build/libs/dreamland
+	cd dreamlandjs; npm i --no-package-lock --legacy-peer-deps; npm run build
+	cp dreamlandjs/dist/all.js build/libs/dreamland/all.js
+	cp dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
+	jq '.version' dreamlandjs/package.json > build/libs/dreamland/version
+
+build/libs/nfsadapter/nfsadapter.js: native-file-system-adapter/src/es6.js native-file-system-adapter/src/adapters/filer.js
+	cd native-file-system-adapter; npm i; npm run build
+	mkdir -p build/libs/nfsadapter
+	mkdir -p build/libs/nfsadapter/adapters
+	cp native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
+	cp native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/adapters/anuraadapter.js
+	cp native-file-system-adapter/src/util.js build/libs/nfsadapter/
+	cp native-file-system-adapter/src/config.js build/libs/nfsadapter/	
 
 build/assets/matter.css:
 	mkdir -p build/assets
 	curl https://github.com/finnhvman/matter/releases/latest/download/matter.css -L -o build/assets/matter.css
 
+apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
+	cd apps/libfileview.lib; bash geticons.sh
+
+build/bin/chimerix.ajs: chimerix/src/*
+	mkdir -p build/bin
+	cd chimerix; npm i
+	cd chimerix; npx rollup -c rollup.config.js
+	cp chimerix/dist/chimerix.ajs build/bin/chimerix.ajs
+
 clean:
-	cd v86; make clean
-	rm -rf build/*
-
-rootfs-debian: FORCE
-	cd x86_image_wizard/debian; sh build-debian-bin.sh
-
-rootfs-arch: FORCE
-	cd x86_image_wizard/arch; sh build-arch-bin.sh
+	rm -rf build
+	cd v86 && make clean || true
 
 rootfs-alpine: FORCE
 	cd x86_image_wizard/alpine; sh build-alpine-bin.sh
@@ -59,14 +139,8 @@ rootfs-alpine: FORCE
 rootfs: FORCE
 	cd x86_image_wizard; sh x86_image_wizard.sh
 
-v86dirty: 
-	touch v86timestamp # makes it "dirty" and forces recompilation
-
 v86: libv86.js build/lib/v86.wasm
 	cp -r v86/bios public
-
-build/cache-load.json: FORCE
-	(find apps/ -type f && cd build/ && find lib/ -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e python.app -e "/\." | jq -Rnc '[inputs]' > build/cache-load.json
 
 libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
 	cd v86; make build/libv86.js
@@ -76,36 +150,41 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
-build/dreamland:
-	mkdir -p build/dreamland
-	git clone https://github.com/MercuryWorkshop/dreamlandjs.git dreamland.tmp
-	cd dreamland.tmp; git checkout 1b33b2a7008aa6052f7ae07dea7f1131cc29f21d
-	cd dreamland.tmp; npm i; npx rollup -c -f iife 
-	cp dreamland.tmp/dist/js.js build/dreamland/js.js
-	cp dreamland.tmp/dist/js.js.map build/dreamland/js.js.map
-	cp dreamland.tmp/dist/css.js build/dreamland/css.js
-	cp dreamland.tmp/dist/css.js.map build/dreamland/css.js.map
-	cp dreamland.tmp/dist/html.js build/dreamland/html.js
-	cp dreamland.tmp/dist/html.js.map build/dreamland/html.js.map
-	rm -rf dreamland.tmp
+build/cache-load.json: FORCE
+	(find apps/ -type f && cd build/ && find lib/ -type f && find libs/ -type f && find uv/ -type f && find assets/ -type f && find bundle.css -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e \.map -e \.d\.ts -e "/\." -e "uv/" -e "workbox/" | jq -Rnc '[inputs]' > build/cache-load.json
+
+public/config.json:
+	cp config.default.json public/config.json
 
 watch: bundle FORCE
-	which inotifywait || echo "INSTALL INOTIFYTOOLS"
-	shopt -s globstar; while true; do inotifywait -e close_write ./src/**/* &>/dev/null;clear; make tsc & make css & make milestone; echo "Done!"; sleep 1; done
+	npx tsc-watch --onSuccess "make css build/cache-load.json milestone" 
+
+bundle: tsc css lint milestone
+	mkdir -p build/artifacts
+
+ANURA_VERSION = $(shell jq -r '.version' package.json)
+
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
 	npx tsc
+	mkdir -p anuraos-types
+	cd anuraos-types/; \
+	mkdir -p lib/
+	cd build/; \
+	(find lib -type f -name "*.d.ts" -exec cp --parents {} ../anuraos-types/ \;)
+	(cd build && find lib -type f -name "*.d.ts") | sed 's/ \+/\n/g' | sed 's|.*|/// <reference path="&" />|' > anuraos-types/index.d.ts
+	jq '.version = "$(ANURA_VERSION)"' types-package.json > anuraos-types/package.json
+	
 css: src/*.css
 	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
-bundle: tsc css lint milestone
-	mkdir -p build/artifacts
+lint:
+	npx prettier -w --log-level error .
+	npx eslint . --fix
 milestone:
 	uuidgen > build/MILESTONE
-lint:
-	npx prettier -w --loglevel error .
-	npx eslint . --fix
+
 # prod: all
 #	npx google-closure-compiler --js build/lib/libv86.js build/assets/libs/filer.min.js build/lib/coreapps/ExternalApp.js build/lib/coreapps/x86MgrApp.js build/lib/coreapps/SettingsApp.js build/lib/coreapps/BrowserApp.js build/lib/v86.js build/lib/AliceWM.js build/lib/AliceJS.js build/lib/Taskbar.js build/lib/ContextMenu.js build/lib/api/ContextMenuAPI.js build/lib/Launcher.js build/lib/Bootsplash.js build/lib/oobe/OobeView.js build/lib/oobe/OobeWelcomeStep.js build/lib/oobe/OobeAssetsStep.js build/lib/Utils.js build/lib/Anura.js build/lib/api/Settings.js build/lib/api/NotificationService.js build/lib/Boot.js --js_output_file public/dist.js
 static: all
@@ -113,10 +192,10 @@ static: all
 	cp -r aboutproxy/static/* static/
 	cp -r apps/ static/apps/
 	cp -r build/* static/
-	cp -r public/* static/ 
+	cp -r public/* static/
 
 server: FORCE
-	cd server; npx ts-node server.ts
+	cd server; node server.js
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 

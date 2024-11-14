@@ -1,29 +1,22 @@
 #!/bin/sh
 
+if [ -w /var/run/docker.sock ]
+then
+    true
+else 
+    echo "You aren't in the docker group, please run usermod -a -G docker $USER && newgrp docker"
+    exit 2
+fi
+
 build_alpine() {
     cd alpine
     sh build-alpine-bin.sh
     cd ..
 }
 
-build_debian() {
-    cd debian
-    sh build-debian-bin.sh
-    cd ..
-}
-
-build_arch() {
-    cd arch
-    sh build-arch-bin.sh
-    cd ..
-}
-
 display_menu() {
     echo "Choose a rootfs image to build:"
     echo "1. Alpine"
-    echo "2. Debian"
-    echo "3. Arch"
-    echo "4. All"
     echo "0. Exit"
 }
 
@@ -31,18 +24,6 @@ process_choice() {
     case "$1" in
         1)
             build_alpine
-            ;;
-        2)
-            build_debian
-            ;;
-        3)
-            build_arch
-            ;;
-        4)
-            echo "Building all rootfs images..."
-            build_alpine
-            build_debian
-            build_arch
             ;;
         0)
             echo "Exiting..."

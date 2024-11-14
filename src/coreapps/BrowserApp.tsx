@@ -1,7 +1,7 @@
 class BrowserApp extends App {
     name = "Anura Browser";
     package = "anura.browser";
-    icon = "/assets/chrome.svg";
+    icon = "/assets/icons/chrome.svg";
     source: string;
     lib: BrowserLib;
     lastWindow: WMWindow | undefined;
@@ -15,7 +15,6 @@ class BrowserApp extends App {
                     this.lastWindow || this.windows[this.windows.length - 1];
 
                 if (typeof win === "undefined") {
-                    console.log("No active browser window. Launching new one.");
                     this.open().then((win) => {
                         const iframe = win?.content.querySelector("iframe");
                         iframe?.addEventListener("load", () => {
@@ -23,8 +22,6 @@ class BrowserApp extends App {
                             const browserDocument =
                                 iframe?.contentDocument ||
                                 iframe?.contentWindow?.document;
-
-                            console.log("New browser window", browserDocument);
 
                             const config = {
                                 attributes: true,
@@ -45,7 +42,7 @@ class BrowserApp extends App {
                                                 // Browser Container attributes changed, so the browser has loaded
                                                 win?.focus();
                                                 //@ts-ignore - aboutbrowser is a global variable
-                                                browserWindow.aboutbrowser.openTab(
+                                                browserWindow.aboutbrowser.navigateTo(
                                                     path,
                                                 );
                                                 // Stop observing
@@ -63,7 +60,6 @@ class BrowserApp extends App {
 
                     return;
                 }
-                console.log("Active browser window", win);
                 const iframe = win.content.querySelector("iframe");
                 const browserWindow = iframe?.contentWindow;
                 win.focus();
@@ -89,25 +85,21 @@ class BrowserApp extends App {
             return;
         }
 
-        const browser = anura.wm.create(
-            this,
-            {
-                title: "",
-                width: "700px",
-                height: "500px",
-            },
-            null,
-            null,
-            () => {
-                if (this.lastWindow == browser) {
-                    this.lastWindow = undefined;
-                }
-            },
-        );
+        const browser = anura.wm.create(this, {
+            title: "",
+            width: "700px",
+            height: "500px",
+        });
+        browser.onclose = () => {
+            if (this.lastWindow === browser) {
+                this.lastWindow = undefined;
+            }
+        };
         // Set the last active window to this one, as it was just opened
         this.lastWindow = browser;
 
         const iframe = document.createElement("iframe");
+        iframe.id = "proc-" + browser.pid;
         //@ts-ignore
         iframe.style =
             "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
@@ -118,9 +110,7 @@ class BrowserApp extends App {
             const doc =
                 iframe.contentDocument || iframe.contentWindow?.document;
             doc?.addEventListener("click", () => {
-                console.log("Active browser window", this.lastWindow);
                 this.lastWindow = browser;
-                console.log("New active browser window", this.lastWindow);
             });
         });
 
