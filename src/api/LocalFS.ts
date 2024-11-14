@@ -554,7 +554,8 @@ class LocalFS extends AFSProvider<LocalFSStats> {
         chown(path: string, uid: number, gid: number): Promise<void> {
             path = this.relativizePath(path);
 
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
+                const type = (await this.promises.lstat(path)).type;
                 // Check if the file exists
                 const stats = this.stats.get(path);
                 if (!stats) {
@@ -565,6 +566,18 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                         message: `No such file or directory: ${path}`,
                         stack: "Error: No such file or directory",
                     } as Error);
+                }
+                if (path.endsWith("/")) path = path.slice(0, -1);
+                if (type === "DIRECTORY") {
+                    path = (await this.getChildDirHandle(path))[1];
+                } else {
+                    const pathDir = (
+                        await this.getChildDirHandle(this.path.dirname(path))
+                    )[1];
+                    path = pathDir + "/" + this.path.basename(path);
+                }
+                if (path.startsWith("/")) {
+                    path = path.slice(1);
                 }
 
                 // Update ownership in stats
@@ -580,12 +593,45 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             });
         },
         chmod: async (fullPath: string, mode: number) => {
+            const stats = await this.promises.lstat(fullPath);
+            const type = stats.type;
+            const sym = (stats.mode & 0o170000) === 0o120000;
+
             let path = this.relativizePath(fullPath);
+
             if (path.endsWith("/")) path = path.slice(0, -1);
+            if (type === "DIRECTORY") {
+                path = (await this.getChildDirHandle(path))[1];
+            } else {
+                const pathDir = (
+                    await this.getChildDirHandle(this.path.dirname(path))
+                )[1];
+                path = pathDir + "/" + this.path.basename(path);
+            }
+            if (path.startsWith("/")) {
+                path = path.slice(1);
+            }
 
             const currStats = this.stats.get(path) || {};
-            if (mode > 0o777) currStats.mode = mode;
-            else currStats.mode = 0o100000 + mode;
+            if (mode > 0o777) {
+                throw {
+                    name: "EINVAL",
+                    code: "EINVAL",
+                    errno: -22,
+                    message: "Mode cannot be greater than 0o777.",
+                    stack: "LocalFS > chmod",
+                } as Error;
+            }
+            if (!sym) {
+                if (type === "FILE") {
+                    currStats.mode = 0o100000 + mode;
+                }
+                if (type === "DIRECTORY") {
+                    currStats.mode = 0o40000 + mode;
+                }
+            } else {
+                currStats.mode = 0o120000 + mode;
+            }
 
             this.stats.set(path, currStats);
 
@@ -780,6 +826,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             atime: Date | number,
             mtime: Date | number,
         ) => {
+            const type = (await this.promises.lstat(path)).type;
             // Ensure path is relative
             path = this.relativizePath(path);
 
@@ -789,6 +836,17 @@ class LocalFS extends AFSProvider<LocalFSStats> {
             const modifiedTime =
                 typeof mtime === "number" ? new Date(mtime) : mtime;
 
+            if (type === "DIRECTORY") {
+                path = (await this.getChildDirHandle(path))[1];
+            } else {
+                const pathDir = (
+                    await this.getChildDirHandle(this.path.dirname(path))
+                )[1];
+                path = pathDir + "/" + this.path.basename(path);
+            }
+            if (path.startsWith("/")) {
+                path = path.slice(1);
+            }
             // Fetch the current stats for the file, or initialize them if not present
             let fileStats = this.stats.get(path);
             if (!fileStats) {
