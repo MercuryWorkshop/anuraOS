@@ -614,15 +614,10 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 
             const currStats = this.stats.get(path) || {};
             if (mode > 0o777) {
-                throw {
-                    name: "EINVAL",
-                    code: "EINVAL",
-                    errno: -22,
-                    message: "Mode cannot be greater than 0o777.",
-                    stack: "LocalFS > chmod",
-                } as Error;
-            }
-            if (!sym) {
+                // Needed for v86
+
+                mode -= mode & 0o170000;
+            } else if (!sym) {
                 if (type === "FILE") {
                     currStats.mode = 0o100000 + mode;
                 }
