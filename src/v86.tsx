@@ -621,7 +621,7 @@ class V86Backend {
         let remaniningLength = 0;
         let recBuffer: Uint8Array;
 
-        const connections: any = { 0: { congestion: 0 } };
+        const connections: any = { 0: { congestion: 4294967294 } };
 
         const congestedBuffer: {
             data: Uint8Array;
