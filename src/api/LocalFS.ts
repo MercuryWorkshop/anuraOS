@@ -617,7 +617,8 @@ class LocalFS extends AFSProvider<LocalFSStats> {
                 // Needed for v86
 
                 mode -= mode & 0o170000;
-            } else if (!sym) {
+            }
+            if (!sym) {
                 if (type === "FILE") {
                     currStats.mode = 0o100000 + mode;
                 }
