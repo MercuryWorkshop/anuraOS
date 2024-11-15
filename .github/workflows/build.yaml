@@ -46,7 +46,7 @@ jobs:
             - name: Get artifacts
               uses: actions/download-artifact@v4
               with:
-                  name: Anura Static Build
+                  name: Anura static build
                   path: .
 
             - name: Release to GitHub
@@ -68,7 +68,7 @@ jobs:
             - name: Get artifacts
               uses: actions/download-artifact@v4
               with:
-                  name: Anura Static Build
+                  name: Anura static build
                   path: .
 
             - name: unzip artifact
