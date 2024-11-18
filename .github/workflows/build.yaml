@@ -27,7 +27,7 @@ jobs:
               with:
                   name: Anura static build
                   path: static/*
-                  retention-days: 91
+                  retention-days: 90
 
     upload:
         name: Upload release
