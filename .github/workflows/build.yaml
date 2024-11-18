@@ -21,12 +21,13 @@ jobs:
             - run: git submodule update --init
             - run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
             - run: source "$HOME/.cargo/env" && make static
-            - run: zip -r anura.zip static/
-            - uses: actions/upload-artifact@v4
+
+            - name: Upload Anura Artifact
+              uses: actions/upload-artifact@v4
               with:
                   name: Anura static build
-                  path: anura.zip
-                  retention-days: 2
+                  path: static/*
+                  retention-days: 91
 
     upload:
         name: Upload release
@@ -47,7 +48,10 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                   name: Anura static build
-                  path: .
+                  path: ./static
+
+            - name: Zip anura Release
+              run: cd static && zip -r ../anura.zip . && cd ..
 
             - name: Release to GitHub
               uses: ncipollo/release-action@v1
@@ -70,15 +74,12 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                   name: Anura static build
-                  path: .
-
-            - name: unzip artifact
-              run: mkdir ./staticbuild && unzip anura.zip -d ./staticbuild
+                  path: ./static
 
             - name: upload pages artifact
               uses: actions/upload-pages-artifact@v3
               with:
-                  path: "./staticbuild"
+                  path: "./static"
 
             - name: deploy to github
               id: deployment
