@@ -1,0 +1,22 @@
+# $Id:$
+# In order to activate the session bus at X session launch
+# simply place use-session-dbus into your /etc/X11/Xsession.options file
+#
+
+STARTDBUS=
+DBUSLAUNCH=/usr/bin/dbus-launch
+
+if has_option use-session-dbus; then
+  if [ -z "$DBUS_SESSION_BUS_ADDRESS" ] && [ -x "$DBUSLAUNCH" ]; then
+    STARTDBUS=yes
+  fi
+fi
+
+if [ -n "$STARTDBUS" ]; then
+  # Note that anything that is D-Bus-activated between here and
+  # 95dbus_update-activation-env will not have the complete environment
+  # set up by Xsession.d, unless the Xsession.d snippet that sets the
+  # environment variable also calls dbus-update-activation-environment.
+  # See <https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=815503>
+  eval $($DBUSLAUNCH --exit-with-session --sh-syntax)
+fi

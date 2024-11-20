@@ -1,0 +1,55 @@
+*Foreground:				rgb:2/3/1
+*Background:				rgb:c/d/b
+*BorderWidth:				0
+
+*Label.justify:				left
+*Text.Background:			rgb:d/e/c
+*Text.displayList:			foreground rgb:f/f/d;segments 1,-1,-2,-1, -1,-2,-1,1;foreground rgb:7/7/5;segments -2,0,1,0, 0,1,0,-2
+*Form.displayList:			foreground rgb:7/7/5;segments 1,-1,-2,-1, -1,-2,-1,1;foreground rgb:f/f/d;segments -2,0,1,0, 0,1,0,-2
+
+*Label.width:				130
+*Label.left:				chainLeft
+*Label.right:				chainLeft
+*topform.Form.displayList:		foreground rgb:e/e/e;segments 1,-1,-2,-1, -1,-2,-1,1;foreground rgb:4/4/4;segments -2,0,1,0, 0,1,0,-2
+*topform.Form.Form.displayList:
+
+*topform.Form.linestyle.Toggle.width:	123
+*topform.Form.capstyle.Toggle.width:	185
+*topform.Form.joinstyle.Toggle.width:	123
+*topform.Form.fillstyle.Toggle.width:	185
+*topform.Form.fillrule.Toggle.width:	185
+*topform.Form.arcmode.Toggle.width:	185
+*topform.Form.linewidth.Text.width:	372
+*topform.Form.font.Text.width:		372
+*topform.Form.foreground.Text.width:	110
+*topform.Form.background.Text.width:	110
+*topform.Form.testpercent.100.Background:	rgb:b/c/a
+*topform.Form.testpercent.100.displayList:	foreground rgb:e/e/c;segments 1,-1,-2,-1, -1,-2,-1,1;foreground rgb:5/5/3;segments -2,0,1,0, 0,1,0,-2
+*topform.Form.testpercent.100.justify:right
+*topform.Form.testpercent.100.width:	30
+*topform.Form.testpercent.100.left:	chainLeft
+*topform.Form.testpercent.100.right:	chainRight
+*topform.Form.testpercent.100.borderWidth:	0
+*topform.Form.testpercent.Scrollbar.width:	332
+*topform.Form.testpercent.Scrollbar.displayList:	foreground rgb:e/e/c;segments 1,-1,-2,-1, -1,-2,-1,1;foreground rgb:5/5/3;segments -2,0,1,0, 0,1,0,-2
+
+*topform.Form.testpercent.Scrollbar.Background:	rgb:b/c/a
+
+*Toggle.borderWidth:			1
+*Toggle.borderColor:			rgb:6/8/6
+*Toggle.justify:			left
+*Toggle.foreground:			rgb:2/4/2
+*Toggle.background:			rgb:8/a/8
+*Toggle.highlightThickness:		0
+*Toggle.displayList:			foreground rgb:4/6/4;draw-rect 1,1,-2,-2;foreground rgb:8/a/8;draw-rect 0,0,-1,-1
+
+*Command.width:			102
+*Command.borderWidth:		1
+*Command.borderColor:		rgb:a/8/6
+*Command.justify:		left
+*Command.foreground:		rgb:6/6/2
+*Command.background:		rgb:c/c/8
+*Command.highlightThickness:	2
+*Command.displayList:		line-style solid;foreground rgb:8/8/4;draw-rect 1,1,-2,-2;dashes 2,2;line-style onoffdash;foreground rgb:c/c/8;draw-rect 0,0,-1,-1
+
+*test.BorderWidth:		1

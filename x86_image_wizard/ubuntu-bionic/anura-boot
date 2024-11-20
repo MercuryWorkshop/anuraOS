@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+
+description="Run Anura Boot Scripts"
+
+start() {
+  ebegin "Running Anura Boot Scripts"
+  ifupdown ifup eth0
+  ip link set lo up
+  eend $?
+}
+
+stop() {
+  ebegin "Stopping Anura Boot Scripts"
+  eend $?
+}
