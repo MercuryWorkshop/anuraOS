@@ -3,6 +3,7 @@ const channel = new BroadcastChannel("tab");
 // send message to all tabs, after a new tab
 channel.postMessage("newtab");
 let activetab = true;
+let splashToRemove: HTMLElement | null = null;
 channel.addEventListener("message", (msg) => {
     if (msg.data === "newtab" && activetab) {
         // if there's a previously registered tab that can read the message, tell the other tab to kill itself
@@ -90,7 +91,6 @@ let anura: Anura;
 // global
 
 window.addEventListener("load", async () => {
-    document.body.appendChild(bootsplash);
     const swShared: any = {
         test: true,
     };
@@ -117,6 +117,40 @@ window.addEventListener("load", async () => {
     }
 
     anura = await Anura.new(conf);
+    LocalFS.newOPFS("/opfs"); // mount opfs on boot
+
+    if (anura.platform.type === "mobile" || anura.platform.type === "tablet") {
+        splashToRemove = bootsplashMobile;
+        document.body.appendChild(bootsplashMobile);
+    } else {
+        if (anura.config.tnbranding === true) {
+            splashToRemove = TNBootSplash;
+            document.body.appendChild(TNBootSplash);
+            setupTNBootsplash();
+        } else if (anura.settings.get("i-am-a-true-gangsta")) {
+            splashToRemove = gangstaBootsplash;
+            document.body.appendChild(gangstaBootsplash);
+        } else if (anura.activation.activated === false) {
+            splashToRemove = bootsplash;
+            document.body.appendChild(bootsplash);
+            const ActivateMark = document.createElement("span");
+            ActivateMark.setAttribute(
+                "style",
+                "position: absolute; bottom: 70px; right: 30px; color: white; opacity: 0.8; z-index: 99999999; user-select: none; webkit-user-select: none; pointer-events: none;",
+            );
+            ActivateMark.innerHTML =
+                "<h2 style='margin-bottom: 0;'>Activate AnuraOS</h2><p style='margin-top: 0.5rem;'>Open Settings to activate AnuraOS.</p>";
+            // ActivateMark.onclick = () => {
+            //     anura.apps["anura.settings"].open();
+            // }
+            document.body.appendChild(ActivateMark);
+        } else {
+            splashToRemove = bootsplash;
+            document.body.appendChild(bootsplash);
+        }
+    }
+
+    console.log(splashToRemove);
 
     swShared.anura = anura;
     swShared.sh = new anura.fs.Shell();
@@ -361,44 +395,6 @@ window.addEventListener("load", async () => {
 
     oobeview = new OobeView();
 
-    if (anura.platform.type === "mobile" || anura.platform.type === "tablet") {
-        bootsplash.remove();
-        document.body.appendChild(bootsplashMobile);
-    } else {
-        if (anura.settings.get("i-am-a-true-gangsta") === true) {
-            bootsplash.remove();
-            document.body.appendChild(gangstaBootsplash);
-        } else if (anura.config.tnbranding === true) {
-            bootsplash.remove();
-            document.body.appendChild(TNBootSplash);
-            const TNMark = document.createElement("span");
-            TNMark.setAttribute(
-                "style",
-                "position: absolute; bottom: 70px; right: 10px",
-            );
-            TNMark.innerHTML =
-                "Instance hosted by Titanium Network.<br>More mirrors at discord.gg/unblock";
-            TNMark.onclick = () => {
-                anura.apps["anura.browser"].open([
-                    "https://discord.gg/unblock",
-                ]);
-            };
-            document.body.appendChild(TNMark);
-        } else if (anura.activation.activated === false) {
-            const ActivateMark = document.createElement("span");
-            ActivateMark.setAttribute(
-                "style",
-                "position: absolute; bottom: 70px; right: 30px; color: white; opacity: 0.8; z-index: 99999999; user-select: none; webkit-user-select: none; pointer-events: none;",
-            );
-            ActivateMark.innerHTML =
-                "<h2 style='margin-bottom: 0;'>Activate AnuraOS</h2><p style='margin-top: 0.5rem;'>Open Settings to activate AnuraOS.</p>";
-            // ActivateMark.onclick = () => {
-            //     anura.apps["anura.settings"].open();
-            // }
-            document.body.appendChild(ActivateMark);
-        }
-    }
-
     document.body.classList.add("platform-" + anura.platform.type);
 
     if (anura.settings.get("blur-disable")) {
@@ -451,7 +447,9 @@ window.addEventListener("load", async () => {
     setTimeout(
         () => {
             setTimeout(() => {
-                document.querySelector(".bootsplash")?.classList.add("hide");
+                if (splashToRemove) {
+                    splashToRemove.classList.add("hide");
+                }
             }, 350); // give the taskbar time to init
             setTimeout(() => {
                 bootsplash.remove();
@@ -797,4 +795,20 @@ async function bootUserCustomizations() {
     }
 
     AnuradHelpers.setStage("anura.bootUserCustomizations");
+}
+
+function setupTNBootsplash() {
+    const TNMark = document.createElement("span");
+    TNMark.setAttribute(
+        "style",
+        "position: absolute; bottom: 70px; right: 10px",
+    );
+    TNMark.innerHTML =
+        "Instance hosted by Titanium Network.<br>More mirrors at discord.gg/unblock";
+    TNMark.onclick = () => {
+        anura.apps["anura.browser"].open([
+            "https://discord.com/invite/unblock/login",
+        ]);
+    };
+    document.body.appendChild(TNMark);
 }

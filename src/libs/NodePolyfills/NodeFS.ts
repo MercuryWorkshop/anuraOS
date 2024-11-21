@@ -1,5 +1,5 @@
 class NodeFS extends Lib {
-    icon = "/assets/icons/generic.png";
+    icon = "/assets/icons/generic.svg";
     package = "node:fs";
     name = "Node Filesystem";
 

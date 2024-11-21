@@ -5,7 +5,10 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
-all: submodules build/bootstrap v86dirty v86 build/libs/nfsadapter/nfsadapter.js build/libs/mime/mime.iife.js build/libs/filer/filer.min.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/fflate/browser.js bundle public/config.json build/cache-load.json apps/libfileview.lib/icons build/bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/idb-keyval/idb-keyval.js build/assets/matter.css build/libs/dreamland/all.js
+all: submodules build/bootstrap \
+		v86 build/libs/filer/filer.min.js build/libs/mime/mime.iife.js build/libs/nfsadapter/nfsadapter.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/idb-keyval/idb-keyval.js \
+		bundle public/config.json build/cache-load.json build/libs/fflate/browser.js apps/libfileview.lib/icons \
+		build/bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/assets/matter.css build/libs/dreamland/all.js \
 
 full: all rootfs-alpine
 
@@ -147,9 +150,6 @@ build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v
 	cd v86; make build/v86.wasm
 	cp v86/build/v86.wasm build/lib/v86.wasm
 
-v86dirty: 
-	touch v86timestamp # makes it "dirty" and forces recompilation
-
 build/cache-load.json: FORCE
 	(find apps/ -type f && cd build/ && find lib/ -type f && find libs/ -type f && find uv/ -type f && find assets/ -type f && find bundle.css -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e \.map -e \.d\.ts -e "/\." -e "uv/" -e "workbox/" | jq -Rnc '[inputs]' > build/cache-load.json
 
@@ -162,10 +162,20 @@ watch: bundle FORCE
 bundle: tsc css lint milestone
 	mkdir -p build/artifacts
 
+ANURA_VERSION = $(shell jq -r '.version' package.json)
+
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
 	npx tsc
+	mkdir -p anuraos-types
+	cd anuraos-types/; \
+	mkdir -p lib/
+	cd build/; \
+	(find lib -type f -name "*.d.ts" -exec cp --parents {} ../anuraos-types/ \;)
+	(cd build && find lib -type f -name "*.d.ts") | sed 's/ \+/\n/g' | sed 's|.*|/// <reference path="&" />|' > anuraos-types/index.d.ts
+	jq '.version = "$(ANURA_VERSION)"' types-package.json > anuraos-types/package.json
+	
 css: src/*.css
 	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
@@ -185,7 +195,7 @@ static: all
 	cp -r public/* static/
 
 server: FORCE
-	cd server; npx ts-node server.ts
+	cd server; node server.js
 
 # v86 imports
 v86/src/rust/gen/jit.rs: 

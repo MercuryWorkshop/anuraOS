@@ -1,7 +1,7 @@
 class BrowserApp extends App {
     name = "Anura Browser";
     package = "anura.browser";
-    icon = "/assets/chrome.svg";
+    icon = "/assets/icons/chrome.svg";
     source: string;
     lib: BrowserLib;
     lastWindow: WMWindow | undefined;

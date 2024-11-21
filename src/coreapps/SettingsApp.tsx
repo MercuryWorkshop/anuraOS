@@ -165,17 +165,12 @@ const settingsCSS = css`
     }
 `;
 
-const SettingSwitch: Component<
-    {
-        title: string;
-        setting: string;
-        callback?: any;
-        on?: boolean;
-    },
-    {
-        //
-    }
-> = function () {
+const SettingSwitch: Component<{
+    title: string;
+    setting: string;
+    callback?: any;
+    on?: boolean;
+}> = function () {
     this.mount = () => {
         this.on = anura.settings.get(this.setting);
     };
@@ -198,18 +193,13 @@ const SettingSwitch: Component<
     );
 };
 
-const SettingText: Component<
-    {
-        title: string;
-        setting: string;
-        callback?: any;
-        value?: string;
-        type?: string;
-    },
-    {
-        //
-    }
-> = function () {
+const SettingText: Component<{
+    title: string;
+    setting: string;
+    callback?: any;
+    value?: string;
+    type?: string;
+}> = function () {
     return (
         <div class="settings-item">
             <span class="settings-item-name">{use(this.title)}</span>
@@ -250,6 +240,11 @@ class SettingsApp extends App {
     name = "Settings";
     package = "anura.settings";
     icon = "/assets/icons/settings.png";
+    win: WMWindow;
+
+    constructor() {
+        super();
+    }
 
     state = $state({
         show_x86_install: anura.settings.get("x86-disabled"),
@@ -257,7 +252,6 @@ class SettingsApp extends App {
         resizing: false,
         settingsBody: undefined as unknown as HTMLDivElement,
     });
-    win: WMWindow;
 
     page = async () => (
         <div
@@ -511,46 +505,43 @@ class SettingsApp extends App {
                                                             ).value,
                                                         ) * 1000000,
                                                     );
-                                                    const emulator =
-                                                        new V86Starter({
-                                                            wasm_path:
-                                                                "/lib/v86.wasm",
-                                                            memory_size:
-                                                                512 *
-                                                                1024 *
-                                                                1024,
-                                                            vga_memory_size:
-                                                                8 * 1024 * 1024,
-                                                            screen_container:
-                                                                anura.x86!
-                                                                    .screen_container,
+                                                    const emulator = new V86({
+                                                        wasm_path:
+                                                            "/lib/v86.wasm",
+                                                        memory_size:
+                                                            512 * 1024 * 1024,
+                                                        vga_memory_size:
+                                                            8 * 1024 * 1024,
+                                                        screen_container:
+                                                            anura.x86!
+                                                                .screen_container,
 
-                                                            initrd: {
-                                                                url: "/x86images/resizefs.img",
-                                                            },
+                                                        initrd: {
+                                                            url: "/x86images/resizefs.img",
+                                                        },
 
-                                                            bzimage: {
-                                                                url: "/x86images/bzResize",
-                                                                async: false,
-                                                            },
-                                                            hda: {
-                                                                buffer: anura.x86hdd,
-                                                                async: true,
-                                                            },
+                                                        bzimage: {
+                                                            url: "/x86images/bzResize",
+                                                            async: false,
+                                                        },
+                                                        hda: {
+                                                            buffer: anura.x86hdd,
+                                                            async: true,
+                                                        },
 
-                                                            cmdline:
-                                                                "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
+                                                        cmdline:
+                                                            "random.trust_cpu=on 8250.nr_uarts=10 spectre_v2=off pti=off",
 
-                                                            bios: {
-                                                                url: "/bios/seabios.bin",
-                                                            },
-                                                            vga_bios: {
-                                                                url: "/bios/vgabios.bin",
-                                                            },
-                                                            autostart: true,
-                                                            uart1: true,
-                                                            uart2: true,
-                                                        });
+                                                        bios: {
+                                                            url: "/bios/seabios.bin",
+                                                        },
+                                                        vga_bios: {
+                                                            url: "/bios/vgabios.bin",
+                                                        },
+                                                        autostart: true,
+                                                        uart1: true,
+                                                        uart2: true,
+                                                    });
                                                     let s0data = "";
                                                     emulator.add_listener(
                                                         "serial0-output-byte",
@@ -817,10 +808,6 @@ class SettingsApp extends App {
             </div>
         </div>
     );
-
-    constructor() {
-        super();
-    }
 
     async open(): Promise<WMWindow | undefined> {
         if (this.win?.element?.parentElement) {

@@ -34,6 +34,10 @@ addContextMenuItem("Refresh", function () {
     reload();
 });
 
+newcontextmenu.addItem("Download", function () {
+    download();
+});
+
 appcontextmenu.addItem("Install (Session)", function () {
     installSession();
 });

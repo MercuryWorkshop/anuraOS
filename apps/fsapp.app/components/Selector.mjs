@@ -27,7 +27,7 @@ export function Selector() {
             <div class="sep"></div>
             <button
                 on:click=${() => {
-                    selectAction(currentlySelected);
+                    filePickerAction(currentlySelected);
                 }}
             >
                 Select

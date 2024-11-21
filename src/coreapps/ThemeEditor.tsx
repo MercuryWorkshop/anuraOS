@@ -1,4 +1,8 @@
 class ThemeEditor extends App {
+    name = "Theme Editor";
+    package = "anura.ui.themeeditor";
+    icon = "/assets/icons/theme.png";
+
     state = $state({
         resizing: false,
     });
@@ -153,9 +157,6 @@ class ThemeEditor extends App {
 
     constructor() {
         super();
-        this.name = "Theme Editor";
-        this.icon = "/assets/icons/themeeditor.png";
-        this.package = "anura.ui.themeeditor";
     }
 
     page = async () => (

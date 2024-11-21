@@ -1,5 +1,5 @@
 class Mime extends Lib {
-    icon = "/assets/icons/generic.png";
+    icon = "/assets/icons/generic.svg";
     package = "npm:mime";
     name = "Mime";
 

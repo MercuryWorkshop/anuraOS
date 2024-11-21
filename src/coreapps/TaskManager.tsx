@@ -1,11 +1,8 @@
 // probably some of the most clusterfucked code i've written - fish
 class TaskManager extends App {
-    constructor() {
-        super();
-        this.name = "Task Manager";
-        this.icon = "/assets/icons/system-monitor.svg";
-        this.package = "anura.taskmgr";
-    }
+    name = "Task Manager";
+    package = "anura.taskmgr";
+    icon = "/assets/icons/system-monitor.svg";
 
     // incomprehensible css
     css = css`
@@ -136,6 +133,10 @@ class TaskManager extends App {
             text-overflow: ellipsis;
         }
     `;
+
+    constructor() {
+        super();
+    }
 
     state = $state({
         selected: -1, // TODO: Multiselect. Shouldn't be too hard

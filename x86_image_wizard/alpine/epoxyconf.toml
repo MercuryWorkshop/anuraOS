@@ -1,6 +1,5 @@
 [server]
-bind = "/dev/hvc0"
-socket = "file"
+bind = ["file", "/dev/hvc0"]
 transport = "lengthdelimitedle"
 file_raw_mode = true # maybe?
 

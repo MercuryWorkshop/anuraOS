@@ -1,13 +1,21 @@
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
-V86Starter.prototype.serial1_send = function (a: string) {
+V86.prototype.serial1_send = function (a: string) {
     for (let b = 0; b < a.length; b++)
         this.bus.send("serial1-input", a.charCodeAt(b));
 };
 
 const SLICE_SIZE = 2 ** 17 * 32;
 const BUF_SIZE = 256;
+
+interface FakeFile {
+    slice: (start: number, end: number) => Promise<Blob>;
+    save: (emulator?: any) => Promise<void>;
+    delete: () => Promise<void>;
+    resize: (size: number) => Promise<void>;
+    size: number;
+}
 
 async function InitV86Hdd(): Promise<FakeFile> {
     // all right! time to explain what goes on here
@@ -273,7 +281,7 @@ class V86Backend {
         const Buffer = Filer.Buffer;
         const sh = new fs.Shell();
 
-        this.emulator = new V86Starter({
+        this.emulator = new V86({
             wasm_path: "/lib/v86.wasm",
             memory_size: anura.settings.get("x86-memory") * 1024 * 1024,
             vga_memory_size: 8 * 1024 * 1024,
@@ -297,9 +305,13 @@ class V86Backend {
 
             bios: { url: "/bios/seabios.bin" },
             vga_bios: { url: "/bios/vgabios.bin" },
-            network_relay_url: anura.wsproxyURL
-                .replace("ws://", "wisp://")
-                .replace("wss://", "wisps://"),
+            net_device: {
+                relay_url: anura.wsproxyURL
+                    .replace("ws://", "wisp://")
+                    .replace("wss://", "wisps://"),
+                type: "virtio",
+            },
+
             // initial_state: { url: "/images/v86state.bin" },
             autostart: true,
             uart1: true,
@@ -378,13 +390,13 @@ class V86Backend {
                 resolve(-1);
             });
         }
-
+        const streamDecoder = new TextDecoder(); // needs its own for stream: true option
         this.sendWispFrame({
             type: "CONNECT",
             streamID: this.ptyNum,
             command: command,
             dataCallback: (data: Uint8Array) => {
-                const string = decoder.decode(data);
+                const string = streamDecoder.decode(data, { stream: true });
                 onData(string);
             },
             closeCallback: (data: number) => {
@@ -609,7 +621,7 @@ class V86Backend {
         let remaniningLength = 0;
         let recBuffer: Uint8Array;
 
-        const connections: any = { 0: { congestion: 0 } };
+        const connections: any = { 0: { congestion: 4294967294 } };
 
         const congestedBuffer: {
             data: Uint8Array;
@@ -682,6 +694,18 @@ class V86Backend {
             },
         );
 
+        let evalBuffer = "";
+        this.emulator.add_listener(
+            "virtio-console1-output-bytes",
+            async (data: Uint8Array) => {
+                evalBuffer += decoder.decode(data);
+                if (evalBuffer.endsWith("\0")) {
+                    const jsrun = evalBuffer.slice(0, -1);
+                    evalBuffer = "";
+                    window.eval(jsrun);
+                }
+            },
+        );
         function processIncomingWispFrame(frame: Uint8Array) {
             //console.log(frame);
             const view = new DataView(frame.buffer);
@@ -828,12 +852,4 @@ class V86Backend {
             sendPacket(fullPacket, frameObj.type, frameObj.streamID);
         };
     }
-}
-
-interface FakeFile {
-    slice: (start: number, end: number) => Promise<Blob>;
-    save: (emulator?: any) => Promise<void>;
-    delete: () => Promise<void>;
-    resize: (size: number) => Promise<void>;
-    size: number;
 }

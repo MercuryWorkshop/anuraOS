@@ -27,9 +27,10 @@ server/passkey
 package-lock.json
 .direnv
 result
+anuraos-types/
 public/config.json
 static/
-x86_image_wizard/alpine/anurad.c
+x86_image_wizard/alpine/anura-run
 x86_image_wizard/alpine/xfrog.sh
 x86_image_wizard/alpine/xsetrandr.sh
 x86_image_wizard/alpine/anuramouse

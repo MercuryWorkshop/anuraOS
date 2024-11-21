@@ -1,9 +1,18 @@
-async function selectAction(selected) {
-    currentlySelected.forEach((row) => {
+// note from perc:
+// this app should be refactored again, (someday?) but im not doing it rn so
+
+// Note from Rafflesia: What the fuck?
+// If you're new here, this is the one file which you really don't want to touch, fsapp has been around since well, forever.
+// The code is the definition of growth-rot and messy, this is a 1k+ line file with almost all of the code for this app.
+// Frankly, it's terrible, don't touch it, and if it works, don't refactor anything unless you're willing to break it and rewrite the entire thing
+// You've been warned
+
+async function filePickerAction(selected) {
+    for (const row of currentlySelected) {
         row.classList.remove("selected");
-    });
+    }
     currentlySelected = [];
-    if (selected.length == 1) {
+    if (selected.length === 1) {
         var fileSelected = selected[0];
         if (fileSelected.getAttribute("data-type") === filePicker.type) {
             let fileData = {
@@ -50,326 +59,64 @@ async function selectAction(selected) {
 
 async function fileAction(selected) {
     if (selected.length === 1) {
-        // SINGLE FILE SELECTION //
-
         var fileSelected = selected[0];
         if (fileSelected.getAttribute("data-type") === "file") {
             console.debug("Clicked on file");
             if (
-                fileSelected
-                    .getAttribute("data-path")
-                    .split(".")
-                    .slice("-2")
-                    .join(".") === "app.zip"
+                fileSelected.getAttribute("data-path").endsWith(".app.zip") ||
+                fileSelected.getAttribute("data-path").endsWith(".lib.zip")
             ) {
-                let data = await fs.promises.readFile(
-                    fileSelected.getAttribute("data-path"),
-                );
-
-                const path = fileSelected
-                    .getAttribute("data-path")
-                    .split(".")
-                    .slice(0, -1)
-                    .join(".");
-
-                const zip = await unzip(new Uint8Array(data));
-                const manifest = JSON.parse(
-                    new TextDecoder().decode(zip["manifest.json"]),
-                );
-                const icon = new Blob([zip[manifest.icon]], {
-                    type: mime.default.getType(manifest.icon),
-                });
-                const win = anura.wm.create(instance, {
-                    title: "",
-                    width: "450px",
-                    height: "525px",
-                });
-
-                const iframe = document.createElement("iframe");
-
-                iframe.setAttribute(
-                    "src",
-                    document.location.href.split("/").slice(0, -1).join("/") +
-                        "/appview.html?manifest=" +
-                        ExternalApp.serializeArgs([
-                            JSON.stringify(manifest),
-                            URL.createObjectURL(icon),
-                            "app",
-                        ]),
-                );
-
-                iframe.style =
-                    "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
-
-                win.content.appendChild(iframe);
-
-                Object.assign(iframe.contentWindow, {
-                    anura,
-                    ExternalApp,
-                    instance,
-                    instanceWindow: win,
-                    install: {
-                        session: async () => {
-                            anura.notifications.add({
-                                title: "Application Installing for Session",
-                                description: `Application ${path.replace(
-                                    "//",
-                                    "/",
-                                )} is being installed, please wait`,
-                                timeout: 50000,
-                            });
-                            await fs.mkdir(`${path.replace("//", "/")}`);
-                            try {
-                                for (const [
-                                    relativePath,
-                                    content,
-                                ] of Object.entries(zip)) {
-                                    if (relativePath.endsWith("/")) {
-                                        fs.mkdir(`${path}/${relativePath}`);
-                                    } else {
-                                        fs.writeFile(
-                                            `${path}/${relativePath}`,
-                                            await Buffer.from(content),
-                                        );
-                                    }
-                                }
-                                await anura.registerExternalApp(
-                                    `/fs${path}`.replace("//", "/"),
-                                );
-                                anura.notifications.add({
-                                    title: "Application Installed for Session",
-                                    description: `Application ${path.replace(
-                                        "//",
-                                        "/",
-                                    )} has been installed temporarily, it will go away on refresh`,
-                                    timeout: 50000,
-                                });
-                            } catch (e) {
-                                console.error(e);
-                            }
-                        },
-                        permanent: async () => {
-                            anura.notifications.add({
-                                title: "Application Installing",
-                                description: `Application ${path.replace(
-                                    "//",
-                                    "/",
-                                )} is being installed, please wait`,
-                                timeout: 50000,
-                            });
-                            await fs.promises.mkdir(
-                                anura.settings.get("directories")["apps"] +
-                                    "/" +
-                                    path.split("/").slice("-1")[0],
-                            );
-
-                            try {
-                                for (const [
-                                    relativePath,
-                                    content,
-                                ] of Object.entries(zip)) {
-                                    if (relativePath.endsWith("/")) {
-                                        await fs.promises.mkdir(
-                                            `${anura.settings.get("directories")["apps"]}/${path.split("/").slice("-1")[0]}/${relativePath}`,
-                                        );
-                                    } else {
-                                        await fs.promises.writeFile(
-                                            `${anura.settings.get("directories")["apps"]}/${path.split("/").slice("-1")[0]}/${relativePath}`,
-                                            Buffer.from(content),
-                                        );
-                                    }
-                                }
-                                await anura.registerExternalApp(
-                                    `/fs${anura.settings.get("directories")["apps"]}/${path.split("/").slice("-1")[0]}`.replace(
-                                        "//",
-                                        "/",
-                                    ),
-                                );
-                                anura.notifications.add({
-                                    title: "Application Installed",
-                                    description: `Application ${path.replace(
-                                        "//",
-                                        "/",
-                                    )} has been installed permanently`,
-                                    timeout: 50000,
-                                });
-                            } catch (e) {
-                                console.error(e);
-                            }
-                        },
-                    },
-                });
-
-                iframe.contentWindow.addEventListener("load", () => {
-                    const matter = document.createElement("link");
-                    matter.setAttribute("rel", "stylesheet");
-                    matter.setAttribute("href", "/assets/matter.css");
-                    iframe.contentDocument.head.appendChild(matter);
-                });
-            } else if (
-                fileSelected
-                    .getAttribute("data-path")
-                    .split(".")
-                    .slice("-2")
-                    .join(".") === "lib.zip"
-            ) {
-                const data = await fs.promises.readFile(
-                    fileSelected.getAttribute("data-path"),
-                );
-
-                const path = fileSelected
-                    .getAttribute("data-path")
-                    .split(".")
-                    .slice(0, -1)
-                    .join(".");
-
-                const zip = await unzip(new Uint8Array(data));
-                const manifest = JSON.parse(
-                    new TextDecoder().decode(zip["manifest.json"]),
-                );
-                const icon = new Blob([zip[manifest.icon]], {
-                    type: mime.default.getType(manifest.icon),
-                });
-
-                const win = anura.wm.create(instance, {
-                    title: "",
-                    width: "450px",
-                    height: "525px",
-                });
-
-                const iframe = document.createElement("iframe");
-
-                iframe.setAttribute(
-                    "src",
-                    document.location.href.split("/").slice(0, -1).join("/") +
-                        "/appview.html?manifest=" +
-                        ExternalApp.serializeArgs([
-                            JSON.stringify(manifest),
-                            URL.createObjectURL(icon),
-                            "lib",
-                        ]),
-                );
-
-                iframe.style =
-                    "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
-
-                win.content.appendChild(iframe);
-
-                Object.assign(iframe.contentWindow, {
-                    anura,
-                    ExternalApp,
-                    instance,
-                    instanceWindow: win,
-                    install: {
-                        session: async () => {
-                            anura.notifications.add({
-                                title: "Library Installing for Session",
-                                description: `Library ${path.replace(
-                                    "//",
-                                    "/",
-                                )} is being installed, please wait`,
-                                timeout: 50000,
-                            });
-                            await fs.promises.mkdir(`${path}`);
-
-                            let filesRemaining = Object.keys(zip).length;
-
-                            Object.entries(zip).forEach(
-                                async ([relativePath, content]) => {
-                                    if (relativePath.endsWith("/")) {
-                                        await fs.promises.mkdir(
-                                            `${path}/${relativePath}`,
-                                        );
-                                    } else {
-                                        await fs.promises.writeFile(
-                                            `${path}/${relativePath}`,
-                                            Buffer.from(content),
-                                        );
-                                    }
-                                    filesRemaining--;
-                                    if (filesRemaining === 0) {
-                                        await anura.registerExternalLib(
-                                            `/fs/${path}`.replace("//", "/"),
-                                        );
-                                        anura.notifications.add({
-                                            title: "Library Installed for Session",
-                                            description: `Library ${path.replace(
-                                                "//",
-                                                "/",
-                                            )} has been installed temporarily, it will go away on refresh`,
-                                            timeout: 50000,
-                                        });
-                                    }
-                                },
-                                function (e) {
-                                    console.error(e);
-                                },
-                            );
-                        },
-                        permanent: async () => {
-                            anura.notifications.add({
-                                title: "Library Installing",
-                                description: `Library ${path.replace(
-                                    "//",
-                                    "/",
-                                )} is being installed`,
-                                timeout: 50000,
-                            });
-                            await fs.mkdir(
-                                anura.settings.get("directories")["libs"] +
-                                    "/" +
-                                    path.split("/").slice("-1")[0],
-                            );
-
-                            let filesRemaining = Object.keys(zip).length;
-
-                            Object.entries(zip).forEach(
-                                async ([relativePath, content]) => {
-                                    if (relativePath.endsWith("/")) {
-                                        await fs.promises.mkdir(
-                                            `${anura.settings.get("directories")["libs"]}/${path.split("/").slice("-1")[0]}/${relativePath}`,
-                                        );
-                                    } else {
-                                        await fs.promises.writeFile(
-                                            `${anura.settings.get("directories")["libs"]}/${path.split("/").slice("-1")[0]}/${relativePath}`,
-                                            Buffer.from(content),
-                                        );
-                                    }
-                                    filesRemaining--;
-                                    if (filesRemaining === 0) {
-                                        await anura.registerExternalLib(
-                                            `/fs${anura.settings.get("directories")["libs"]}/${path.split("/").slice("-1")[0]}`.replace(
-                                                "//",
-                                                "/",
-                                            ),
-                                        );
-                                        anura.notifications.add({
-                                            title: "Library Installed",
-                                            description: `Library ${path.replace(
-                                                "//",
-                                                "/",
-                                            )} has been installed permanently`,
-                                            timeout: 50000,
-                                        });
-                                    }
-                                },
-                                function (e) {
-                                    console.error(e);
-                                },
-                            );
-                        },
-                    },
-                });
-
-                iframe.contentWindow.addEventListener("load", () => {
-                    const matter = document.createElement("link");
-                    matter.setAttribute("rel", "stylesheet");
-                    matter.setAttribute("href", "/assets/matter.css");
-                    iframe.contentDocument.head.appendChild(matter);
-                });
-            } else {
                 anura.files.open(fileSelected.getAttribute("data-path"));
+                return;
             }
+
+            if (fileSelected.getAttribute("data-path").endsWith(".zip")) {
+                const data = await unzip(
+                    await anura.fs.promises.readFile(
+                        fileSelected.getAttribute("data-path"),
+                    ),
+                );
+                const root =
+                    fileSelected
+                        .getAttribute("data-path")
+                        .split("/")
+                        .slice(0, -1)
+                        .join("/") +
+                    "/" +
+                    fileSelected
+                        .getAttribute("data-path")
+                        .split("/")
+                        .pop()
+                        .split(".")
+                        .slice(0, -1)
+                        .join(".") +
+                    "/";
+                // const folders = [];
+                const files = [];
+                for (const item in data) {
+                    console.log(item);
+                    if (item.endsWith("/")) {
+                        // folders.push(item);
+                    } else {
+                        files.push([item, data[item]]);
+                    }
+                }
+                const sh = new fs.Shell();
+                for (const file of files) {
+                    const container =
+                        file[0].split("/").slice(0, -1).join("/") + "/";
+                    await sh.promises.mkdirp(root + container);
+
+                    await fs.promises.writeFile(
+                        root + file[0],
+                        Buffer.from(file[1]),
+                    );
+                }
+                reload();
+                return;
+            }
+
+            anura.files.open(fileSelected.getAttribute("data-path"));
         } else if (fileSelected.getAttribute("data-type") === "dir") {
             if (
                 fileSelected
@@ -396,19 +143,15 @@ async function fileAction(selected) {
                         anura.apps[manifest.package].open();
                         return;
                     }
-
                     const iconData = await fs.promises.readFile(
                         `${fileSelected.getAttribute("data-path")}/${manifest.icon}`,
                     );
-
                     const icon = new Blob([iconData]);
-
                     const win = anura.wm.create(instance, {
                         title: "",
                         width: "450px",
                         height: "525px",
                     });
-
                     const iframe = document.createElement("iframe");
                     iframe.setAttribute(
                         "src",
@@ -425,7 +168,6 @@ async function fileAction(selected) {
                     );
                     iframe.style =
                         "top:0; left:0; bottom:0; right:0; width:100%; height:100%; border:none; margin:0; padding:0;";
-
                     win.content.appendChild(iframe);
                     Object.assign(iframe.contentWindow, {
                         anura,
@@ -482,7 +224,6 @@ async function fileAction(selected) {
                             },
                         },
                     });
-
                     iframe.contentWindow.addEventListener("load", () => {
                         const matter = document.createElement("link");
                         matter.setAttribute("rel", "stylesheet");
@@ -646,15 +387,11 @@ async function fileAction(selected) {
 function setBreadcrumbs(path) {
     path = path.replace(/(\/)\1+/g, "$1");
     var pathSplit = path.split("/");
-    pathSplit[0] = "My files";
+    pathSplit[0] = "/";
     var breadcrumbs = document.querySelector(".breadcrumbs");
     breadcrumbs.setAttribute("data-current-path", path);
     breadcrumbs.innerHTML = "";
-    if (
-        pathSplit.length === 2 &&
-        pathSplit[0] === "My files" &&
-        pathSplit[1] === ""
-    ) {
+    if (pathSplit.length === 2 && pathSplit[0] === "/" && pathSplit[1] === "") {
         var breadcrumb = document.createElement("button");
         breadcrumb.innerText = "My files";
         breadcrumb.addEventListener("click", () => {
@@ -666,10 +403,14 @@ function setBreadcrumbs(path) {
     for (var i = 0; i < pathSplit.length; i++) {
         var breadcrumb = document.createElement("button");
         breadcrumb.innerText = pathSplit[i];
-        var index = i;
+        if (pathSplit[i] === "/") {
+            breadcrumb.innerText = "My files";
+        }
+        let index = i;
 
-        breadcrumb.addEventListener("click", () => {
-            loadPath("/" + pathSplit.slice(1, index).join("/"));
+        breadcrumb.addEventListener("click", function () {
+            let path = pathSplit.slice(0, index + 1).join("/");
+            loadPath(path);
         });
         breadcrumbs.appendChild(breadcrumb);
         if (pathSplit[i] !== pathSplit[pathSplit.length - 1]) {
@@ -725,7 +466,8 @@ function reload() {
 }
 
 function upload() {
-    let fauxput = document.createElement("input"); // fauxput - fake input that isn't shown or ever added to page TODO: think of a better name for this variable
+    // TODO: think of a better name for this variable
+    const fauxput = document.createElement("input"); // fauxput - fake input that isn't shown or ever added to page
     fauxput.type = "file";
     fauxput.onchange = async (e) => {
         const file = await e.target.files[0];
@@ -743,8 +485,32 @@ function upload() {
     fauxput.click();
 }
 
-function deleteFile() {
-    currentlySelected.forEach(async (item) => {
+async function download() {
+    for (const item of currentlySelected) {
+        if (item.getAttribute("data-type") !== "file") {
+            return;
+        }
+        const filePath = item.getAttribute("data-path");
+        const fileData = await fs.promises.readFile(filePath);
+        const file = await fs.promises.stat(filePath);
+        // keeping up the bad names
+        // TODO: this name is horrible, fix it
+        const fauxnchor = document.createElement("a");
+        fauxnchor.style.display = "none";
+        document.body.appendChild(fauxnchor);
+        const blob = new Blob([fileData], { type: "application/octet-stream" });
+        const url = window.URL.createObjectURL(blob);
+        fauxnchor.href = url;
+        fauxnchor.download = file.name;
+        fauxnchor.click();
+
+        window.URL.revokeObjectURL(url);
+        fauxnchor.remove();
+    }
+}
+
+async function deleteFile() {
+    for (item of currentlySelected) {
         await sh.rm(
             item.getAttribute("data-path"),
             {
@@ -755,7 +521,8 @@ function deleteFile() {
                 reload();
             },
         );
-    });
+    }
+    currentlySelected = [];
 }
 
 function copy() {
@@ -856,8 +623,8 @@ async function rename() {
     }
 }
 
-function installSession() {
-    currentlySelected.forEach(async (item) => {
+async function installSession() {
+    for (item of currentlySelected) {
         const path = item.getAttribute("data-path");
         const ext = path.split(".").slice("-1")[0];
         const stats = await fs.promises.stat(path);
@@ -903,11 +670,11 @@ function installSession() {
                 }
             }
         }
-    });
+    }
 }
 
-function installPermanent() {
-    currentlySelected.forEach(async (item) => {
+async function installPermanent() {
+    for (const item of currentlySelected) {
         const path = item.getAttribute("data-path");
         const ext = path.split(".").slice("-1")[0];
         const stats = await fs.promises.stat(path);
@@ -1049,7 +816,7 @@ function installPermanent() {
                 }
             }
         }
-    });
+    }
 }
 
 // Context menu version of the loadPath function

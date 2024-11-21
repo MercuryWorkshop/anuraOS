@@ -1,11 +1,8 @@
 class ExploreApp extends App {
+    name = "Explore";
+    package = "anura.explore";
+    icon = "/assets/icons/explore.png";
     hidden = false;
-    constructor() {
-        super();
-        this.name = "Explore";
-        this.icon = "/assets/icons/explore2.png";
-        this.package = "anura.explore";
-    }
 
     css = css`
         background-color: var(--theme-bg);
@@ -134,6 +131,10 @@ class ExploreApp extends App {
         }
     `;
 
+    constructor() {
+        super();
+    }
+
     whatsnew = (
         <div id="body">
             <h1>What's new in AnuraOS {anura.version.pretty}?</h1>
@@ -143,7 +144,7 @@ class ExploreApp extends App {
                 <span>
                     <a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
                         <img
-                            src="/assets/icons/themeeditor.png"
+                            src="/assets/icons/theme.png"
                             alt="Theme Editor Icon"
                         />{" "}
                         Theme Editor
@@ -296,7 +297,7 @@ class ExploreApp extends App {
                 <span>
                     <a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
                         <img
-                            src="/assets/icons/themeeditor.png"
+                            src="/assets/icons/theme.png"
                             alt="Theme Editor Icon"
                         />{" "}
                         Theme Editor

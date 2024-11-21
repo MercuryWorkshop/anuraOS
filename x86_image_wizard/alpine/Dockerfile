@@ -2,7 +2,7 @@ FROM i386/alpine:edge
 
 RUN apk add --update \
         alpine-base alpine-conf openrc bash ncurses shadow curl \
-        linux-virt linux-firmware-none linux-firmware-sb16 linux-headers \
+        linux-virt linux-headers linux-firmware-none linux-firmware-sb16 \
         gcc make gcompat musl-dev libx11-dev xinit \
         curl bind-tools \
         htop vim nano
@@ -45,5 +45,11 @@ RUN rc-update add killprocs shutdown
 RUN rc-update add twisp-service default
 
 COPY mkinitfs.conf /etc/mkinitfs/mkinitfs.conf
+RUN mkdir -p /etc/apk/commit_hooks.d/
+COPY anura-apk /etc/apk/commit_hooks.d/anura-linux.sh
+COPY anura-run /bin/anura-run
+RUN chmod +x /bin/anura-run
+
+RUN chmod +x /etc/apk/commit_hooks.d/anura-linux.sh
 RUN mkinitfs -c /etc/mkinitfs/mkinitfs.conf -b / $(cat /usr/share/kernel/virt/kernel.release)
 RUN bash

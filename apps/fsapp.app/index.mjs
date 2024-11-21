@@ -5,14 +5,13 @@ self.mime = await anura.import("npm:mime");
 self.currentlySelected = [];
 self.clipboard = [];
 self.removeAfterPaste = false;
-self.fs = anura.fs;
 self.filePicker = false;
+self.fs = anura.fs;
 self.Buffer = Filer.Buffer;
 self.sh = new anura.fs.Shell();
 
 // components
-import { File } from "./components/File.mjs";
-import { Folder } from "./components/Folder.mjs";
+import { File, Folder } from "./components/File.mjs";
 import { TopBar } from "./components/TopBar.mjs";
 import { SideBar } from "./components/SideBar.mjs";
 import { Selector } from "./components/Selector.mjs";
@@ -95,6 +94,7 @@ function App() {
         </div>
     `;
 }
+
 self.loadPath = async (path) => {
     console.debug("loading path: ", path);
     const files = await fs.promises.readdir(path + "/");
@@ -125,9 +125,11 @@ self.loadPath = async (path) => {
     }
 };
 document.body.appendChild(html`<${App} />`);
+
 if (filePicker) {
     document
         .getElementById("app")
         .appendChild(html`<${Selector}></${Selector}>`);
 }
+
 loadPath("/");

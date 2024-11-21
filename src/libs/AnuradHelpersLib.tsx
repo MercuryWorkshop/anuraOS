@@ -68,7 +68,7 @@ namespace AnuradHelpers {
 }
 
 class AnuradHelpersLib extends Lib {
-    icon = "/assets/icons/generic.png";
+    icon = "/assets/icons/generic.svg";
     package = "anura.daemon.helpers";
     name = "Anurad Helpers";
 

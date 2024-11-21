@@ -72,12 +72,6 @@ abstract class AnuraFSOperations<TStats> {
 
     abstract unlink(path: string, callback?: (err: Error | null) => void): void;
 
-    abstract mknod(
-        path: string,
-        mode: number,
-        callback?: (err: Error | null) => void,
-    ): void;
-
     abstract rmdir(path: string, callback?: (err: Error | null) => void): void;
 
     abstract mkdir(
@@ -223,60 +217,6 @@ abstract class AnuraFSOperations<TStats> {
         callback?: (err: Error | null) => void,
     ): void;
 
-    abstract setxattr(
-        path: string,
-        name: string,
-        value: string | object,
-        flag: "CREATE" | "REPLACE",
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract setxattr(
-        path: string,
-        name: string,
-        value: string | object,
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract fsetxattr(
-        fd: AnuraFD,
-        name: string,
-        value: string | object,
-        flag: "CREATE" | "REPLACE",
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract fsetxattr(
-        fd: AnuraFD,
-        name: string,
-        value: string | object,
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract getxattr(
-        path: string,
-        name: string,
-        callback?: (err: Error | null, value: string | object) => void,
-    ): void;
-
-    abstract fgetxattr(
-        fd: AnuraFD,
-        name: string,
-        callback?: (err: Error | null, value: string | object) => void,
-    ): void;
-
-    abstract removexattr(
-        path: string,
-        name: string,
-        callback?: (err: Error | null) => void,
-    ): void;
-
-    abstract fremovexattr(
-        fd: AnuraFD,
-        name: string,
-        callback?: (err: Error | null) => void,
-    ): void;
-
     /*
      * Asynchronous FS operations
      */
@@ -290,7 +230,6 @@ abstract class AnuraFSOperations<TStats> {
         access(path: string, mode?: number): Promise<void>;
         chown(path: string, uid: number, gid: number): Promise<void>;
         chmod(path: string, mode: number): Promise<void>;
-        getxattr(path: string, name: string): Promise<string | object>;
         link(srcPath: string, dstPath: string): Promise<void>;
         lstat(path: string): Promise<TStats>;
         mkdir(path: string, mode?: number): Promise<void>;
@@ -298,7 +237,6 @@ abstract class AnuraFSOperations<TStats> {
             prefix: string,
             options?: { encoding: string },
         ): Promise<string>;
-        mknod(path: string, mode: number): Promise<void>;
         open(
             path: string,
             flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
@@ -310,15 +248,8 @@ abstract class AnuraFSOperations<TStats> {
         ): Promise<string[]>;
         readFile(path: string): Promise<Uint8Array>;
         readlink(path: string): Promise<string>;
-        removexattr(path: string, name: string): Promise<void>;
         rename(oldPath: string, newPath: string): Promise<void>;
         rmdir(path: string): Promise<void>;
-        setxattr(
-            path: string,
-            name: string,
-            value: string | object,
-            flag?: "CREATE" | "REPLACE",
-        ): Promise<void>;
         stat(path: string): Promise<TStats>;
         symlink(srcPath: string, dstPath: string, type?: string): Promise<void>;
         truncate(path: string, len: number): Promise<void>;
@@ -1071,7 +1002,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 
     symlink(path: string, ...rest: any[]) {
         // @ts-ignore - Overloaded methods are scary
-        this.processPath(path).symlink(path, ...rest);
+        this.processPath(rest[0]).symlink(path, ...rest);
     }
 
     readlink(
@@ -1083,10 +1014,6 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 
     unlink(path: string, callback?: (err: Error | null) => void) {
         this.processPath(path).unlink(path, callback);
-    }
-
-    mknod(path: string, mode: number, callback?: (err: Error | null) => void) {
-        this.processPath(path).mknod(path, mode, callback);
     }
 
     rmdir(path: string, callback?: (err: Error | null) => void) {
@@ -1104,7 +1031,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
     mkdtemp(...args: any[]) {
         // Temp directories should remain in the root filesystem for now
         // @ts-ignore - Overloaded methods are scary
-        this.providers.get("/")!.mkdtemp(...args);
+        this.processPath(path).mkdtemp(...args);
     }
 
     readdir(path: string, ...rest: any[]) {
@@ -1230,41 +1157,6 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
         this.processPath(path).appendFile(path, data, callback);
     }
 
-    setxattr(path: string, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processPath(path).setxattr(path, ...rest);
-    }
-
-    fsetxattr(fd: AnuraFD, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processFD(fd).fsetxattr(fd, ...rest);
-    }
-
-    getxattr(
-        path: string,
-        name: string,
-        callback?: (err: Error | null, value: string | object) => void,
-    ) {
-        this.processPath(path).getxattr(path, name, callback);
-    }
-
-    fgetxattr(fd: AnuraFD, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processFD(fd).fgetxattr(fd, ...rest);
-    }
-
-    removexattr(
-        path: string,
-        name: string,
-        callback?: (err: Error | null) => void,
-    ) {
-        this.processPath(path).removexattr(path, name, callback);
-    }
-
-    fremovexattr(fd: AnuraFD, ...rest: any[]) {
-        // @ts-ignore - Overloaded methods are scary
-        this.processFD(fd).fremovexattr(fd, ...rest);
-    }
     // @ts-ignore - This is still being implemented.
     promises = {
         appendFile: (
@@ -1288,17 +1180,13 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
             this.processPath(path).promises.chown(path, uid, gid),
         chmod: (path: string, mode: number) =>
             this.processPath(path).promises.chmod(path, mode),
-        getxattr: (path: string, name: string) =>
-            this.processPath(path).promises.getxattr(path, name),
         link: (srcPath: string, dstPath: string) =>
             this.processPath(srcPath).promises.link(srcPath, dstPath),
         lstat: (path: string) => this.processPath(path).promises.lstat(path),
         mkdir: (path: string, mode?: number) =>
             this.processPath(path).promises.mkdir(path, mode),
         mkdtemp: (prefix: string, options?: { encoding: string }) =>
-            this.providers.get("/")!.promises.mkdtemp(prefix, options),
-        mknod: (path: string, mode: number) =>
-            this.processPath(path).promises.mknod(path, mode),
+            this.processPath(prefix).promises.mkdtemp(prefix, options),
         open: async (
             path: string,
             flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
@@ -1312,20 +1200,12 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
             this.processPath(path).promises.readFile(path),
         readlink: (path: string) =>
             this.processPath(path).promises.readlink(path),
-        removexattr: (path: string, name: string) =>
-            this.processPath(path).promises.removexattr(path, name),
         rename: (oldPath: string, newPath: string) =>
             this.processPath(oldPath).promises.rename(oldPath, newPath),
         rmdir: (path: string) => this.processPath(path).promises.rmdir(path),
-        setxattr: (
-            path: string,
-            name: string,
-            value: string | object,
-            flag?: "CREATE" | "REPLACE",
-        ) => this.processPath(path).promises.setxattr(path, name, value, flag),
         stat: (path: string) => this.processPath(path).promises.stat(path),
         symlink: (srcPath: string, dstPath: string, type?: string) =>
-            this.processPath(srcPath).promises.symlink(srcPath, dstPath, type),
+            this.processPath(dstPath).promises.symlink(srcPath, dstPath, type),
         truncate: (path: string, len: number) =>
             this.processPath(path).promises.truncate(path, len),
         unlink: (path: string) => this.processPath(path).promises.unlink(path),

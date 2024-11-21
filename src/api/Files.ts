@@ -3,28 +3,23 @@
 class FilesAPI {
     // This is the fallback icon that will be used if no handler is found and no default handler is set.
     // This should almost never be used, as it is a fallback for the fallback. It is here just in case.
-    fallbackIcon = "/missing_icon.svg";
+    fallbackIcon = "/assets/icons/missing_icon.svg";
 
     // Folder icon
-    folderIcon = "/missing_icon.svg";
+    folderIcon = "/assets/icons/missing_icon.svg";
 
-    open = async function (path: string): Promise<void> {
+    async open(path: string): Promise<void> {
         const ext = path.split("/").pop()!.split(".").pop();
         const extHandlers = anura.settings.get("FileExts") || {};
         if (extHandlers[ext!]) {
             const handler = extHandlers[ext!];
-            console.log(`Opening ${path} with ${handler}`);
             if (handler.handler_type === "module") {
                 const handlerModule = await anura.import(handler.id);
                 if (!handlerModule) {
-                    console.log(`Failed to load handler ${handler}`);
                     await this.defaultOpen(path);
                     return;
                 }
                 if (!handlerModule.openFile) {
-                    console.log(
-                        `Handler ${handler} does not have an openFile function`,
-                    );
                     await this.defaultOpen(path);
                     return;
                 }
@@ -42,23 +37,18 @@ class FilesAPI {
         // If no handler is found, try the default handler
         await this.defaultOpen(path);
         return;
-    };
+    }
 
     async defaultOpen(path: string): Promise<void> {
         const extHandlers = anura.settings.get("FileExts") || {};
         if (extHandlers["default"]) {
             const handler = extHandlers["default"];
-            console.log(`Opening ${path} with ${handler}`);
             if (handler.handler_type === "module") {
                 const handlerModule = await anura.import(handler.id);
                 if (!handlerModule) {
-                    console.log(`Failed to load handler ${handler}`);
                     return;
                 }
                 if (!handlerModule.openFile) {
-                    console.log(
-                        `Handler ${handler} does not have an openFile function`,
-                    );
                     return;
                 }
                 handlerModule.openFile(path);
@@ -75,7 +65,7 @@ class FilesAPI {
         }
     }
 
-    getIcon = async function (path: string) {
+    async getIcon(path: string): Promise<string> {
         const ext = path.split("/").pop()!.split(".").pop();
         const extHandlers = anura.settings.get("FileExts") || {};
         if (extHandlers[ext!]) {
@@ -83,13 +73,9 @@ class FilesAPI {
             if (handler.handler_type === "module") {
                 const handlerModule = await anura.import(handler.id);
                 if (!handlerModule) {
-                    console.log(`Failed to load handler ${handler}`);
                     return await this.defaultIcon(path);
                 }
                 if (!handlerModule.getIcon) {
-                    console.log(
-                        `Handler ${handler} does not have an getIcon function`,
-                    );
                     return await this.defaultIcon(path);
                 }
                 return handlerModule.getIcon(path);
@@ -108,22 +94,18 @@ class FilesAPI {
         }
         // If no handler is found, try the default handler
         return await this.defaultIcon(path);
-    };
+    }
 
-    async defaultIcon(path: string) {
+    async defaultIcon(path: string): Promise<string> {
         const extHandlers = anura.settings.get("FileExts") || {};
         if (extHandlers["default"]) {
             const handler = extHandlers["default"];
             if (handler.handler_type === "module") {
                 const handlerModule = await anura.import(handler.id);
                 if (!handlerModule) {
-                    console.log(`Failed to load handler ${handler}`);
                     return this.fallbackIcon;
                 }
                 if (!handlerModule.getIcon) {
-                    console.log(
-                        `Handler ${handler} does not have an getIcon function`,
-                    );
                     return this.fallbackIcon;
                 }
                 return handlerModule.getIcon(path);
@@ -143,7 +125,7 @@ class FilesAPI {
         return this.fallbackIcon;
     }
 
-    async getFileType(path: string) {
+    async getFileType(path: string): Promise<string> {
         const ext = path.split("/").pop()!.split(".").pop();
         const extHandlers = anura.settings.get("FileExts") || {};
         if (extHandlers[ext!]) {
@@ -151,13 +133,9 @@ class FilesAPI {
             if (handler.handler_type === "module") {
                 const handlerModule = await anura.import(handler.id);
                 if (!handlerModule) {
-                    console.log(`Failed to load handler ${handler}`);
                     return "Anura File";
                 }
                 if (!handlerModule.getFileType) {
-                    console.log(
-                        `Handler ${handler} does not have an getFileType function`,
-                    );
                     return "Anura File";
                 }
                 return handlerModule.getFileType(path);
@@ -190,6 +168,7 @@ class FilesAPI {
         };
         anura.settings.set("FileExts", extHandlers);
     }
+
     setModule(id: string, extension: string) {
         const extHandlers = anura.settings.get("FileExts") || {};
         extHandlers[extension] = {

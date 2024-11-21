@@ -1,14 +1,14 @@
 {
     "name": "anuraos",
     "version": "2.0.0",
+    "type": "module",
     "description": "webOS that has v86 capabilities and a modular app system",
-    "main": ".eslintrc.js",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/MercuryWorkshop/AnuraOS.git"
     },
-    "author": "",
-    "license": "ISC",
+    "author": "Mercury Workshop",
+    "license": "AGPL-3.0-only",
     "bugs": {
         "url": "https://github.com/MercuryWorkshop/AnuraOS/issues"
     },
@@ -16,32 +16,33 @@
     "dependencies": {
         "@mercuryworkshop/bare-mux": "^1.1.4",
         "@titaniumnetwork-dev/ultraviolet": "3.1.5",
-        "@typescript-eslint/eslint-plugin": "^5.60.1",
-        "autoprefixer": "^10.4.14",
+        "autoprefixer": "^10.4.20",
         "comlink": "^4.4.1",
-        "eslint": "=8.13.0",
-        "eslint-plugin-html": "^7.1.0",
-        "eslint-plugin-jsdoc": "^46.4.3",
-        "express": "^4.18.2",
-        "express-basic-auth": "^1.2.1",
         "fflate": "^0.8.2",
         "filer": "^1.4.1",
         "fs-readdir-recursive": "^1.1.0",
         "idb-keyval": "^6.2.1",
-        "libcurl.js": "^0.6.15",
-        "mime": "^4.0.1",
+        "libcurl.js": "^0.6.20",
+        "mime": "^4.0.4",
         "onchange": "^7.1.0",
-        "postcss": "^8.4.24",
-        "postcss-cli": "^10.1.0",
-        "serve-static": "^1.15.0",
-        "typescript": "=5.0.4"
+        "postcss": "^8.4.45",
+        "postcss-cli": "^11.0.0",
+        "typescript": "^5.6.3"
     },
     "devDependencies": {
-        "@types/node": "^20.5.9",
+        "eslint": "9.13.0",
+        "eslint-plugin-html": "^8.1.2",
+        "eslint-plugin-jsdoc": "^50.4.3",
+        "@typescript-eslint/eslint-plugin": "^8.11.0",
+        "@typescript-eslint/parser": "^8.11.0",
+        "@eslint/eslintrc": "^3.1.0",
+        "@eslint/js": "^9.13.0",
+        "@types/node": "^22.5.4",
         "@types/wicg-file-system-access": "^2023.10.5",
         "dreamland": "^0.0.24",
-        "prettier": "3.2.4",
-        "rollup": "^2.79.1",
+        "globals": "^15.11.0",
+        "prettier": "3.3.3",
+        "rollup": "^4.21.3",
         "workbox-cli": "7.1.0"
     }
 }

@@ -2,6 +2,15 @@ import RepoList from "./screens/RepoList.mjs";
 import ItemList from "./screens/ItemList.mjs";
 import Overview from "./screens/Overview.mjs";
 const { Store } = await anura.import("anura.libstore@2.0.0");
+const persist = await anura.import("anura.persistence");
+const loader = persist.buildLoader(anura);
+await loader.locate();
+const persistence = await loader.build(instance);
+
+if (anura.settings.get("workstore-repos")) {
+    await persistence.set("repos", anura.settings.get("workstore-repos"));
+    anura.settings.set("workstore-repos", null);
+}
 
 const branding = anura.settings.get("marketplace-branding") || {
     repoList: "Marketplace",
@@ -21,10 +30,10 @@ document.addEventListener("anura-theme-change", () => {
 
 window.saved = $state({
     repos: Object.entries(
-        anura.settings.get("workstore-repos") || {
+        (await persistence.get("repos")) || {
             "Anura App Repository":
                 "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
-            "Anura Games": "https://anura.games/",
+            "Anura Games": "https://games.anura.pro/",
             "BomberFish's Extras":
                 "https://raw.githubusercontent.com/BomberFish/anura-repo/master/",
         },
@@ -32,7 +41,7 @@ window.saved = $state({
 });
 
 instanceWindow.addEventListener("close", () => {
-    anura.settings.set("workstore-repos", Object.fromEntries(saved.repos));
+    persistence.set("repos", Object.fromEntries(saved.repos));
 });
 
 window.state = $state({

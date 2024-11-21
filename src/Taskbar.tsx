@@ -154,7 +154,8 @@ class Taskbar {
             </li>
         ));
     }
-    #contextMenu = new ContextMenuAPI(true); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
+
+    #contextMenu = new ContextMenu(true); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
     showcontext(app: App, e: MouseEvent) {
         if (app.windows.length > 0) {
             this.#contextMenu.removeAllItems();
@@ -248,7 +249,7 @@ class Taskbar {
     // shortcuts: { [key: string]: Shortcut } = {};
     constructor() {
         setInterval(() => {
-            const date = new Date();
+            const date = Date.now();
             this.state.date = this.dateformat.format(date);
             if (this.timeformat.resolvedOptions().hour12 === false) {
                 this.state.time = this.timeformat.format(date);

@@ -1,6 +1,6 @@
 // This provides the Comlink library through the anura libs system, rather than the
 class Comlink extends Lib {
-    icon = "/assets/icons/generic.png";
+    icon = "/assets/icons/generic.svg";
     package = "npm:comlink";
     name = "Comlink";
 

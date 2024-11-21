@@ -20,6 +20,7 @@ rm -rf $OUT_ROOTFS_BIN || :
 cp ../xfrog.sh .
 cp ../xsetrandr.sh .
 cp -r ../anuramouse .
+cp ../anura-run .
 cd ../epoxy/server; RUSTFLAGS="-C target-feature=+crt-static" cargo +nightly b -F twisp -r --target i686-unknown-linux-gnu; cp ../target/i686-unknown-linux-gnu/release/epoxy-server ../../alpine/;
 cd ../../alpine;
 
@@ -47,6 +48,7 @@ sudo umount "$loop"
 sudo losetup -d "$loop"
 rm "$OUT_ROOTFS_TAR"
 rm -rf "$OUT_ROOTFS_MNT"
+rm anura-run
 rm xfrog.sh
 rm xsetrandr.sh
 rm epoxy-server
