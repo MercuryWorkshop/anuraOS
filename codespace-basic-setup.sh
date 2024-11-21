@@ -2,7 +2,7 @@
 
 #fix the uuidgen command not found error
 sudo apt update
-sudo apt upgrade
+sudo apt upgrade -y
 sudo apt install -y uuid-runtime gcc-multilib
 
 #install
