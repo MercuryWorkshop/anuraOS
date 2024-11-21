@@ -24,7 +24,7 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 
 ### Easy Install for GitHub Codespaces
 
--   Run `bash codespace-basic-setup.sh`
+-   Run `source codespace-basic-setup.sh`
 
 > [!NOTE]
 >
