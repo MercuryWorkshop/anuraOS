@@ -40,11 +40,12 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 -   `rustup`
 -   `wasm-opt`
 -   `make`
--   `gcc`
+-   `gcc` (`gcc-multilib` on Debian and Ubuntu x86_64)
 -   `clang`
 -   `uuid-runtime`
 -   `jq`
 -   `docker`
+-   An x86(-64) Linux PC (`make rootfs-alpine` build depends on x86 specific tools)
 
 > [!NOTE]
 > You will have to install the required Rust toolchain by running `rustup target add wasm32-unknown-unknown` and also `rustup target add i686-unknown-linux-gnu` if you are planning to build v86 images.
