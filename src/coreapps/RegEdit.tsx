@@ -209,36 +209,73 @@ class RegEdit extends App {
                                 <tr>
                                     <td class="name">{item[0]}</td>
                                     <td class="type">{typeof item[1]}</td>
-                                    <input
-                                        class="value matter-textfield-outlined"
-                                        on:blur={function (event: any) {
-                                            const elements =
-                                                event.srcElement.parentElement
-                                                    .children;
-                                            try {
-                                                anura.settings.cache[
-                                                    elements[0].innerText
-                                                ] = JSON.parse(
-                                                    elements[2].value,
+                                    {typeof item[1] === "boolean" ? (
+                                        <label class="value matter-switch">
+                                            <input
+                                                type="checkbox"
+                                                checked={item[1]}
+                                                on:change={function (e: any) {
+                                                    const elements =
+                                                        e.srcElement
+                                                            .parentElement
+                                                            .children;
+                                                    console.log(
+                                                        item[0],
+                                                        e.srcElement.srcchecked,
+                                                    );
+                                                    anura.settings.set(
+                                                        item[0],
+                                                        e.srcElement.checked,
+                                                    );
+                                                }}
+                                            />
+                                            <span></span>
+                                        </label>
+                                    ) : (
+                                        <input
+                                            class="value matter-textfield-outlined"
+                                            on:blur={function (event: any) {
+                                                const elements =
+                                                    event.srcElement
+                                                        .parentElement.children;
+                                                console.log(
+                                                    item[0],
+                                                    event.srcElement.value,
                                                 );
-                                                anura.settings.save();
-                                            } catch (e) {
-                                                elements[2].value =
-                                                    anura.settings.cache[
-                                                        elements[0].innerText
-                                                    ];
-                                                anura.notifications.add({
-                                                    title: "RegEdit Error",
-                                                    description: `Failed to set value for ${elements[0].innerText}, invalid input`,
-                                                    timeout: 50000,
-                                                });
-                                            }
+                                                try {
+                                                    const parsed = JSON.parse(
+                                                        event.srcElement.value,
+                                                    );
 
-                                            // console.log(JSON.parse(event.srcElement.value));
-                                            console.log("blur", event);
-                                        }}
-                                        value={JSON.stringify(item[1])}
-                                    ></input>
+                                                    anura.settings.set(
+                                                        elements[0].innerText,
+                                                        parsed,
+                                                    );
+
+                                                    // anura.settings.cache[
+                                                    //     elements[0].innerText
+                                                    // ] = JSON.parse(
+                                                    //     elements[2].value,
+                                                    // );
+                                                    // anura.settings.save();
+                                                } catch (e) {
+                                                    elements[2].value =
+                                                        anura.settings.get(
+                                                            item[0],
+                                                        );
+                                                    anura.notifications.add({
+                                                        title: "RegEdit Error",
+                                                        description: `Failed to set value for ${elements[0].innerText}, invalid input`,
+                                                        timeout: 50000,
+                                                    });
+                                                }
+
+                                                // console.log(JSON.parse(event.srcElement.value));
+                                                console.log("blur", event);
+                                            }}
+                                            value={JSON.stringify(item[1])}
+                                        ></input>
+                                    )}
                                 </tr>
                             )),
                     )}
