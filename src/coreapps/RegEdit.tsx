@@ -248,25 +248,34 @@ class RegEdit extends App {
     );
 
     async open(): Promise<WMWindow | undefined> {
-        const win = anura.wm.create(this, {
-            title: "Registry Editor",
-            width: "910px",
-            height: `${(720 * window.innerHeight) / 1080}px`,
-            resizable: true,
-        });
-
-        win.content.appendChild(await this.page());
+        let win: WMWindow | undefined;
         if (!anura.settings.get("disable-regedit-warning")) {
             anura.dialog
                 .confirm(
                     "Are you sure you want to continue?",
                     "Editing the registry can cause irreparable damage to your system!",
                 )
-                .then((value) => {
-                    if (value === false) {
-                        win.close();
+                .then(async (value) => {
+                    if (value === true) {
+                        win = anura.wm.create(this, {
+                            title: "Registry Editor",
+                            width: "910px",
+                            height: `${(720 * window.innerHeight) / 1080}px`,
+                            resizable: true,
+                        });
+
+                        win.content.appendChild(await this.page());
                     }
                 });
+        } else {
+            win = anura.wm.create(this, {
+                title: "Registry Editor",
+                width: "910px",
+                height: `${(720 * window.innerHeight) / 1080}px`,
+                resizable: true,
+            });
+
+            win.content.appendChild(await this.page());
         }
 
         return win;
