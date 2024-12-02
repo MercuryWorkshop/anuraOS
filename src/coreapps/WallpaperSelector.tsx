@@ -291,6 +291,7 @@ class WallpaperSelector extends App {
         h2 {
             display: inline-block;
             margin-right: 1rem;
+            cursor: pointer;
         }
     `;
 
