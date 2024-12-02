@@ -125,6 +125,34 @@ class Taskbar {
                         // @ts-ignore
                         this.dragged = $el;
                     }}
+                    on:drag={(e: DragEvent) => {
+                        // draw a line to show where the icon will be placed
+                        const icons = document.querySelectorAll(
+                            ".taskbar-button .showDialog",
+                        );
+                        const dropX = e.clientX;
+                        const rects: DOMRect[] = [];
+                        icons.forEach((icn) => {
+                            const rect = icn.getBoundingClientRect();
+                            rects.push(rect);
+                        });
+                        let closestIndex =
+                            anura.settings.get("applist").length - 1;
+                        rects.forEach((rect, index) => {
+                            if (
+                                dropX > rect.left &&
+                                dropX < (rects[index + 1]?.left || 0)
+                            ) {
+                                closestIndex = index;
+                            }
+                        });
+                        for (let i = 0; i < icons.length; i++) {
+                            (icons[i] as HTMLElement).style.borderRight =
+                                "none";
+                        }
+                        (icons[closestIndex] as HTMLElement).style.borderRight =
+                            "2px solid var(--theme-fg)";
+                    }}
                     class="showDialog"
                     on:click={(e: MouseEvent) => {
                         if (app.windows.length === 1) {
