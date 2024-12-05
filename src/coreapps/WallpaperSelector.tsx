@@ -93,10 +93,8 @@ class WallpaperSelector extends App {
             grid-gap: 20px;
             margin-left: 20px;
             text-align: center;
-            overflow-y: scroll;
-            height: calc(
-                100% - 264px
-            ); /* i just realized this was a hacky workaround, can someone make it better - fish */
+            overflow-y: auto;
+            flex-grow: 1;
         }
         .wallpaper-list-item {
             cursor: pointer;
@@ -408,7 +406,7 @@ class WallpaperSelector extends App {
             </div>
             {$if(
                 use(this.state.tab, (tab) => tab === "wallpapers"),
-                <div>
+                <div style="display: flex; flex-direction: column; height: 100%;">
                     <div class="current-wallpaper">
                         <img
                             class="current-wallpaper-image"
