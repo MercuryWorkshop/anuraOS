@@ -144,7 +144,7 @@ class WallpaperSelector extends App {
             border: none;
             padding: 0;
             width: 2.5rem;
-            height: 25px;
+            height: 2rem;
         }
 
         input[type="color" i]::-webkit-color-swatch {
@@ -196,6 +196,7 @@ class WallpaperSelector extends App {
             align-items: center;
             width: 100%;
             padding-block: 0.6rem;
+            /* height: 2.75em; */
         }
 
         .editor:not(:last-of-type) {
@@ -232,6 +233,9 @@ class WallpaperSelector extends App {
             display: flex;
             gap: 0.15rem;
 
+            opacity: 1;
+            transition: opacity 0.15s allow-discrete;
+
             & button {
                 padding: 0.5rem 0.75rem;
                 border-radius: 10rem;
@@ -267,6 +271,18 @@ class WallpaperSelector extends App {
                     );
                     transition: 0.05s background;
                 }
+            }
+
+            &[hidden] {
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.15s allow-discrete;
+            }
+
+            /* because fuck firefox and its users */
+            @starting-style {
+                opacity: 0;
+                transition: opacity 0.15 allow-discrete;
             }
         }
 
@@ -386,7 +402,13 @@ class WallpaperSelector extends App {
                 </span>
                 {$if(
                     use(this.state.tab, (tab) => tab === "colors"),
-                    <span id="btns">
+                    <span
+                        id="btns"
+                        bind:hidden={use(
+                            this.state.tab,
+                            (tab) => tab === "wallpapers",
+                        )}
+                    >
                         <button
                             style={{
                                 color: use(anura.ui.theme.state.foreground),
