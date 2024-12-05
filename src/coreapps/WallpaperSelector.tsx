@@ -271,25 +271,56 @@ class WallpaperSelector extends App {
         }
 
         &:has(#colors) h2:not(:first-of-type) {
-            color: var(--theme-fg);
+            color: var(--theme-accent);
+
+            &::after {
+                width: 100%;
+            }
         }
 
         &:has(#colors) h2 {
-            color: var(--theme-secondary-fg);
+            color: var(--theme-fg);
+
+            &::after {
+                width: 0px;
+            }
         }
 
         &:not(:has(#colors)) h2 {
-            color: var(--theme-fg);
+            color: var(--theme-accent);
+
+            &::after {
+                width: 100%;
+            }
         }
 
         &:not(:has(#colors)) h2:not(:first-of-type) {
-            color: var(--theme-secondary-fg);
+            color: var(--theme-fg);
+
+            &::after {
+                width: 0px;
+            }
         }
 
         h2 {
             display: inline-block;
             margin-right: 1rem;
             cursor: pointer;
+            font-size: 1rem;
+            text-transform: capitalize;
+
+            &::after {
+                content: "";
+                display: block;
+                width: 0px;
+                height: 3px;
+                background: var(--theme-accent);
+                margin-top: 0.5rem;
+                transition: 0.15s width;
+                display: flex;
+                align-self: center;
+                justify-self: center;
+            }
         }
     `;
 
