@@ -26,6 +26,7 @@ class Anura {
     dialog: Dialog;
     sw: SWProcess;
     anurad: Anurad;
+    activation: Activation;
     systray: Systray;
     uri = new URIHandlerAPI();
     files = new FilesAPI();
@@ -49,6 +50,7 @@ class Anura {
 
         this.notifications = new NotificationService();
         this.processes = new Processes();
+        this.activation = new Activation(settings);
         document.body.appendChild(this.notifications.element);
     }
 
