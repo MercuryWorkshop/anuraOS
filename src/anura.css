@@ -116,7 +116,8 @@ nav li {
     position: absolute;
     background-color: var(--theme-secondary-bg);
     padding: 5px 0;
-    width: 150px;
+    min-width: 150px;
+    max-width: 250px;
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
 
     z-index: 10000;
@@ -128,7 +129,8 @@ nav li {
 
 .custom-menu.large {
     padding: 5px 0;
-    width: 170px;
+    min-width: 170px;
+    max-width: 300px;
     background-color: color-mix(in srgb, var(--theme-dark-bg) 85%, transparent);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
