@@ -23,6 +23,11 @@
     opacity: 1;
 }
 
+.aliceWMwin svg {
+    fill: var(--theme-fg);
+    height: 12px;
+}
+
 .scaletransition {
     transition:
         visibility 0s,

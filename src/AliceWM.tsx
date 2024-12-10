@@ -81,7 +81,9 @@ class WMWindow extends EventTarget implements Process {
         this.state.title = title;
     }
 
-    maximizeImg: HTMLImageElement;
+    maximizeImg: HTMLOrSVGElement;
+    maximizeSvg: HTMLOrSVGElement;
+    restoreSvg: HTMLOrSVGElement;
     constructor(
         wininfo: WindowInformation,
         public app?: App,
@@ -97,6 +99,42 @@ class WMWindow extends EventTarget implements Process {
             this.resizable = true;
         }
         this.clampWindows = !!anura.settings.get("clampWindows");
+
+        this.maximizeSvg = (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                width="12px"
+                height="12px"
+                viewBox="0 0 12 12"
+                version="1.1"
+            >
+                <g id="surface1">
+                    <path
+                        style=" stroke:none;fill-rule:evenodd;fill-opacity:1;"
+                        d="M 11.5 0.5 L 11.5 11.5 L 0.5 11.5 L 0.5 0.5 Z M 10 10 L 2 10 L 2 2 L 10 2 Z M 10 10 "
+                    />
+                </g>
+            </svg>
+        );
+
+        this.restoreSvg = (
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                width="12px"
+                height="12px"
+                viewBox="0 0 12 12"
+                version="1.1"
+            >
+                <g id="surface1">
+                    <path
+                        style=" stroke:none;fill-rule:evenodd;fill-opacity:1;"
+                        d="M 11.5 8 L 4 8 L 4 0.5 L 11.5 0.5 Z M 5.5 6.5 L 5.5 2 L 10 2 L 10 6.5 Z M 2 4 L 0.5 4 L 0.5 11.5 L 8 11.5 L 8 10 L 2 10 Z M 2 4 "
+                    />
+                </g>
+            </svg>
+        );
 
         this.element = (
             <div
@@ -172,35 +210,47 @@ class WMWindow extends EventTarget implements Process {
                             this.minimize();
                         }}
                     >
-                        <img
-                            src="/assets/window/minimize.svg"
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink"
+                            width="12px"
                             height="12px"
-                            class="windowButtonIcon"
-                        />
+                            viewBox="0 0 12 12"
+                            version="1.1"
+                        >
+                            <g id="surface1">
+                                <path
+                                    style=" stroke:none;fill-rule:evenodd;fill-opacity:1;"
+                                    d="M 0.5 10 L 11.5 10 L 11.5 11.5 L 0.5 11.5 Z M 0.5 10 "
+                                />
+                            </g>
+                        </svg>
                     </button>
                     <button
                         class="windowButton maximize"
                         on:click={this.maximize.bind(this)}
                     >
-                        {
-                            (this.maximizeImg = (
-                                <img
-                                    src="/assets/window/maximize.svg"
-                                    height="12px"
-                                    class="windowButtonIcon"
-                                />
-                            ) as HTMLImageElement)
-                        }
+                        {(this.maximizeImg = this.maximizeSvg)}
                     </button>
                     <button
                         class="windowButton close"
                         on:click={this.close.bind(this)}
                     >
-                        <img
-                            src="/assets/window/close.svg"
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink"
+                            width="12px"
                             height="12px"
-                            class="windowButtonIcon"
-                        />
+                            viewBox="0 0 12 12"
+                            version="1.1"
+                        >
+                            <g id="surface1">
+                                <path
+                                    style=" stroke:none;fill-rule:evenodd;fill-opacity:1;"
+                                    d="M 11.5 1.609375 L 10.390625 0.5 L 6 4.890625 L 1.609375 0.5 L 0.5 1.609375 L 4.890625 6 L 0.5 10.390625 L 1.609375 11.5 L 6 7.109375 L 10.390625 11.5 L 11.5 10.390625 L 7.109375 6 Z M 11.5 1.609375 "
+                                />
+                            </g>
+                        </svg>
                     </button>
                 </div>
                 {
@@ -599,7 +649,7 @@ class WMWindow extends EventTarget implements Process {
                 this.element.classList.remove("scaletransition");
             }, 200);
 
-        this.maximizeImg.src = "/assets/window/restore.svg";
+        this.maximizeImg = this.restoreSvg;
 
         this.justresized = true;
         this.maximized = true;
@@ -631,7 +681,7 @@ class WMWindow extends EventTarget implements Process {
 
             WMSplitBar.prototype.cleanup();
 
-            this.maximizeImg.src = "/assets/window/maximize.svg";
+            this.maximizeImg = this.maximizeSvg;
 
             this.element.setAttribute("style", this.oldstyle!);
             this.justresized = true;
@@ -655,7 +705,7 @@ class WMWindow extends EventTarget implements Process {
                 this.element.classList.remove("maxtransition");
                 this.element.classList.remove("scaletransition");
             }, 200);
-        this.maximizeImg.src = "/assets/window/maximize.svg";
+        this.maximizeImg = this.maximizeSvg;
 
         await sleep(10); // Race condition as a feature
         this.justresized = true;
@@ -952,7 +1002,7 @@ class WMWindow extends EventTarget implements Process {
         );
         this.onresize(this.width, this.height);
 
-        this.maximizeImg.src = "/assets/window/restore.svg";
+        this.maximizeImg = this.restoreSvg;
         this.snapped = true;
     }
 
