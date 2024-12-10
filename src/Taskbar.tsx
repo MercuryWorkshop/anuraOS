@@ -368,12 +368,7 @@ class Taskbar {
                             calendar.close();
                             launcher.toggleVisible();
                         }}
-                    >
-                        <img
-                            src="/assets/icons/launcher.svg"
-                            style="height:100%;width:100%"
-                        ></img>
-                    </div>
+                    ></div>
                 </div>
                 <nav
                     id="taskbar-bar"
