@@ -17,6 +17,22 @@ const DisclosureGroup: Component<{
 
     this.css = `
         padding-left: ${0.8 * this.level!}em;
+		// height: 1.75em;
+		border-radius: 0.2em;
+
+		transition: background-color 0.05s;
+
+		&:hover {
+			background-color: color-mix(in srgb, var(--theme-secondary-bg), transparent 90%);
+		}
+
+		&.selected {
+            background-color: var(--theme-secondary-bg);
+        }
+
+        &.selected details {
+            background-color: var(--theme-bg);
+        }
     `;
 
     return (
@@ -109,6 +125,11 @@ class RegEdit extends App {
             margin: 0;
         }
 
+        summary {
+            // height: 2em;
+            cursor: pointer;
+        }
+
         .value {
             overflow: hidden;
             text-overflow: ellipsis;
@@ -125,13 +146,32 @@ class RegEdit extends App {
             white-space: nowrap;
         }
 
-        .selected {
-            background-color: var(--theme-secondary-bg);
+        td {
+            padding-inline: 0.5em;
         }
 
-        .selected details {
-            background-color: var(--theme-bg);
+        tr {
+            height: 4rem;
+            margin: 0;
+            // border-bottom: 1px solid var(--theme-border);
         }
+
+        label {
+            width: 100%;
+        }
+
+        table {
+            border-color: var(--theme-border);
+            // border-collapse: collapse;
+        }
+
+        // tr:last-child {
+        //     border-bottom: none;
+        // }
+
+        // td:not(:last-child) {
+        //     border-right: 1px solid var(--theme-border);
+        // }
     `;
 
     constructor() {
@@ -168,7 +208,7 @@ class RegEdit extends App {
                                     this.state.selected = anura.settings.cache;
                                 }}
                             >
-                                System
+                                Root
                             </span>
                         </summary>
                         {Object.entries(anura.settings.cache)
@@ -209,73 +249,97 @@ class RegEdit extends App {
                                 <tr>
                                     <td class="name">{item[0]}</td>
                                     <td class="type">{typeof item[1]}</td>
-                                    {typeof item[1] === "boolean" ? (
-                                        <label class="value matter-switch">
-                                            <input
-                                                type="checkbox"
-                                                checked={item[1]}
-                                                on:change={function (e: any) {
-                                                    const elements =
-                                                        e.srcElement
-                                                            .parentElement
-                                                            .children;
-                                                    console.log(
-                                                        item[0],
-                                                        e.srcElement.srcchecked,
-                                                    );
-                                                    anura.settings.set(
-                                                        item[0],
-                                                        e.srcElement.checked,
-                                                    );
-                                                }}
-                                            />
-                                            <span></span>
-                                        </label>
-                                    ) : (
-                                        <input
-                                            class="value matter-textfield-outlined"
-                                            on:blur={function (event: any) {
-                                                const elements =
-                                                    event.srcElement
-                                                        .parentElement.children;
-                                                console.log(
-                                                    item[0],
-                                                    event.srcElement.value,
-                                                );
-                                                try {
-                                                    const parsed = JSON.parse(
-                                                        event.srcElement.value,
-                                                    );
-
-                                                    anura.settings.set(
-                                                        elements[0].innerText,
-                                                        parsed,
-                                                    );
-
-                                                    // anura.settings.cache[
-                                                    //     elements[0].innerText
-                                                    // ] = JSON.parse(
-                                                    //     elements[2].value,
-                                                    // );
-                                                    // anura.settings.save();
-                                                } catch (e) {
-                                                    elements[2].value =
-                                                        anura.settings.get(
+                                    <td class="value">
+                                        {typeof item[1] === "boolean" ? (
+                                            <label class="value matter-switch">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={item[1]}
+                                                    on:change={function (
+                                                        e: any,
+                                                    ) {
+                                                        const elements =
+                                                            e.srcElement
+                                                                .parentElement
+                                                                .children;
+                                                        console.log(
                                                             item[0],
+                                                            e.srcElement
+                                                                .srcchecked,
                                                         );
-                                                    anura.notifications.add({
-                                                        title: "RegEdit Error",
-                                                        description: `Failed to set value for ${elements[0].innerText}, invalid input`,
-                                                        timeout: 50000,
-                                                    });
-                                                }
+                                                        anura.settings.set(
+                                                            item[0],
+                                                            e.srcElement
+                                                                .checked,
+                                                        );
+                                                    }}
+                                                />
+                                                <span></span>
+                                            </label>
+                                        ) : (
+                                            <label class="matter-textfield-filled">
+                                                <input
+                                                    placeholder=" "
+                                                    on:blur={function (
+                                                        event: any,
+                                                    ) {
+                                                        const elements =
+                                                            event.srcElement
+                                                                .parentElement
+                                                                .children;
+                                                        console.log(
+                                                            item[0],
+                                                            event.srcElement
+                                                                .value,
+                                                        );
+                                                        try {
+                                                            const parsed =
+                                                                JSON.parse(
+                                                                    event
+                                                                        .srcElement
+                                                                        .value,
+                                                                );
 
-                                                // console.log(JSON.parse(event.srcElement.value));
-                                                console.log("blur", event);
-                                            }}
-                                            value={JSON.stringify(item[1])}
-                                        ></input>
-                                    )}
+                                                            anura.settings.set(
+                                                                elements[0]
+                                                                    .innerText,
+                                                                parsed,
+                                                            );
+
+                                                            // anura.settings.cache[
+                                                            //     elements[0].innerText
+                                                            // ] = JSON.parse(
+                                                            //     elements[2].value,
+                                                            // );
+                                                            // anura.settings.save();
+                                                        } catch (e) {
+                                                            elements[2].value =
+                                                                anura.settings.get(
+                                                                    item[0],
+                                                                );
+                                                            anura.notifications.add(
+                                                                {
+                                                                    title: "RegEdit Error",
+                                                                    description: `Failed to set value for ${elements[0].innerText}, invalid input`,
+                                                                    timeout: 50000,
+                                                                },
+                                                            );
+                                                        }
+
+                                                        // console.log(JSON.parse(event.srcElement.value));
+                                                        console.log(
+                                                            "blur",
+                                                            event,
+                                                        );
+                                                    }}
+                                                    value={JSON.stringify(
+                                                        item[1],
+                                                    )}
+                                                />
+                                                <span>Value</span>
+                                            </label>
+                                        )}
+                                    </td>
                                 </tr>
                             )),
                     )}
