@@ -6,7 +6,10 @@ class OobeView {
         offlineEnabled: true,
         v86Enabled: false,
         dlsize: "0MB",
+        productKey: "",
     });
+
+    activation = new Activation();
 
     constructor() {
         useChange([this.state.offlineEnabled, this.state.v86Enabled], () => {
@@ -105,6 +108,18 @@ class OobeView {
             filter: brightness(1.1);
         }
 
+        .screen .unpreferredButton {
+            background-color: transparent;
+            border: 1px solid rgb(26, 115, 232);
+            border-radius: 16px;
+            border-style: none;
+            color: white;
+            height: 2em;
+            padding-left: 1em;
+            padding-right: 1em;
+            transition: 0s;
+        }
+
         .screen button {
             background-color: var(--oobe-bg);
             border-radius: 16px;
@@ -134,6 +149,10 @@ class OobeView {
             display: ${anura.platform.type === "mobile" ? "none;" : "unset;"};
         }
 
+        #activation #subtitle {
+            margin-bottom: 0.25rem;
+        }
+
         .material-symbols-outlined {
             font-size: 1rem;
         }
@@ -151,6 +170,15 @@ class OobeView {
         #features #subtitle {
             margin-bottom: 2rem;
         }
+
+        .matter-textfield-standard > input,
+        .matter-textfield-standard > textarea {
+            border-bottom: solid 1px gray;
+        }
+
+        .matter-checkbox:has(input:disabled) {
+            filter: grayscale(1) contrast(0.25);
+        }
     `;
 
     steps = [
@@ -167,6 +195,101 @@ class OobeView {
                                 class="preferredButton"
                             >
                                 Get Started
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            ),
+            on: () => {},
+        },
+
+        {
+            elm: (
+                <div class="screen" id="activation">
+                    <h1>Activate AnuraOS</h1>
+                    <div id="subtitle">
+                        Locate your 10-digit product key and type it in the
+                        space below. Then click Next to continue.
+                    </div>
+                    <div id="gridContent">
+                        <div>
+                            <label class="matter-textfield-standard">
+                                <input
+                                    placeholder=" "
+                                    type="text"
+                                    pattern="[0-9]{3}-[0-9]{7}"
+                                    bind:value={use(this.state.productKey)}
+                                    on:keypress={() => {
+                                        if (this.state.productKey.length > 11) {
+                                            this.state.productKey =
+                                                this.state.productKey.slice(
+                                                    0,
+                                                    11,
+                                                );
+                                        } else if (
+                                            this.state.productKey.length === 3
+                                        ) {
+                                            this.state.productKey += "-";
+                                        }
+                                    }}
+                                />
+                                <span>Product Key</span>
+                            </label>
+                            <br></br>
+                            <div
+                                class="sub"
+                                style={{
+                                    marginTop: "1rem",
+                                }}
+                            >
+                                <span class="material-symbols-outlined">
+                                    info
+                                </span>
+                                &nbsp;Any Windows 95 retail key will work.
+                            </div>
+                        </div>
+                        <div id="bottomButtons">
+                            <button on:click={() => this.nextStep()}>
+                                I don't have a key
+                            </button>
+                            <button
+                                on:click={() => {
+                                    try {
+                                        // The sum of the digits should be divisible by 7
+                                        if (
+                                            this.activation.validate(
+                                                this.state.productKey,
+                                            )
+                                        ) {
+                                            anura.settings.set(
+                                                "product-key",
+                                                this.state.productKey,
+                                            );
+                                            this.nextStep();
+                                        } else {
+                                            throw "Invalid key!";
+                                        }
+                                    } catch (e) {
+                                        console.error(e);
+                                        alert(
+                                            "Invalid key! Please check the key and try again.",
+                                        );
+                                    }
+                                }}
+                                class="preferredButton"
+                            >
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        fontSize: "0.7rem!important",
+                                    }}
+                                >
+                                    <span>Next</span>
+                                    <span class="material-symbols-outlined">
+                                        chevron_right
+                                    </span>
+                                </div>
                             </button>
                         </div>
                     </div>
@@ -196,13 +319,16 @@ class OobeView {
                         <input
                             type="checkbox"
                             bind:checked={use(this.state.v86Enabled)}
+                            disabled={!this.activation.activated}
                         />
                         <span>Linux Emulation</span>
                     </label>
                     <div class="sub">
                         <span class="material-symbols-outlined">info</span>
-                        &nbsp;This allows you to run Linux applications on
-                        AnuraOS.
+                        &nbsp;
+                        {this.activation.activated
+                            ? "This allows you to run Linux applications on AnuraOS."
+                            : "The x86 subsystem is not available because you have not activated AnuraOS."}
                     </div>
                     <br></br>
                     <div id="size" class="sub">

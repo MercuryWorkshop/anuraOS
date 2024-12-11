@@ -130,6 +130,20 @@ window.addEventListener("load", async () => {
         } else if (anura.settings.get("i-am-a-true-gangsta")) {
             splashToRemove = gangstaBootsplash;
             document.body.appendChild(gangstaBootsplash);
+        } else if (anura.activation.activated === false) {
+            splashToRemove = bootsplash;
+            document.body.appendChild(bootsplash);
+            const ActivateMark = document.createElement("span");
+            ActivateMark.setAttribute(
+                "style",
+                "position: absolute; bottom: 70px; right: 30px; color: white; opacity: 0.8; z-index: 99999999; user-select: none; webkit-user-select: none; pointer-events: none;",
+            );
+            ActivateMark.innerHTML =
+                "<h2 style='margin-bottom: 0;'>Activate AnuraOS</h2><p style='margin-top: 0.5rem;'>Open Settings to activate AnuraOS.</p>";
+            // ActivateMark.onclick = () => {
+            //     anura.apps["anura.settings"].open();
+            // }
+            document.body.appendChild(ActivateMark);
         } else {
             splashToRemove = bootsplash;
             document.body.appendChild(bootsplash);
@@ -609,6 +623,7 @@ document.addEventListener("anura-login-completed", async () => {
     document.body.appendChild(quickSettings.notificationCenterElement);
     document.body.appendChild(taskbar.element);
     document.body.appendChild(alttab.element);
+
     anura.systray = new Systray();
     AnuradHelpers.setReady("anura.systray");
 
