@@ -55,7 +55,7 @@ build/libs/comlink/comlink.min.mjs: build/bootstrap
 
 build/libs/workbox/version: build/bootstrap
 	mkdir -p build/libs/workbox
-	npx workbox-cli@7.1.0 copyLibraries build/libs/workbox/
+	npx workbox-cli@7.3.0 copyLibraries build/libs/workbox/
 	jq '.version' node_modules/workbox-build/package.json > build/libs/workbox/version
 
 build/libs/mime/mime.iife.js: build/bootstrap

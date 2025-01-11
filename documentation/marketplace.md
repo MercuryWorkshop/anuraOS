@@ -22,12 +22,12 @@ manifest.json
 
 This contains information about the repo.
 
--   `name`: `String` – Repo name. Not strictly required but highly recommended.
--   `maintainer` – Maintainer info.
-    -   `name`: `String` – Maintainer name
-    -   `email`: `String` – Maintainer email
-    -   `website`: `String` – Maintainer website
--   `version`: `String` – Repo version.
+- `name`: `String` – Repo name. Not strictly required but highly recommended.
+- `maintainer` – Maintainer info.
+    - `name`: `String` – Maintainer name
+    - `email`: `String` – Maintainer email
+    - `website`: `String` – Maintainer website
+- `version`: `String` – Repo version.
 
 ```json
 {
@@ -79,19 +79,19 @@ Example:
 
 Each app is supposed to have its own manifest that lists details about the app.
 
--   `name`: `String` - Program name. Required.
--   `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Marketplace will display this icon throughout the App.
--   `summary`: `String` - Short program app description. Shown in the app preview. Required.
--   `desc`: `String` - Long program app description. Shown in the app overview screen. Required.
--   `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
--   `data`: `String` - Path (from app directory) to the archive containing the app data. Required.
--   `installHook`: `String` - Path (from app directory) to the archive containing the app data. Only read if the program is an app. Optional.
--   `screenshots`: `Array [{ path, desc }]` - Array of all the screenshots of an app. Optional.
--   `screenshots.path`: `String` - Path (from app directory) to the screenshots. Required if object is present.
--   `screenshots.desc`: `String` - Description of the screenshots. Optional.
--   `version`: `String` - Version of the program. Optional.
--   `dependencies`: `Array [ String ]` - Array of of all the dependencies of an app. Will be installed alongside your app. Optional.
--   `category`: `String` - Program category. Required.
+- `name`: `String` - Program name. Required.
+- `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Marketplace will display this icon throughout the App.
+- `summary`: `String` - Short program app description. Shown in the app preview. Required.
+- `desc`: `String` - Long program app description. Shown in the app overview screen. Required.
+- `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
+- `data`: `String` - Path (from app directory) to the archive containing the app data. Required.
+- `installHook`: `String` - Path (from app directory) to the archive containing the app data. Only read if the program is an app. Optional.
+- `screenshots`: `Array [{ path, desc }]` - Array of all the screenshots of an app. Optional.
+- `screenshots.path`: `String` - Path (from app directory) to the screenshots. Required if object is present.
+- `screenshots.desc`: `String` - Description of the screenshots. Optional.
+- `version`: `String` - Version of the program. Optional.
+- `dependencies`: `Array [ String ]` - Array of of all the dependencies of an app. Will be installed alongside your app. Optional.
+- `category`: `String` - Program category. Required.
 
 Here is an example of a manifest.json
 

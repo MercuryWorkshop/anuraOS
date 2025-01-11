@@ -805,9 +805,9 @@ This API provides information about the platform that Anura is running on.
 
 This property returns the type of platform that Anura is running on. This can be one of the following values:
 
--   `desktop` - Anura is running on a desktop.
--   `mobile` - Anura is running on a mobile phone.
--   `tablet` - Anura is running on a tablet.
+- `desktop` - Anura is running on a desktop.
+- `mobile` - Anura is running on a mobile phone.
+- `tablet` - Anura is running on a tablet.
 
 #### anura.platform.touchInput: `boolean`
 
@@ -837,14 +837,14 @@ document.addEventListener("anura-theme-change", () => {
 
 You now have the following CSS variables to use, corresponding to the properties listed below.
 
--   `--theme-fg`
--   `--theme-secondary-fg`
--   `--theme-border`
--   `--theme-dark-border`
--   `--theme-bg`
--   `--theme-secondary-bg`
--   `--theme-dark-bg`
--   `--theme-accent`
+- `--theme-fg`
+- `--theme-secondary-fg`
+- `--theme-border`
+- `--theme-dark-border`
+- `--theme-bg`
+- `--theme-secondary-bg`
+- `--theme-dark-bg`
+- `--theme-accent`
 
 ### Properties
 

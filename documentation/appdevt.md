@@ -10,28 +10,28 @@ AnuraOS apps are simple creatures. They live inside folders with the suffix `.ap
 
 Each app contains a `manifest.json`, which defines the functionality of the app. See [`manifest.json.example`](./manifest.json.example).
 
--   `name`: `String` - Program name. Required.
--   `type`: `String` - Program type. "auto" or "manual". Required.
+- `name`: `String` - Program name. Required.
+- `type`: `String` - Program type. "auto" or "manual". Required.
 
-*   "manual": Evaluates at top-window level. Highly discouraged.
-*   "auto": Evaluates within a contained iframe.
+* "manual": Evaluates at top-window level. Highly discouraged.
+* "auto": Evaluates within a contained iframe.
 
--   `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
--   `index`: `String` - Path (from app directory) to the index HTML file. Required if `type` is `"auto"` - the iframe source will be set to this.
--   `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Anura will display this icon throughout the DE.
--   `background`: Background color of iframe while it is loading. Optional.
--   `handler`: `String` - Path (from app directory) to a file containing JavaScript to execute at the top-level document. Required if `type` is `"manual"`, ignored otherwise - the top-level document will execute this file as JavaScript.
--   `useIdbWrapper`: `Boolean` - Use the IndexedDB wrapper, which prevents the app from making accidental modifications to other app's indexeddb stores or anura's own stores. Defaults to `false`. Optional.
--   `wininfo`: `Object {title, width, height, resizable}` - Required if `type` is `"auto"`.
+- `package`: `String` - Package name (structured class-like, `organization.programname`). Required.
+- `index`: `String` - Path (from app directory) to the index HTML file. Required if `type` is `"auto"` - the iframe source will be set to this.
+- `icon`: `String` - Path (from app directory) to the application's icon. Optional but highly recommended. Anura will display this icon throughout the DE.
+- `background`: Background color of iframe while it is loading. Optional.
+- `handler`: `String` - Path (from app directory) to a file containing JavaScript to execute at the top-level document. Required if `type` is `"manual"`, ignored otherwise - the top-level document will execute this file as JavaScript.
+- `useIdbWrapper`: `Boolean` - Use the IndexedDB wrapper, which prevents the app from making accidental modifications to other app's indexeddb stores or anura's own stores. Defaults to `false`. Optional.
+- `wininfo`: `Object {title, width, height, resizable}` - Required if `type` is `"auto"`.
 
-    -   `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
-    -   `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
-    -   `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
-    -   `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
+    - `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
+    - `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
+    - `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
+    - `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
 
 ### Tips and Tricks
 
--   In iframed apps, Anura still gives you full access to the APIs through the `anura` object and also gives you access to your app instance and the Window in the Window Manager. You can access the WMWindow using `instanceWindow` and access your anura app instance using `instance` in your javascript. This could be used to manipulate the window or invoke actions on your app instance. An example is shown below where a back arrow is drawn on the window decorations in the marketplace app.
+- In iframed apps, Anura still gives you full access to the APIs through the `anura` object and also gives you access to your app instance and the Window in the Window Manager. You can access the WMWindow using `instanceWindow` and access your anura app instance using `instance` in your javascript. This could be used to manipulate the window or invoke actions on your app instance. An example is shown below where a back arrow is drawn on the window decorations in the marketplace app.
 
 ```js
 const back = html`
@@ -79,7 +79,7 @@ titlebar.style.backgroundColor = "rgba(0, 0, 0, 0)";
 titlebar.insertBefore(back, titlebar.children[1]);
 ```
 
--   All Anura windows allow you to hook into their events. This can be achieved via a callback or a event listener. You can see this in action in the window managment api and in multiple system apps.
+- All Anura windows allow you to hook into their events. This can be achieved via a callback or a event listener. You can see this in action in the window managment api and in multiple system apps.
 
 ```js
 let win = anura.wm.create(instance, {
@@ -113,7 +113,7 @@ win.onsnap: (snapDirection) => void;
 win.onunmaximize: () => void;
 ```
 
--   When an app is installed from the Marketplace or `libstore`, the current version and the repo that the app was downloaded from is injected into the manifest of your app. This could be used for update logic in your apps. An example is shown below of basic app updating logic, where it checks to see if libstore downloaded the app. If it did, then it checks if the version is the same on the repo it was downloaded from and updates if not.
+- When an app is installed from the Marketplace or `libstore`, the current version and the repo that the app was downloaded from is injected into the manifest of your app. This could be used for update logic in your apps. An example is shown below of basic app updating logic, where it checks to see if libstore downloaded the app. If it did, then it checks if the version is the same on the repo it was downloaded from and updates if not.
 
 ```js
 if (instance.manifest.marketplace) {
@@ -224,7 +224,7 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
 
 ### Manifest
 
--   You write a library that consists of a `manifest.json` file and an ES module. An example of the manifest file is below.
+- You write a library that consists of a `manifest.json` file and an ES module. An example of the manifest file is below.
     ```json
     {
         "name": "Example Library",
@@ -238,16 +238,16 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
         "currentVersion": "1.0.0"
     }
     ```
-    -   `name` is the name of the library.
-    -   `icon` is the icon of the library (for use in Marketplace).
-    -   `package` is the package name of the library.
-    -   `versions` is a map of version numbers to entry points.
-    -   `installHook` is a file that is run when the library is installed. It should have a default export that is a function that takes the anura instance as an argument.
-    -   `currentVersion` is the current version of the library, which will be used as the default version when using the [`anura.import`](./Anura-API.md#anuraimport) api.
+    - `name` is the name of the library.
+    - `icon` is the icon of the library (for use in Marketplace).
+    - `package` is the package name of the library.
+    - `versions` is a map of version numbers to entry points.
+    - `installHook` is a file that is run when the library is installed. It should have a default export that is a function that takes the anura instance as an argument.
+    - `currentVersion` is the current version of the library, which will be used as the default version when using the [`anura.import`](./Anura-API.md#anuraimport) api.
 
 ### Usage
 
--   Libraries can be imported using the [`anura.import`](./Anura-API.md#anuraimport) api. This api takes the package id of the library and an optional version number. The version number is specified by appending `@<version>` to the package id. If no version is specified, the current version of the library is used.
+- Libraries can be imported using the [`anura.import`](./Anura-API.md#anuraimport) api. This api takes the package id of the library and an optional version number. The version number is specified by appending `@<version>` to the package id. If no version is specified, the current version of the library is used.
 
 ```js
 anura.import("anura.examplelib@1.0.0").then((lib) => {
