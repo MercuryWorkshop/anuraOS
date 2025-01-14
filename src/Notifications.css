@@ -1,24 +1,24 @@
 @keyframes slideIn {
-    from {
-        left: 500px;
-    }
-    to {
-        left: 0px;
-    }
+	from {
+		left: 500px;
+	}
+	to {
+		left: 0px;
+	}
 }
 @keyframes slide-in {
-    from {
-        transform: translateY(100%);
-    }
-    to {
-        transform: translateY(-5%);
-    }
+	from {
+		transform: translateY(100%);
+	}
+	to {
+		transform: translateY(-5%);
+	}
 }
 @keyframes slide-out {
-    from {
-        transform: translateY(0%);
-    }
-    to {
-        transform: translateY(100%);
-    }
+	from {
+		transform: translateY(0%);
+	}
+	to {
+		transform: translateY(100%);
+	}
 }

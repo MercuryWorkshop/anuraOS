@@ -1,55 +1,51 @@
 #launcher-button-container {
-    position: absolute;
-    height: 100%;
-    aspect-ratio: 1/1;
-    width: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
+	position: absolute;
+	height: 100%;
+	aspect-ratio: 1/1;
+	width: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
 }
 
 #launcher-button {
-    background: var(--theme-secondary-bg);
-    background: color-mix(
-        in srgb,
-        var(--theme-secondary-fg) 17.5%,
-        transparent
-    );
+	background: var(--theme-secondary-bg);
+	background: color-mix(in srgb, var(--theme-secondary-fg) 17.5%, transparent);
 
-    border-radius: 50%;
-    height: 34px;
-    width: 34px;
+	border-radius: 50%;
+	height: 34px;
+	width: 34px;
 }
 
 #launcher-button::after {
-    content: "";
-    position: absolute;
-    width: 0.78em;
-    height: 0.78em;
-    border: 0.16em solid var(--theme-fg);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+	content: "";
+	position: absolute;
+	width: 0.78em;
+	height: 0.78em;
+	border: 0.16em solid var(--theme-fg);
+	border-radius: 50%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 #launcher-button img {
-    border-radius: 50%;
-    height: 15px;
-    width: 15px;
-    opacity: 100;
+	border-radius: 50%;
+	height: 15px;
+	width: 15px;
+	opacity: 100;
 }
 .hw-screen {
-    height: 100%;
-    width: 100%;
+	height: 100%;
+	width: 100%;
 }
 
 body.blur-disable #launcher {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 .app-shortcut-name {
-    text-align: center;
+	text-align: center;
 }

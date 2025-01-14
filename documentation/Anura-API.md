@@ -68,12 +68,12 @@ This allows you to open a PTY and run commands inside of it. It returns the numb
 
 ```js
 const pty = await anura.x86.openpty(
-    "/bin/bash",
-    screenSize.width,
-    screenSize.height,
-    (data) => {
-        // callback gets called every time the PTY returns data
-    },
+	"/bin/bash",
+	screenSize.width,
+	screenSize.height,
+	(data) => {
+		// callback gets called every time the PTY returns data
+	},
 );
 ```
 
@@ -85,12 +85,12 @@ This allows you to send data to a PTY. This data should be a string or converted
 
 ```js
 const pty = await anura.x86.openpty(
-    "/bin/bash",
-    screenSize.width,
-    screenSize.height,
-    (data) => {
-        console.log(data);
-    },
+	"/bin/bash",
+	screenSize.width,
+	screenSize.height,
+	(data) => {
+		console.log(data);
+	},
 );
 anura.x86.writepty(pty, "Hello World!");
 ```
@@ -103,12 +103,12 @@ This allows you to resize a PTY.
 
 ```js
 const pty = await anura.x86.openpty(
-    "TERM=xterm DISPLAY=:0 bash",
-    screenSize.width,
-    screenSize.height,
-    (data) => {
-        console.log(data);
-    },
+	"TERM=xterm DISPLAY=:0 bash",
+	screenSize.width,
+	screenSize.height,
+	(data) => {
+		console.log(data);
+	},
 );
 anura.x86.resizepty(pty, screenSize.height, screenSize.width);
 ```
@@ -287,9 +287,9 @@ This api allows you to create a window that will be displayed in the DE.
 
 ```js
 let win = anura.wm.create(instance, {
-    title: "Example Window",
-    width: "1280px",
-    height: "720px",
+	title: "Example Window",
+	width: "1280px",
+	height: "720px",
 });
 
 // do things with the window that gets returned
@@ -303,9 +303,9 @@ This is is the same as the `anura.wm.create` api but creates a window under the 
 
 ```js
 let win = anura.wm.createGeneric({
-    title: "Example Window",
-    width: "1280px",
-    height: "720px",
+	title: "Example Window",
+	width: "1280px",
+	height: "720px",
 });
 
 // another use case
@@ -348,11 +348,11 @@ This has the same functionality as the built in DOM function and works identical
 ```js
 let ws = new anura.net.WebSocket("wss://echo.websocket.in/");
 ws.addEventListener("open", () => {
-    console.log("ws connected!");
-    ws.send("hello".repeat(128));
+	console.log("ws connected!");
+	ws.send("hello".repeat(128));
 });
 ws.addEventListener("message", (event) => {
-    console.log(event.data);
+	console.log(event.data);
 });
 ```
 
@@ -500,12 +500,12 @@ This api allows you to add a notification to the notification service and have a
 
 ```js
 anura.notifications.add({
-    title: "Test Notification",
-    description: `This is a test notification`,
-    callback: function () {
-        console.log("hi");
-    },
-    timeout: 2000,
+	title: "Test Notification",
+	description: `This is a test notification`,
+	callback: function () {
+		console.log("hi");
+	},
+	timeout: 2000,
 }); // Show a notification to the user, on click, it says hi in console, it lasts for 2 seconds.
 ```
 
@@ -535,7 +535,7 @@ the last function of a processes kill function.
 
 ```js
 function kill() {
-    anura.processes.remove(this.pid);
+	anura.processes.remove(this.pid);
 }
 ```
 
@@ -638,17 +638,17 @@ This API returns a usable wsproxy url for any TCP application.
 
 ```js
 let webSocket = new WebSocket(anura.wsproxyURL + "alicesworld.tech:80", [
-    "binary",
+	"binary",
 ]);
 
 webSocket.onmessage = async (event) => {
-    const text = await (await event.data).text();
+	const text = await (await event.data).text();
 
-    console.log(text);
+	console.log(text);
 };
 
 webSocket.onopen = (event) => {
-    webSocket.send("GET / HTTP/1.1\r\nHost: alicesworld.tech\r\n\r\n");
+	webSocket.send("GET / HTTP/1.1\r\nHost: alicesworld.tech\r\n\r\n");
 };
 
 // Sends HTTP 1.1 request to alicesworld.tech using wsproxy
@@ -663,17 +663,17 @@ This API creates a anura style context menu you can use in your apps.
 ```js
 const contextmenu = new anura.ContextMenu();
 contextmenu.addItem("Log to console", function () {
-    console.log("hello world!");
+	console.log("hello world!");
 });
 element.addEventListener("contextmenu", (e) => {
-    e.preventDefault();
-    const boundingRect = window.frameElement.getBoundingClientRect();
-    contextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
-    document.onclick = (e) => {
-        document.onclick = null;
-        contextmenu.hide();
-        e.preventDefault();
-    };
+	e.preventDefault();
+	const boundingRect = window.frameElement.getBoundingClientRect();
+	contextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+	document.onclick = (e) => {
+		document.onclick = null;
+		contextmenu.hide();
+		e.preventDefault();
+	};
 });
 ```
 
@@ -686,7 +686,7 @@ This adds an item to the context menu item with a callback thats executed on sel
 ```js
 const contextmenu = new anura.ContextMenu();
 contextmenu.addItem("Log to console", function () {
-    console.log("hello world!");
+	console.log("hello world!");
 });
 ```
 
@@ -697,7 +697,7 @@ This makes the context menu visible to the user, it also takes arguments on wher
 ```js
 const contextmenu = new anura.ContextMenu();
 contextmenu.addItem("Log to console", function () {
-    console.log("hello world!");
+	console.log("hello world!");
 });
 contextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y); // place context menu where the mouse is
 ```
@@ -709,7 +709,7 @@ This hides the context menu from the user.
 ```js
 const contextmenu = new anura.ContextMenu();
 contextmenu.addItem("Log to console", function () {
-    console.log("hello world!");
+	console.log("hello world!");
 });
 contextmenu.hide();
 ```
@@ -739,7 +739,7 @@ This creates a dialog window that gives the user a prompt to confirm an action. 
 ```js
 let confirm = await anura.dialog.confirm("Are you sure?");
 if (confirm) {
-    console.log("They were sure.");
+	console.log("They were sure.");
 }
 ```
 
@@ -752,13 +752,13 @@ This gives a user a dialog prompt where the user can enter text. If the user dec
 ```js
 let input = await anura.dialog.prompt("What is your favorite number?");
 if (input) {
-    console.log(input);
+	console.log(input);
 }
 
 // default value mode
 let input = await anura.dialog.prompt("What is your favorite number?", "3");
 if (input) {
-    console.log(input);
+	console.log(input);
 }
 ```
 
@@ -784,14 +784,14 @@ This function allows you to create an object in the systray, you can pass in an 
 
 ```js
 const sysicon = anura.systray.create({
-    icon: "data:image/svg+xml;base64,BASE64ICON",
-    tooltip: "Anura AdBlock Active",
+	icon: "data:image/svg+xml;base64,BASE64ICON",
+	tooltip: "Anura AdBlock Active",
 });
 sysicon.onclick = (event) => {
-    console.log("got left click event");
+	console.log("got left click event");
 };
 sysicon.onrightclick = (event) => {
-    console.log("got right click event");
+	console.log("got right click event");
 };
 ```
 
@@ -826,12 +826,12 @@ Returns a CSS style you can append to your document's `head` to provide styles f
 ```js
 // Append theme css
 document.head.appendChild(
-    html`<><style data-id="anura-theme">${anura.ui.theme.css()}</style></>`,
+	html`<><style data-id="anura-theme">${anura.ui.theme.css()}</style></>`,
 );
 
 document.addEventListener("anura-theme-change", () => {
-    document.head.querySelector('style[data-id="anura-theme"]').innerHTML =
-        anura.ui.theme.css();
+	document.head.querySelector('style[data-id="anura-theme"]').innerHTML =
+		anura.ui.theme.css();
 });
 ```
 

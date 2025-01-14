@@ -1,76 +1,76 @@
 .aboutapp-container {
-    background-color: var(--material-bg);
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    display: flex;
-    padding: 0;
-    flex-direction: column;
-    flex-grow: 1;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+	background-color: var(--material-bg);
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	display: flex;
+	padding: 0;
+	flex-direction: column;
+	flex-grow: 1;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
 }
 
 .aboutapp-logo {
-    height: 128px;
+	height: 128px;
 }
 
 .aboutapp-logo-img {
-    transition: background 1s ease-in-out;
-    /* height: 100%; */
-    /* border-radius: 10%; */
-    background: url(icon.png);
-    background-size: contain;
-    background-repeat: no-repeat;
-    height: 128px;
-    width: 128px;
+	transition: background 1s ease-in-out;
+	/* height: 100%; */
+	/* border-radius: 10%; */
+	background: url(icon.png);
+	background-size: contain;
+	background-repeat: no-repeat;
+	height: 128px;
+	width: 128px;
 }
 .aboutapp-logo-img:hover {
-    background: url(/assets/images/idol.gif);
-    background-size: contain;
-    background-repeat: no-repeat;
-    height: 128px;
-    width: 128px;
+	background: url(/assets/images/idol.gif);
+	background-size: contain;
+	background-repeat: no-repeat;
+	height: 128px;
+	width: 128px;
 }
 
 .aboutapp-logo-divider {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    height: 1px;
-    background-color: var(--theme-border);
-    flex-shrink: 0;
-    width: 22rem;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	height: 1px;
+	background-color: var(--theme-border);
+	flex-shrink: 0;
+	width: 22rem;
 }
 
 .aboutapp-content {
-    color: var(--theme-fg);
+	color: var(--theme-fg);
 }
 
 .aboutapp-content p {
-    margin: 0;
+	margin: 0;
 }
 
 .aboutapp-content a {
-    color: var(--theme-accent);
+	color: var(--theme-accent);
 }
 
 .aboutapp-link-button {
-    background: none !important;
-    border: none;
-    padding: 0 !important;
-    color: var(--theme-accent);
-    text-decoration: underline;
-    cursor: pointer;
-    font-family:
-        "Roboto",
-        RobotoDraft,
-        "Droid Sans",
-        Arial,
-        Helvetica,
-        -apple-system,
-        BlinkMacSystemFont,
-        system-ui,
-        sans-serif;
-    font-size: 1em;
+	background: none !important;
+	border: none;
+	padding: 0 !important;
+	color: var(--theme-accent);
+	text-decoration: underline;
+	cursor: pointer;
+	font-family:
+		"Roboto",
+		RobotoDraft,
+		"Droid Sans",
+		Arial,
+		Helvetica,
+		-apple-system,
+		BlinkMacSystemFont,
+		system-ui,
+		sans-serif;
+	font-size: 1em;
 }

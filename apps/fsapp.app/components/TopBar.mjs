@@ -1,5 +1,5 @@
 export function TopBar() {
-    this.css = `
+	this.css = `
     margin-top: 0.3em;
     margin-right: 1em;
     display: flex;
@@ -47,25 +47,25 @@ export function TopBar() {
         background-color: transparent;
     }
     `;
-    return html`
-        <div>
-            <div class="breadcrumbs">
-                <button>My files</button><span>></span><button>owo :3</button>
-            </div>
-            <div class="sep"></div>
-            <button>
-                <i class="material-symbols-outlined">search</i>
-            </button>
-            <button>
-                <i class="material-symbols-outlined">table_rows</i>
-            </button>
-            <button>
-                <i class="material-symbols-outlined">sort_by_alpha</i>
-                <!--<i class="fa-solid fa-arrow-down-z-a fa-lg"></i> - opposite-->
-            </button>
-            <button>
-                <i class="material-symbols-outlined">settings</i>
-            </button>
-        </div>
-    `;
+	return html`
+		<div>
+			<div class="breadcrumbs">
+				<button>My files</button><span>></span><button>owo :3</button>
+			</div>
+			<div class="sep"></div>
+			<button>
+				<i class="material-symbols-outlined">search</i>
+			</button>
+			<button>
+				<i class="material-symbols-outlined">table_rows</i>
+			</button>
+			<button>
+				<i class="material-symbols-outlined">sort_by_alpha</i>
+				<!--<i class="fa-solid fa-arrow-down-z-a fa-lg"></i> - opposite-->
+			</button>
+			<button>
+				<i class="material-symbols-outlined">settings</i>
+			</button>
+		</div>
+	`;
 }

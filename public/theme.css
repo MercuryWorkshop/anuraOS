@@ -1,62 +1,62 @@
 :root {
-    --material-bg: #202124;
-    --material-border: #444;
-    --matter-surface-rgb: 32, 33, 36;
-    --matter-onsurface-rgb: 255, 255, 255;
+	--material-bg: #202124;
+	--material-border: #444;
+	--matter-surface-rgb: 32, 33, 36;
+	--matter-onsurface-rgb: 255, 255, 255;
 }
 
 .background {
-    background-color: var(--material-bg);
+	background-color: var(--material-bg);
 }
 
 .matter-switch {
-    color: var(--theme-fg) !important;
+	color: var(--theme-fg) !important;
 }
 
 .matter-button-contained:not(.settingsIcon, .symbolButton) {
-    background-color: var(--theme-accent) !important;
-    /* color: var(--theme-fg); */
+	background-color: var(--theme-accent) !important;
+	/* color: var(--theme-fg); */
 }
 
 .matter-button-outlined {
-    color: var(--theme-accent) !important;
+	color: var(--theme-accent) !important;
 }
 
 .matter-switch > input + span::before,
 .matter-switch > input + span::after {
-    background-color: var(--theme-secondary-fg) !important;
+	background-color: var(--theme-secondary-fg) !important;
 }
 
 .matter-switch > input {
-    background-color: var(--theme-secondary-bg) !important;
+	background-color: var(--theme-secondary-bg) !important;
 }
 
 .matter-switch > input:checked + span::before,
 .matter-switch > input:checked + span::after {
-    background-color: var(--theme-accent) !important;
+	background-color: var(--theme-accent) !important;
 }
 
 .matter-switch > input:checked {
-    background-color: color-mix(
-        in srgb,
-        var(--theme-accent) 75%,
-        black 25%
-    ) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--theme-accent) 75%,
+		black 25%
+	) !important;
 }
 
 .matter-button-outlined {
-    color: var(--theme-accent) !important;
-    border-color: var(--theme-border) !important;
+	color: var(--theme-accent) !important;
+	border-color: var(--theme-border) !important;
 }
 
 .matter-button-outlined::before {
-    background-color: color-mix(
-        in srgb,
-        var(--theme-accent) 75%,
-        var(--theme-bg) 25%
-    ) !important;
+	background-color: color-mix(
+		in srgb,
+		var(--theme-accent) 75%,
+		var(--theme-bg) 25%
+	) !important;
 }
 
 .matter-button-text {
-    color: var(--theme-accent) !important;
+	color: var(--theme-accent) !important;
 }

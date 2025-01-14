@@ -1,245 +1,245 @@
 .aliceWMwin {
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    height: 200px;
-    width: 500px;
-    background: var(--theme-bg);
-    position: fixed;
-    overflow: hidden;
-    z-index: 91;
-    display: flex;
-    /* FLEXBOX #2 */
-    border: 2px solid var(--material-border);
-    flex-direction: column;
-    box-shadow:
-        0 4px 8px 0 rgba(0, 0, 0, 0.2),
-        0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    border-radius: 3px;
-    transform: scale(1);
-    transition:
-        visibility 0s,
-        opacity 0.15s cubic-bezier(0, 0, 0.4, 1);
-    opacity: 1;
+	user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	height: 200px;
+	width: 500px;
+	background: var(--theme-bg);
+	position: fixed;
+	overflow: hidden;
+	z-index: 91;
+	display: flex;
+	/* FLEXBOX #2 */
+	border: 2px solid var(--material-border);
+	flex-direction: column;
+	box-shadow:
+		0 4px 8px 0 rgba(0, 0, 0, 0.2),
+		0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	border-radius: 3px;
+	transform: scale(1);
+	transition:
+		visibility 0s,
+		opacity 0.15s cubic-bezier(0, 0, 0.4, 1);
+	opacity: 1;
 }
 
 .aliceWMwin svg {
-    fill: var(--theme-fg);
-    height: 12px;
+	fill: var(--theme-fg);
+	height: 12px;
 }
 
 .scaletransition {
-    transition:
-        visibility 0s,
-        transform 0.15s cubic-bezier(0, 0, 0.4, 1),
-        opacity 0.15s cubic-bezier(0, 0, 0.4, 1);
+	transition:
+		visibility 0s,
+		transform 0.15s cubic-bezier(0, 0, 0.4, 1),
+		opacity 0.15s cubic-bezier(0, 0, 0.4, 1);
 }
 
 .opacity0.scaletransition {
-    transform: scale(0.9);
+	transform: scale(0.9);
 }
 
 .maxtransition {
-    transition:
-        width 0.2s,
-        height 0.2s,
-        top 0.2s,
-        left 0.2s;
+	transition:
+		width 0.2s,
+		height 0.2s,
+		top 0.2s,
+		left 0.2s;
 }
 
 .remaxtransitionx {
-    transition:
-        width 0.2s,
-        left 0.2s;
+	transition:
+		width 0.2s,
+		left 0.2s;
 }
 
 .remaxtransitiony {
-    transition:
-        height 0.2s,
-        top 0.2s;
+	transition:
+		height 0.2s,
+		top 0.2s;
 }
 
 #snapPreview {
-    background-color: gray;
-    opacity: 50%;
-    position: fixed;
-    user-select: none;
-    transition: opacity 0.2s;
-    z-index: 9999;
+	background-color: gray;
+	opacity: 50%;
+	position: fixed;
+	user-select: none;
+	transition: opacity 0.2s;
+	z-index: 9999;
 }
 
 /* super jank */
 .snapPreview-se,
 .snapPreview-sw {
-    bottom: 49px !important;
+	bottom: 49px !important;
 }
 
 #snapSplitBar {
-    background-color: rgba(0, 0, 0, 0.1);
-    top: 0;
-    height: calc(100% - 49px);
-    width: 8px;
-    position: fixed;
-    transition: background 0.2s;
-    z-index: 0;
-    cursor: ew-resize;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	background-color: rgba(0, 0, 0, 0.1);
+	top: 0;
+	height: calc(100% - 49px);
+	width: 8px;
+	position: fixed;
+	transition: background 0.2s;
+	z-index: 0;
+	cursor: ew-resize;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #snapSplitBar > div {
-    opacity: 1;
-    width: 2px;
-    height: 16px;
-    border-radius: 2px;
-    background-color: white;
+	opacity: 1;
+	width: 2px;
+	height: 16px;
+	border-radius: 2px;
+	background-color: white;
 }
 
 .opacity0 {
-    opacity: 0;
+	opacity: 0;
 }
 
 .aliceWMwin .title {
-    display: flex;
-    background-color: var(--theme-bg);
-    font-weight: bold;
-    color: var(--theme-fg);
-    height: 24px;
-    padding: 2px;
-    align-items: center;
-    z-index: 1;
+	display: flex;
+	background-color: var(--theme-bg);
+	font-weight: bold;
+	color: var(--theme-fg);
+	height: 24px;
+	padding: 2px;
+	align-items: center;
+	z-index: 1;
 }
 body.platform-mobile .aliceWMwin {
-    border: 0;
-    border-radius: 0px;
+	border: 0;
+	border-radius: 0px;
 }
 
 body.platform-mobile .aliceWMwin .title {
-    height: 21px; /* just big enough to hide behind taskbar */
+	height: 21px; /* just big enough to hide behind taskbar */
 }
 body.platform-tablet .aliceWMwin .title {
-    height: 21px; /* just big enough to hide behind taskbar */
+	height: 21px; /* just big enough to hide behind taskbar */
 }
 
 .aliceWMwin .titleContent {
-    flex: 1;
-    font-size: 13px;
-    font-weight: 400;
-    padding: 8px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	flex: 1;
+	font-size: 13px;
+	font-weight: 400;
+	padding: 8px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .aliceWMwin .content {
-    padding: 2px;
-    flex: 1;
-    background-color: var(--theme-bg);
+	padding: 2px;
+	flex: 1;
+	background-color: var(--theme-bg);
 }
 
 .aliceWMwin .content iframe {
-    color-scheme: normal; /* quirk to preserve frame bg */
+	color-scheme: normal; /* quirk to preserve frame bg */
 }
 
 .aliceWMwin .title:hover {
-    cursor: move;
+	cursor: move;
 }
 
 .aliceWMwin .windowButton {
-    background-color: transparent;
-    color: var(--theme-fg);
-    fill: var(--theme-fg);
-    border: none;
-    border-radius: 100%;
-    margin: 2px;
-    aspect-ratio: 1 / 1;
-    flex-shrink: 0;
-    transition: background-color 0.2s ease-in-out;
-    z-index: 2;
+	background-color: transparent;
+	color: var(--theme-fg);
+	fill: var(--theme-fg);
+	border: none;
+	border-radius: 100%;
+	margin: 2px;
+	aspect-ratio: 1 / 1;
+	flex-shrink: 0;
+	transition: background-color 0.2s ease-in-out;
+	z-index: 2;
 }
 
 body.platform-mobile .aliceWMwin .windowButton.maximize {
-    display: none;
+	display: none;
 }
 
 .aliceWMwin .windowButton > span {
-    font-size: 16px;
+	font-size: 16px;
 }
 
 body.platform-mobile .aliceWMwin .windowButton > span,
 body.platform-tablet .aliceWMwin .windowButton > span {
-    font-size: 18px;
-    padding: 2px;
+	font-size: 18px;
+	padding: 2px;
 }
 
 .aliceWMwin .windowButton:hover {
-    background-color: var(--theme-secondary-bg);
+	background-color: var(--theme-secondary-bg);
 }
 
 .aliceWMwin .windowButton:active {
-    background-color: color-mix(var(--theme-secondary-bg) var(--theme-bg) 50%);
+	background-color: color-mix(var(--theme-secondary-bg) var(--theme-bg) 50%);
 }
 
 .resize-corner {
-    width: 10px;
-    height: 10px;
+	width: 10px;
+	height: 10px;
 
-    position: absolute;
-    z-index: 2;
+	position: absolute;
+	z-index: 2;
 }
 
 .resize-edge {
-    position: absolute;
-    z-index: 2;
-    padding: 5px;
+	position: absolute;
+	z-index: 2;
+	padding: 5px;
 }
 
 .resize-edge.left {
-    left: -5px;
-    height: 100%;
-    cursor: e-resize;
+	left: -5px;
+	height: 100%;
+	cursor: e-resize;
 }
 
 .resize-edge.right {
-    right: -5px;
-    height: 100%;
-    cursor: e-resize;
+	right: -5px;
+	height: 100%;
+	cursor: e-resize;
 }
 
 .resize-edge.top {
-    top: -5px;
-    width: 100%;
-    cursor: s-resize;
+	top: -5px;
+	width: 100%;
+	cursor: s-resize;
 }
 
 .resize-edge.bottom {
-    bottom: -5px;
-    width: 100%;
-    cursor: s-resize;
+	bottom: -5px;
+	width: 100%;
+	cursor: s-resize;
 }
 
 .resize-corner.top-left {
-    left: -5px;
-    top: -5px;
-    cursor: nwse-resize;
-    /*resizer cursor*/
+	left: -5px;
+	top: -5px;
+	cursor: nwse-resize;
+	/*resizer cursor*/
 }
 
 .resize-corner.top-right {
-    right: -5px;
-    top: -5px;
-    cursor: nesw-resize;
+	right: -5px;
+	top: -5px;
+	cursor: nesw-resize;
 }
 
 .resize-corner.bottom-left {
-    left: -5px;
-    bottom: -5px;
-    cursor: nesw-resize;
+	left: -5px;
+	bottom: -5px;
+	cursor: nesw-resize;
 }
 
 .resize-corner.bottom-right {
-    right: -5px;
-    bottom: -5px;
-    cursor: nwse-resize;
+	right: -5px;
+	bottom: -5px;
+	cursor: nwse-resize;
 }

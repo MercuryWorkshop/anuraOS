@@ -1,51 +1,51 @@
 {
-    "apps": [
-        "apps/term.app",
-        "apps/fsapp.app",
-        "apps/marketplace.app",
-        "apps/ashell.app"
-    ],
-    "libs": [
-        "/apps/libfileview.lib",
-        "/apps/libfilepicker.lib",
-        "/apps/libstore.lib",
-        "/apps/libpersist.lib"
-    ],
-    "bin": ["/bin/chimerix.ajs"],
-    "defaultsettings": {
-        "use-sw-cache": false,
-        "applist": ["anura.browser", "anura.settings", "anura.fsapp"],
-        "clampWindows": true,
-        "launcher-keybind": true,
-        "relay-url": "wss://relay.widgetry.org/"
-    },
-    "x86": {
-        "alpine": {
-            "bzimage": "/x86images/alpine-boot/vmlinuz-virt",
-            "initrd": "/x86images/alpine-boot/initramfs-virt",
-            "rootfs": [
-                "x86images/alpine-rootfs/aa",
-                "x86images/alpine-rootfs/ab",
-                "x86images/alpine-rootfs/ac",
-                "x86images/alpine-rootfs/ad",
-                "x86images/alpine-rootfs/ae",
-                "x86images/alpine-rootfs/af",
-                "x86images/alpine-rootfs/ag",
-                "x86images/alpine-rootfs/ah",
-                "x86images/alpine-rootfs/ai",
-                "x86images/alpine-rootfs/aj",
-                "x86images/alpine-rootfs/ak",
-                "x86images/alpine-rootfs/al",
-                "x86images/alpine-rootfs/am",
-                "x86images/alpine-rootfs/an",
-                "x86images/alpine-rootfs/ao",
-                "x86images/alpine-rootfs/ap",
-                "x86images/alpine-rootfs/aq",
-                "x86images/alpine-rootfs/ar",
-                "x86images/alpine-rootfs/as",
-                "x86images/alpine-rootfs/at",
-                "x86images/alpine-rootfs/au"
-            ]
-        }
-    }
+	"apps": [
+		"apps/term.app",
+		"apps/fsapp.app",
+		"apps/marketplace.app",
+		"apps/ashell.app"
+	],
+	"libs": [
+		"/apps/libfileview.lib",
+		"/apps/libfilepicker.lib",
+		"/apps/libstore.lib",
+		"/apps/libpersist.lib"
+	],
+	"bin": ["/bin/chimerix.ajs"],
+	"defaultsettings": {
+		"use-sw-cache": false,
+		"applist": ["anura.browser", "anura.settings", "anura.fsapp"],
+		"clampWindows": true,
+		"launcher-keybind": true,
+		"relay-url": "wss://relay.widgetry.org/"
+	},
+	"x86": {
+		"alpine": {
+			"bzimage": "/x86images/alpine-boot/vmlinuz-virt",
+			"initrd": "/x86images/alpine-boot/initramfs-virt",
+			"rootfs": [
+				"x86images/alpine-rootfs/aa",
+				"x86images/alpine-rootfs/ab",
+				"x86images/alpine-rootfs/ac",
+				"x86images/alpine-rootfs/ad",
+				"x86images/alpine-rootfs/ae",
+				"x86images/alpine-rootfs/af",
+				"x86images/alpine-rootfs/ag",
+				"x86images/alpine-rootfs/ah",
+				"x86images/alpine-rootfs/ai",
+				"x86images/alpine-rootfs/aj",
+				"x86images/alpine-rootfs/ak",
+				"x86images/alpine-rootfs/al",
+				"x86images/alpine-rootfs/am",
+				"x86images/alpine-rootfs/an",
+				"x86images/alpine-rootfs/ao",
+				"x86images/alpine-rootfs/ap",
+				"x86images/alpine-rootfs/aq",
+				"x86images/alpine-rootfs/ar",
+				"x86images/alpine-rootfs/as",
+				"x86images/alpine-rootfs/at",
+				"x86images/alpine-rootfs/au"
+			]
+		}
+	}
 }

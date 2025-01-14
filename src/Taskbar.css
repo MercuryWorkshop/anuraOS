@@ -1,140 +1,136 @@
 #taskbar-bar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 48px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 48px;
 }
 
 .showDialog {
-    width: 32px;
-    height: 32px;
+	width: 32px;
+	height: 32px;
 }
 
 .lightbar {
-    transition:
-        visibility 0s,
-        opacity 5s linear;
-    opacity: 1;
+	transition:
+		visibility 0s,
+		opacity 5s linear;
+	opacity: 1;
 }
 
 .lightbar-hidden {
-    visibility: hidden;
-    opacity: 0;
+	visibility: hidden;
+	opacity: 0;
 }
 
 .splitBar {
-    background-color: var(--material-border);
-    width: 1px;
-    height: 40%;
+	background-color: var(--material-border);
+	width: 1px;
+	height: 40%;
 }
 
 .taskbar-button {
-    filter: drop-shadow(0px 3px 7px #111);
+	filter: drop-shadow(0px 3px 7px #111);
 }
 
 #taskbar-right {
-    right: 0.3em;
+	right: 0.3em;
 
-    top: 50%;
-    transform: translateY(-50%);
-    position: absolute;
-    height: 70%;
-    display: flex;
-    gap: 5px;
+	top: 50%;
+	transform: translateY(-50%);
+	position: absolute;
+	height: 70%;
+	display: flex;
+	gap: 5px;
 }
 
 #taskinfo-container,
 #date-container {
-    background-color: var(--theme-secondary-bg);
-    background: color-mix(
-        in srgb,
-        var(--theme-secondary-fg) 17.5%,
-        transparent
-    );
-    padding-left: 1em;
-    padding-right: 1em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	background-color: var(--theme-secondary-bg);
+	background: color-mix(in srgb, var(--theme-secondary-fg) 17.5%, transparent);
+	padding-left: 1em;
+	padding-right: 1em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1rem;
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1rem;
 }
 
 #taskinfo-container {
-    border-radius: 5px 25px 25px 5px;
+	border-radius: 5px 25px 25px 5px;
 }
 
 #date-container {
-    border-radius: 25px 5px 5px 25px;
+	border-radius: 25px 5px 5px 25px;
 }
 
 #taskinfo-container .material-symbols-outlined {
-    font-size: 1rem;
+	font-size: 1rem;
 }
 
 #taskinfo-container > *,
 #date-container > * {
-    color: var(--theme-fg);
-    cursor: pointer;
+	color: var(--theme-fg);
+	cursor: pointer;
 }
 
 footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    /* left: -1px; */
-    /* background-color: rgba(0, 0, 0, 0.55); */
-    background-color: color-mix(in srgb, var(--theme-dark-bg) 90%, transparent);
-    border: 1px solid var(--theme-dark-border);
-    box-shadow: inset 0 0 0 1px var(--theme-border);
-    border-bottom: none;
-    backdrop-filter: blur(30px);
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    transition-property: border-radius, background-color;
-    transition-duration: 0.15s;
-    transition-timing-function: ease;
-    -webkit-backdrop-filter: blur(30px);
-    border-left: none;
-    border-right: none;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	/* left: -1px; */
+	/* background-color: rgba(0, 0, 0, 0.55); */
+	background-color: color-mix(in srgb, var(--theme-dark-bg) 90%, transparent);
+	border: 1px solid var(--theme-dark-border);
+	box-shadow: inset 0 0 0 1px var(--theme-border);
+	border-bottom: none;
+	backdrop-filter: blur(30px);
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	transition-property: border-radius, background-color;
+	transition-duration: 0.15s;
+	transition-timing-function: ease;
+	-webkit-backdrop-filter: blur(30px);
+	border-left: none;
+	border-right: none;
 }
 
 body.blur-disable footer {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 .systray {
-    display: flex;
-    padding-top: 0.075em; /* mmm */
-    height: 1.5em;
-    align-items: center;
-    justify-content: center;
+	display: flex;
+	padding-top: 0.075em; /* mmm */
+	height: 1.5em;
+	align-items: center;
+	justify-content: center;
 }
 .notification-badge {
-    display: flex;
-    width: 1.5em;
-    height: 1.5em;
-    color: var(--theme-dark-bg);
-    background-color: var(--theme-fg);
-    border-radius: 50%;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-    opacity: 1;
-    transition-property: width, height, opacity;
-    transition-duration: 0.15s;
-    transition-timing-function: ease;
-    padding-top: 0.075em; /* mmm */
+	display: flex;
+	width: 1.5em;
+	height: 1.5em;
+	color: var(--theme-dark-bg);
+	background-color: var(--theme-fg);
+	border-radius: 50%;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.75rem;
+	font-weight: 600;
+	opacity: 1;
+	transition-property: width, height, opacity;
+	transition-duration: 0.15s;
+	transition-timing-function: ease;
+	padding-top: 0.075em; /* mmm */
 }
 
 .notification-badge.hidden {
-    width: 0em;
-    height: 0.25em;
-    opacity: 0;
-    transition-property: width, height, opacity;
-    transition-duration: 0.15s;
-    transition-timing-function: ease;
+	width: 0em;
+	height: 0.25em;
+	opacity: 0;
+	transition-property: width, height, opacity;
+	transition-duration: 0.15s;
+	transition-timing-function: ease;
 }

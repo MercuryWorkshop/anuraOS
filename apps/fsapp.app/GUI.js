@@ -9,70 +9,70 @@ const emptycontextmenu = new anura.ContextMenu();
 
 // Helper to add context menu items to both menus
 function addContextMenuItem(name, func) {
-    newcontextmenu.addItem(name, func);
-    appcontextmenu.addItem(name, func);
+	newcontextmenu.addItem(name, func);
+	appcontextmenu.addItem(name, func);
 }
 
 // addContextMenuItem("Get Info", function () {});
 // addContextMenuItem("Pin to Shelf", function () {});
 addContextMenuItem("Cut", function () {
-    cut();
+	cut();
 });
 addContextMenuItem("Copy", function () {
-    copy();
+	copy();
 });
 addContextMenuItem("Paste", function () {
-    paste();
+	paste();
 });
 addContextMenuItem("Delete", function () {
-    deleteFile();
+	deleteFile();
 });
 addContextMenuItem("Rename", function () {
-    rename();
+	rename();
 });
 addContextMenuItem("Refresh", function () {
-    reload();
+	reload();
 });
 
 newcontextmenu.addItem("Download", function () {
-    download();
+	download();
 });
 
 appcontextmenu.addItem("Install (Session)", function () {
-    installSession();
+	installSession();
 });
 
 appcontextmenu.addItem("Install (Permanent)", function () {
-    installPermanent();
+	installPermanent();
 });
 
 appcontextmenu.addItem("Navigate", function () {
-    navigate();
+	navigate();
 });
 
 emptycontextmenu.addItem("Upload from PC", function () {
-    upload();
+	upload();
 });
 emptycontextmenu.addItem("New folder", function () {
-    newFolder();
+	newFolder();
 });
 emptycontextmenu.addItem("New file", function () {
-    newFile();
+	newFile();
 });
 emptycontextmenu.addItem("Paste", function () {
-    paste();
+	paste();
 });
 emptycontextmenu.addItem("Refresh", function () {
-    reload();
+	reload();
 });
 
 const min = 150;
 const columnTypeToRatioMap = {
-    icon: 0.1,
-    name: 3,
-    size: 1,
-    type: 1,
-    modified: 1,
+	icon: 0.1,
+	name: 3,
+	size: 1,
+	type: 1,
+	modified: 1,
 };
 
 const table = document.querySelector("table");
@@ -87,100 +87,89 @@ let headerBeingResized;
 
 // Where the magic happens. I.e. when they're actually resizing
 const onMouseMove = (e) =>
-    requestAnimationFrame(() => {
-        (window.getSelection
-            ? window.getSelection()
-            : document.selection
-        ).empty();
+	requestAnimationFrame(() => {
+		(window.getSelection ? window.getSelection() : document.selection).empty();
 
-        // Calculate the desired width
-        horizontalScrollOffset = document.documentElement.scrollLeft;
-        const width =
-            horizontalScrollOffset + e.clientX - headerBeingResized.offsetLeft;
+		// Calculate the desired width
+		horizontalScrollOffset = document.documentElement.scrollLeft;
+		const width =
+			horizontalScrollOffset + e.clientX - headerBeingResized.offsetLeft;
 
-        // Update the column object with the new size value
-        const column = columns.find(
-            ({ header }) => header === headerBeingResized,
-        );
-        column.size = Math.max(min, width) + "px"; // Enforce our minimum
+		// Update the column object with the new size value
+		const column = columns.find(({ header }) => header === headerBeingResized);
+		column.size = Math.max(min, width) + "px"; // Enforce our minimum
 
-        // For the other headers which don't have a set width, fix it to their computed width
-        columns.forEach((column) => {
-            if (column.size.startsWith("minmax")) {
-                // isn't fixed yet (it would be a pixel value otherwise)
-                column.size = parseInt(column.header.clientWidth, 10) + "px";
-            }
-        });
+		// For the other headers which don't have a set width, fix it to their computed width
+		columns.forEach((column) => {
+			if (column.size.startsWith("minmax")) {
+				// isn't fixed yet (it would be a pixel value otherwise)
+				column.size = parseInt(column.header.clientWidth, 10) + "px";
+			}
+		});
 
-        /*
+		/*
       Update the column sizes
       Reminder: grid-template-columns sets the width for all columns in one value
   */
-        table.style.gridTemplateColumns = columns
-            .map(({ header, size }) => size)
-            .join(" ");
-    });
+		table.style.gridTemplateColumns = columns
+			.map(({ header, size }) => size)
+			.join(" ");
+	});
 
 const onMouseUp = () => {
-    window.removeEventListener("mousemove", onMouseMove);
-    window.removeEventListener("mouseup", onMouseUp);
-    headerBeingResized.classList.remove("header--being-resized");
-    headerBeingResized = null;
+	window.removeEventListener("mousemove", onMouseMove);
+	window.removeEventListener("mouseup", onMouseUp);
+	headerBeingResized.classList.remove("header--being-resized");
+	headerBeingResized = null;
 };
 
 const initResize = ({ target }) => {
-    headerBeingResized = target.parentNode;
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseup", onMouseUp);
-    headerBeingResized.classList.add("header--being-resized");
+	headerBeingResized = target.parentNode;
+	window.addEventListener("mousemove", onMouseMove);
+	window.addEventListener("mouseup", onMouseUp);
+	headerBeingResized.classList.add("header--being-resized");
 };
 
 document.querySelectorAll("th").forEach((header) => {
-    const max = columnTypeToRatioMap[header.dataset.type] + "fr";
-    columns.push({
-        header,
-        size: `minmax(${min}px, ${max})`,
-    });
-    header
-        .querySelector(".resize-handle")
-        .addEventListener("mousedown", initResize);
+	const max = columnTypeToRatioMap[header.dataset.type] + "fr";
+	columns.push({
+		header,
+		size: `minmax(${min}px, ${max})`,
+	});
+	header
+		.querySelector(".resize-handle")
+		.addEventListener("mousedown", initResize);
 });
 
 document.addEventListener("contextmenu", (e) => {
-    if (e.shiftKey) {
-        return;
-    }
-    e.preventDefault();
-    const boundingRect = window.frameElement.getBoundingClientRect();
+	if (e.shiftKey) {
+		return;
+	}
+	e.preventDefault();
+	const boundingRect = window.frameElement.getBoundingClientRect();
 
-    const containsApps =
-        currentlySelected
-            .map(
-                (item) =>
-                    item.getAttribute("data-path").split(".").slice("-1")[0],
-            )
-            .filter((item) => item === "app" || item === "lib").length > 0;
+	const containsApps =
+		currentlySelected
+			.map((item) => item.getAttribute("data-path").split(".").slice("-1")[0])
+			.filter((item) => item === "app" || item === "lib").length > 0;
 
-    if (containsApps) {
-        appcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
-        newcontextmenu.hide();
-        emptycontextmenu.hide();
-    } else if (currentlySelected.length !== 0) {
-        newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
-        appcontextmenu.hide();
-        emptycontextmenu.hide();
-    } else {
-        emptycontextmenu.show(
-            e.pageX + boundingRect.x,
-            e.pageY + boundingRect.y,
-        );
-        newcontextmenu.hide();
-        appcontextmenu.hide();
-    }
+	if (containsApps) {
+		appcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+		newcontextmenu.hide();
+		emptycontextmenu.hide();
+	} else if (currentlySelected.length !== 0) {
+		newcontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+		appcontextmenu.hide();
+		emptycontextmenu.hide();
+	} else {
+		emptycontextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+		newcontextmenu.hide();
+		appcontextmenu.hide();
+	}
 });
 
 document.addEventListener("click", (e) => {
-    newcontextmenu.hide();
-    appcontextmenu.hide();
-    emptycontextmenu.hide();
+	newcontextmenu.hide();
+	appcontextmenu.hide();
+	emptycontextmenu.hide();
 });

@@ -24,10 +24,10 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
 - `useIdbWrapper`: `Boolean` - Use the IndexedDB wrapper, which prevents the app from making accidental modifications to other app's indexeddb stores or anura's own stores. Defaults to `false`. Optional.
 - `wininfo`: `Object {title, width, height, resizable}` - Required if `type` is `"auto"`.
 
-    - `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
-    - `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
-    - `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
-    - `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
+  - `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
+  - `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
+  - `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
+  - `wininfo.resizable`: `Boolean` - Allow users to resize the window for your application. Defaults to `true`. Optional.
 
 ### Tips and Tricks
 
@@ -35,43 +35,43 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
 
 ```js
 const back = html`
-    <button
-        class=${["windowButton"]}
-        style=${{
-            width: "24px",
-            height: "24px",
-            display: use(state.showBackButton),
-        }}
-        on:mousedown=${(evt) => {
-            evt.stopPropagation();
-        }}
-        on:click=${async () => {
-            switch (state.currentScreen) {
-                case "overview":
-                    state.currentScreen = "itemList";
-                    break;
-                default:
-                    state.currentScreen = "repoList";
-                    break;
-            }
-        }}
-    >
-        <span
-            class=${["material-symbols-outlined"]}
-            style=${{
-                fontSize: "16px",
-                lineHeight: "24px",
-            }}
-        >
-            arrow_back
-        </span>
-    </button>
+	<button
+		class=${["windowButton"]}
+		style=${{
+			width: "24px",
+			height: "24px",
+			display: use(state.showBackButton),
+		}}
+		on:mousedown=${(evt) => {
+			evt.stopPropagation();
+		}}
+		on:click=${async () => {
+			switch (state.currentScreen) {
+				case "overview":
+					state.currentScreen = "itemList";
+					break;
+				default:
+					state.currentScreen = "repoList";
+					break;
+			}
+		}}
+	>
+		<span
+			class=${["material-symbols-outlined"]}
+			style=${{
+				fontSize: "16px",
+				lineHeight: "24px",
+			}}
+		>
+			arrow_back
+		</span>
+	</button>
 `;
 
 instanceWindow.content.style.position = "absolute";
 instanceWindow.content.style.height = "100%";
 const titlebar = Array.from(instanceWindow.element.children).filter((e) =>
-    e.classList.contains("title"),
+	e.classList.contains("title"),
 )[0];
 
 titlebar.style.backgroundColor = "rgba(0, 0, 0, 0)";
@@ -117,51 +117,51 @@ win.onunmaximize: () => void;
 
 ```js
 if (instance.manifest.marketplace) {
-    let libstore = await anura.import("anura.libstore@2.0.0");
+	let libstore = await anura.import("anura.libstore@2.0.0");
 
-    marketplace = new libstore.Store(anura.net, {
-        onError: (appName, error) => {
-            anura.notifications.add({
-                title: "Example Application",
-                description: `Example Application encountered an error while updating.`,
-                timeout: 5000,
-            });
-        },
-        onDownloadStart: (appName) => {
-            anura.notifications.add({
-                title: "Example Application",
-                description: `Example Application started downloading an update.`,
-                timeout: 5000,
-            });
-        },
-        onDepInstallStart: (appName, libName) => {
-            anura.notifications.add({
-                title: "Example Application",
-                description: `Example Application started updating dependency ${libName}.`,
-                timeout: 5000,
-            });
-        },
-        onComplete: (appName) => {
-            anura.notifications.add({
-                title: "Example Application",
-                description: `Example Application finished updating.`,
-                timeout: 5000,
-            });
-        },
-    });
-    const marketplaceRepo = await marketplace.getRepo(
-        "Update Repo",
-        instance.manifest.marketplace.repo,
-    );
-    let repoApp;
-    if (repo.version === "legacy") {
-        repoApp = marketplaceRepo.getApp(instance.name);
-    } else {
-        repoApp = marketplaceRepo.getApp(instance.package);
-    }
-    if (instance.manifest.version !== repoApp.version) {
-        repo.installApp(instance.package);
-    }
+	marketplace = new libstore.Store(anura.net, {
+		onError: (appName, error) => {
+			anura.notifications.add({
+				title: "Example Application",
+				description: `Example Application encountered an error while updating.`,
+				timeout: 5000,
+			});
+		},
+		onDownloadStart: (appName) => {
+			anura.notifications.add({
+				title: "Example Application",
+				description: `Example Application started downloading an update.`,
+				timeout: 5000,
+			});
+		},
+		onDepInstallStart: (appName, libName) => {
+			anura.notifications.add({
+				title: "Example Application",
+				description: `Example Application started updating dependency ${libName}.`,
+				timeout: 5000,
+			});
+		},
+		onComplete: (appName) => {
+			anura.notifications.add({
+				title: "Example Application",
+				description: `Example Application finished updating.`,
+				timeout: 5000,
+			});
+		},
+	});
+	const marketplaceRepo = await marketplace.getRepo(
+		"Update Repo",
+		instance.manifest.marketplace.repo,
+	);
+	let repoApp;
+	if (repo.version === "legacy") {
+		repoApp = marketplaceRepo.getApp(instance.name);
+	} else {
+		repoApp = marketplaceRepo.getApp(instance.package);
+	}
+	if (instance.manifest.version !== repoApp.version) {
+		repo.installApp(instance.package);
+	}
 }
 ```
 
@@ -186,31 +186,31 @@ const persistence = await loader.build(instance);
 const $store = persistence.createStoreFn($state, instanceWindow);
 
 let persistentState = await $store(
-    {
-        count: 0,
-    },
-    "state",
+	{
+		count: 0,
+	},
+	"state",
 );
 
 let externalState = $state({
-    count: 0,
+	count: 0,
 });
 
 function App() {
-    return (
-        <div>
-            <button
-                on:click={() => {
-                    persistentState.count++;
-                    externalState.count++;
-                }}
-            >
-                Increment
-            </button>
-            <div>Persistent: {use(persistentState.count)}</div>
-            <div>Session: {use(externalState.count)}</div>
-        </div>
-    );
+	return (
+		<div>
+			<button
+				on:click={() => {
+					persistentState.count++;
+					externalState.count++;
+				}}
+			>
+				Increment
+			</button>
+			<div>Persistent: {use(persistentState.count)}</div>
+			<div>Session: {use(externalState.count)}</div>
+		</div>
+	);
 }
 
 document.body.appendChild(<App />);
@@ -225,25 +225,25 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
 ### Manifest
 
 - You write a library that consists of a `manifest.json` file and an ES module. An example of the manifest file is below.
-    ```json
-    {
-        "name": "Example Library",
-        "icon": "libtest.png",
-        "package": "anura.examplelib",
-        "versions": {
-            "0.0.1": "deprecated/0.0.1/index.js",
-            "1.0.0": "index.js"
-        },
-        "installHook": "install.js",
-        "currentVersion": "1.0.0"
-    }
-    ```
-    - `name` is the name of the library.
-    - `icon` is the icon of the library (for use in Marketplace).
-    - `package` is the package name of the library.
-    - `versions` is a map of version numbers to entry points.
-    - `installHook` is a file that is run when the library is installed. It should have a default export that is a function that takes the anura instance as an argument.
-    - `currentVersion` is the current version of the library, which will be used as the default version when using the [`anura.import`](./Anura-API.md#anuraimport) api.
+  ```json
+  {
+  	"name": "Example Library",
+  	"icon": "libtest.png",
+  	"package": "anura.examplelib",
+  	"versions": {
+  		"0.0.1": "deprecated/0.0.1/index.js",
+  		"1.0.0": "index.js"
+  	},
+  	"installHook": "install.js",
+  	"currentVersion": "1.0.0"
+  }
+  ```
+  - `name` is the name of the library.
+  - `icon` is the icon of the library (for use in Marketplace).
+  - `package` is the package name of the library.
+  - `versions` is a map of version numbers to entry points.
+  - `installHook` is a file that is run when the library is installed. It should have a default export that is a function that takes the anura instance as an argument.
+  - `currentVersion` is the current version of the library, which will be used as the default version when using the [`anura.import`](./Anura-API.md#anuraimport) api.
 
 ### Usage
 
@@ -251,7 +251,7 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
 
 ```js
 anura.import("anura.examplelib@1.0.0").then((lib) => {
-    // Do stuff with the library.
+	// Do stuff with the library.
 });
 ```
 
@@ -286,10 +286,10 @@ let picker = await anura.import("anura.filepicker");
 let file = await picker.selectFile();
 // regex supported
 let fileWithFilter = await picker.selectFile({
-    regex: "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
+	regex: "(png|jpe?g|gif|bmp|webp|tiff|svg|ico)",
 });
 let multipleFiles = await picker.selectFile({
-    multiple: true,
+	multiple: true,
 });
 // select folder (all options except for regex apply here)
 let folder = await picker.selectFolder();
@@ -335,41 +335,40 @@ Libraries can also be setup to handle files. A file handler library at the least
 
 ```js
 export function openFile(path) {
-    anura.fs.readFile(path, async function (err, data) {
-        let fileView = anura.wm.createGeneric("Simple Text Editor");
-        fileView.content.style.overflow = "auto";
-        fileView.content.style.backgroundColor = "var(--material-bg)";
-        fileView.content.style.color = "white";
-        const text = document.createElement("textarea");
-        text.style.fontFamily = '"Roboto Mono", monospace';
-        text.style.top = 0;
-        text.style.left = 0;
-        text.style.width = "calc( 100% - 20px )";
-        text.style.height = "calc( 100% - 24px )";
-        text.style.backgroundColor = "var(--material-bg)";
-        text.style.color = "white";
-        text.style.border = "none";
-        text.style.resize = "none";
-        text.style.outline = "none";
-        text.style.userSelect = "text";
-        text.style.margin = "8px";
-        text.value = data;
-        text.onchange = () => {
-            fs.writeFile(path, text.value);
-        };
-        fileView.content.appendChild(text);
-    });
+	anura.fs.readFile(path, async function (err, data) {
+		let fileView = anura.wm.createGeneric("Simple Text Editor");
+		fileView.content.style.overflow = "auto";
+		fileView.content.style.backgroundColor = "var(--material-bg)";
+		fileView.content.style.color = "white";
+		const text = document.createElement("textarea");
+		text.style.fontFamily = '"Roboto Mono", monospace';
+		text.style.top = 0;
+		text.style.left = 0;
+		text.style.width = "calc( 100% - 20px )";
+		text.style.height = "calc( 100% - 24px )";
+		text.style.backgroundColor = "var(--material-bg)";
+		text.style.color = "white";
+		text.style.border = "none";
+		text.style.resize = "none";
+		text.style.outline = "none";
+		text.style.userSelect = "text";
+		text.style.margin = "8px";
+		text.value = data;
+		text.onchange = () => {
+			fs.writeFile(path, text.value);
+		};
+		fileView.content.appendChild(text);
+	});
 }
 
 export function getIcon(path) {
-    return (
-        import.meta.url.substring(0, import.meta.url.lastIndexOf("/")) +
-        "/icon.png"
-    );
+	return (
+		import.meta.url.substring(0, import.meta.url.lastIndexOf("/")) + "/icon.png"
+	);
 }
 
 export function getFileType(path) {
-    return "Text File";
+	return "Text File";
 }
 ```
 

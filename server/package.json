@@ -1,19 +1,19 @@
 {
-    "name": "anuraos-server",
-    "type": "module",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/MercuryWorkshop/AnuraOS.git"
-    },
-    "author": "Mercury Workshop",
-    "license": "AGPL-3.0-only",
-    "bugs": {
-        "url": "https://github.com/MercuryWorkshop/AnuraOS/issues"
-    },
-    "homepage": "https://github.com/MercuryWorkshop/AnuraOS#readme",
-    "dependencies": {
-        "express": "^4.21.0",
-        "wisp-server-node": "^1.1.7",
-        "ws": "^8.18.0"
-    }
+	"name": "anuraos-server",
+	"type": "module",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/MercuryWorkshop/AnuraOS.git"
+	},
+	"author": "Mercury Workshop",
+	"license": "AGPL-3.0-only",
+	"bugs": {
+		"url": "https://github.com/MercuryWorkshop/AnuraOS/issues"
+	},
+	"homepage": "https://github.com/MercuryWorkshop/AnuraOS#readme",
+	"dependencies": {
+		"express": "^4.21.0",
+		"wisp-server-node": "^1.1.7",
+		"ws": "^8.18.0"
+	}
 }

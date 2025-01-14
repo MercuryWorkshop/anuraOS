@@ -1,80 +1,80 @@
 .alttab-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 0.8em 1.5em;
-    border-radius: 1rem;
-    background-color: color-mix(in srgb, var(--theme-dark-bg) 80%, transparent);
-    backdrop-filter: blur(10px);
-    color: var(--theme-fg);
-    border: 0.0125rem solid var(--theme-border);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 0.8em 1.5em;
+	border-radius: 1rem;
+	background-color: color-mix(in srgb, var(--theme-dark-bg) 80%, transparent);
+	backdrop-filter: blur(10px);
+	color: var(--theme-fg);
+	border: 0.0125rem solid var(--theme-border);
 }
 
 body.blur-disable .alttab-container {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 .alttab-hidden {
-    display: none;
+	display: none;
 }
 
 .alttab-window-list {
-    display: flex;
-    gap: 0.5rem;
+	display: flex;
+	gap: 0.5rem;
 }
 
 .alttab-nowindows {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--theme-secondary-fg);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: var(--theme-secondary-fg);
 }
 
 .alttab-window,
 .alttab-nowindows {
-    min-width: 10rem;
-    min-height: 5.625rem;
-    padding: 1em;
-    border: 0.125rem solid transparent;
-    border-radius: 0.8rem;
+	min-width: 10rem;
+	min-height: 5.625rem;
+	padding: 1em;
+	border: 0.125rem solid transparent;
+	border-radius: 0.8rem;
 }
 
 .alttab-window {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    transition: 0.1s border-color;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	transition: 0.1s border-color;
 }
 
 .alttab-window-selected {
-    border-color: var(--theme-accent);
-    transition: 0.1s border-color;
+	border-color: var(--theme-accent);
+	transition: 0.1s border-color;
 }
 
 .alttab-window-icon-container {
-    flex-basis: 100%;
-    display: flex;
-    justify-content: center;
+	flex-basis: 100%;
+	display: flex;
+	justify-content: center;
 }
 
 .alttab-icon-large {
-    width: 3rem;
-    height: 3rem;
+	width: 3rem;
+	height: 3rem;
 }
 
 .alttab-icon-inline {
-    width: 1.5em;
-    height: 1.5em;
-    padding: 0 0.25em;
+	width: 1.5em;
+	height: 1.5em;
+	padding: 0 0.25em;
 }
 
 .alttab-titlebar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.3rem;
-    padding-top: 0.25rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.3rem;
+	padding-top: 0.25rem;
 }

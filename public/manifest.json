@@ -1,22 +1,22 @@
 {
-    "name": "AnuraOS",
-    "icons": [
-        {
-            "src": "pwa_icon.png",
-            "sizes": "16x16 32x32 48x48 72x72 96x96 128x128 256x256 512x512 1024x1024 2048x2048",
-            "type": "image/png",
-            "purpose": "any maskable"
-        }
-    ],
-    "short_name": "AnuraOS",
-    "start_url": "/",
-    "display_override": [
-        "window-controls-overlay",
-        "standalone",
-        "minimal-ui",
-        "browser"
-    ],
-    "display": "standalone",
-    "background_color": "#000",
-    "description": "A webOS and development environment powered by v86"
+	"name": "AnuraOS",
+	"icons": [
+		{
+			"src": "pwa_icon.png",
+			"sizes": "16x16 32x32 48x48 72x72 96x96 128x128 256x256 512x512 1024x1024 2048x2048",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	],
+	"short_name": "AnuraOS",
+	"start_url": "/",
+	"display_override": [
+		"window-controls-overlay",
+		"standalone",
+		"minimal-ui",
+		"browser"
+	],
+	"display": "standalone",
+	"background_color": "#000",
+	"description": "A webOS and development environment powered by v86"
 }

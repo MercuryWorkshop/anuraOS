@@ -1,10 +1,10 @@
 class Lib {
-    icon: string;
-    package: string;
-    name: string;
+	icon: string;
+	package: string;
+	name: string;
 
-    versions: { [key: string]: any } = {};
-    latestVersion: string;
+	versions: { [key: string]: any } = {};
+	latestVersion: string;
 
-    async getImport(version: string): Promise<any> {}
+	async getImport(version: string): Promise<any> {}
 }

@@ -1,5 +1,5 @@
 export function Selector() {
-    this.css = `
+	this.css = `
     margin-top: 0.3em;
     margin-right: 1em;
     display: flex;
@@ -22,16 +22,16 @@ export function Selector() {
     }
     `;
 
-    return html`
-        <div class="topbar" id="selector">
-            <div class="sep"></div>
-            <button
-                on:click=${() => {
-                    filePickerAction(currentlySelected);
-                }}
-            >
-                Select
-            </button>
-        </div>
-    `;
+	return html`
+		<div class="topbar" id="selector">
+			<div class="sep"></div>
+			<button
+				on:click=${() => {
+					filePickerAction(currentlySelected);
+				}}
+			>
+				Select
+			</button>
+		</div>
+	`;
 }

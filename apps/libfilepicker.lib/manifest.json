@@ -1,10 +1,10 @@
 {
-    "name": "File Picker",
-    "icon": "files.png",
-    "package": "anura.filepicker",
-    "versions": {
-        "1.0.0": "handler.js"
-    },
-    "currentVersion": "1.0.0",
-    "installHook": "install.js"
+	"name": "File Picker",
+	"icon": "files.png",
+	"package": "anura.filepicker",
+	"versions": {
+		"1.0.0": "handler.js"
+	},
+	"currentVersion": "1.0.0",
+	"installHook": "install.js"
 }

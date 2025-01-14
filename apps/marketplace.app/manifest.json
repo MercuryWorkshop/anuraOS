@@ -1,12 +1,12 @@
 {
-    "name": "Marketplace",
-    "type": "auto",
-    "package": "anura.store",
-    "index": "index.html",
-    "icon": "playstore.webp",
-    "wininfo": {
-        "title": "",
-        "width": "1000px",
-        "height": "600px"
-    }
+	"name": "Marketplace",
+	"type": "auto",
+	"package": "anura.store",
+	"index": "index.html",
+	"icon": "playstore.webp",
+	"wininfo": {
+		"title": "",
+		"width": "1000px",
+		"height": "600px"
+	}
 }

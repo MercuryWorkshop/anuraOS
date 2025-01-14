@@ -1,176 +1,176 @@
 html {
-    background-color: black;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
+	background-color: black;
+	-webkit-touch-callout: none;
+	-webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    scrollbar-width: thin;
-    color-scheme: dark;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	scrollbar-width: thin;
+	color-scheme: dark;
 }
 #overlay {
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    right: 0;
-    position: fixed;
-    background: gray;
-    opacity: 0.5;
-    z-index: 98;
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	right: 0;
+	position: fixed;
+	background: gray;
+	opacity: 0.5;
+	z-index: 98;
 }
 
 body {
-    overflow: hidden;
-    background: #000000;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-    user-select: none;
-    font-family:
-        "Roboto",
-        RobotoDraft,
-        "Droid Sans",
-        Arial,
-        Helvetica,
-        -apple-system,
-        BlinkMacSystemFont,
-        system-ui,
-        sans-serif;
+	overflow: hidden;
+	background: #000000;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	user-select: none;
+	font-family:
+		"Roboto",
+		RobotoDraft,
+		"Droid Sans",
+		Arial,
+		Helvetica,
+		-apple-system,
+		BlinkMacSystemFont,
+		system-ui,
+		sans-serif;
 }
 
 body.blur-disable #quickSettings {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    text-align: center;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	text-align: center;
 }
 
 nav li {
-    display: inline-block;
-    margin-right: 10px;
-    margin-left: 10px;
-    padding-top: 5px;
+	display: inline-block;
+	margin-right: 10px;
+	margin-left: 10px;
+	padding-top: 5px;
 }
 
 .lightbar {
-    width: 40px;
-    height: 2px;
-    position: relative;
-    bottom: 1px;
-    border-radius: 5px;
-    opacity: 0.75;
+	width: 40px;
+	height: 2px;
+	position: relative;
+	bottom: 1px;
+	border-radius: 5px;
+	opacity: 0.75;
 }
 
 .bootsplash {
-    background-color: black;
-    z-index: 9999999999;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    text-align: center;
-    color: white;
-    flex-wrap: wrap;
-    transition: 0.175s;
-    opacity: 1;
-    transform: scale(1);
+	background-color: black;
+	z-index: 9999999999;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: center;
+	text-align: center;
+	color: white;
+	flex-wrap: wrap;
+	transition: 0.175s;
+	opacity: 1;
+	transform: scale(1);
 }
 
 .bootsplash.hide {
-    opacity: 0;
-    pointer-events: none;
-    transition: 0.175s;
-    transform: scale(1.25);
+	opacity: 0;
+	pointer-events: none;
+	transition: 0.175s;
+	transform: scale(1.25);
 }
 
 .flex {
-    display: flex;
+	display: flex;
 }
 .flexcenter {
-    justify-content: space-evenly;
-    align-items: center;
+	justify-content: space-evenly;
+	align-items: center;
 }
 
 .material-symbols-outlined {
-    font-family: "Material Symbols Outlined", sans-serif;
+	font-family: "Material Symbols Outlined", sans-serif;
 }
 
 .custom-menu {
-    position: absolute;
-    background-color: var(--theme-secondary-bg);
-    padding: 5px 0;
-    min-width: 150px;
-    max-width: 250px;
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+	position: absolute;
+	background-color: var(--theme-secondary-bg);
+	padding: 5px 0;
+	min-width: 150px;
+	max-width: 250px;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
 
-    z-index: 10000;
-    overflow: hidden;
+	z-index: 10000;
+	overflow: hidden;
 
-    padding: 0;
-    border-radius: 3px;
+	padding: 0;
+	border-radius: 3px;
 }
 
 .custom-menu.large {
-    padding: 5px 0;
-    min-width: 170px;
-    max-width: 300px;
-    background-color: color-mix(in srgb, var(--theme-dark-bg) 85%, transparent);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 10px;
+	padding: 5px 0;
+	min-width: 170px;
+	max-width: 300px;
+	background-color: color-mix(in srgb, var(--theme-dark-bg) 85%, transparent);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border-radius: 10px;
 }
 
 .custom-menu-item:hover {
-    background-color: color-mix(in srgb, var(--theme-fg) 5%, transparent);
-    transition: 0.05s;
+	background-color: color-mix(in srgb, var(--theme-fg) 5%, transparent);
+	transition: 0.05s;
 }
 
 body.blur-disable .custom-menu {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 .custom-menu-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    font-size: 13px;
-    color: var(--theme-fg);
-    cursor: pointer;
-    user-select: none;
-    transition: 0.075s;
+	display: flex;
+	align-items: center;
+	padding: 8px 12px;
+	font-size: 13px;
+	color: var(--theme-fg);
+	cursor: pointer;
+	user-select: none;
+	transition: 0.075s;
 }
 
 .custom-menu-item .material-symbols-outlined {
-    margin-top: 0.2px;
-    margin-right: 0.5em;
-    padding-left: 1px;
-    font-size: 1.5em;
+	margin-top: 0.2px;
+	margin-right: 0.5em;
+	padding-left: 1px;
+	font-size: 1.5em;
 }
 
 .custom-menu .extra-menu-wrapper {
-    position: fixed;
+	position: fixed;
 }
 
 .custom-menu .extra-menu {
-    position: relative;
-    left: 303px;
-    bottom: 0.75em;
+	position: relative;
+	left: 303px;
+	bottom: 0.75em;
 }

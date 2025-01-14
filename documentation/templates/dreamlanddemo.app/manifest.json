@@ -1,12 +1,12 @@
 {
-    "name": "Dreamland Demo",
-    "type": "auto",
-    "package": "org.js.dreamland.demo",
-    "index": "index.html",
-    "icon": "libtest.png",
-    "wininfo": {
-        "title": "Dreamland Demo",
-        "width": "800px",
-        "height": "600px"
-    }
+	"name": "Dreamland Demo",
+	"type": "auto",
+	"package": "org.js.dreamland.demo",
+	"index": "index.html",
+	"icon": "libtest.png",
+	"wininfo": {
+		"title": "Dreamland Demo",
+		"width": "800px",
+		"height": "600px"
+	}
 }

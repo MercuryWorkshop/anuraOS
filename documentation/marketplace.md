@@ -24,20 +24,20 @@ This contains information about the repo.
 
 - `name`: `String` – Repo name. Not strictly required but highly recommended.
 - `maintainer` – Maintainer info.
-    - `name`: `String` – Maintainer name
-    - `email`: `String` – Maintainer email
-    - `website`: `String` – Maintainer website
+  - `name`: `String` – Maintainer name
+  - `email`: `String` – Maintainer email
+  - `website`: `String` – Maintainer website
 - `version`: `String` – Repo version.
 
 ```json
 {
-    "name": "Anura App Repository",
-    "maintainer": {
-        "name": "Mercury Workshop",
-        "email": "support@mercurywork.shop",
-        "website": "mercurywork.shop"
-    },
-    "version": "2.0.1"
+	"name": "Anura App Repository",
+	"maintainer": {
+		"name": "Mercury Workshop",
+		"email": "support@mercurywork.shop",
+		"website": "mercurywork.shop"
+	},
+	"version": "2.0.1"
 }
 ```
 
@@ -97,26 +97,26 @@ Here is an example of a manifest.json
 
 ```json
 {
-    "name": "Example app",
-    "icon": "example.png",
-    "summary": "(tiny app description)",
-    "desc": "(longer app description)",
-    "package": "anura.example",
-    "data": "app.zip",
-    "installHook": "install.js",
-    "screenshots": [
-        {
-            "path": "screenshots/something.png",
-            "desc": "(screenshot desc)"
-        },
-        {
-            "path": "screenshots/something2.png",
-            "desc": "(screenshot desc)"
-        }
-    ],
-    "version": "1.0.0",
-    "dependencies": ["(package identifier)"],
-    "category": "game"
+	"name": "Example app",
+	"icon": "example.png",
+	"summary": "(tiny app description)",
+	"desc": "(longer app description)",
+	"package": "anura.example",
+	"data": "app.zip",
+	"installHook": "install.js",
+	"screenshots": [
+		{
+			"path": "screenshots/something.png",
+			"desc": "(screenshot desc)"
+		},
+		{
+			"path": "screenshots/something2.png",
+			"desc": "(screenshot desc)"
+		}
+	],
+	"version": "1.0.0",
+	"dependencies": ["(package identifier)"],
+	"category": "game"
 }
 ```
 
@@ -144,34 +144,34 @@ To initialize the libstore library, call the `Store` constructor with a networki
 let libstore = await anura.import("anura.libstore@2.0.0");
 
 marketplace = new libstore.Store(anura.net, {
-    onError: (appName, error) => {
-        anura.notifications.add({
-            title: "libstore",
-            description: `libstore encountered an error while installing ${appName}: ${error}`,
-            timeout: 5000,
-        });
-    },
-    onDownloadStart: (appName) => {
-        anura.notifications.add({
-            title: "libstore",
-            description: `libstore started downloading ${appName}`,
-            timeout: 5000,
-        });
-    },
-    onDepInstallStart: (appName, libName) => {
-        anura.notifications.add({
-            title: "libstore",
-            description: `libstore started installing dependency ${libName} for ${appName}`,
-            timeout: 5000,
-        });
-    },
-    onComplete: (appName) => {
-        anura.notifications.add({
-            title: "libstore",
-            description: `libstore finished installing ${appName}`,
-            timeout: 5000,
-        });
-    },
+	onError: (appName, error) => {
+		anura.notifications.add({
+			title: "libstore",
+			description: `libstore encountered an error while installing ${appName}: ${error}`,
+			timeout: 5000,
+		});
+	},
+	onDownloadStart: (appName) => {
+		anura.notifications.add({
+			title: "libstore",
+			description: `libstore started downloading ${appName}`,
+			timeout: 5000,
+		});
+	},
+	onDepInstallStart: (appName, libName) => {
+		anura.notifications.add({
+			title: "libstore",
+			description: `libstore started installing dependency ${libName} for ${appName}`,
+			timeout: 5000,
+		});
+	},
+	onComplete: (appName) => {
+		anura.notifications.add({
+			title: "libstore",
+			description: `libstore finished installing ${appName}`,
+			timeout: 5000,
+		});
+	},
 });
 ```
 
@@ -183,8 +183,8 @@ To fetch a repo and its contents use the `getRepo` method. This method will retu
 
 ```js
 const marketplaceRepo = await marketplace.getRepo(
-    "Anura App Repository",
-    "https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
+	"Anura App Repository",
+	"https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
 );
 ```
 
@@ -214,7 +214,7 @@ This method flushes the repo cache and refetches it. This does not return anythi
 let button = document.createElement("button");
 button.innerHTML = "Refresh";
 button.addEventListener("click", () => {
-    repo.refreshRepoCache();
+	repo.refreshRepoCache();
 });
 ```
 
@@ -228,7 +228,7 @@ This method flushes the the thumbnail cache. All new thumbnail fetches will add 
 let button = document.createElement("button");
 button.innerHTML = "Refresh";
 button.addEventListener("click", () => {
-    repo.refreshRepoCache();
+	repo.refreshRepoCache();
 });
 ```
 
@@ -251,7 +251,7 @@ This method grabs all of the apps from the repo and returns all of them in an ar
 ```js
 let apps = await repo.getApps();
 apps.forEach((app) => {
-    console.log("App Data: ", app);
+	console.log("App Data: ", app);
 });
 ```
 
@@ -290,7 +290,7 @@ This method grabs all of the libraries from the repo and returns all of them in 
 ```js
 let libs = await repo.getlibs();
 libs.forEach((lib) => {
-    console.log("Library Data: ", lib);
+	console.log("Library Data: ", lib);
 });
 ```
 
