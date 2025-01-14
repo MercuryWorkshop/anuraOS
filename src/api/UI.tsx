@@ -187,11 +187,9 @@ class AnuraUI {
             this.class ||= [];
             if (typeof this.class === "string") this.class = [this.class];
 
-            const dynamicStyle: any = {};
-
-            if (this.width) dynamicStyle.width = this.width;
-            if (this.height) dynamicStyle.height = this.height;
-            if (this.margin) dynamicStyle.margin = this.margin;
+            this.width ||= "100%";
+            this.height ||= "100%";
+            this.margin ||= "0";
 
             this.css = `
                 display: flex;
@@ -219,7 +217,9 @@ class AnuraUI {
             return (
                 <div
                     style={{
-                        ...dynamicStyle,
+                        width: use(this.width),
+                        height: use(this.height),
+                        margin: use(this.margin),
                         ...this.style,
                     }}
                     class={this.class}
