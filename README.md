@@ -41,6 +41,7 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 - `wasm-opt`
 - `make`
 - `gcc` (`gcc-multilib` on Debian and Ubuntu x86_64)
+- 32 bit version of `glibc` (needed for building rootfs, `lib32-glibc` on Arch Linux)
 - `clang`
 - `uuid-runtime`
 - `jq`
