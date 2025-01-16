@@ -1,6 +1,6 @@
 FROM i386/alpine:edge
 
-ENV CACHE_BUST=1235
+ENV CACHE_BUST=1236
 
 RUN apk add --update \
         alpine-base alpine-conf openrc bash ncurses shadow curl \
