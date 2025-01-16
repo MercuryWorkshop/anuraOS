@@ -1,5 +1,7 @@
 FROM i386/alpine:edge
 
+ENV CACHE_BUST=1235
+
 RUN apk add --update \
         alpine-base alpine-conf openrc bash ncurses shadow curl \
         linux-virt linux-headers linux-firmware-none linux-firmware-sb16 \
@@ -16,7 +18,6 @@ RUN passwd -d root
 RUN chsh -s /bin/bash
 RUN echo "host9p /root 9p defaults 0 0" >> /etc/fstab
 
-ENV CACHE_BUST=1234
 COPY xorg.conf /etc/X11/
 COPY X11/* /etc/X11/
 
