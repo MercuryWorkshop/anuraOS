@@ -5,6 +5,8 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
+# The 'all' target is used by the Dockerfile to build the application.
+# It includes all necessary build steps for the Docker container.
 all: submodules build/bootstrap \
 		v86 build/libs/filer/filer.min.js build/libs/mime/mime.iife.js build/libs/nfsadapter/nfsadapter.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/idb-keyval/idb-keyval.js \
 		bundle public/config.json build/cache-load.json build/libs/fflate/browser.js apps/libfileview.lib/icons \
@@ -21,7 +23,7 @@ build/bootstrap: package.json server/package.json
 
 hooks: FORCE
 	mkdir -p .git/hooks
-	echo -e "#!/bin/sh\nmake lint\ngit update-index --again" > .git/hooks/pre-commit
+	echo -e "#!/bin/sh\\nmake lint\\ngit update-index --again" > .git/hooks/pre-commit
 	chmod +x .git/hooks/pre-commit
 
 submodules: .gitmodules
@@ -173,7 +175,7 @@ tsc:
 	mkdir -p lib/
 	cd build/; \
 	(find lib -type f -name "*.d.ts" -exec cp --parents {} ../anuraos-types/ \;)
-	(cd build && find lib -type f -name "*.d.ts") | sed 's/ \+/\n/g' | sed 's|.*|/// <reference path="&" />|' > anuraos-types/index.d.ts
+	(cd build && find lib -type f -name "*.d.ts") | sed 's/ \+/\\n/g' | sed 's|.*|/// <reference path="&" />|' > anuraos-types/index.d.ts
 	jq '.version = "$(ANURA_VERSION)"' types-package.json > anuraos-types/package.json
 	
 css: src/*.css
