@@ -1,5 +1,5 @@
-# Use the official Node.js 14 Alpine image as the base image
-FROM node:14-alpine
+# Use the official Node.js 16 Alpine image as the base image
+FROM node:16-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -11,7 +11,8 @@ COPY . .
 RUN npm install
 
 # If there are any build steps, such as compiling TypeScript or bundling JavaScript, include them here
-# RUN npm run build (Uncomment and modify this line if there are build steps)
+# Run the build step to compile TypeScript or bundle JavaScript
+RUN npm run build
 
 # Expose the port the application will run on
 EXPOSE 3000
