@@ -10,6 +10,9 @@ COPY . .
 # Install Node.js dependencies
 RUN npm install
 
+# Use Makefile to build the application
+RUN make all
+
 # If there are any build steps, such as compiling TypeScript or bundling JavaScript, include them here
 # Run the build step to compile TypeScript or bundle JavaScript
 RUN npm run build
