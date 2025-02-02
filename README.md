@@ -62,8 +62,8 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 ### Building the Linux RootFS
 
 - Make sure you have `Docker` installed and running.
-- Run `make rootfs`
 - Make sure to add yourself to the Docker group using `usermod -a -G docker $USER`
+- Run `make rootfs`
 
 ### Running Anura Locally
 
