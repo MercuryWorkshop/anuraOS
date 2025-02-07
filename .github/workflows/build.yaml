@@ -11,22 +11,38 @@ jobs:
     name: Build Anura
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-      - run: sudo apt update
-      - run: sudo apt install -y git build-essential clang default-jre
-      - run: git submodule update --init
-      - run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-      - run: source "$HOME/.cargo/env" && make static
 
-      - name: Upload Anura Artifact
+      - name: Install dependencies
+        run: sudo apt update && sudo apt install -y git build-essential clang default-jre
+
+      - name: Pull submodules
+        run: git submodule update --init
+
+      - name: Install Rust
+        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+      - name: Pack Anura
+        run: source "$HOME/.cargo/env" && make static
+
+      - name: Upload Anura Static Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Anura static build
+          name: anura-static
           path: static/*
+          retention-days: 90
+
+      - name: Upload Anura Types Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: anura-static
+          path: anuraos-types/*
           retention-days: 90
 
   upload:
@@ -47,7 +63,7 @@ jobs:
       - name: Get artifacts
         uses: actions/download-artifact@v4
         with:
-          name: Anura static build
+          name: anura-static
           path: ./static
 
       - name: Zip anura Release
@@ -63,6 +79,49 @@ jobs:
           artifacts: "anura.zip"
           prerelease: true
 
+  publish:
+    name: Upload release
+    runs-on: ubuntu-latest
+    needs: build
+    permissions: write-all
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+      - name: Get artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: anura-static
+          path: .
+
+      - name: Check the version
+        id: check
+        run: |
+          CURRENT_VERSION=$(jq -r .version package.json)
+          echo "Current version: $CURRENT_VERSION"
+          LATEST_TAG=$(npm view {pkg} version)
+          echo "Latest NPM version: $LATEST_VERSION"
+
+          LATEST_VERSION=${LATEST_TAG}
+
+          if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ]; 
+          then
+            echo "Version changed"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
+            echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Version not changed"
+            echo "version_changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish
+        if: steps.check.outputs.version_changed == 'true'
+        run: npm publish --access public --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
   pages:
     name: Upload to Github Pages
     runs-on: ubuntu-latest
@@ -73,7 +132,7 @@ jobs:
       - name: Get artifacts
         uses: actions/download-artifact@v4
         with:
-          name: Anura static build
+          name: anura-static
           path: ./static
 
       - name: upload pages artifact
