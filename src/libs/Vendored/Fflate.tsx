@@ -1,9 +1,9 @@
 class Fflate extends Lib {
-	icon = "/assets/icons/generic.svg";
+	icon = "./assets/icons/generic.svg";
 	package = "npm:fflate";
 	name = "fflate";
 
-	src = "/libs/fflate/browser.js";
+	src = "./libs/fflate/browser.js";
 
 	versions: { [key: string]: any } = {};
 	latestVersion = "0.0.0";

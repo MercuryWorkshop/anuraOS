@@ -1,7 +1,7 @@
 class ExploreApp extends App {
 	name = "Explore";
 	package = "anura.explore";
-	icon = "/assets/icons/explore.png";
+	icon = "./assets/icons/explore.png";
 	hidden = false;
 
 	css = css`
@@ -142,7 +142,7 @@ class ExploreApp extends App {
 				<span>
 					<a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
 						<img
-							src="/assets/icons/wallpaper.png"
+							src="./assets/icons/wallpaper.png"
 							alt="Wallpaper Selector Icon"
 						/>
 						Wallpaper &amp; Style
@@ -196,7 +196,7 @@ class ExploreApp extends App {
 						It seems like you dont have the subsystem enabled. You can install
 						it from{" "}
 						<span>
-							<img src="/assets/icons/settings.png" alt="Settings icon" />
+							<img src="./assets/icons/settings.png" alt="Settings icon" />
 							<a href="javascript:anura.apps['anura.settings'].open();">
 								Settings
 							</a>
@@ -209,7 +209,7 @@ class ExploreApp extends App {
 					<p>
 						You can open a terminal using the{" "}
 						<span>
-							<img src="/assets/icons/terminal.png" alt="v86 Terminal Icon" />
+							<img src="./assets/icons/terminal.png" alt="v86 Terminal Icon" />
 							<a href="javascript:anura.apps['anura.term'].open();">
 								v86 Terminal
 							</a>
@@ -227,7 +227,7 @@ class ExploreApp extends App {
 				If you want to create a shortcut for an X11 app in the launcher, you can
 				do so from{" "}
 				<span>
-					<img src="/assets/icons/settings.png" alt="Settings icon" />
+					<img src="./assets/icons/settings.png" alt="Settings icon" />
 					<a href="javascript:anura.apps['anura.settings'].open();">Settings</a>
 				</span>
 				.
@@ -274,7 +274,7 @@ class ExploreApp extends App {
 				<span>
 					<a href="javascript:anura.apps['anura.wallpaper'].open();">
 						<img
-							src="/assets/icons/wallpaper.png"
+							src="./assets/icons/wallpaper.png"
 							alt="Wallpaper Selector Icon"
 						/>
 						Wallpaper &amp; Style

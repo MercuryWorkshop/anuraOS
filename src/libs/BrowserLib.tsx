@@ -2,7 +2,7 @@
 class BrowserLib extends Lib {
 	name = "Anura Browser Lib";
 	package = "anura.libbrowser";
-	icon = "/assets/chrome.svg";
+	icon = "./assets/chrome.svg";
 
 	events: {
 		openTab?: (path: string, callback?: () => void) => void;

@@ -1,7 +1,7 @@
 class RecoveryApp extends App {
 	name = "Recovery";
 	package = "anura.recovery";
-	icon = "/assets/icons/verificationoff.png";
+	icon = "./assets/icons/verificationoff.png";
 
 	css = css`
 		background-color: var(--material-bg);
@@ -19,7 +19,7 @@ class RecoveryApp extends App {
 		}
 
 		.recovery-logo-img {
-			background-image: url("/assets/icons/verificationoff.png");
+			background-image: url("./assets/icons/verificationoff.png");
 			background-size: contain;
 			height: 128px;
 			width: 128px;

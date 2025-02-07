@@ -1,9 +1,9 @@
 class Mime extends Lib {
-	icon = "/assets/icons/generic.svg";
+	icon = "./assets/icons/generic.svg";
 	package = "npm:mime";
 	name = "Mime";
 
-	src = "/libs/mime/src/index.js";
+	src = "./libs/mime/src/index.js";
 
 	versions: { [key: string]: any } = {};
 	latestVersion = "0.0.0";

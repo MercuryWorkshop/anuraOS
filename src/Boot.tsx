@@ -484,7 +484,7 @@ document.addEventListener("anura-login-completed", async () => {
 
 	wallpaper.setWallpaper(
 		anura.settings.get("wallpaper") ||
-			"/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
+			"./assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
 	);
 
 	for (const bin of anura.config.bin) {

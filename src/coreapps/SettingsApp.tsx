@@ -230,7 +230,7 @@ const SettingText: Component<{
 class SettingsApp extends App {
 	name = "Settings";
 	package = "anura.settings";
-	icon = "/assets/icons/settings.png";
+	icon = "./assets/icons/settings.png";
 	win: WMWindow;
 
 	constructor() {

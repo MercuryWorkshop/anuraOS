@@ -9,7 +9,7 @@ class XAppStub extends App {
 		super();
 		this.name = name;
 		this.package = packageIdent;
-		this.icon = icon || "/assets/icons/xfrog.png";
+		this.icon = icon || "./assets/icons/xfrog.png";
 		this.command = command;
 	}
 	async open() {

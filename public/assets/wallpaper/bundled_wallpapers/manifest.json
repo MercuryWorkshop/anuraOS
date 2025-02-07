@@ -2,87 +2,87 @@
 	"wallpapers": [
 		{
 			"name": "Nocturne",
-			"url": "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Nocturne.jpg"
 		},
 		{
 			"name": "ChromeOS Default",
-			"url": "/assets/wallpaper/bundled_wallpapers/Default.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Default.jpg"
 		},
 		{
 			"name": "Blues Dark",
-			"url": "/assets/wallpaper/bundled_wallpapers/Blues Dark.png"
+			"url": "./assets/wallpaper/bundled_wallpapers/Blues Dark.png"
 		},
 		{
 			"name": "Blues",
-			"url": "/assets/wallpaper/bundled_wallpapers/Blues.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Blues.jpg"
 		},
 		{
 			"name": "Child",
-			"url": "/assets/wallpaper/bundled_wallpapers/Child.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Child.jpg"
 		},
 		{
 			"name": "ChromeOS Material",
-			"url": "/assets/wallpaper/bundled_wallpapers/Material.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Material.jpg"
 		},
 		{
 			"name": "Earth Dark",
-			"url": "/assets/wallpaper/bundled_wallpapers/Earth Dark.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Earth Dark.jpg"
 		},
 		{
 			"name": "Earth Light",
-			"url": "/assets/wallpaper/bundled_wallpapers/Earth Light.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Earth Light.jpg"
 		},
 		{
 			"name": "Fire Dark",
-			"url": "/assets/wallpaper/bundled_wallpapers/Fire Dark.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Fire Dark.jpg"
 		},
 		{
 			"name": "Fire Light",
-			"url": "/assets/wallpaper/bundled_wallpapers/Fire Light.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Fire Light.jpg"
 		},
 		{
 			"name": "Greens Dark",
-			"url": "/assets/wallpaper/bundled_wallpapers/Greens Dark.png"
+			"url": "./assets/wallpaper/bundled_wallpapers/Greens Dark.png"
 		},
 		{
 			"name": "Greens",
-			"url": "/assets/wallpaper/bundled_wallpapers/Greens.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Greens.jpg"
 		},
 		{
 			"name": "Guest",
-			"url": "/assets/wallpaper/bundled_wallpapers/Guest.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Guest.jpg"
 		},
 		{
 			"name": "Reds Dark",
-			"url": "/assets/wallpaper/bundled_wallpapers/Reds Dark.png"
+			"url": "./assets/wallpaper/bundled_wallpapers/Reds Dark.png"
 		},
 		{
 			"name": "Reds",
-			"url": "/assets/wallpaper/bundled_wallpapers/Reds.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Reds.jpg"
 		},
 		{
 			"name": "Water Dark",
-			"url": "/assets/wallpaper/bundled_wallpapers/Water Dark.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Water Dark.jpg"
 		},
 		{
 			"name": "Water Light",
-			"url": "/assets/wallpaper/bundled_wallpapers/Water Light.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Water Light.jpg"
 		},
 		{
 			"name": "Wind Dark",
-			"url": "/assets/wallpaper/bundled_wallpapers/Wind Dark.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Wind Dark.jpg"
 		},
 		{
 			"name": "Wind Light",
-			"url": "/assets/wallpaper/bundled_wallpapers/Wind Light.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Wind Light.jpg"
 		},
 		{
 			"name": "Yellows Dark",
-			"url": "/assets/wallpaper/bundled_wallpapers/Yellows Dark.png"
+			"url": "./assets/wallpaper/bundled_wallpapers/Yellows Dark.png"
 		},
 		{
 			"name": "Yellows",
-			"url": "/assets/wallpaper/bundled_wallpapers/Yellows.jpg"
+			"url": "./assets/wallpaper/bundled_wallpapers/Yellows.jpg"
 		}
 	]
 }
