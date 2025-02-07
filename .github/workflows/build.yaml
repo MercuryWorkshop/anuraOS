@@ -101,7 +101,7 @@ jobs:
         run: |
           CURRENT_VERSION=$(jq -r .version package.json)
           echo "Current version: $CURRENT_VERSION"
-          LATEST_TAG=$(npm view {pkg} version)
+          LATEST_TAG=$(npm view @mercuryworkshop/anuraos-types version || echo "0.0.0")
           echo "Latest NPM version: $LATEST_VERSION"
 
           LATEST_VERSION=${LATEST_TAG}

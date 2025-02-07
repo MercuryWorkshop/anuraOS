@@ -97,14 +97,14 @@ window.addEventListener("load", async () => {
 
 	(window as any).swShared = swShared;
 
-	const comlinksrc = "/libs/comlink/comlink.min.mjs";
+	const comlinksrc = "./libs/comlink/comlink.min.mjs";
 	const comlink = await import(comlinksrc);
 
 	let conf, milestone, instancemilestone;
 
 	try {
-		conf = await (await fetch("/config.json")).json();
-		milestone = await (await fetch("/MILESTONE")).text();
+		conf = await (await fetch("./config.json")).json();
+		milestone = await (await fetch("./MILESTONE")).text();
 
 		console.debug("writing config??");
 		Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
