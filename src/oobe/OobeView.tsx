@@ -245,7 +245,7 @@ class OobeView {
 					<div id="subtitle" style="color: white;">
 						For the best experience, AnuraOS needs to download required assets.
 					</div>
-					<img src="./assets/oobe/spinner.gif" />
+					<img src="/assets/oobe/spinner.gif" />
 					<br />
 					<span id="tracker"></span>
 				</div>

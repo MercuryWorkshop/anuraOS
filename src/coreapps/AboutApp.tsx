@@ -1,7 +1,7 @@
 class AboutApp extends App {
 	name = "About Anura";
 	package = "anura.about";
-	icon = "./assets/icons/aboutapp.png";
+	icon = "/assets/icons/aboutapp.png";
 
 	page = () => (
 		<div class="aboutapp-container">
@@ -77,7 +77,7 @@ class AboutApp extends App {
 			if (args.includes("fuller-screen-easter-egg")) {
 				// You asked for it
 				document.body.style.background =
-					"url(./assets/images/idol.gif) no-repeat center center fixed";
+					"url(/assets/images/idol.gif) no-repeat center center fixed";
 
 				anura.wm.windows.forEach((win) => {
 					// No animation
@@ -94,7 +94,7 @@ class AboutApp extends App {
 				)! as HTMLLinkElement;
 
 				icon.type = "image/gif";
-				icon.href = "./assets/images/idol.gif";
+				icon.href = "/assets/images/idol.gif";
 
 				return;
 			}
@@ -109,7 +109,7 @@ class AboutApp extends App {
 
 		if (fullscreenEasterEgg) {
 			aboutview.content.appendChild(
-				<div style="background: url(./assets/images/idol.gif); width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat;"></div>,
+				<div style="background: url(/assets/images/idol.gif); width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat;"></div>,
 			);
 		} else {
 			aboutview.content.appendChild(this.page());

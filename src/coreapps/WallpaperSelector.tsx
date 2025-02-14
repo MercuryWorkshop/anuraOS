@@ -6,7 +6,7 @@ type WallpaperObject = {
 class WallpaperSelector extends App {
 	name = "Wallpaper & Style";
 	package = "anura.wallpaper";
-	icon = "./assets/icons/wallpaper.png";
+	icon = "/assets/icons/wallpaper.png";
 
 	libfilepicker: {
 		selectFile: (options?: object) => Promise<string | string[]>;

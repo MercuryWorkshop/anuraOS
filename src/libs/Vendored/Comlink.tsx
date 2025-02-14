@@ -1,10 +1,10 @@
 // This provides the Comlink library through the anura libs system, rather than the
 class Comlink extends Lib {
-	icon = "./assets/icons/generic.svg";
+	icon = "/assets/icons/generic.svg";
 	package = "npm:comlink";
 	name = "Comlink";
 
-	src = "./libs/comlink/comlink.min.mjs";
+	src = "/libs/comlink/comlink.min.mjs";
 
 	versions: { [key: string]: any } = {};
 	latestVersion = "0.0.0";

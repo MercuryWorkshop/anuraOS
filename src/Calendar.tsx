@@ -230,7 +230,7 @@ class Calendar {
 					class={["calContent"]}
 					on:contextmenu={(e: PointerEvent) => e.preventDefault()}
 				>
-					<link rel="stylesheet" href="./assets/materialsymbols.css"></link>
+					<link rel="stylesheet" href="/assets/materialsymbols.css"></link>
 					<div class="calendar-container">
 						<header class="calendar-header">
 							<div id="calendar-date">

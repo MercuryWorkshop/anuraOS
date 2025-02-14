@@ -2,7 +2,7 @@
 class TaskManager extends App {
 	name = "Task Manager";
 	package = "anura.taskmgr";
-	icon = "./assets/icons/system-monitor.svg";
+	icon = "/assets/icons/system-monitor.svg";
 
 	// incomprehensible css
 	css = css`

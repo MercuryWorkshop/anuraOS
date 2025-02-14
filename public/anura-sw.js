@@ -12,10 +12,10 @@ if (navigator.userAgent.includes("Firefox")) {
 // Due to anura's filesystem only being available once an anura instance is running,
 // we need a temporary filesystem to store files that are requested for caching.
 // As the anura filesystem is a wrapper around Filer, we can use default Filer here.
-importScripts("./libs/filer/filer.min.js");
+importScripts("/libs/filer/filer.min.js");
 
 // Importing mime
-importScripts("./libs/mime/mime.iife.js");
+importScripts("/libs/mime/mime.iife.js");
 
 // self.fs = new Filer.FileSystem({
 //     name: "anura-mainContext",
@@ -71,18 +71,18 @@ async function currentFs() {
 
 self.Buffer = Filer.Buffer;
 
-importScripts("./libs/comlink/comlink.min.umd.js");
+importScripts("/libs/comlink/comlink.min.umd.js");
 
-importScripts("./libs/workbox/workbox-v7.3.0/workbox-sw.js");
+importScripts("/libs/workbox/workbox-v7.3.0/workbox-sw.js");
 workbox.setConfig({
 	debug: false,
-	modulePathPrefix: "./libs/workbox/workbox-v7.3.0",
+	modulePathPrefix: "/libs/workbox/workbox-v7.3.0",
 });
 
 workbox.core.skipWaiting();
 workbox.core.clientsClaim();
 
-importScripts("./libs/idb-keyval/idb-keyval.js");
+importScripts("/libs/idb-keyval/idb-keyval.js");
 
 var cacheenabled;
 

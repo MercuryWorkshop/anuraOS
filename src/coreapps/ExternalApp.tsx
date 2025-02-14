@@ -59,7 +59,7 @@ interface AppManifest {
 class ExternalApp extends App {
 	manifest: AppManifest;
 	source: string;
-	icon = "./assets/icons/generic.svg";
+	icon = "/assets/icons/generic.svg";
 
 	constructor(manifest: AppManifest, source: string) {
 		super();
@@ -264,7 +264,7 @@ class ExternalApp extends App {
 
 			const matter = document.createElement("link");
 			matter.setAttribute("rel", "stylesheet");
-			matter.setAttribute("href", "./assets/matter.css");
+			matter.setAttribute("href", "/assets/matter.css");
 
 			iframe.contentWindow!.addEventListener("load", () => {
 				iframe.contentDocument!.head.appendChild(matter);

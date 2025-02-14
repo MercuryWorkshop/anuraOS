@@ -3,10 +3,10 @@
 class FilesAPI {
 	// This is the fallback icon that will be used if no handler is found and no default handler is set.
 	// This should almost never be used, as it is a fallback for the fallback. It is here just in case.
-	fallbackIcon = "./assets/icons/missing_icon.svg";
+	fallbackIcon = "/assets/icons/missing_icon.svg";
 
 	// Folder icon
-	folderIcon = "./assets/icons/missing_icon.svg";
+	folderIcon = "/assets/icons/missing_icon.svg";
 
 	async open(path: string): Promise<void> {
 		const ext = path.split("/").pop()!.split(".").pop();
