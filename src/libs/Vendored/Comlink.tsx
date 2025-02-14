@@ -11,7 +11,7 @@ class Comlink extends Lib {
 
 	async getImport(version?: string): Promise<any> {
 		if (this.latestVersion === "0.0.0") {
-			this.latestVersion = await (await fetch("./libs/comlink/version")).json();
+			this.latestVersion = await (await fetch("/libs/comlink/version")).json();
 			this.versions[this.latestVersion] = await import(this.src);
 		}
 		if (!version) {
