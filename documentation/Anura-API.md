@@ -824,10 +824,16 @@ Returns a CSS style you can append to your document's `head` to provide styles f
 **Example:**
 
 ```js
-// Append theme css
+// Append theme css element (with dreamland)
 document.head.appendChild(
 	html`<><style data-id="anura-theme">${anura.ui.theme.css()}</style></>`,
 );
+
+// Append theme css element (without dreamland)
+const style = document.createElement("style");
+dataset.example.id = "anura-theme";
+dataset.innerHTML = anura.ui.theme.css();
+document.head.appendChild(style);
 
 document.addEventListener("anura-theme-change", () => {
 	document.head.querySelector('style[data-id="anura-theme"]').innerHTML =

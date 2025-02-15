@@ -6,9 +6,9 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
 
 all: submodules build/bootstrap \
-		v86 build/libs/filer/filer.min.js build/libs/mime/mime.iife.js build/libs/nfsadapter/nfsadapter.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/idb-keyval/idb-keyval.js \
-		bundle public/config.json build/cache-load.json build/libs/fflate/browser.js apps/libfileview.lib/icons \
-		build/bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/assets/matter.css build/libs/dreamland/all.js \
+		v86 external-libs \
+		bundle public/config.json build/cache-load.json \
+		apps/libfileview.lib/icons build/assets/matter.css \
 
 full: all rootfs-alpine
 
@@ -32,6 +32,8 @@ submodules: .gitmodules
 #   build/libs/<libname>/<bundle>.min.js.map
 #   build/libs/<libname>/version (contains version number as JSON string, e.g. "1.2.3")
 
+external-libs: build/libs/filer/filer.min.js build/libs/mime/mime.iife.js build/libs/nfsadapter/nfsadapter.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/idb-keyval/idb-keyval.js build/libs/fflate/browser.js build/bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/dreamland/all.js
+	mkdir -p build/libs/
 build/libs/libcurl/version: build/bootstrap
 	mkdir -p build/libs/libcurl
 	cp node_modules/libcurl.js/libcurl.mjs build/libs/libcurl/libcurl.mjs
@@ -174,7 +176,7 @@ tsc:
 	cd build/; \
 	(find lib -type f -name "*.d.ts" -exec cp --parents {} ../anuraos-types/ \;)
 	(cd build && find lib -type f -name "*.d.ts") | sed 's/ \+/\n/g' | sed 's|.*|/// <reference path="&" />|' > anuraos-types/index.d.ts
-	jq '.version = "$(ANURA_VERSION)"' types-package.json > anuraos-types/package.json
+	jq 'del(.dependencies, .devDependencies) | .name = "@mercuryworkshop/anuraos-types" | .description = "Type declarations for anuraOS" | .types = "index.d.ts"' package.json > anuraos-types/package.json
 	
 css: src/*.css
 	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
