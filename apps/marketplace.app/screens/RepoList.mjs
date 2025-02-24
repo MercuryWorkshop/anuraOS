@@ -212,19 +212,21 @@ export default function RepoList() {
 									url = url + "/";
 								}
 
-								if (!url.startsWith("https://raw.githubusercontent.com/")) {
-									console.warn(
-										"URL does not follow https://raw.githubusercontent.com/[user]/[repo]/master/ format, this is a user skill issue.",
-									);
-									url = url.split("https://github.com")[1];
-									url = "https://raw.githubusercontent.com" + url + "master/";
-								}
-
-                                if (!url.endsWith("master/")) {
-                                    console.warn(
-                                        'URL does not end with "master/", this is a user skill issue.',
-                                    );
-                                    url = url + "/master/"
+                                if (url.includes("github.com") || url.includes("raw.githubusercontent.com")) {
+                                    if (!url.startsWith("https://raw.githubusercontent.com/")) {
+                                        console.warn(
+                                            "URL does not follow https://raw.githubusercontent.com/[user]/[repo]/master/ format, this is a user skill issue.",
+                                        );
+                                        url = url.split("https://github.com")[1];
+                                        url = "https://raw.githubusercontent.com" + url + "master/";
+                                    }
+    
+                                    if (!url.endsWith("master/")) {
+                                        console.warn(
+                                            'URL does not end with "master/", this is a user skill issue.',
+                                        );
+                                        url = url + "/master/"
+                                    }
                                 }
 
 								try {
