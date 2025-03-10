@@ -22,17 +22,17 @@ class errorHandler {
 		let err = this.generateErr("library", path, rooterr, true)
 		anura.notifications.add(err);
 	};
-	static permenantLib(rooterr, path) { // couldnt think of a better name to call libs that dont get uninstalled
+	static lib(rooterr, path) {
 		let err = this.generateErr("library", path, rooterr, false)
 		anura.notifications.add(err);
 	};
-	static sessionApp(rooterr, path) {} {
+	static sessionApp(rooterr, path) {
 		let err = this.generateErr("app", path, rooterr, true)
 		anura.notifications.add(err)
 	};
-	static permenantApp() {
+	static app(rooterr, path) {
 		let err = this.generateErr("app", path, rooterr, false)
-		anura.notifications.add(err)
+		anura.notifications.add(err);
 	};
 }
 
@@ -196,48 +196,56 @@ async function fileAction(selected) {
 						instanceWindow: win,
 						install: {
 							session: async () => {
-								await anura.registerExternalApp(
-									`/fs${fileSelected.getAttribute("data-path")}`.replace(
-										"//",
-										"/",
-									),
-								);
-								anura.notifications.add({
-									title: "Application Installed for Session",
-									description: `Application ${fileSelected
-										.getAttribute("data-path")
-										.replace(
+								try {
+									await anura.registerExternalApp(
+										`/fs${fileSelected.getAttribute("data-path")}`.replace(
 											"//",
 											"/",
-										)} has been installed temporarily, it will go away on refresh`,
-									timeout: 50000,
-								});
-								win.close();
+										),
+									);
+									anura.notifications.add({
+										title: "Application Installed for Session",
+										description: `Application ${fileSelected
+											.getAttribute("data-path")
+											.replace(
+												"//",
+												"/",
+											)} has been installed temporarily, it will go away on refresh`,
+										timeout: 50000,
+									});
+									win.close();
+								} catch (err) {
+									errorHandler.sessionApp(err, fileSelected);
+								}
 							},
 							permanent: async () => {
-								await fs.promises.rename(
-									fileSelected.getAttribute("data-path"),
-									anura.settings.get("directories")["apps"] +
-										"/" +
-										fileSelected
+								try {
+									await fs.promises.rename(
+										fileSelected.getAttribute("data-path"),
+										anura.settings.get("directories")["apps"] +
+											"/" +
+											fileSelected
+												.getAttribute("data-path")
+												.split("/")
+												.slice("-1")[0],
+									);
+									await anura.registerExternalApp(
+										`/fs${anura.settings.get("directories")["apps"]}/${fileSelected.getAttribute("data-path").split("/").slice("-1")[0]}`.replace(
+											"//",
+											"/",
+										),
+									);
+									anura.notifications.add({
+										title: "Application Installed",
+										description: `Application ${fileSelected
 											.getAttribute("data-path")
-											.split("/")
-											.slice("-1")[0],
-								);
-								await anura.registerExternalApp(
-									`/fs${anura.settings.get("directories")["apps"]}/${fileSelected.getAttribute("data-path").split("/").slice("-1")[0]}`.replace(
-										"//",
-										"/",
-									),
-								);
-								anura.notifications.add({
-									title: "Application Installed",
-									description: `Application ${fileSelected
-										.getAttribute("data-path")
-										.replace("//", "/")} has been installed permanently`,
-									timeout: 50000,
-								});
-								win.close();
+											.replace("//", "/")} has been installed permanently`,
+										timeout: 50000,
+									});
+									win.close();
+								} catch(err) {
+									errorHandler.app(err, fileSelected);
+								}
 							},
 						},
 					});
@@ -248,10 +256,7 @@ async function fileAction(selected) {
 						iframe.contentDocument.head.appendChild(matter);
 					});
 				} catch (e) {
-					anura.dialog.alert(
-						`There was an error: ${e}`,
-						"Error installing app",
-					);
+					errorHandler.app(e, fileSelected);
 				}
 			} else if (
 				fileSelected.getAttribute("data-path").split(".").slice("-1")[0] ===
@@ -698,11 +703,7 @@ async function installPermanent() {
 						),
 					);
 				} catch (e) {
-					anura.notifications.add({
-						title: "Application Install Error",
-						description: `Application had an error installing: ${e}`,
-						timeout: 50000,
-					});
+					errorHandler.app(e, path.split("/").slice("-1")[0]);
 				}
 			}
 			if (ext === "lib") {
