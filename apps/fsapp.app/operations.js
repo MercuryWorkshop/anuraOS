@@ -7,6 +7,35 @@
 // Frankly, it's terrible, don't touch it, and if it works, don't refactor anything unless you're willing to break it and rewrite the entire thing
 // You've been warned
 
+class errorHandler {
+	static generateErr(type, path, baseErr, sessionOnly) { // for anyone who wants to make a custom one not specified in the class by default
+		return {
+			title: `Error installing ${type}`,
+			description: `An error occured while installing the ${type} ${sessionOnly ? "for this session " : ""}at ${path.replace("//","/",)}. (Click for more details)`,
+			callback: function() {
+				anura.dialog.alert(`Error: ${baseErr.message}\nStack:\n${baseErr.stack}`);
+			},
+			timeout: 50000,
+		};
+	};
+	static sessionLib(rooterr, path) {
+		let err = this.generateErr("library", path, rooterr, true)
+		anura.notifications.add(err);
+	};
+	static lib(rooterr, path) {
+		let err = this.generateErr("library", path, rooterr, false)
+		anura.notifications.add(err);
+	};
+	static sessionApp(rooterr, path) {
+		let err = this.generateErr("app", path, rooterr, true)
+		anura.notifications.add(err)
+	};
+	static app(rooterr, path) {
+		let err = this.generateErr("app", path, rooterr, false)
+		anura.notifications.add(err);
+	};
+}
+
 async function filePickerAction(selected) {
 	for (const row of currentlySelected) {
 		row.classList.remove("selected");
@@ -167,48 +196,56 @@ async function fileAction(selected) {
 						instanceWindow: win,
 						install: {
 							session: async () => {
-								await anura.registerExternalApp(
-									`/fs${fileSelected.getAttribute("data-path")}`.replace(
-										"//",
-										"/",
-									),
-								);
-								anura.notifications.add({
-									title: "Application Installed for Session",
-									description: `Application ${fileSelected
-										.getAttribute("data-path")
-										.replace(
+								try {
+									await anura.registerExternalApp(
+										`/fs${fileSelected.getAttribute("data-path")}`.replace(
 											"//",
 											"/",
-										)} has been installed temporarily, it will go away on refresh`,
-									timeout: 50000,
-								});
-								win.close();
+										),
+									);
+									anura.notifications.add({
+										title: "Application Installed for Session",
+										description: `Application ${fileSelected
+											.getAttribute("data-path")
+											.replace(
+												"//",
+												"/",
+											)} has been installed temporarily, it will go away on refresh`,
+										timeout: 50000,
+									});
+									win.close();
+								} catch (err) {
+									errorHandler.sessionApp(err, fileSelected);
+								}
 							},
 							permanent: async () => {
-								await fs.promises.rename(
-									fileSelected.getAttribute("data-path"),
-									anura.settings.get("directories")["apps"] +
-										"/" +
-										fileSelected
+								try {
+									await fs.promises.rename(
+										fileSelected.getAttribute("data-path"),
+										anura.settings.get("directories")["apps"] +
+											"/" +
+											fileSelected
+												.getAttribute("data-path")
+												.split("/")
+												.slice("-1")[0],
+									);
+									await anura.registerExternalApp(
+										`/fs${anura.settings.get("directories")["apps"]}/${fileSelected.getAttribute("data-path").split("/").slice("-1")[0]}`.replace(
+											"//",
+											"/",
+										),
+									);
+									anura.notifications.add({
+										title: "Application Installed",
+										description: `Application ${fileSelected
 											.getAttribute("data-path")
-											.split("/")
-											.slice("-1")[0],
-								);
-								await anura.registerExternalApp(
-									`/fs${anura.settings.get("directories")["apps"]}/${fileSelected.getAttribute("data-path").split("/").slice("-1")[0]}`.replace(
-										"//",
-										"/",
-									),
-								);
-								anura.notifications.add({
-									title: "Application Installed",
-									description: `Application ${fileSelected
-										.getAttribute("data-path")
-										.replace("//", "/")} has been installed permanently`,
-									timeout: 50000,
-								});
-								win.close();
+											.replace("//", "/")} has been installed permanently`,
+										timeout: 50000,
+									});
+									win.close();
+								} catch(err) {
+									errorHandler.app(err, fileSelected);
+								}
 							},
 						},
 					});
@@ -219,10 +256,7 @@ async function fileAction(selected) {
 						iframe.contentDocument.head.appendChild(matter);
 					});
 				} catch (e) {
-					anura.dialog.alert(
-						`There was an error: ${e}`,
-						"Error installing app",
-					);
+					errorHandler.app(e, fileSelected);
 				}
 			} else if (
 				fileSelected.getAttribute("data-path").split(".").slice("-1")[0] ===
@@ -338,8 +372,11 @@ async function fileAction(selected) {
 					});
 				} catch (e) {
 					anura.notifications.add({
-						title: "Library Install Error",
-						description: `Library had an error installing: ${e}`,
+						title: "Error Installing Library",
+						description: "An error occured whilist trying to install a library. (Click for more details)",
+						callback: function() {
+							anura.dialog.alert(`Error: ${e.message}\nStack:\n${err.stack}`)
+						},
 						timeout: 50000,
 					});
 				}
@@ -351,6 +388,14 @@ async function fileAction(selected) {
 				loadPath(fileSelected.getAttribute("data-path"));
 			}
 		} else {
+			anura.notifications.add({
+				title: "Unknown Filetype",
+				description: `There isn't a file handler for this type of file! Click for more details.`,
+				callback: function () {
+					anura.dialog.alert("File Explorer couldn't find a file handler for this type of file installed. Try checking if you forgot to install a file handler.")
+				},
+				timeout: 2000,
+			});
 			console.warn(
 				"Unknown filetype ",
 				fileSelected.getAttribute("data-type"),
@@ -472,15 +517,15 @@ async function download() {
 		const fileData = await fs.promises.readFile(filePath);
 		const file = await fs.promises.stat(filePath);
 		// keeping up the bad names
-		// TODO: this name is horrible, fix it
-		const fauxnchor = document.createElement("a");
-		fauxnchor.style.display = "none";
-		document.body.appendChild(fauxnchor);
+		// TODO: this name is horrible, fix it | done
+		const downloadLink = document.createElement("a");
+		downloadLink.style.display = "none";
+		document.body.appendChild(downloadLink);
 		const blob = new Blob([fileData], { type: "application/octet-stream" });
 		const url = window.URL.createObjectURL(blob);
-		fauxnchor.href = url;
-		fauxnchor.download = file.name;
-		fauxnchor.click();
+		downloadLink.href = url;
+		downloadLink.download = file.name;
+		downloadLink.click();
 
 		window.URL.revokeObjectURL(url);
 		fauxnchor.remove();
@@ -582,14 +627,9 @@ async function rename() {
 		.querySelector(".breadcrumbs")
 		.getAttribute("data-current-path");
 	if (currentlySelected.length > 1) {
-		anura.notifications.add({
-			title: "Filesystem app",
-			description: "Renaming only works with one file",
-			timeout: 5000,
-		});
-		return;
+		anura.dialog.alert("You can only rename one file at a time!")
 	}
-	const filename = await anura.dialog.prompt("Filename:");
+	const filename = await anura.dialog.prompt("New filename:");
 	if (filename) {
 		await fs.promises.rename(
 			currentlySelected[0].getAttribute("data-path"),
@@ -635,10 +675,7 @@ async function installSession() {
 						timeout: 50000,
 					});
 				} catch (e) {
-					anura.dialog.alert(
-						`There was an error: ${e}`,
-						"Error installing library",
-					);
+					errorHandler.permenantLib(e, path)
 				}
 			}
 		}
@@ -666,11 +703,7 @@ async function installPermanent() {
 						),
 					);
 				} catch (e) {
-					anura.notifications.add({
-						title: "Application Install Error",
-						description: `Application had an error installing: ${e}`,
-						timeout: 50000,
-					});
+					errorHandler.app(e, path.split("/").slice("-1")[0]);
 				}
 			}
 			if (ext === "lib") {
@@ -765,11 +798,7 @@ async function installPermanent() {
 						},
 					);
 				} catch (e) {
-					anura.notifications.add({
-						title: "Library Install Error",
-						description: `Library had an error installing: ${e}`,
-						timeout: 50000,
-					});
+					errorHandler.permenantLib(e, path)
 				}
 			}
 		}
