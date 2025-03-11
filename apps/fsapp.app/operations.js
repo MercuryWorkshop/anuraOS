@@ -11,26 +11,30 @@ class errorHandler {
 	static generateErr(type, path, baseErr, sessionOnly) { // for anyone who wants to make a custom one not specified in the class by default
 		return {
 			title: `Error installing ${type}`,
-			description: `An error occured while installing the ${type} ${sessionOnly ? "for this session " : ""}at ${path.replace("//","/",)}. (Click for more details)`,
+			description: `An error occured while installing the ${type} ${sessionOnly ? "for this session " : ""}at ${path.getAttribute("data-path").replace("//","/",)}. (Click for more details)`,
 			callback: function() {
-				anura.dialog.alert(`Error: ${baseErr.message}\nStack:\n${baseErr.stack}`);
+				anura.dialog.alert(baseErr.stack);
 			},
 			timeout: 50000,
 		};
 	};
 	static sessionLib(rooterr, path) {
+		console.error(rooterr);
 		let err = this.generateErr("library", path, rooterr, true)
 		anura.notifications.add(err);
 	};
 	static lib(rooterr, path) {
+		console.error(rooterr);
 		let err = this.generateErr("library", path, rooterr, false)
 		anura.notifications.add(err);
 	};
 	static sessionApp(rooterr, path) {
+		console.error(rooterr);
 		let err = this.generateErr("app", path, rooterr, true)
 		anura.notifications.add(err)
 	};
 	static app(rooterr, path) {
+		console.error(rooterr);
 		let err = this.generateErr("app", path, rooterr, false)
 		anura.notifications.add(err);
 	};
