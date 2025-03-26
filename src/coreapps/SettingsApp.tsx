@@ -112,14 +112,25 @@ const settingsCSS = css`
 		cursor: pointer;
 		margin-right: 10px;
 	}
+		
 	.settings-item-text-input {
 		background-color: var(--theme-bg);
 		margin-right: 10px;
 		border: none;
-		border-radius: 5px;
-		padding: 5px;
+		border-radius: 4px;
+		padding: 3px;
 		color: var(--theme-fg);
+		font-family: Roboto, sans-serif;
+		height: 1.65em;
+		margin-block: 0;
+		padding-inline: 10px;
+
+		&::placeholder {
+			color: color-mix(in srgb, var(--theme-secondary-fg) 80%, var(--theme-bg))
+			font-family: Roboto, sans-serif;
+		}
 	}
+
 	.settings-item-text-input:focus {
 		outline: none;
 	}
