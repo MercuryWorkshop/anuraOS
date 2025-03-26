@@ -43,22 +43,22 @@ class Dialog extends App {
 		el.style.position = "absolute";
 		el.style.top = "0";
 		el.style.left = "0";
-		el.classList = this.css;
+		// el.classList = this.css;
 		el.style.width = "350px";
 		el.style.padding = "14px";
 		el.style.height = "max-content";
-		// el.style.visibility = "hidden";
-		// el.style.zIndex = "-1";
-		// el.style.opacity = "0";
+		el.style.visibility = "hidden";
+		el.style.zIndex = "-1";
+		el.style.opacity = "0";
 
 		document.body.appendChild(el);
 		const height = el.offsetHeight;
 
-		setTimeout(() => {
-			document.body.removeChild(el);
-		}, 1000);
+		// setTimeout(() => {
+		document.body.removeChild(el);
+		// }, 1000);
 
-		console.log("height", height);
+		// console.log("height", height);
 		return Math.max(height + 50, minHeight || 170);
 	}
 
