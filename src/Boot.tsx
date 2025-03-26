@@ -123,13 +123,13 @@ window.addEventListener("load", async () => {
 		splashToRemove = bootsplashMobile;
 		document.body.appendChild(bootsplashMobile);
 	} else {
-		if (anura.config.tnbranding === true) {
+		if (anura.settings.get("i-am-a-true-gangsta")) {
+			splashToRemove = gangstaBootsplash;
+			document.body.appendChild(gangstaBootsplash);
+		} else if (anura.config.tnbranding === true) {
 			splashToRemove = TNBootSplash;
 			document.body.appendChild(TNBootSplash);
 			setupTNBootsplash();
-		} else if (anura.settings.get("i-am-a-true-gangsta")) {
-			splashToRemove = gangstaBootsplash;
-			document.body.appendChild(gangstaBootsplash);
 		} else {
 			splashToRemove = bootsplash;
 			document.body.appendChild(bootsplash);
@@ -175,27 +175,38 @@ window.addEventListener("load", async () => {
 	anura.processes.register(swProcess);
 
 	if (milestone) {
-		const stored = anura.settings.get("milestone");
-		if (!stored) await anura.settings.set("milestone", milestone);
-		else if (stored !== milestone) {
-			await anura.settings.set("milestone", milestone);
-			if (anura.settings.get("use-sw-cache")) {
-				const tracker = document.getElementById("systemstatus")!;
-				const tracker_br = document.getElementById("systemstatus-br")!;
-				tracker.style.display = "unset";
-				tracker_br.style.display = "unset";
-				tracker.innerText = "Anura is updating your system...";
-				try {
-					await new Filer.fs.Shell().promises.rm("/anura_files", {
-						recursive: true,
-					});
-				} catch {
-					console.debug("cache already invalidated");
+		function isValidUUID(uuid: string) {
+			const regex =
+				/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+			return regex.test(uuid);
+		}
+		if (isValidUUID(milestone.split("\n")[0]!)) {
+			const stored = anura.settings.get("milestone");
+			if (!stored) await anura.settings.set("milestone", milestone);
+			else if (stored !== milestone) {
+				await anura.settings.set("milestone", milestone);
+				if (anura.settings.get("use-sw-cache")) {
+					const tracker = document.getElementById("systemstatus")!;
+					const tracker_br = document.getElementById("systemstatus-br")!;
+					tracker.style.display = "unset";
+					tracker_br.style.display = "unset";
+					tracker.innerText = "Anura is updating your system...";
+					try {
+						await new Filer.fs.Shell().promises.rm("/anura_files", {
+							recursive: true,
+						});
+					} catch {
+						console.debug("cache already invalidated");
+					}
+					await preloadFiles(tracker);
 				}
-				await preloadFiles(tracker);
+				console.debug("invalidated cache");
+				window.location.reload();
 			}
-			console.debug("invalidated cache");
-			window.location.reload();
+		} else {
+			// Domain is either expired or some non conformant milestone is being delivered (bad extension?)
+			// Either way, ignore and dont try and perform an update
+			console.log("Anura update poisoning detected...");
 		}
 	}
 
