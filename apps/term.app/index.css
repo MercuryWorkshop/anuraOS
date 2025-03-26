@@ -16,7 +16,7 @@ html * {
 }
 
 x-row {
-	font-family: "Roboto Mono", "Droid Sans Mono", ui-monospace,
-		"DejaVu Sans Mono", "Noto Sans Mono", "Everson Mono", FreeMono, Menlo,
-		Terminal, monospace !important;
+	font-family:
+		"Roboto Mono", "Droid Sans Mono", ui-monospace, "DejaVu Sans Mono",
+		"Noto Sans Mono", "Everson Mono", FreeMono, Menlo, Terminal, monospace !important;
 }
