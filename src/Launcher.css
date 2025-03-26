@@ -19,15 +19,15 @@
 }
 
 #launcher-button::after {
-    content: "";
-    position: absolute;
-    width: 0.7rem;
-    height: 0.7rem;
-    border: 0.125rem solid var(--theme-fg);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+	content: "";
+	position: absolute;
+	width: 0.7rem;
+	height: 0.7rem;
+	border: 0.125rem solid var(--theme-fg);
+	border-radius: 50%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 #launcher-button img {

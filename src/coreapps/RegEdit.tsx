@@ -62,6 +62,7 @@ const DisclosureGroup: Component<{
 							<DisclosureGroup
 								entry={item}
 								bind:sel={use(this.sel)}
+								sel={this.sel}
 								level={this.level! + 1}
 							/>
 						))}
@@ -211,6 +212,7 @@ class RegEdit extends App {
 								<DisclosureGroup
 									entry={item}
 									bind:sel={use(this.state.selected)}
+									sel={this.state.selected}
 								/>
 							))}
 					</details>

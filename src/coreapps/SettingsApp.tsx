@@ -253,7 +253,6 @@ class SettingsApp extends App {
 				<h2>Anura Settings</h2>
 			</div>
 
-<<<<<<< HEAD
 			<div css={this.state} class="container">
 				<div class="sidebar">
 					<div
@@ -306,9 +305,20 @@ class SettingsApp extends App {
 							<SettingSwitch
 								title="Allow offline use"
 								setting="use-sw-cache"
-								callback={() => {
-									anura.settings.set("milestone", "INVALID");
-									window.location.reload();
+								callback={async () => {
+									if (
+										await anura.dialog.confirm(
+											"This will restart Anura. Are you sure?",
+										)
+									) {
+										anura.settings.set("milestone", "INVALID");
+										window.location.reload();
+									} else {
+										anura.settings.set(
+											"use-sw-cache",
+											!anura.settings.get("use-sw-cache"),
+										);
+									}
 								}}
 							/>
 							<SettingSwitch title="24-hour time" setting="sir-yes-sir" />
@@ -354,147 +364,6 @@ class SettingsApp extends App {
 													"x86 OS has sucessfully installed. Reload the page to use it!",
 												timeout: 5000,
 											});
-=======
-            <div css={this.state} class="container">
-                <div class="sidebar">
-                    <div
-                        class="sidebar-settings-item"
-                        on:click={() => {
-                            this.state.settingsBody.scrollTo({
-                                top: 0,
-                                behavior: "smooth",
-                            });
-                        }}
-                    >
-                        <span class="sidebar-settings-item-name">
-                            <span class="material-symbols-outlined">build</span>
-                            <a>General</a>
-                        </span>
-                    </div>
-                    <div
-                        class="sidebar-settings-item"
-                        on:click={() => {
-                            this.state.settingsBody.scrollTo({
-                                top: 100000,
-                                behavior: "smooth",
-                            });
-                        }}
-                    >
-                        <span class="sidebar-settings-item-name">
-                            <span class="material-symbols-outlined">
-                                memory
-                            </span>
-                            <a>x86</a>
-                        </span>
-                    </div>
-                    <div
-                        class="sidebar-settings-item"
-                        on:click={() => {
-                            this.state.settingsBody.scrollTo({
-                                top: 100000,
-                                behavior: "smooth",
-                            });
-                        }}
-                    >
-                        <span class="sidebar-settings-item-name">
-                            <span class="material-symbols-outlined">
-                                device_reset
-                            </span>
-                            <a>Reset</a>
-                        </span>
-                    </div>
-                </div>
-                <div
-                    bind:this={use(this.state.settingsBody)}
-                    class="settings-body"
-                >
-                    <div id="general" class="general settings-category">
-                        <h3 class="settings-category-name">General</h3>
-                        <div class="settings-group">
-                            <SettingSwitch
-                                title="Allow offline use"
-                                setting="use-sw-cache"
-                                callback={async () => {
-                                    if (
-                                        await anura.dialog.confirm(
-                                            "This will restart Anura. Are you sure?",
-                                        )
-                                    ) {
-                                        anura.settings.set(
-                                            "milestone",
-                                            "INVALID",
-                                        );
-                                        window.location.reload();
-                                    } else {
-                                        anura.settings.set(
-                                            "use-sw-cache",
-                                            !anura.settings.get("use-sw-cache"),
-                                        );
-                                    }
-                                }}
-                            />
-                            <SettingSwitch
-                                title="24-hour time"
-                                setting="sir-yes-sir"
-                            />
-                            <SettingSwitch
-                                title="Borderless AboutBrowser"
-                                setting="borderless-aboutbrowser"
-                            />
-                            <SettingSwitch
-                                title="Performance mode"
-                                setting="blur-disable"
-                            />
-                            <SettingSwitch
-                                title="Reduce motion"
-                                setting="disable-animation"
-                            />
-                            <SettingSwitch
-                                title="Window Edge Clamping"
-                                setting="clampWindows"
-                            />
-                            <SettingSwitch
-                                title="Transparent Anura Shell Background"
-                                setting="transparent-ashell"
-                            />
-                            <SettingSwitch
-                                title="Enable Launcher Keybind"
-                                setting="launcher-keybind"
-                            />
-                            <SettingText
-                                title="Custom Wisp URL"
-                                setting="wisp-url"
-                            />
-                            <SettingText
-                                title="Custom Power Off URL"
-                                setting="exitUrl"
-                            />
-                        </div>
-                    </div>
-                    <div id="v86" class="v86 settings-category">
-                        <h3 class="settings-category-name">Anura x86</h3>
-                        <div class="settings-group">
-                            {this.state.show_x86_install ? (
-                                <div>
-                                    <button
-                                        on:click={async () => {
-                                            this.state.x86_installing = true;
-                                            anura.settings.set(
-                                                "x86-image",
-                                                "alpine",
-                                            );
-                                            await installx86();
-                                            anura.settings.set(
-                                                "x86-disabled",
-                                                false,
-                                            );
-                                            anura.notifications.add({
-                                                title: "x86 Subsystem Installed",
-                                                description:
-                                                    "x86 OS has sucessfully installed. Reload the page to use it!",
-                                                timeout: 5000,
-                                            });
->>>>>>> inline-window-control-svgs
 
 											this.state.x86_installing = false;
 											this.state.show_x86_install = true;
