@@ -12,12 +12,21 @@ class TaskManager extends App {
 			padding-inline: 1em;
 			height: 2rem;
 
+<<<<<<< HEAD
 			&,
 			& td,
 			& th {
 				&:not(:first-of-type):not(last-of-type) {
 					border: 2px solid var(--theme-border);
 				}
+=======
+            &,
+            & td,
+            & th {
+                &:not(:first-of-type):not(last-of-type) {
+                    border: 1px solid var(--theme-border);
+                }
+>>>>>>> inline-window-control-svgs
 
 				height: 2rem;
 				line-height: 2rem;
@@ -66,6 +75,7 @@ class TaskManager extends App {
 			border-collapse: collapse;
 			width: 100%;
 
+<<<<<<< HEAD
 			& tbody {
 				max-height: calc(100% - 1rem);
 				overflow-y: scroll;
@@ -78,6 +88,23 @@ class TaskManager extends App {
 				background: var(--theme-bg);
 				border-bottom: 2px solid var(--theme-border);
 			}
+=======
+            border-color: var(--theme-border);
+            border-width: 1px;
+
+            & tbody {
+                max-height: calc(100% - 1rem);
+                overflow-y: scroll;
+            }
+
+            & thead {
+                height: 1rem;
+                position: sticky;
+                top: 0;
+                background: var(--theme-bg);
+                border-bottom: 1px solid var(--theme-border);
+            }
+>>>>>>> inline-window-control-svgs
 
 			& th {
 				position: relative;
@@ -102,6 +129,7 @@ class TaskManager extends App {
 			padding: 0.5rem;
 		}
 
+<<<<<<< HEAD
 		.resizer {
 			position: absolute;
 			top: 0;
@@ -118,6 +146,24 @@ class TaskManager extends App {
 				var(--theme-fg)
 			);
 		}
+=======
+        .resizer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            cursor: ew-resize;
+            user-select: none;
+            background: var(--theme-border);
+        }
+        .resizer:hover {
+            border-color: color-mix(
+                in srgb,
+                var(--theme-border) 80%,
+                var(--theme-fg)
+            );
+        }
+>>>>>>> inline-window-control-svgs
 
 		.resizing {
 			border-color: color-mix(in srgb, var(--theme-border) 60%, transparent);
