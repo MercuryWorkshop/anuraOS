@@ -25,6 +25,13 @@ body {
 	z-index: 98;
 }
 
+:root {
+	--theme-font-sans:
+		"Roboto", RobotoDraft, "Droid Sans", Arial, Helvetica, -apple-system,
+		BlinkMacSystemFont, system-ui, sans-serif;
+	--theme-font-mono: "Roboto Mono", "Courier New", Courier, monospace;
+}
+
 body {
 	overflow: hidden;
 	background: #000000;
@@ -33,16 +40,7 @@ body {
 	-o-background-size: cover;
 	background-size: cover;
 	user-select: none;
-	font-family:
-		"Roboto",
-		RobotoDraft,
-		"Droid Sans",
-		Arial,
-		Helvetica,
-		-apple-system,
-		BlinkMacSystemFont,
-		system-ui,
-		sans-serif;
+	font-family: var(--theme-font-sans);
 }
 
 body.blur-disable #quickSettings {

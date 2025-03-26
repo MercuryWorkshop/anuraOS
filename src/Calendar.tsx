@@ -32,16 +32,7 @@ class Calendar {
 			align-items: top;
 			justify-content: center;
 			overflow: hidden;
-			font-family:
-				"Roboto",
-				RobotoDraft,
-				"Droid Sans",
-				Arial,
-				Helvetica,
-				-apple-system,
-				BlinkMacSystemFont,
-				system-ui,
-				sans-serif;
+			font-family: var(--theme-font-sans);
 			color: var(--theme-fg);
 		}
 

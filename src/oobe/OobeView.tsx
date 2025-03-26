@@ -115,16 +115,7 @@ class OobeView {
 			padding-left: 1em;
 			padding-right: 1em;
 			cursor: pointer;
-			font-family:
-				"Roboto",
-				RobotoDraft,
-				"Droid Sans",
-				Arial,
-				Helvetica,
-				-apple-system,
-				BlinkMacSystemFont,
-				system-ui,
-				sans-serif;
+			font-family: var(--theme-font-sans);
 		}
 
 		.screen #animation {

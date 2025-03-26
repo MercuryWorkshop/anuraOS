@@ -41,7 +41,7 @@ class Launcher {
 		}
 
 		.topSearchBar input {
-			font-family: inherit;
+			font-family: var(--theme-font-sans);
 			flex-grow: 1;
 			background: transparent;
 			border: none;

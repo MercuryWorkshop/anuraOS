@@ -3,16 +3,7 @@ const settingsCSS = css`
 
 	.header {
 		margin-left: 20px;
-		font-family:
-			"Roboto",
-			RobotoDraft,
-			"Droid Sans",
-			Arial,
-			Helvetica,
-			-apple-system,
-			BlinkMacSystemFont,
-			system-ui,
-			sans-serif;
+		font-family: var(--theme-font-sans);
 	}
 	.container {
 		display: flex;
@@ -112,7 +103,7 @@ const settingsCSS = css`
 		cursor: pointer;
 		margin-right: 10px;
 	}
-		
+
 	.settings-item-text-input {
 		background-color: var(--theme-bg);
 		margin-right: 10px;
@@ -120,14 +111,14 @@ const settingsCSS = css`
 		border-radius: 4px;
 		padding: 3px;
 		color: var(--theme-fg);
-		font-family: Roboto, sans-serif;
+		font-family: var(--theme-font-sans);
 		height: 1.65em;
 		margin-block: 0;
 		padding-inline: 10px;
 
 		&::placeholder {
-			color: color-mix(in srgb, var(--theme-secondary-fg) 80%, var(--theme-bg))
-			font-family: Roboto, sans-serif;
+			color: color-mix(in srgb, var(--theme-secondary-fg) 80%, var(--theme-bg));
+			font-family: var(--theme-font-sans);
 		}
 	}
 
@@ -138,16 +129,7 @@ const settingsCSS = css`
 		color: var(--theme-secondary-fg);
 		margin-left: 20px;
 		text-decoration: none;
-		font-family:
-			"Roboto",
-			RobotoDraft,
-			"Droid Sans",
-			Arial,
-			Helvetica,
-			-apple-system,
-			BlinkMacSystemFont,
-			system-ui,
-			sans-serif;
+		font-family: var(--theme-font-sans);
 	}
 
 	.disk-info {
