@@ -321,9 +321,23 @@ class SettingsApp extends App {
                             <SettingSwitch
                                 title="Allow offline use"
                                 setting="use-sw-cache"
-                                callback={() => {
-                                    anura.settings.set("milestone", "INVALID");
-                                    window.location.reload();
+                                callback={async () => {
+                                    if (
+                                        await anura.dialog.confirm(
+                                            "This will restart Anura. Are you sure?",
+                                        )
+                                    ) {
+                                        anura.settings.set(
+                                            "milestone",
+                                            "INVALID",
+                                        );
+                                        window.location.reload();
+                                    } else {
+                                        anura.settings.set(
+                                            "use-sw-cache",
+                                            !anura.settings.get("use-sw-cache"),
+                                        );
+                                    }
                                 }}
                             />
                             <SettingSwitch
