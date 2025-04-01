@@ -253,6 +253,7 @@ export class StoreRepo {
 			await anura.registerExternalApp("/fs" + path);
 			if (installHook) window.top.eval(installHook);
 			this.hooks.onComplete(app.name);
+			return 200; // throw new Error is truthy so this is my solution
 		} catch (error) {
 			this.hooks.onError(app.name, error);
 		}
