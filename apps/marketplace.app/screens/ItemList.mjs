@@ -31,18 +31,35 @@ function Item() {
 						installed = !!anura.libs[this.data.package];
 					}
 					if (installed) {
-						this.installButton.value = "Installed";
+						if (this.type === "app") {
+							this.installButton.value = "Open";
+							this.installButton.addEventListener("click", async (ee) => { ee.stopPropagation(); anura.apps[this.data.package].open(); });
+						} else {
+							this.installButton.value = "Installed";
+							this.installButton.disabled = true;
+						}
 						this.installButton.style.backgroundColor = "var(--theme-bg)";
 						this.installButton.style.color = "#fff";
-						this.installButton.disabled = true;
+						
 					} else {
 						this.installButton.value = "Install";
 						this.installButton.addEventListener("click", async (e) => {
 							e.stopPropagation();
 							if (this.type === "app") {
-								await repo.installApp(id);
+								if (this.installButton.value === "Open") {
+									anura.apps[this.data.package].open();
+								}
+								else if (await repo.installApp(id) === 200) {
+									this.installButton.value = "Open";
+									this.installButton.style.backgroundColor = "var(--theme-bg)";
+									this.installButton.style.color = "#fff";
+								}
 							} else {
-								await repo.installLib(id);
+								if (await repo.installLib(id) === 200) {
+									this.installButton.value = "Installed";
+									this.installButton.style.backgroundColor = "var(--theme-bg)";
+									this.installButton.style.color = "#fff";
+									this.installButton.disabled = true;
 							}
 						});
 					}
