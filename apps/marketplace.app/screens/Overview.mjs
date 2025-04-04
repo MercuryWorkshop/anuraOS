@@ -16,118 +16,143 @@ export default function Overview() {
 		}
 
 		if (installed) {
-			this.installButton.value = "Installed";
-			this.installButton.style.backgroundColor = "var(--theme-secondary-bg)";
+			if (state.currentItemType === "app") {
+				this.installButton.value = "Open";
+				this.installButton.addEventListener("click", async (EE) => {
+					EE.stopPropagation();
+					anura.apps[state.currentItem.package].open();
+				});
+			} else {
+				this.installButton.value = "Installed";
+				this.installButton.disabled = true;
+			}
+			this.installButton.style.backgroundColor = "var(--theme-bg)";
 			this.installButton.style.color = "#fff";
-			this.installButton.disabled = true;
 		} else {
 			this.installButton.value = "Install";
-			this.installButton.addEventListener("click", async (e) => {
-				e.stopPropagation();
+			this.installButton.addEventListener("click", async (E) => {
+				E.stopPropagation();
 				if (state.currentItemType === "app") {
-					await repo.installApp(id);
+					if (this.installButton.value === "Open") {
+						anura.apps[state.currentItem.package].open();
+					} else {
+						this.installButton.value = "Installing..."
+						this.installButton.disabled = true;
+						if (await repo.installApp(id) === 200) {
+							this.installButton.value = "Open";
+							this.installButton.disabled = false;
+							this.installButton.style.backgroundColor = "var(--theme-bg)";
+							this.installButton.style.color = "#fff";
+						}
+					}
 				} else {
-					await repo.installLib(id);
+					this.installButton.style.backgroundColor = "var(--theme-bg)";
+					this.installButton.style.color = "#fff";
+					this.installButton.disabled = true;
+					this.installButton.value = "Installing..."
+					if (await repo.installLib(id) === 200) {
+						this.installButton.value = "Installed"
+					}
 				}
 			});
 		}
 	};
 
 	this.css = `
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        overflow: hidden;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
 
-        .infoSection {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--theme-dark-bg);
-            width: 100%;
-            height: 150px;
-        }
+		.infoSection {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			background-color: var(--theme-dark-bg);
+			width: 100%;
+			height: 150px;
+		}
 
-        .infoContainer {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-around;
-            align-items: center;
-            width: 70%;
-        }
+		.infoContainer {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-around;
+			align-items: center;
+			width: 70%;
+		}
 
-        .appInfoContainer {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-left: 20px;
-            margin-right: auto;
-            height: 100px;
-        }
+		.appInfoContainer {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			margin-left: 20px;
+			margin-right: auto;
+			height: 100px;
+		}
 
-        .appTitle {
-            display: block;
-            margin: 0;
-            font-size: 35px;
-            font-weight: bolder;
-            color: var(--theme-fg);
-            text-align: left;
-        }
+		.appTitle {
+			display: block;
+			margin: 0;
+			font-size: 35px;
+			font-weight: bolder;
+			color: var(--theme-fg);
+			text-align: left;
+		}
 
-        .appCategory {
-            display: block;
-            position: relative;
-            font-size: 16px;
-            text-align: left;
-            color: var(--theme-secondary-fg);
-            width: 100%;
-        }
+		.appCategory {
+			display: block;
+			position: relative;
+			font-size: 16px;
+			text-align: left;
+			color: var(--theme-secondary-fg);
+			width: 100%;
+		}
 
-        .thumbnailContainer {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            height: 80px;
-            width: 80px;
-        }
+		.thumbnailContainer {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			height: 80px;
+			width: 80px;
+		}
 
-        .screenshotSection {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: var(--theme-dark-bg);
-            width: 100%;
-        }
+		.screenshotSection {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			background-color: var(--theme-dark-bg);
+			width: 100%;
+		}
 
-        .screenshotContainer {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            width: 70%;
-            max-height: 250px;
-            min-height: 50px;
-        }
+		.screenshotContainer {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			width: 70%;
+			max-height: 250px;
+			min-height: 50px;
+		}
 
-        .aboutSection {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-        }
+		.aboutSection {
+			display: flex;
+			justify-content: center;
+			width: 100%;
+		}
 
-        .aboutContainer {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-            width: 70%;
-        }
+		.aboutContainer {
+			display: flex;
+			flex-direction: column;
+			text-align: left;
+			width: 70%;
+		}
 
-        .aboutDesc {
-            color: var(--theme-secondary-fg);
-        }
-    `;
+		.aboutDesc {
+			color: var(--theme-secondary-fg);
+		}
+	`;
 
 	return html` <div>
 		<div class="infoSection">
