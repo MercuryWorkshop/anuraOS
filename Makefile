@@ -161,7 +161,7 @@ public/config.json:
 watch: bundle FORCE
 	npx tsc-watch --onSuccess "make css build/cache-load.json milestone" 
 
-bundle: tsc css milestone
+bundle: tsc css lint milestone
 	mkdir -p build/artifacts
 
 ANURA_VERSION = $(shell jq -r '.version' package.json)
@@ -181,6 +181,9 @@ tsc:
 css: src/*.css
 	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
+lint:
+	npx prettier -w --log-level error .
+	npx eslint . --fix
 milestone:
 	uuidgen > build/MILESTONE
 
