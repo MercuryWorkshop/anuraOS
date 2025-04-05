@@ -352,7 +352,15 @@ workbox.routing.registerRoute(
 				headers: { "content-type": "text/html" },
 			});
 		}
-		if (!cacheenabled) return fetch(url);
+		if (!cacheenabled) {
+			const fetchResponse = await fetch(url);
+			fetchResponse.headers = new Headers(
+				Object.fromEntries(fetchResponse.headers.entries()),
+				corsheaders,
+			);
+
+			return fetchResponse;
+		}
 		if (url.pathname === "/") {
 			url.pathname = "/index.html";
 		}
@@ -377,6 +385,11 @@ workbox.routing.registerRoute(
 				const fetchResponse = await fetch(url);
 				// Promise so that we can return the response before we cache it, for faster response times
 				return new Promise(async (resolve) => {
+					fetchResponse.headers = new Headers(
+						Object.fromEntries(fetchResponse.headers.entries()),
+						corsheaders,
+					);
+
 					resolve(fetchResponse);
 					if (fetchResponse.ok) {
 						const buffer = await fetchResponse.clone().arrayBuffer();
