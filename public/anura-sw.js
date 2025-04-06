@@ -396,8 +396,6 @@ workbox.routing.registerRoute(
 						},
 					);
 
-					console.log(corsResponse);
-
 					resolve(corsResponse);
 
 					if (fetchResponse.ok) {
