@@ -386,12 +386,15 @@ workbox.routing.registerRoute(
 				const fetchResponse = await fetch(url);
 				// Promise so that we can return the response before we cache it, for faster response times
 				return new Promise(async (resolve) => {
-					const corsResponse = new Response(await fetchResponse.arrayBuffer(), {
-						headers: {
-							...Object.fromEntries(fetchResponse.headers.entries()),
-							...corsheaders,
+					const corsResponse = new Response(
+						await fetchResponse.clone().arrayBuffer(),
+						{
+							headers: {
+								...Object.fromEntries(fetchResponse.headers.entries()),
+								...corsheaders,
+							},
 						},
-					});
+					);
 
 					console.log(corsResponse);
 
