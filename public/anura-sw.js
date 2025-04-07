@@ -129,50 +129,50 @@ async function handleDavRequest({ request, url }) {
 					const href = url.pathname;
 					let responses = "";
 
+					const renderEntry = async (entryPath, stat) => {
+						const isDir = stat.type === "DIRECTORY";
+						const contentLength = isDir
+							? ""
+							: `<a:getcontentlength b:dt="int">${stat.size}</a:getcontentlength>`;
+						const contentType = isDir
+							? ""
+							: `<a:getcontenttype>application/octet-stream</a:getcontenttype>`;
+						const creationDate = new Date(stat.ctime).toISOString();
+						const lastModified = new Date(stat.mtime).toUTCString();
+						const resourcetype = isDir ? "<a:collection/>" : "";
+
+						return `
+							<a:response>
+								<a:href>${entryPath}</a:href>
+								<a:propstat>
+									<a:status>HTTP/1.1 200 OK</a:status>
+									<a:prop>
+										<a:resourcetype>${resourcetype}</a:resourcetype>
+										${contentLength}
+										${contentType}
+										<a:creationdate>${creationDate}</a:creationdate>
+										<a:getlastmodified>${lastModified}</a:getlastmodified>
+									</a:prop>
+								</a:propstat>
+							</a:response>
+						`;
+					};
+
 					if (isDirectory) {
-						// List contents
 						const files = await fs.readdir(path);
-						responses = await Promise.all(
+						const fileResponses = await Promise.all(
 							files.map(async (file) => {
 								const fullPath = path.endsWith("/")
 									? path + file
 									: `${path}/${file}`;
 								const stat = await fs.stat(fullPath);
-								const entryPath = `${href.endsWith("/") ? href : href + "/"}${file}`;
-								const resourcetype =
-									stat.type === "DIRECTORY" ? "<a:collection/>" : "";
-
-								return `
-							  <a:response>
-								<a:href>${entryPath}</a:href>
-								<a:propstat>
-								  <a:status>HTTP/1.1 200 OK</a:status>
-								  <a:prop>
-									<a:resourcetype>${resourcetype}</a:resourcetype>
-								  </a:prop>
-								</a:propstat>
-							  </a:response>
-							`;
+								const entryHref = `${href.endsWith("/") ? href : href + "/"}${file}`;
+								return renderEntry(entryHref, stat);
 							}),
 						);
-						responses = responses.join("");
+						responses = fileResponses.join("");
 					} else {
-						// Single file info
-						const contentType = "application/octet-stream"; // Optional: infer from file extension
-						const contentLength = stats.size;
-
-						responses = `
-							<a:response>
-							<a:href>${href}</a:href>
-							<a:propstat>
-								<a:status>HTTP/1.1 200 OK</a:status>
-								<a:prop>
-								<a:getcontenttype>${contentType}</a:getcontenttype>
-								<a:getcontentlength b:dt="int">${contentLength}</a:getcontentlength>
-								</a:prop>
-							</a:propstat>
-							</a:response>
-						`;
+						responses = await renderEntry(href, stats);
 					}
 
 					const xml = `
@@ -180,7 +180,7 @@ async function handleDavRequest({ request, url }) {
 						<a:multistatus xmlns:a="DAV:" xmlns:b="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882/">
 							${responses}
 						</a:multistatus>
-						`.trim();
+					`.trim();
 
 					return new Response(xml, {
 						headers: { "Content-Type": "application/xml" },
