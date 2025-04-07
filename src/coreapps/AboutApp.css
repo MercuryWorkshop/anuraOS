@@ -62,15 +62,6 @@
 	color: var(--theme-accent);
 	text-decoration: underline;
 	cursor: pointer;
-	font-family:
-		"Roboto",
-		RobotoDraft,
-		"Droid Sans",
-		Arial,
-		Helvetica,
-		-apple-system,
-		BlinkMacSystemFont,
-		system-ui,
-		sans-serif;
+	font-family: var(--theme-font-sans);
 	font-size: 1em;
 }

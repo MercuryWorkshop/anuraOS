@@ -90,7 +90,7 @@ class ExploreApp extends App {
 				background-color: var(--theme-secondary-bg);
 				padding: 0.1rem 0.3rem;
 				border-radius: 0.2rem;
-				font-family: "Roboto Mono", monospace;
+				font-family: var(--theme-font-mono);
 			}
 
 			& h2 {

@@ -1,13 +1,12 @@
 /* global workbox */
 
-// workaround for a firefox quirk where crossOriginIsolated
-// is not reported properly in a service worker
-if (navigator.userAgent.includes("Firefox")) {
-	Object.defineProperty(globalThis, "crossOriginIsolated", {
-		value: true,
-		writable: false,
-	});
-}
+// was a workaround for a firefox quirk where crossOriginIsolated
+// is not reported properly in a service worker, now its just assumed for
+// compatibility with UV
+Object.defineProperty(globalThis, "crossOriginIsolated", {
+	value: true,
+	writable: false,
+});
 
 // Due to anura's filesystem only being available once an anura instance is running,
 // we need a temporary filesystem to store files that are requested for caching.
@@ -352,7 +351,17 @@ workbox.routing.registerRoute(
 				headers: { "content-type": "text/html" },
 			});
 		}
-		if (!cacheenabled) return fetch(url);
+		if (!cacheenabled) {
+			const fetchResponse = await fetch(url);
+			return new Response(await fetchResponse.arrayBuffer(), {
+				headers: {
+					...Object.fromEntries(fetchResponse.headers.entries()),
+					...corsheaders,
+				},
+			});
+
+			return fetchResponse;
+		}
 		if (url.pathname === "/") {
 			url.pathname = "/index.html";
 		}
@@ -377,7 +386,18 @@ workbox.routing.registerRoute(
 				const fetchResponse = await fetch(url);
 				// Promise so that we can return the response before we cache it, for faster response times
 				return new Promise(async (resolve) => {
-					resolve(fetchResponse);
+					const corsResponse = new Response(
+						await fetchResponse.clone().arrayBuffer(),
+						{
+							headers: {
+								...Object.fromEntries(fetchResponse.headers.entries()),
+								...corsheaders,
+							},
+						},
+					);
+
+					resolve(corsResponse);
+
 					if (fetchResponse.ok) {
 						const buffer = await fetchResponse.clone().arrayBuffer();
 						await sh.promises.mkdirp(

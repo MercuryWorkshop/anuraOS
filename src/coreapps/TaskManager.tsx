@@ -12,11 +12,14 @@ class TaskManager extends App {
 			padding-inline: 1em;
 			height: 2rem;
 
+			font-size: 0.9rem;
+
 			&,
 			& td,
 			& th {
 				&:not(:first-of-type):not(last-of-type) {
-					border: 2px solid var(--theme-border);
+					border: 1px solid var(--theme-border);
+					border-inline: none;
 				}
 
 				height: 2rem;
@@ -66,6 +69,12 @@ class TaskManager extends App {
 			border-collapse: collapse;
 			width: 100%;
 
+			border-color: var(--theme-border);
+			border-inline: none;
+			border-width: 1px;
+
+			font-size: 0.9rem;
+
 			& tbody {
 				max-height: calc(100% - 1rem);
 				overflow-y: scroll;
@@ -76,7 +85,7 @@ class TaskManager extends App {
 				position: sticky;
 				top: 0;
 				background: var(--theme-bg);
-				border-bottom: 2px solid var(--theme-border);
+				border-bottom: 1px solid var(--theme-border);
 			}
 
 			& th {
@@ -84,12 +93,11 @@ class TaskManager extends App {
 				font-weight: 400;
 				padding-inline: 0.6rem;
 				padding-block: 0.15rem;
-				font-size: 0.9rem;
 				text-align: right;
 				&:first-of-type {
 					text-align: left;
 				}
-
+				font-size: 0.8rem;
 				height: 1.5rem;
 			}
 		}
@@ -106,10 +114,10 @@ class TaskManager extends App {
 			position: absolute;
 			top: 0;
 			right: 0;
-			width: 5px;
+			width: 1px;
 			cursor: ew-resize;
 			user-select: none;
-			border-right: 2px solid var(--theme-border);
+			background: var(--theme-border);
 		}
 		.resizer:hover {
 			border-color: color-mix(

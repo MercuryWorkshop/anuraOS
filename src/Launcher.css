@@ -21,9 +21,9 @@
 #launcher-button::after {
 	content: "";
 	position: absolute;
-	width: 0.78em;
-	height: 0.78em;
-	border: 0.16em solid var(--theme-fg);
+	width: 0.7rem;
+	height: 0.7rem;
+	border: 0.125rem solid var(--theme-fg);
 	border-radius: 50%;
 	top: 50%;
 	left: 50%;

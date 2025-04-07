@@ -167,7 +167,8 @@ class Taskbar {
 
 	#contextMenu = new ContextMenu(true); // This is going to be before anura is initialized, so we can't use anura.ContextMenu
 	showcontext(app: App, e: MouseEvent) {
-		if (app.windows.length > 0) {
+		// If `app` has open windows, or if dock item was right clicked
+		if (app.windows.length > 0 || e.button === 2) {
 			this.#contextMenu.removeAllItems();
 			this.#contextMenu.addItem(
 				"New Window",

@@ -57,16 +57,7 @@ class WallpaperSelector extends App {
 			border: none;
 			padding: 5px;
 			border-radius: 5px;
-			font-family:
-				"Roboto",
-				RobotoDraft,
-				"Droid Sans",
-				Arial,
-				Helvetica,
-				-apple-system,
-				BlinkMacSystemFont,
-				system-ui,
-				sans-serif;
+			font-family: var(--theme-font-sans);
 			outline: none;
 			height: 25px;
 		}
@@ -243,7 +234,7 @@ class WallpaperSelector extends App {
 				color: var(--theme-fg);
 				border: none;
 				cursor: pointer;
-				font-family: inherit;
+				font-family: var(--theme-font-sans);
 				font-size: 1rem;
 
 				display: flex;

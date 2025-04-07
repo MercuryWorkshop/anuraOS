@@ -8,11 +8,17 @@ class Dialog extends App {
 	hidden = true;
 
 	css = css`
-		margin: 16px;
+		padding: 14px;
+		height: calc(100% - 24px);
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+
 		h2 {
 			font-size: 1.2rem;
 		}
 		.buttons {
+			flex-grow: 1;
 			display: flex;
 			justify-content: flex-end;
 			margin-top: 10px;
@@ -31,23 +37,37 @@ class Dialog extends App {
 		super();
 	}
 
+	// this is probably the worst way to do this but hey it works - fish
+	private getFit(element: HTMLElement, minHeight?: number): number {
+		const el = element.cloneNode(true) as HTMLElement;
+		el.style.position = "absolute";
+		el.style.top = "0";
+		el.style.left = "0";
+		// el.classList = this.css;
+		el.style.width = "350px";
+		el.style.padding = "14px";
+		el.style.height = "max-content";
+		el.style.visibility = "hidden";
+		el.style.zIndex = "-1";
+		el.style.opacity = "0";
+
+		document.body.appendChild(el);
+		const height = el.offsetHeight;
+
+		// setTimeout(() => {
+		document.body.removeChild(el);
+		// }, 1000);
+
+		// console.log("height", height);
+		return Math.max(height + 50, minHeight || 170);
+	}
+
 	alert(message: string, title = "Alert") {
 		const dialog = this as object;
 		(dialog as any).title = "";
 		(dialog as any).width = "350px";
-		(dialog as any).height = "170px";
-		const win = anura.wm.create(this, dialog);
 
-		// MARK: The DAMN CSS
-		win.content.style.background = "var(--material-bg)";
-		win.content.style.color = "white";
-
-		// MARK: good idea?
-		// (win.element as HTMLElement).querySelectorAll(".windowButton").forEach((el: HTMLElement) => {
-		//     el.style.display = "none";
-		// })
-
-		win.content.appendChild(
+		const contents: HTMLElement = (
 			<div class={[this.css]}>
 				<h2>{title}</h2>
 				<p>{message}</p>
@@ -61,25 +81,30 @@ class Dialog extends App {
 						OK
 					</button>
 				</div>
-			</div>,
+			</div>
 		);
+
+		(dialog as any).height = this.getFit(contents) + "px";
+		const win = anura.wm.create(this, dialog);
+
+		// MARK: The DAMN CSS
+		win.content.style.background = "var(--material-bg)";
+		win.content.style.color = "white";
+
+		// MARK: good idea?
+		// (win.element as HTMLElement).querySelectorAll(".windowButton").forEach((el: HTMLElement) => {
+		//     el.style.display = "none";
+		// })
+
+		win.content.appendChild(contents);
 	}
 	async confirm(message: string, title = "Confirmation"): Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			const dialog = this as object;
 			(dialog as any).title = "";
 			(dialog as any).width = "350px";
-			(dialog as any).height = "170px";
-			const win = anura.wm.create(this, dialog);
 
-			win.onclose = () => {
-				resolve(false);
-			};
-
-			win.content.style.background = "var(--material-bg)";
-			win.content.style.color = "white";
-
-			win.content.appendChild(
+			const contents: HTMLElement = (
 				<div class={[this.css]}>
 					<h2>{title}</h2>
 					<p>{message}</p>
@@ -103,8 +128,20 @@ class Dialog extends App {
 							OK
 						</button>
 					</div>
-				</div>,
+				</div>
 			);
+
+			(dialog as any).height = this.getFit(contents) + "px";
+			const win = anura.wm.create(this, dialog);
+
+			win.onclose = () => {
+				resolve(false);
+			};
+
+			win.content.style.background = "var(--material-bg)";
+			win.content.style.color = "white";
+
+			win.content.appendChild(contents);
 		});
 	}
 	async prompt(message: string, defaultValue?: any): Promise<any> {
@@ -112,23 +149,12 @@ class Dialog extends App {
 			const dialog = this as object;
 			(dialog as any).title = "";
 			(dialog as any).width = "350px";
-			(dialog as any).height = "200px";
-			const win = anura.wm.create(this, dialog);
-
-			win.onclose = () => {
-				resolve(null);
-			};
-
-			win.content.style.background = "var(--material-bg)";
-			win.content.style.color = "white";
 
 			let input: HTMLInputElement;
 
-			win.content.appendChild(
+			const contents: HTMLElement = (
 				<div class={[this.css]}>
 					<h2>{message}</h2>
-					{/* MARK: FIXME: UGLY
-					 */}
 					<label class="matter-textfield-filled">
 						{(input = (<input placeholder=" " />) as HTMLInputElement)}
 					</label>
@@ -160,8 +186,20 @@ class Dialog extends App {
 							OK
 						</button>
 					</div>
-				</div>,
+				</div>
 			);
+
+			(dialog as any).height = this.getFit(contents, 200) + "px";
+			const win = anura.wm.create(this, dialog);
+
+			win.onclose = () => {
+				resolve(null);
+			};
+
+			win.content.style.background = "var(--material-bg)";
+			win.content.style.color = "white";
+
+			win.content.appendChild(contents);
 		});
 	}
 }
