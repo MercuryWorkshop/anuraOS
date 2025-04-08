@@ -101,17 +101,21 @@ window.addEventListener("load", async () => {
 	const comlink = await import(comlinksrc);
 
 	let conf, milestone, instancemilestone;
+	let bootStrapFs = Filer.fs;
 
+	if (await (window as any).idbKeyval.get("bootFromOPFS")) {
+		bootStrapFs = (await LocalFS.newSwOPFS()) as any;
+	}
 	try {
 		conf = await (await fetch("/config.json")).json();
 		milestone = await (await fetch("/MILESTONE")).text();
 
 		console.debug("writing config??");
-		Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
+		bootStrapFs.writeFile("/config_cached.json", JSON.stringify(conf));
 	} catch (e) {
 		conf = JSON.parse(
 			new TextDecoder().decode(
-				await Filer.fs.promises.readFile("/config_cached.json"),
+				await bootStrapFs.promises.readFile("/config_cached.json"),
 			),
 		);
 	}
@@ -192,7 +196,7 @@ window.addEventListener("load", async () => {
 					tracker_br.style.display = "unset";
 					tracker.innerText = "Anura is updating your system...";
 					try {
-						await new Filer.fs.Shell().promises.rm("/anura_files", {
+						await new anura.fs.Shell().promises.rm("/anura_files", {
 							recursive: true,
 						});
 					} catch {

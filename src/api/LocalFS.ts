@@ -193,6 +193,26 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 
 		return fs;
 	}
+	static async newSwOPFS() {
+		const anuraPath = "/";
+		const dirHandle = await navigator.storage.getDirectory();
+
+		const fs = new LocalFS(dirHandle, anuraPath);
+		const textde = new TextDecoder();
+		try {
+			fs.stats = new Map(
+				JSON.parse(
+					textde.decode(
+						await fs.promises.readFile(anuraPath + "/.anura_stats"),
+					),
+				),
+			);
+		} catch (e: any) {
+			console.log("Error on mount, probably first mount ", e);
+		}
+
+		return fs;
+	}
 	static async new(anuraPath: string) {
 		let dirHandle;
 		try {

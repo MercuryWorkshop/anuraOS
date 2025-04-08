@@ -15,7 +15,9 @@ importScripts("/libs/filer/filer.min.js");
 
 // Importing mime
 importScripts("/libs/mime/mime.iife.js");
-
+importScripts("/lib/api/Filesystem.js");
+importScripts("/lib/api/LocalFS.js");
+importScripts("/libs/idb-keyval/idb-keyval.js");
 // self.fs = new Filer.FileSystem({
 //     name: "anura-mainContext",
 //     provider: new Filer.FileSystem.providers.IndexedDB(),
@@ -25,10 +27,30 @@ const filerfs = new Filer.FileSystem({
 	name: "anura-mainContext",
 	provider: new Filer.FileSystem.providers.IndexedDB(),
 });
-
 const filersh = new filerfs.Shell();
 
+let opfs = undefined;
+let opfssh = undefined;
+
+const bootStrapFSReady = new Promise((res, rej) => {
+	console.log(globalThis);
+	globalThis.idbKeyval
+		.get("bootFromOPFS")
+		.then((res) => {
+			if (res) {
+				opfs = LocalFS.newSwOPFS();
+				globalThis.anura = { fs: opfs }; // Stupid thing for AFSShell compat
+				opfssh = new AFSShell();
+			}
+			res(true);
+		})
+		.catch((e) => {
+			res(true);
+		});
+});
+
 async function currentFs() {
+	await bootStrapFSReady();
 	// isConnected will return true if the anura instance is running, and otherwise infinitely wait.
 	// it will never return false, but it may hang indefinitely if the anura instance is not running.
 	// here, we race the isConnected promise with a timeout to prevent hanging indefinitely.
@@ -37,8 +59,8 @@ async function currentFs() {
 		// An anura instance has not been started yet to populate the isConnected promise.
 		// We automatically know that the filesystem is not connected.
 		return {
-			fs: filerfs,
-			sh: filersh,
+			fs: opfs || filerfs,
+			sh: opfssh || filersh,
 		};
 	}
 
@@ -47,8 +69,8 @@ async function currentFs() {
 		new Promise((resolve) =>
 			setTimeout(() => {
 				resolve({
-					fs: filerfs,
-					sh: filersh,
+					fs: opfs || filerfs,
+					sh: opfssh || filersh,
 					fallback: true,
 				});
 			}, CONN_TIMEOUT),
@@ -317,8 +339,6 @@ for (const method of supportedWebDAVMethods) {
 workbox.core.skipWaiting();
 workbox.core.clientsClaim();
 
-importScripts("/libs/idb-keyval/idb-keyval.js");
-
 var cacheenabled;
 
 const callbacks = {};
@@ -571,6 +591,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
 	/^(?!.*(\/config.json|\/MILESTONE|\/x86images\/|\/service\/))/,
 	async ({ url }) => {
+		await bootStrapFSReady();
 		if (cacheenabled === undefined) {
 			console.debug("retrieving cache value");
 			let result = await idbKeyval.get("cacheenabled");
@@ -610,8 +631,8 @@ workbox.routing.registerRoute(
 		let path = decodeURI(url.pathname);
 
 		// Force Filer to be used in cache routes, as it does not require waiting for anura to be connected
-		const fs = filerfs;
-		const sh = filersh;
+		const fs = opfs || filerfs;
+		const sh = opfs || filersh;
 
 		const response = await serveFile(`${basepath}${path}`, fs, sh);
 
