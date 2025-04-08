@@ -117,6 +117,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 		options?: FileSystemGetFileOptions,
 		recurseCounter = 0,
 	): Promise<[FileSystemFileHandle, string]> {
+		console.error("Getting filehandle for ", path);
 		if (!path.includes("/")) {
 			path = "/" + path;
 		}
@@ -399,9 +400,22 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 			return new Filer.Buffer(await (await handle.getFile()).arrayBuffer());
 		},
 		readdir: async (path: string) => {
-			const [dirHandle, realPath] = await this.getChildDirHandle(
-				this.relativizePath(path),
-			);
+			let dirHandle, realPath;
+			try {
+				[dirHandle, realPath] = await this.getChildDirHandle(
+					this.relativizePath(path),
+				);
+			} catch (e) {
+				throw {
+					name: "ENOENT",
+					code: "ENOENT",
+					errno: 34,
+					message: "no such file or directory",
+					path: (this.domain + "/" + path).replace("//", "/"),
+					stack: e,
+				};
+			}
+
 			const nodes: string[] = [];
 			for await (const entry of dirHandle.values()) {
 				if (entry.name !== ".anura_stats")
@@ -429,6 +443,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 			await parentHandle.removeEntry(path);
 		},
 		mkdir: async (path: string) => {
+			if (path.endsWith("/")) path = path.slice(0, -1);
 			let parentHandle = this.dirHandle;
 			let realParentPath = "";
 			path = this.relativizePath(path);
@@ -505,7 +520,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 					throw {
 						name: "ENOENT",
 						code: "ENOENT",
-						errno: -2,
+						errno: 34,
 						message: "no such file or directory",
 						path: (this.domain + "/" + path).replace("//", "/"),
 						stack: e,
@@ -540,8 +555,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 						reject({
 							name: "ENOENT",
 							code: "ENOENT",
-							errno: -2,
-							message: `No such file or directory: ${path}`,
+							errno: 34,
+							message: `No such file or directory`,
+							path,
 							stack: "Error: No such file or directory",
 						} as Error),
 					); // File doesn't exist
@@ -558,8 +574,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 					return reject({
 						name: "ENOENT",
 						code: "ENOENT",
-						errno: -2,
-						message: `No such file or directory: ${path}`,
+						errno: 34,
+						message: `No such file or directory`,
+						path,
 						stack: "Error: No such file or directory",
 					} as Error);
 				}
@@ -674,7 +691,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 					throw {
 						name: "ENOENT",
 						code: "ENOENT",
-						errno: -2,
+						errno: 34,
 						message: "no such file or directory",
 						path: (this.domain + "/" + path).replace("//", "/"),
 						stack: e,
@@ -701,7 +718,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 					return reject({
 						name: "EINVAL",
 						code: "EINVAL",
-						errno: -22,
+						errno: 342,
 						message: "Invalid template, must contain 'XXXXXX'.",
 						stack: "Error: Invalid template",
 					} as Error);
@@ -754,8 +771,9 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 				throw {
 					name: "ENOENT",
 					code: "ENOENT",
-					errno: -2,
-					message: `No such file or directory: ${path}`,
+					errno: 34,
+					message: `No such file or directory`,
+					path,
 					stack: "Error: No such file",
 				} as Error;
 			}
@@ -764,7 +782,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 					// I think this is the wrong error type
 					name: "EINVAL",
 					code: "EINVAL",
-					errno: -22,
+					errno: 342,
 					message: `Is not a symbolic link: ${path}`,
 					stack: "Error: Is not a symbolic link",
 				} as Error;
@@ -905,7 +923,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 				{
 					name: "EISDIR",
 					code: "EISDIR",
-					errno: -21,
+					errno: 28,
 					message: "Is a directory",
 					stack: "Error: Is a directory",
 				} as Error,
@@ -1086,7 +1104,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 				{
 					name: "EISDIR",
 					code: "EISDIR",
-					errno: -21,
+					errno: 28,
 					message: "Is a directory",
 					stack: "Error: Is a directory",
 				} as Error,
@@ -1137,7 +1155,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 				{
 					name: "EISDIR",
 					code: "EISDIR",
-					errno: -21,
+					errno: 28,
 					message: "Is a directory",
 					stack: "Error: Is a directory",
 				} as Error,
