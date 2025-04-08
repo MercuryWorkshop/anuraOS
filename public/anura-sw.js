@@ -50,7 +50,7 @@ const bootStrapFSReady = new Promise((res, rej) => {
 });
 
 async function currentFs() {
-	await bootStrapFSReady();
+	await bootStrapFSReady;
 	// isConnected will return true if the anura instance is running, and otherwise infinitely wait.
 	// it will never return false, but it may hang indefinitely if the anura instance is not running.
 	// here, we race the isConnected promise with a timeout to prevent hanging indefinitely.
@@ -591,7 +591,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
 	/^(?!.*(\/config.json|\/MILESTONE|\/x86images\/|\/service\/))/,
 	async ({ url }) => {
-		await bootStrapFSReady();
+		await bootStrapFSReady;
 		if (cacheenabled === undefined) {
 			console.debug("retrieving cache value");
 			let result = await idbKeyval.get("cacheenabled");
