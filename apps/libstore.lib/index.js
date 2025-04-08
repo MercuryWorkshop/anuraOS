@@ -1,6 +1,6 @@
 const fflate = await anura.import("npm:fflate");
 
-const fs = Filer.fs;
+const fs = anura.fs;
 const Buffer = Filer.Buffer;
 
 function unzip(zip) {
