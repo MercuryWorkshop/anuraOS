@@ -414,7 +414,7 @@ async function newFolder(path) {
 		}
 	}
 	if (path) {
-		fs.mkdir(path);
+		await fs.promises.mkdir(path);
 		reload();
 	}
 }

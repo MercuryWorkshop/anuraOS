@@ -60,7 +60,7 @@ export async function createAppView(dataPath, type) {
 				try {
 					for (const [relativePath, content] of Object.entries(zip)) {
 						if (relativePath.endsWith("/")) {
-							anura.fs.mkdir(`${path}/${relativePath}`);
+							await anura.fs.promises.mkdir(`${path}/${relativePath}`);
 						} else {
 							anura.fs.writeFile(
 								`${path}/${relativePath}`,

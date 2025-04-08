@@ -230,7 +230,7 @@ export class StoreRepo {
 		try {
 			for (const [relativePath, content] of Object.entries(zip)) {
 				if (relativePath.endsWith("/")) {
-					fs.mkdir(`${path}/${relativePath}`);
+					await fs.promises.mkdir(`${path}/${relativePath}`);
 				} else {
 					if (relativePath === "manifest.json") {
 						let manifest = new TextDecoder().decode(content);
@@ -280,7 +280,7 @@ export class StoreRepo {
 		try {
 			for (const [relativePath, content] of Object.entries(zip)) {
 				if (relativePath.endsWith("/")) {
-					fs.mkdir(`${path}/${relativePath}`);
+					await fs.promises.mkdir(`${path}/${relativePath}`);
 				} else {
 					if (relativePath === "manifest.json") {
 						let manifest = new TextDecoder().decode(content);
@@ -441,7 +441,7 @@ export class StoreRepoLegacy {
 		try {
 			for (const [relativePath, content] of Object.entries(zip)) {
 				if (relativePath.endsWith("/")) {
-					fs.mkdir(`${path}/${relativePath}`);
+					await fs.promises.mkdir(`${path}/${relativePath}`);
 				} else {
 					if (relativePath == "post_install.js") {
 						let script = new TextDecoder().decode(content);
@@ -484,7 +484,7 @@ export class StoreRepoLegacy {
 		try {
 			for (const [relativePath, content] of Object.entries(zip)) {
 				if (relativePath.endsWith("/")) {
-					fs.mkdir(`${path}/${relativePath}`);
+					await fs.promises.mkdir(`${path}/${relativePath}`);
 				} else {
 					fs.writeFile(`${path}/${relativePath}`, await Buffer.from(content));
 				}
