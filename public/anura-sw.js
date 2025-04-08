@@ -187,8 +187,21 @@ async function handleDavRequest({ request, url }) {
 						status: 207,
 					});
 				} catch (err) {
-					console.error(err);
-					return new Response(null, { status: 404 });
+					console.error(path);
+					const xml = `
+					<?xml version="1.0"?>
+					<a:multistatus xmlns:a="DAV:">
+						<a:response>
+							<a:href>${url.pathname}</a:href>
+							<a:status>HTTP/1.1 404 Not Found</a:status>
+						</a:response>
+					</a:multistatus>
+				`.trim();
+
+					return new Response(xml, {
+						headers: { "Content-Type": "application/xml" },
+						status: 207, // multi-status
+					});
 				}
 			}
 
@@ -219,6 +232,7 @@ async function handleDavRequest({ request, url }) {
 			case "PUT": {
 				const buffer = await getBuffer();
 				try {
+					console.log(buffer);
 					await fs.writeFile(path, buffer);
 					return new Response(null, { status: 201 });
 				} catch {
