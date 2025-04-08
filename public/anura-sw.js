@@ -632,7 +632,7 @@ workbox.routing.registerRoute(
 
 		// Force Filer to be used in cache routes, as it does not require waiting for anura to be connected
 		const fs = opfs || filerfs;
-		const sh = opfssh || filers;
+		const sh = opfssh || filersh;
 
 		const response = await serveFile(`${basepath}${path}`, fs, sh);
 
@@ -669,6 +669,8 @@ workbox.routing.registerRoute(
 							Buffer.from(buffer),
 						);
 					}
+				}).catch((e) => {
+					console.error("I hate this bug: ", e);
 				});
 			} catch (e) {
 				return new Response(
