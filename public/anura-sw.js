@@ -136,7 +136,7 @@ async function handleDavRequest({ request, url }) {
 							: `<a:getcontentlength b:dt="int">${stat.size}</a:getcontentlength>`;
 						const contentType = isDir
 							? ""
-							: `<a:getcontenttype>application/octet-stream</a:getcontenttype>`;
+							: `<a:getcontenttype>${mime.default.getType(entryPath) || "application/octet-stream"}</a:getcontenttype>`;
 						const creationDate = new Date(stat.ctime).toISOString();
 						const lastModified = new Date(stat.mtime).toUTCString();
 						const resourcetype = isDir ? "<a:collection/>" : "";
@@ -159,6 +159,11 @@ async function handleDavRequest({ request, url }) {
 					};
 
 					if (isDirectory) {
+						responses = await renderEntry(
+							href.endsWith("/") ? href : href + "/",
+							stats,
+						);
+
 						const files = await fs.readdir(path);
 						const fileResponses = await Promise.all(
 							files.map(async (file) => {
@@ -170,7 +175,7 @@ async function handleDavRequest({ request, url }) {
 								return renderEntry(entryHref, stat);
 							}),
 						);
-						responses = fileResponses.join("");
+						responses += fileResponses.join("");
 					} else {
 						responses = await renderEntry(href, stats);
 					}
@@ -221,7 +226,10 @@ async function handleDavRequest({ request, url }) {
 				try {
 					const data = await fs.readFile(path);
 					return new Response(method === "HEAD" ? null : new Blob([data]), {
-						headers: { "Content-Type": "application/octet-stream" },
+						headers: {
+							"Content-Type":
+								mime.default.getType(path) || "application/octet-stream",
+						},
 						status: 200,
 					});
 				} catch {
@@ -298,7 +306,7 @@ async function handleDavRequest({ request, url }) {
 
 for (const method of supportedWebDAVMethods) {
 	workbox.routing.registerRoute(
-		/\/dav\//,
+		/\/dav/,
 		async (event) => {
 			return await handleDavRequest(event);
 		},
