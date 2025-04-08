@@ -117,7 +117,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 		options?: FileSystemGetFileOptions,
 		recurseCounter = 0,
 	): Promise<[FileSystemFileHandle, string]> {
-		console.error("Getting filehandle for ", path);
 		if (!path.includes("/")) {
 			path = "/" + path;
 		}
