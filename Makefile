@@ -7,8 +7,8 @@ RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
 
 all: submodules build/bootstrap \
 		v86 external-libs \
-		bundle public/config.json build/cache-load.json \
-		apps/libfileview.lib/icons build/assets/matter.css \
+		bundle public/config.json apps/libfileview.lib/icons \
+		build/assets/matter.css build/cache-load.json \
 
 full: all rootfs-alpine
 
