@@ -36,9 +36,9 @@ const bootStrapFSReady = new Promise((res, rej) => {
 	console.log(globalThis);
 	globalThis.idbKeyval
 		.get("bootFromOPFS")
-		.then((res) => {
+		.then(async (res) => {
 			if (res) {
-				opfs = LocalFS.newSwOPFS();
+				opfs = await LocalFS.newSwOPFS();
 				globalThis.anura = { fs: opfs }; // Stupid thing for AFSShell compat
 				opfssh = new AFSShell();
 			}
@@ -632,7 +632,7 @@ workbox.routing.registerRoute(
 
 		// Force Filer to be used in cache routes, as it does not require waiting for anura to be connected
 		const fs = opfs || filerfs;
-		const sh = opfs || filersh;
+		const sh = opfssh || filers;
 
 		const response = await serveFile(`${basepath}${path}`, fs, sh);
 
