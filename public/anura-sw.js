@@ -214,7 +214,7 @@ async function handleDavRequest({ request, url }) {
 						status: 207,
 					});
 				} catch (err) {
-					console.error(path);
+					console.error(path, err);
 					const xml = `
 					<?xml version="1.0"?>
 					<a:multistatus xmlns:a="DAV:">
@@ -272,7 +272,7 @@ async function handleDavRequest({ request, url }) {
 
 			case "DELETE":
 				try {
-					await shell.promises.rm(path);
+					await shell.promises.rm(path, { recursive: true });
 					return new Response(null, { status: 204 });
 				} catch {
 					return new Response(null, { status: 404 });
@@ -281,12 +281,13 @@ async function handleDavRequest({ request, url }) {
 			case "COPY": {
 				// This is technically invalid -- Copy should handle full folders as well but filer doesn't have a convinient way to do this :/
 				// take this broken solution in the interim - Rafflesia
+
 				const dest = getDestPath();
 				try {
-					const data = await fs.readFile(path);
-					await fs.writeFile(dest, data);
+					await shell.promises.cpr(path, dest);
 					return new Response(null, { status: 201 });
-				} catch {
+				} catch (e) {
+					console.error(e);
 					return new Response(null, { status: 404 });
 				}
 			}
