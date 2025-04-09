@@ -519,46 +519,9 @@ async function paste() {
 		.getAttribute("data-current-path");
 	if (!removeAfterPaste) {
 		for (item of clipboard) {
-			if (item.attributes["data-type"].value === "dir") {
-				//INPUT
-				let newPath = path;
-				let oldPath = item.attributes["data-path"].value;
-
-				// Normalize (remove trailing slash, replace // with /)
-				if (oldPath.endsWith("/")) oldPath = oldPath.slice(0, -1);
-				if (newPath.endsWith("/")) newPath = newPath.slice(0, -1);
-				newPath = newPath.replace("//", "/");
-				oldPath = oldPath.replace("//", "/");
-
-				const oldFolderName = oldPath.split("/").pop();
-				// Search
-				const files = await sh.promises.ls(oldPath, {
-					recursive: true,
-				});
-				// Apply
-				for (file of files) {
-					// Creating the relative path string
-					let path = file.split("/");
-					const filename = path.pop();
-					path = path.join("/");
-					path = path.substring(oldPath.length);
-
-					await sh.promises.mkdirp(`${newPath}/${oldFolderName}${path}`);
-					const data = await fs.promises.readFile(
-						`${oldPath}${path}/${filename}`,
-					);
-					await fs.promises.writeFile(
-						`${newPath}/${oldFolderName}${path}/${filename}`,
-						data,
-					);
-				}
-			} else {
-				let origin = item.attributes["data-path"].value;
-				await fs.promises.writeFile(
-					`${path}/${origin.split("/").slice("-1")[0]}`,
-					await fs.promises.readFile(origin),
-				);
-			}
+			let newPath = path;
+			let oldPath = item.attributes["data-path"].value;
+			await sh.promises.cpr(oldPath, newPath, { createInnerFolder: true });
 		}
 		clipboard = [];
 		reload();
