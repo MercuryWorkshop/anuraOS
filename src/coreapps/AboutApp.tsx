@@ -43,6 +43,14 @@ class AboutApp extends App {
 				)}
 
 				<br />
+
+				{$if(
+					anura.settings.get("bootFromOPFS"),
+					<p>Anura is booting from OPFS.</p>,
+					<p>Anura OPFS boot disabled.</p>,
+				)}
+
+				<br />
 				<br />
 
 				<p>
