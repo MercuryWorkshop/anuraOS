@@ -345,7 +345,7 @@ var cacheenabled;
 const callbacks = {};
 const filepickerCallbacks = {};
 
-addEventListener("message", (event) => {
+addEventListener("message", async (event) => {
 	if (event.data.anura_target === "anura.x86.proxy") {
 		let callback = callbacks[event.data.id];
 		callback(event.data.value);
@@ -353,6 +353,16 @@ addEventListener("message", (event) => {
 	if (event.data.anura_target === "anura.cache") {
 		cacheenabled = event.data.value;
 		idbKeyval.set("cacheenabled", event.data.value);
+	}
+	if (event.data.anura_target === "anura.bootFromOPFS") {
+		if (event.data.value) {
+			opfs = await LocalFS.newSwOPFS();
+			globalThis.anura = { fs: opfs }; // Stupid thing for AFSShell compat
+			opfssh = new AFSShell();
+		} else {
+			opfs = undefined;
+			opfssh = undefined;
+		}
 	}
 	if (event.data.anura_target === "anura.filepicker.result") {
 		let callback = filepickerCallbacks[event.data.id];

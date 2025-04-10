@@ -10,7 +10,6 @@ export default function install(anura) {
 		await anura.fs.promises.mkdir(
 			directories["opt"] + "/anura.persistence/providers/anureg",
 		);
-		console.warn("Made layer 3");
 
 		await anura.fs.promises.writeFile(
 			directories["opt"] + "/anura.persistence/providers/anureg/manifest.json",
