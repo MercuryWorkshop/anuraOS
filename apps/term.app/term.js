@@ -1,9 +1,9 @@
-const $ = document.querySelector.bind(document);
+const hterm = (await anura.import("anura.hterm")).default;
+const root = document.getElementById("terminal");
 
 window.addEventListener("load", async () => {
 	const t = new hterm.Terminal();
-	let htermNode = $("#terminal");
-	t.decorate(htermNode);
+	t.decorate(root);
 	t.onTerminalReady = async () => {
 		let e = document
 			.querySelector("iframe")
@@ -58,6 +58,6 @@ window.addEventListener("load", async () => {
 
 		t.installKeyboard();
 
-		htermNode.querySelector("iframe").style.position = "relative";
+		root.querySelector("iframe").style.position = "relative";
 	};
 });

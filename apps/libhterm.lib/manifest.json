@@ -1,0 +1,10 @@
+{
+	"name": "libhterm",
+	"icon": "terminal.svg",
+	"package": "anura.hterm",
+	"versions": {
+		"1.92.1": "versions/1.92.1/index.js"
+	},
+	"cache": true,
+	"currentVersion": "1.92.1"
+}
