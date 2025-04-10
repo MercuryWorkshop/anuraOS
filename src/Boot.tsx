@@ -485,7 +485,7 @@ document.addEventListener("anura-login-completed", async () => {
 	const about = new AboutApp();
 	anura.registerApp(about);
 
-	const wallpaper = new WallpaperSelector();
+	const wallpaper = new WallpaperAndStyle();
 	anura.registerApp(wallpaper);
 
 	// const themeEditor = new ThemeEditor();
