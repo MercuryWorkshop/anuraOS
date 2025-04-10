@@ -512,19 +512,12 @@ class AFSShell {
 		}
 	}
 	mkdirp(path: string, callback: (err: Error | null) => void) {
-		const parts = this.#relativeToAbsolute(path).split("/");
-		callback ||= () => {};
-		parts.reduce((acc, part) => {
-			acc += "/" + part;
-			anura.fs.mkdir(acc, (err: Error | null) => {
-				if (err) {
-					callback(err);
-					return;
-				}
+		this.promises
+			.mkdirp(path)
+			.then(() => callback!(null))
+			.catch((err) => {
+				callback(err);
 			});
-			return acc;
-		});
-		callback(null);
 	}
 	rm(
 		path: string,
@@ -774,16 +767,18 @@ class AFSShell {
 				throw err;
 			}
 		},
-		mkdirp: (path: string) => {
-			return new Promise<void>((resolve, reject) => {
-				this.mkdirp(path, (err) => {
-					if (err) {
-						reject(err);
-						return;
-					}
-					resolve();
-				});
-			});
+		mkdirp: async (path: string) => {
+			const parts = this.#relativeToAbsolute(path).split("/");
+			let builder = "";
+			for (const part of parts) {
+				if (part === "") continue;
+				builder += "/" + part;
+				try {
+					await anura.fs.promises.mkdir(builder);
+				} catch (e) {
+					if (e.code !== "EEXIST") throw e;
+				}
+			}
 		},
 		rm: (
 			path: string,

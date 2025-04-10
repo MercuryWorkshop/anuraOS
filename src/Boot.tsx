@@ -323,7 +323,7 @@ window.addEventListener("load", async () => {
 			await sh.promises.mkdirp(directories[k]);
 		} catch (e) {
 			if (e.code !== "EEXIST") {
-				console.error(e);
+				console.error(e, " for ", directories[k]);
 			}
 		}
 	});
