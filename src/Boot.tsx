@@ -722,6 +722,17 @@ async function bootUserCustomizations() {
 			timeout: "never",
 			callback: () => anura.apps["anura.recovery"].open(),
 		});
+
+		const safeMode = document.createElement("span");
+		safeMode.style.position = "absolute";
+		safeMode.style.bottom = "calc(48px + 1.5rem)";
+		safeMode.style.color = "#ff5533";
+		safeMode.style.fontWeight = "bold";
+		safeMode.style.fontSize = "1.25rem";
+		safeMode.style.right = "1.5rem";
+		safeMode.style.textAlign = "left";
+		safeMode.textContent = "Safe Mode";
+		document.body.appendChild(safeMode);
 	} else {
 		// Not in safe mode
 		// Load all user provided init scripts
