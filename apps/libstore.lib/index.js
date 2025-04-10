@@ -243,13 +243,18 @@ export class StoreRepo {
 						if (app.dependencies) {
 							manifest.marketplace.dependencies = app.dependencies;
 						}
-						fs.writeFile(`${path}/${relativePath}`, JSON.stringify(manifest));
+						await fs.promises.writeFile(
+							`${path}/${relativePath}`,
+							JSON.stringify(manifest),
+						);
 						continue;
 					}
-					fs.writeFile(`${path}/${relativePath}`, await Buffer.from(content));
+					await fs.promises.writeFile(
+						`${path}/${relativePath}`,
+						await Buffer.from(content),
+					);
 				}
 			}
-			await sleep(500); // race condition because of manifest.json
 			await anura.registerExternalApp("/fs" + path);
 			if (installHook) window.top.eval(installHook);
 			this.hooks.onComplete(app.name);
