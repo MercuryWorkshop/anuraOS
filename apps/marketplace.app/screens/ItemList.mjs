@@ -14,7 +14,7 @@ function Item() {
 		let observerOptions = {
 			root: document.all.screen,
 			rootMargin: "0px",
-			threshold: 0.1
+			threshold: 0.1,
 		};
 		const observer = new IntersectionObserver((entries, observer) => {
 			entries.forEach(async (entry) => {
@@ -33,8 +33,8 @@ function Item() {
 					if (installed) {
 						if (this.type === "app") {
 							this.installButton.value = "Open";
-							this.installButton.addEventListener("click", async (ee) => {
-								ee.stopPropagation();
+							this.installButton.addEventListener("click", async (e) => {
+								e.stopPropagation();
 								anura.apps[this.data.package].open();
 							});
 						} else {
@@ -45,18 +45,21 @@ function Item() {
 						this.installButton.style.color = "#fff";
 					} else {
 						this.installButton.value = "Install";
+						this.installButton.canOpen = false;
 						this.installButton.addEventListener("click", async (e) => {
 							e.stopPropagation();
 							if (this.type === "app") {
-								if (this.installButton.value === "Open") {
+								if (this.installButton.canOpen) {
 									anura.apps[this.data.package].open();
 								} else {
-									this.installButton.value = "Installing..."
+									this.installButton.value = "Installing...";
 									this.installButton.disabled = true;
-									if (await repo.installApp(id) === 200) {
+									if ((await repo.installApp(id)) === 200) {
 										this.installButton.value = "Open";
+										this.installButton.canOpen = true;
 										this.installButton.disabled = false;
-										this.installButton.style.backgroundColor = "var(--theme-bg)";
+										this.installButton.style.backgroundColor =
+											"var(--theme-bg)";
 										this.installButton.style.color = "#fff";
 									}
 								}
@@ -64,9 +67,9 @@ function Item() {
 								this.installButton.style.backgroundColor = "var(--theme-bg)";
 								this.installButton.style.color = "#fff";
 								this.installButton.disabled = true;
-								this.installButton.value = "Installing..."
-								if (await repo.installLib(id) === 200) {
-									this.installButton.value = "Installed"
+								this.installButton.value = "Installing...";
+								if ((await repo.installLib(id)) === 200) {
+									this.installButton.value = "Installed";
 								}
 							}
 						});

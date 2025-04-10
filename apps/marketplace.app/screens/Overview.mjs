@@ -18,8 +18,8 @@ export default function Overview() {
 		if (installed) {
 			if (state.currentItemType === "app") {
 				this.installButton.value = "Open";
-				this.installButton.addEventListener("click", async (EE) => {
-					EE.stopPropagation();
+				this.installButton.addEventListener("click", async (e) => {
+					e.stopPropagation();
 					anura.apps[state.currentItem.package].open();
 				});
 			} else {
@@ -30,15 +30,15 @@ export default function Overview() {
 			this.installButton.style.color = "#fff";
 		} else {
 			this.installButton.value = "Install";
-			this.installButton.addEventListener("click", async (E) => {
-				E.stopPropagation();
+			this.installButton.addEventListener("click", async (e) => {
+				e.stopPropagation();
 				if (state.currentItemType === "app") {
 					if (this.installButton.value === "Open") {
 						anura.apps[state.currentItem.package].open();
 					} else {
-						this.installButton.value = "Installing..."
+						this.installButton.value = "Installing...";
 						this.installButton.disabled = true;
-						if (await repo.installApp(id) === 200) {
+						if ((await repo.installApp(id)) === 200) {
 							this.installButton.value = "Open";
 							this.installButton.disabled = false;
 							this.installButton.style.backgroundColor = "var(--theme-bg)";
@@ -49,9 +49,9 @@ export default function Overview() {
 					this.installButton.style.backgroundColor = "var(--theme-bg)";
 					this.installButton.style.color = "#fff";
 					this.installButton.disabled = true;
-					this.installButton.value = "Installing..."
-					if (await repo.installLib(id) === 200) {
-						this.installButton.value = "Installed"
+					this.installButton.value = "Installing...";
+					if ((await repo.installLib(id)) === 200) {
+						this.installButton.value = "Installed";
 					}
 				}
 			});
