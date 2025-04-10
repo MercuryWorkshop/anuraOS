@@ -552,10 +552,10 @@ async function updateFile(path, data) {
 const fsRegex = /\/fs(\/.*)/;
 
 const corsheaders = {
-	"Cross-Origin-Embedder-Policy": "require-corp",
-	"Access-Control-Allow-Origin": "*",
-	"Cross-Origin-Opener-Policy": "same-origin",
-	"Cross-Origin-Resource-Policy": "same-site",
+	"cross-origin-embedder-policy": "require-corp",
+	"access-control-allow-origin": "*",
+	"cross-origin-opener-policy": "same-origin",
+	"cross-origin-resource-policy": "same-site",
 };
 
 workbox.routing.registerRoute(
