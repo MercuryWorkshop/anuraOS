@@ -121,6 +121,11 @@ window.addEventListener("load", async () => {
 	}
 
 	anura = await Anura.new(conf);
+	if (bootStrapFs instanceof LocalFS) {
+		anura.settings.cache["bootFromOPFS"] = true;
+	} else {
+		anura.settings.cache["bootFromOPFS"] = false;
+	}
 	LocalFS.newOPFS("/opfs"); // mount opfs on boot
 
 	if (anura.platform.type === "mobile" || anura.platform.type === "tablet") {

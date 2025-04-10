@@ -314,6 +314,28 @@ class SettingsApp extends App {
 									}
 								}}
 							/>
+							<SettingSwitch
+								title="Boot from OPFS"
+								setting="bootFromOPFS"
+								callback={async () => {
+									if (
+										await anura.dialog.confirm(
+											"This will restart Anura. Are you sure?\nYour data will not be accessible",
+										)
+									) {
+										await (window as any).idbKeyval.set(
+											"bootFromOPFS",
+											!(await (window as any).idbKeyval.get("bootFromOPFS")),
+										);
+										window.location.reload();
+									} else {
+										anura.settings.set(
+											"bootFromOpfs",
+											!anura.settings.get("bootFromOpfs"),
+										);
+									}
+								}}
+							/>
 							<SettingSwitch title="24-hour time" setting="sir-yes-sir" />
 							<SettingSwitch
 								title="Borderless AboutBrowser"
