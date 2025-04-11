@@ -258,6 +258,7 @@ export class StoreRepo {
 			await anura.registerExternalApp("/fs" + path);
 			if (installHook) window.top.eval(installHook);
 			this.hooks.onComplete(app.name);
+			return 200; // throw new Error is truthy so this is my solution
 		} catch (error) {
 			this.hooks.onError(app.name, error);
 		}
@@ -307,6 +308,7 @@ export class StoreRepo {
 			await sleep(500); // race condition because of manifest.json
 			await anura.registerExternalLib("/fs" + path);
 			this.hooks.onComplete(lib.name);
+			return 200;
 		} catch (error) {
 			this.hooks.onError(lib.name, error);
 		}
