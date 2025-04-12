@@ -33,6 +33,8 @@ window.saved = $state({
 		(await persistence.get("repos")) || {
 			"Anura App Repository":
 				"https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
+			"Anura Developer Repository":
+				"https://raw.githubusercontent.com/MercuryWorkshop/anura-developer-repo/master/",
 			"Anura Games": "https://games.anura.pro/",
 			"BomberFish's Extras":
 				"https://raw.githubusercontent.com/BomberFish/anura-repo/master/",
@@ -328,4 +330,10 @@ function App() {
 	`;
 }
 
-document.body.appendChild(html`<${App} />`);
+const root = document.getElementById("app");
+try {
+	root.replaceWith(h(App));
+} catch (e) {
+	root.replaceWith(document.createTextNode("" + e));
+	throw e;
+}

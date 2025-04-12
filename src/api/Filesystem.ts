@@ -512,19 +512,12 @@ class AFSShell {
 		}
 	}
 	mkdirp(path: string, callback: (err: Error | null) => void) {
-		const parts = this.#relativeToAbsolute(path).split("/");
-		callback ||= () => {};
-		parts.reduce((acc, part) => {
-			acc += "/" + part;
-			anura.fs.mkdir(acc, (err: Error | null) => {
-				if (err) {
-					callback(err);
-					return;
-				}
+		this.promises
+			.mkdirp(path)
+			.then(() => callback!(null))
+			.catch((err) => {
+				callback(err);
 			});
-			return acc;
-		});
-		callback(null);
 	}
 	rm(
 		path: string,
@@ -734,16 +727,58 @@ class AFSShell {
 				});
 			});
 		},
-		mkdirp: (path: string) => {
-			return new Promise<void>((resolve, reject) => {
-				this.mkdirp(path, (err) => {
-					if (err) {
-						reject(err);
-						return;
+		cpr: async (src: string, dest: string, options?: any) => {
+			try {
+				const stat = await anura.fs.promises.stat(src);
+				if (options?.createInnerFolder === true) {
+					try {
+						const destStat = await anura.fs.promises.stat(dest);
+						if (destStat.type === "DIRECTORY") {
+							dest = Filer.Path.join(dest, Filer.Path.basename(src));
+						}
+					} catch {
+						// Destination does not exist; continue as-is
 					}
-					resolve();
-				});
-			});
+				}
+
+				if (stat.type === "FILE") {
+					// Make sure destination directory exists
+					const destDir = Filer.Path.dirname(dest);
+
+					await this.promises.mkdirp(destDir);
+					await anura.fs.promises.writeFile(
+						dest,
+						await anura.fs.promises.readFile(src),
+					);
+				} else if (stat.type === "DIRECTORY") {
+					await this.promises.mkdirp(dest);
+
+					const items = await anura.fs.promises.readdir(src);
+					for (const item of items) {
+						const srcPath = Filer.Path.join(src, item);
+						const destPath = Filer.Path.join(dest, item);
+						await this.promises.cpr(srcPath, destPath);
+					}
+				} else {
+					throw new Error(`Unsupported file type at path: ${src}`);
+				}
+			} catch (err) {
+				console.error(`Error copying from ${src} to ${dest}:`, err);
+				throw err;
+			}
+		},
+		mkdirp: async (path: string) => {
+			const parts = this.#relativeToAbsolute(path).split("/");
+			let builder = "";
+			for (const part of parts) {
+				if (part === "") continue;
+				builder += "/" + part;
+				try {
+					await anura.fs.promises.mkdir(builder);
+				} catch (e) {
+					if (e.code !== "EEXIST") throw e;
+				}
+			}
 		},
 		rm: (
 			path: string,
@@ -1187,7 +1222,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 				data = Filer.Buffer.from(data);
 			}
 
-			this.processPath(path).promises.writeFile(path, data, options);
+			return this.processPath(path).promises.writeFile(path, data, options);
 		},
 	};
 }

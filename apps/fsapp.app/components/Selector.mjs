@@ -1,24 +1,40 @@
+// TODO: Make the button actually mirror CrOS's design
 export function Selector() {
 	this.css = `
-    margin-top: 0.3em;
-    margin-right: 1em;
     display: flex;
     flex-direction: row;
     align-items: center;
     position: fixed;
     bottom: 0;
-    left: 0;
-    width: 100%;
-    justify-content: flex-end;
-    padding: 0.5em;
+    right: 0;
+    padding: 0.3em;
 
     button {
         background: var(--theme-accent);
-        margin: 1rem 0.5rem;
-        padding: 1.5em;
+        margin: 1rem .5rem;
+        padding: .8em 1.5em;
         display: flex;
         align-items: center;
         border-radius: 9999px;
+        border: none;
+        cursor: pointer;
+
+        &,
+        &:hover,
+        &:active,
+        &:focus {
+            outline: none;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        &:focus,
+        &:hover {
+            background: color-mix(in srgb, var(--theme-accent), var(--theme-fg) 8%);
+        }
+
+        &:active {
+            background: color-mix(in srgb, var(--theme-accent), var(--theme-fg) 20%);
+        }
     }
     `;
 

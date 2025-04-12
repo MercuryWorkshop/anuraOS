@@ -5,6 +5,7 @@ class OobeView {
 		step: 0,
 		offlineEnabled: true,
 		v86Enabled: false,
+		localfsdriver: false,
 		dlsize: "0MB",
 	});
 
@@ -188,6 +189,19 @@ class OobeView {
 						&nbsp;This allows you to run Linux applications on AnuraOS.
 					</div>
 					<br></br>
+					<label class="matter-checkbox">
+						<input
+							type="checkbox"
+							bind:checked={use(this.state.localfsdriver)}
+						/>
+						<span>Experimental OPFS Driver</span>
+					</label>
+					<div class="sub">
+						<span class="material-symbols-outlined">info</span>
+						&nbsp;Use experimental OPFS based filesystem driver. Comes with a
+						speed improvement at the cost of system stability.
+					</div>
+					<br></br>
 					<div id="size" class="sub">
 						<span class="material-symbols-outlined">download</span>
 						&nbsp;{use(this.state.dlsize)} download
@@ -200,13 +214,21 @@ class OobeView {
 						<img id="animation" src="assets/oobe/checking_for_update.gif" />
 						<div id="bottomButtons">
 							<button
-								on:click={() => {
+								on:click={async () => {
 									anura.settings.set("x86-disabled", !this.state.v86Enabled);
 									anura.settings.set("use-sw-cache", this.state.offlineEnabled);
 									anura.settings.set("applist", [
 										...anura.settings.get("applist"),
 										this.state.v86Enabled ? "anura.term" : "anura.ashell",
 									]);
+
+									if (this.state.localfsdriver) {
+										await (window as any).idbKeyval.set("bootFromOPFS", true);
+										navigator.serviceWorker.controller?.postMessage({
+											anura_target: "anura.bootFromOPFS",
+											value: true,
+										});
+									}
 									this.nextStep();
 								}}
 								class="preferredButton"
@@ -281,9 +303,15 @@ class OobeView {
 		const step = this.steps[this.state.step]!;
 		if (step.on) step.on();
 	}
-	complete() {
-		anura.settings.set("oobe-complete", true);
-
+	async complete() {
+		await anura.settings.set("oobe-complete", true);
+		if (this.state.localfsdriver) {
+			await anura.fs.promises.writeFile(
+				"/opfs/anura_settings.json",
+				JSON.stringify(anura.settings.cache),
+			);
+			window.location.reload(); // need to reboot to go through firstboot again if using new opfs driver
+		}
 		document.dispatchEvent(new Event("anura-login-completed"));
 		this.element.remove();
 	}
