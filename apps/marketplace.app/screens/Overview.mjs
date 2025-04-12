@@ -30,16 +30,18 @@ export default function Overview() {
 			this.installButton.style.color = "#fff";
 		} else {
 			this.installButton.value = "Install";
+			this.installButton.canOpen = false;
 			this.installButton.addEventListener("click", async (e) => {
 				e.stopPropagation();
 				if (state.currentItemType === "app") {
-					if (this.installButton.value === "Open") {
+					if (this.installButton.canOpen) {
 						anura.apps[state.currentItem.package].open();
 					} else {
 						this.installButton.value = "Installing...";
 						this.installButton.disabled = true;
 						if ((await repo.installApp(id)) === 200) {
 							this.installButton.value = "Open";
+							this.installButton.canOpen = true;
 							this.installButton.disabled = false;
 							this.installButton.style.backgroundColor = "var(--theme-bg)";
 							this.installButton.style.color = "#fff";
