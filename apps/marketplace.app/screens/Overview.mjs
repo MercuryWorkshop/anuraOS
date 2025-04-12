@@ -16,18 +16,45 @@ export default function Overview() {
 		}
 
 		if (installed) {
-			this.installButton.value = "Installed";
-			this.installButton.style.backgroundColor = "var(--theme-secondary-bg)";
+			if (state.currentItemType === "app") {
+				this.installButton.value = "Open";
+				this.installButton.addEventListener("click", async (e) => {
+					e.stopPropagation();
+					anura.apps[state.currentItem.package].open();
+				});
+			} else {
+				this.installButton.value = "Installed";
+				this.installButton.disabled = true;
+			}
+			this.installButton.style.backgroundColor = "var(--theme-bg)";
 			this.installButton.style.color = "#fff";
-			this.installButton.disabled = true;
 		} else {
 			this.installButton.value = "Install";
+			this.installButton.canOpen = false;
 			this.installButton.addEventListener("click", async (e) => {
 				e.stopPropagation();
 				if (state.currentItemType === "app") {
-					await repo.installApp(id);
+					if (this.installButton.canOpen) {
+						anura.apps[state.currentItem.package].open();
+					} else {
+						this.installButton.value = "Installing...";
+						this.installButton.disabled = true;
+						if ((await repo.installApp(id)) === 200) {
+							this.installButton.value = "Open";
+							this.installButton.canOpen = true;
+							this.installButton.disabled = false;
+							this.installButton.style.backgroundColor = "var(--theme-bg)";
+							this.installButton.style.color = "#fff";
+						}
+					}
 				} else {
-					await repo.installLib(id);
+					this.installButton.style.backgroundColor = "var(--theme-bg)";
+					this.installButton.style.color = "#fff";
+					this.installButton.disabled = true;
+					this.installButton.value = "Installing...";
+					if ((await repo.installLib(id)) === 200) {
+						this.installButton.value = "Installed";
+					}
 				}
 			});
 		}
