@@ -5,7 +5,7 @@ class Anura {
 			minor: "1",
 			patch: "0",
 		},
-		buildstate: "alpha",
+		buildstate: "stable",
 		codename: "Starboy",
 		get pretty() {
 			const semantic = anura.version.semantic;
