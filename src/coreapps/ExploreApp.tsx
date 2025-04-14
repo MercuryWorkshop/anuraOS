@@ -136,45 +136,36 @@ class ExploreApp extends App {
 	whatsnew = (
 		<div id="body">
 			<h1>What's new in AnuraOS {anura.version.pretty}?</h1>
-			<h2>Themes</h2>
+			<h2>Experimental OPFS filesystem driver</h2>
 			<p>
-				You can now completely customize how Anura looks! Just open{" "}
+				AnuraOS 2.1 includes an experimental filesystem driver for the Origin
+				Private File System (OPFS). This greatly improves the speed of file
+				operations. You can enable it in{" "}
 				<span>
-					<a href="javascript:anura.apps['anura.ui.themeeditor'].open();">
-						<img
-							src="/assets/icons/wallpaper.png"
-							alt="Wallpaper Selector Icon"
-						/>
-						Wallpaper &amp; Style
+					<a href="javascript:anura.apps['anura.ui.settings'].open();">
+						<img src="/assets/icons/settings.png" alt="Settings Icon" />
+						Settings
 					</a>
 					.
 				</span>
 			</p>
-			<h2>Support for more platforms</h2>
+			<h2>VSCode Support</h2>
 			<p>
-				Anura now supports tablets and phones through the new redesigned mobile
-				shell to provide better support to those platforms.
+				AnuraOS 2.1 is the first version to include support for Visual Studio
+				Code. You can download it from the Developer Repository in{" "}
+				<span>
+					<img
+						src="/apps/marketplace.app/playstore.webp"
+						alt="Marketplace Icon"
+					/>
+					<a href="javascript:anura.apps['anura.store'].open();">Marketplace</a>
+					.
+				</span>
 			</p>
-			<h2>Overhauled Marketplace</h2>
-			<p>
-				The Marketplace app has been completely redesigned from the ground up
-				for a better experience.
-			</p>
-			<h2>Task Manager</h2>
-			<p>
-				A brand new Task Manager app has been added! You can manage running apps
-				from there.
-			</p>
-			<h2>Other</h2>
+			<h2>Other changes</h2>
 			<ul>
-				<li>A calendar was added to the system tray.</li>
-				<li>A quick settings menu was added.</li>
-				<li>
-					Various UI elements were reworked to create a more cohesive user
-					experience.
-				</li>
-				<li>Various bugs were squashed.</li>
-				<li>Removed Herobrine.</li>
+				<li>Added WebDAV endpoint at /dav/*</li>
+				<li>Fix UI bugs in the file picker</li>
 			</ul>
 		</div>
 	);
