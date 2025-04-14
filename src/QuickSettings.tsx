@@ -404,7 +404,7 @@ class QuickSettings {
 					this.notificationCenterCss,
 				]}
 				width="360px"
-				// height="calc(60% - 80px);"
+				height="calc(60% - 80px);"
 				id="notificationCenter"
 			>
 				<div class={["notificationContainer"]}>
