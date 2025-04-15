@@ -52,7 +52,7 @@ class OobeView {
 			box-sizing: border-box;
 
 			&:has(#features) {
-				padding-top: 28px;
+				padding-top: 0;
 			}
 		}
 
@@ -240,8 +240,20 @@ class OobeView {
 										fontSize: "0.7rem!important",
 									}}
 								>
-									<span>Next</span>
-									<span class="material-symbols-outlined">chevron_right</span>
+									{$if(
+										use(this.state.v86Enabled),
+										<span>Next</span>,
+										<span>
+											<span>Finish</span>
+										</span>,
+									)}
+
+									{$if(
+										use(this.state.v86Enabled),
+										<span class="material-symbols-outlined">
+											chevron_right
+										</span>,
+									)}
 								</div>
 							</button>
 						</div>
