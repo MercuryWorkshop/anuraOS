@@ -237,7 +237,7 @@ function App() {
 				<img src="./playstore.webp" />
 				<span>
 					<h1>Welcome to Marketplace</h1>
-					<p>Click a repository to view its contents.</p>
+					<p>Click on a repository to view its contents.</p>
 				</span>
 			</div>
 		</div>
