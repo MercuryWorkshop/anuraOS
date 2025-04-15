@@ -136,6 +136,11 @@ class ExploreApp extends App {
 	whatsnew = (
 		<div id="body">
 			<h1>What's new in AnuraOS {anura.version.pretty}?</h1>
+			<p>
+				This version resolves a bug where certain portions of the OOBE were
+				displayed incorrectly. The release notes for AnuraOS 2.1.0 continue
+				below.
+			</p>
 			<h2>Experimental OPFS filesystem driver</h2>
 			<p>
 				AnuraOS 2.1 includes an experimental filesystem driver for the Origin
