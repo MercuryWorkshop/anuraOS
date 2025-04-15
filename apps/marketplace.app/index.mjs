@@ -36,7 +36,7 @@ window.saved = $state({
 			"Anura Developer Repository":
 				"https://raw.githubusercontent.com/MercuryWorkshop/anura-developer-repo/master/",
 			"Anura Games": "https://games.anura.pro/",
-			"BomberFish's Extras":
+			"Anura Extras":
 				"https://raw.githubusercontent.com/BomberFish/anura-repo/master/",
 		},
 	),
