@@ -36,6 +36,10 @@ class Dialog extends App {
 		.confirm {
 			margin-left: 5px;
 		}
+
+		.matter-progress-linear {
+			width: 100%;
+		}
 	`;
 
 	constructor() {
@@ -218,8 +222,10 @@ class Dialog extends App {
 		});
 		const contents: HTMLElement = (
 			<div class={[this.css]}>
-				<h2>{use(state.title)}</h2>
-				<p>{use(state.detail)}</p>
+				<h2 style="margin-bottom: 3px;">{use(state.title)}</h2>
+				<p style="margin-top: 4px; margin-bottom: 16px; font-size: 0.925rem;">
+					{use(state.detail)}
+				</p>
 				<progress
 					class="matter-progress-linear"
 					bind:value={use(state.progress)}
