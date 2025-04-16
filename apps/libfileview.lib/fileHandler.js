@@ -1,4 +1,4 @@
-import { createAppView } from "./pages/appview/appview.js";
+import { createAppView, getAppIcon } from "./pages/appview/appview.js";
 
 const icons = await (await fetch(localPathToURL("icons.json"))).json();
 
@@ -188,6 +188,14 @@ export function openFile(path) {
 }
 
 export function getIcon(path) {
+	switch (path.split(".").slice("-2").join(".")) {
+		case "app.zip":
+			return getAppIcon(path);
+		case "lib.zip":
+			return getAppIcon(path);
+		default:
+			break;
+	}
 	let ext = path.split(".").slice("-1")[0];
 	let iconObject = icons.files.find((icon) => icon.ext === ext);
 	if (iconObject) {
@@ -197,6 +205,14 @@ export function getIcon(path) {
 }
 
 export function getFileType(path) {
+	switch (path.split(".").slice("-2").join(".")) {
+		case "app.zip":
+			return "Anura App Archive";
+		case "lib.zip":
+			return "Anura Library Archive";
+		default:
+			break;
+	}
 	let ext = path.split(".").slice("-1")[0];
 	let iconObject = icons.files.find((icon) => icon.ext === ext);
 	if (iconObject) {
