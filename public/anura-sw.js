@@ -627,7 +627,7 @@ workbox.routing.registerRoute(
 		const content = url.searchParams.get("content");
 
 		if (content) {
-			return new Response(decodeURIComponent(content), {
+			return new Response(content, {
 				headers: {
 					"content-type": url.searchParams.get("type") || "text/html",
 					...corsheaders,
