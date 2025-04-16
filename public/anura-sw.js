@@ -263,7 +263,7 @@ async function handleDavRequest({ request, url }) {
 				const buffer = await getBuffer();
 				try {
 					console.log(buffer);
-					await fs.writeFile(path, buffer);
+					await fs.writeFile(path, Filer.Buffer.from(buffer));
 					return new Response(null, { status: 201 });
 				} catch {
 					return new Response(null, { status: 500 });
