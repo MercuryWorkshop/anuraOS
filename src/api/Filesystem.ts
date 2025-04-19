@@ -10,143 +10,6 @@ abstract class AnuraFSOperations<TStats> {
 	 * Synchronous FS operations
 	 */
 
-	abstract rename(
-		oldPath: string,
-		newPath: string,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract truncate(
-		path: string,
-		len: number,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract stat(
-		path: string,
-		callback?: (err: Error | null, stats: TStats) => void,
-	): void;
-
-	abstract lstat(
-		path: string,
-		callback?: (err: Error | null, stats: TStats) => void,
-	): void;
-
-	/** @deprecated fs.exists() is an anachronism and exists only for historical reasons. */
-	abstract exists(path: string, callback?: (exists: boolean) => void): void;
-
-	abstract link(
-		srcPath: string,
-		dstPath: string,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract symlink(
-		srcPath: string,
-		dstPath: string,
-		type: string,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract symlink(
-		srcPath: string,
-		dstPath: string,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract readlink(
-		path: string,
-		callback?: (err: Error | null, linkContents: string) => void,
-	): void;
-
-	abstract unlink(path: string, callback?: (err: Error | null) => void): void;
-
-	abstract rmdir(path: string, callback?: (err: Error | null) => void): void;
-
-	abstract mkdir(
-		path: string,
-		mode: number,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract mkdir(path: string, callback?: (err: Error | null) => void): void;
-
-	abstract access(
-		path: string,
-		mode: number,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract access(path: string, callback?: (err: Error | null) => void): void;
-
-	abstract mkdtemp(
-		prefix: string,
-		options: { encoding: string } | string,
-		callback?: (err: Error | null, path: string) => void,
-	): void;
-
-	abstract mkdtemp(
-		prefix: string,
-		callback?: (err: Error | null, path: string) => void,
-	): void;
-
-	abstract readdir(
-		path: string,
-		options: { encoding: string; withFileTypes: boolean } | string,
-		callback?: (err: Error | null, files: string[]) => void,
-	): void;
-
-	abstract readdir(
-		path: string,
-		callback?: (err: Error | null, files: string[]) => void,
-	): void;
-
-	abstract utimes(
-		path: string,
-		atime: number | Date,
-		mtime: number | Date,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract chown(
-		path: string,
-		uid: number,
-		gid: number,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract chmod(
-		path: string,
-		mode: number,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract readFile(
-		path: string,
-		callback?: (err: Error | null, data: Uint8Array) => void,
-	): void;
-
-	abstract writeFile(
-		path: string,
-		data: Uint8Array | string,
-		options:
-			| { encoding: string; flag: "r" | "r+" | "w" | "w+" | "a" | "a+" }
-			| string,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract writeFile(
-		path: string,
-		data: Uint8Array | string,
-		callback?: (err: Error | null) => void,
-	): void;
-
-	abstract appendFile(
-		path: string,
-		data: Uint8Array,
-		callback?: (err: Error | null) => void,
-	): void;
-
 	/*
 	 * Asynchronous FS operations
 	 */
@@ -261,7 +124,7 @@ class AFSShell {
 					callback(err, contents);
 					return;
 				}
-				contents += data.toString() + "\n";
+				contents += data!.toString() + "\n";
 				remaining--;
 				if (remaining === 0) {
 					callback(null, contents.replace(/\n$/, ""));
@@ -892,7 +755,10 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 		newPath: string,
 		callback?: (err: Error | null) => void,
 	) {
-		this.processPath(oldPath).rename(oldPath, newPath, callback);
+		this.promises
+			.rename(oldPath, newPath)
+			.then(() => callback!(null))
+			.catch(callback);
 	}
 
 	ftruncate(fd: number, len: number, callback?: (err: Error | null) => void) {
@@ -900,11 +766,21 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 	}
 
 	truncate(path: string, len: number, callback?: (err: Error | null) => void) {
-		this.processPath(path).truncate(path, len, callback);
+		this.promises
+			.truncate(path, len)
+			.then(() => callback!(null))
+			.catch(callback);
 	}
 
 	stat(path: string, callback?: (err: Error | null, stats: any) => void) {
-		this.processPath(path).stat(path, callback);
+		this.promises
+			.stat(path)
+			.then((res) => {
+				callback!(null, res);
+			})
+			.catch((err) => {
+				callback!(err, null);
+			});
 	}
 
 	fstat(
@@ -915,12 +791,24 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 	}
 
 	lstat(path: string, callback?: (err: Error | null, stats: any) => void) {
-		this.processPath(path).lstat(path, callback);
+		this.promises
+			.lstat(path)
+			.then((res) => {
+				callback!(null, res);
+			})
+			.catch((err) => {
+				callback!(err, null);
+			});
 	}
 
 	/** @deprecated fs.exists() is an anachronism and exists only for historical reasons. */
-	exists(path: string, callback?: (exists: boolean) => void) {
-		this.processPath(path).exists(path, callback);
+	async exists(path: string, callback?: (exists: boolean) => void) {
+		try {
+			await anura.fs.promises.access(path);
+			callback!(true);
+		} catch (e) {
+			callback!(false);
+		}
 	}
 
 	link(
@@ -928,7 +816,14 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 		dstPath: string,
 		callback?: (err: Error | null) => void,
 	) {
-		this.processPath(srcPath).link(srcPath, dstPath, callback);
+		this.promises
+			.link(srcPath, dstPath)
+			.then((res) => {
+				callback!(null);
+			})
+			.catch((err) => {
+				callback!(err);
+			});
 	}
 
 	symlink(path: string, ...rest: any[]) {
@@ -938,25 +833,60 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 
 	readlink(
 		path: string,
-		callback?: (err: Error | null, linkContents: string) => void,
+		callback?: (err: Error | null, linkContents: string | undefined) => void,
 	) {
-		this.processPath(path).readlink(path, callback);
+		this.promises
+			.readlink(path)
+			.then((res) => {
+				callback!(null, res);
+			})
+			.catch((err) => {
+				callback!(err, undefined);
+			});
 	}
 
 	unlink(path: string, callback?: (err: Error | null) => void) {
-		this.processPath(path).unlink(path, callback);
+		this.promises
+			.unlink(path)
+			.then((res) => {
+				callback!(null);
+			})
+			.catch((err) => {
+				callback!(err);
+			});
 	}
 
 	rmdir(path: string, callback?: (err: Error | null) => void) {
-		this.processPath(path).rmdir(path, callback);
+		this.promises
+			.rmdir(path)
+			.then((res) => {
+				callback!(null);
+			})
+			.catch((err) => {
+				callback!(err);
+			});
 	}
 
 	mkdir(path: string, ...rest: any[]) {
-		this.processPath(path).mkdir(path, ...rest);
+		this.promises
+			.mkdir(path)
+			.then((res) => {
+				rest[rest.length - 1]!(null);
+			})
+			.catch((err) => {
+				rest[rest.length - 1]!(err);
+			});
 	}
 
 	access(path: string, ...rest: any[]) {
-		this.processPath(path).access(path, ...rest);
+		this.promises
+			.access(path)
+			.then((res) => {
+				rest[rest.length - 1]!(null);
+			})
+			.catch((err) => {
+				rest[rest.length - 1]!(err);
+			});
 	}
 
 	mkdtemp(...args: any[]) {
@@ -966,7 +896,14 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 	}
 
 	readdir(path: string, ...rest: any[]) {
-		this.processPath(path).readdir(path, ...rest);
+		this.promises
+			.readdir(path, typeof rest[0] !== "function" ? rest[0] : undefined)
+			.then((res) => {
+				rest[rest.length - 1]!(null);
+			})
+			.catch((err) => {
+				rest[rest.length - 1]!(err);
+			});
 	}
 
 	close(
@@ -1025,7 +962,14 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 		mtime: number | Date,
 		callback?: (err: Error | null) => void,
 	) {
-		this.processPath(path).utimes(path, atime, mtime, callback);
+		this.promises
+			.utimes(path, atime, mtime)
+			.then((res) => {
+				callback!(null);
+			})
+			.catch((err) => {
+				callback!(err);
+			});
 	}
 
 	futimes(fd: number, ...rest: any[]) {
@@ -1039,7 +983,14 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 		gid: number,
 		callback?: (err: Error | null) => void,
 	) {
-		this.processPath(path).chown(path, uid, gid, callback);
+		this.promises
+			.chown(path, uid, gid)
+			.then((res) => {
+				callback!(null);
+			})
+			.catch((err) => {
+				callback!(err);
+			});
 	}
 
 	fchown(fd: number, ...rest: any[]) {
@@ -1048,7 +999,10 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 	}
 
 	chmod(path: string, mode: number, callback?: (err: Error | null) => void) {
-		this.processPath(path).chmod(path, mode, callback);
+		this.promises
+			.chmod(path, mode)
+			.then(() => callback!(null))
+			.catch(callback);
 	}
 
 	fchmod(fd: number, ...rest: any[]) {
@@ -1150,29 +1104,52 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 
 	readFile(
 		path: string,
-		callback?: (err: Error | null, data: Uint8Array) => void,
+		callback?: (err: Error | null, data?: Uint8Array) => void,
 	) {
-		this.processPath(path).readFile(path, callback);
+		this.promises
+			.readFile(path)
+			.then((res) => {
+				callback!(null, res);
+			})
+			.catch((err) => {
+				callback!(err);
+			});
 	}
 
 	writeFile(path: string, data: Uint8Array | string, ...rest: any[]) {
 		if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
 			data = Filer.Buffer.from(data);
 		}
-
-		this.processPath(path).writeFile(path, data, ...rest);
+		this.promises
+			.writeFile(
+				path,
+				data,
+				typeof rest[0] !== "function" ? rest[0] : undefined,
+			)
+			.then((res) => {
+				rest[rest.length - 1]!(null, res);
+			})
+			.catch((err) => {
+				rest[rest.length - 1]!(err);
+			});
 	}
 
-	appendFile(
-		path: string,
-		data: Uint8Array,
-		callback?: (err: Error | null) => void,
-	) {
+	appendFile(path: string, data: Uint8Array, ...rest: any[]) {
 		if (data instanceof Uint8Array && !(data instanceof Filer.Buffer)) {
 			data = Filer.Buffer.from(data);
 		}
-
-		this.processPath(path).appendFile(path, data, callback);
+		this.promises
+			.appendFile(
+				path,
+				data,
+				typeof rest[0] !== "function" ? rest[0] : undefined,
+			)
+			.then((res) => {
+				rest[rest.length - 1]!(null, res);
+			})
+			.catch((err) => {
+				rest[rest.length - 1]!(err);
+			});
 	}
 
 	// @ts-ignore - This is still being implemented.
