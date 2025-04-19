@@ -2,11 +2,11 @@ class Anura {
 	version = {
 		semantic: {
 			major: "2",
-			minor: "1",
-			patch: "1",
+			minor: "2",
+			patch: "0",
 		},
-		buildstate: "stable",
-		codename: "Starboy",
+		buildstate: "alpha",
+		codename: "unknown",
 		get pretty() {
 			const semantic = anura.version.semantic;
 			return `${semantic.major}.${semantic.minor}.${semantic.patch}${anura.version.buildstate == "stable" ? "" : `-${anura.version.buildstate}`}`;

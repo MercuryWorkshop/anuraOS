@@ -737,23 +737,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 					.catch(reject);
 			});
 		},
-		open: async (
-			path: string,
-			_flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
-			_mode?: any,
-		) => {
-			path = this.relativizePath(path);
-			const stats = this.stats.get(path);
 
-			const parentHandle = this.dirHandle;
-			const [handle] = await this.getFileHandle(path, { create: true });
-			(handle as any).path = path; // Hack
-			this.fds.push(handle);
-			return {
-				fd: this.fds.length - 1,
-				[AnuraFDSymbol]: this.domain,
-			};
-		},
 		readlink: async (path: string) => {
 			// Check if the path exists in stats
 			path = this.relativizePath(path);
@@ -867,70 +851,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 		},
 	};
 
-	ftruncate(
-		fd: AnuraFD,
-		len: number,
-		callback?: (err: Error | null, fd: AnuraFD) => void,
-	) {
-		callback ||= () => {};
-		const handle = this.fds[fd.fd];
-		if (!handle) {
-			callback(
-				{
-					name: "EBADF",
-					code: "EBADF",
-					errno: 9,
-					message: "bad file descriptor",
-					stack: "Error: bad file descriptor",
-				} as Error,
-				fd,
-			);
-			return;
-		}
-		const path = (handle as any).path;
-		this.promises
-			.truncate(path, len)
-			.then(() => callback!(null, fd))
-			.catch((err) => {
-				callback(err, fd);
-			});
-	}
-
-	fstat(fd: AnuraFD, callback: (err: Error | null, stats: any) => void) {
-		callback ||= () => {};
-		const handle = this.fds[fd.fd];
-		if (handle === undefined) {
-			callback(
-				{
-					name: "EBADF",
-					code: "EBADF",
-					errno: 9,
-					message: "bad file descriptor",
-					stack: "Error: bad file descriptor",
-				} as Error,
-				null,
-			);
-			return;
-		}
-
-		if (handle.kind === "file") {
-			(handle as FileSystemFileHandle).getFile().then((file) => {
-				callback(null, new LocalFSStats({ name: file.name, size: file.size }));
-			});
-		} else {
-			callback(
-				{
-					name: "EISDIR",
-					code: "EISDIR",
-					errno: 28,
-					message: "Is a directory",
-					stack: "Error: Is a directory",
-				} as Error,
-				null,
-			);
-		}
-	}
-
 	lstat(
 		path: string,
 		callback?: (err: Error | null, stats: any) => void,
@@ -999,187 +919,11 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 			});
 	}
 
-	fchown(
-		fd: AnuraFD,
-		uid: number,
-		gid: number,
-		callback?: (err: Error | null) => void,
-	) {
-		callback ||= () => {};
-
-		const handle = this.fds[fd.fd];
-		if (!handle) {
-			callback({
-				name: "EBADF",
-				code: "EBADF",
-				errno: 9,
-				message: "bad file descriptor",
-				stack: "Error: bad file descriptor",
-			} as Error);
-			return;
-		}
-
-		const path = (handle as any).path; // Retrieve the file path
-
-		// Reuse the chown logic to update ownership by path
-		this.chown(path, uid, gid, callback);
-	}
-
 	chmod(path: string, mode: number, callback?: (err: Error | null) => void) {
 		this.promises
 			.chmod(path, mode)
 			.then(() => callback!(null))
 			.catch(callback);
-	}
-
-	fchmod(fd: AnuraFD, mode: number, callback?: (err: Error | null) => void) {
-		callback ||= () => {};
-		const handle = this.fds[fd.fd];
-		if (!handle) {
-			callback({
-				name: "EBADF",
-				code: "EBADF",
-				errno: 9,
-				message: "bad file descriptor",
-				stack: "Error: bad file descriptor",
-			} as Error);
-			return;
-		}
-
-		const path = (handle as any).path; // Retrieve the file path
-		this.promises
-			.chmod(path, mode)
-			.then(() => callback!(null))
-			.catch(callback);
-	}
-
-	fsync(fd: AnuraFD, callback?: (err: Error | null) => void) {
-		callback ||= () => {};
-		const handle = this.fds[fd.fd];
-		if (!handle) {
-			callback({
-				name: "EBADF",
-				code: "EBADF",
-				errno: 9,
-				message: "bad file descriptor",
-				stack: "Error: bad file descriptor",
-			} as Error);
-			return;
-		}
-		// In the OPFS API, data is automatically flushed to disk, so fsync can be a no-op.
-		callback(null);
-	}
-
-	write(
-		fd: AnuraFD,
-		buffer: Uint8Array,
-		offset: number,
-		length: number,
-		position: number | null,
-		callback?: (err: Error | null, nbytes: number) => void,
-	) {
-		callback ||= () => {};
-		const handle = this.fds[fd.fd];
-		if (position !== null) {
-			position += this.cursors[fd.fd] || 0;
-		} else {
-			position = this.cursors[fd.fd] || 0;
-		}
-		if (handle === undefined) {
-			callback(
-				{
-					name: "EBADF",
-					code: "EBADF",
-					errno: 9,
-					message: "bad file descriptor",
-					stack: "Error: bad file descriptor",
-				} as Error,
-				0,
-			);
-			return;
-		}
-		if (handle.kind === "directory") {
-			callback(
-				{
-					name: "EISDIR",
-					code: "EISDIR",
-					errno: 28,
-					message: "Is a directory",
-					stack: "Error: Is a directory",
-				} as Error,
-				0,
-			);
-			return;
-		}
-		const bufferSlice = buffer.slice(offset, offset + length);
-		(handle as FileSystemFileHandle).createWritable().then((writer) => {
-			writer.seek(position || 0);
-			writer.write(bufferSlice);
-			writer.close();
-			this.cursors[fd.fd] = (position || 0) + bufferSlice.length;
-			callback!(null, bufferSlice.length);
-		});
-	}
-
-	read(
-		fd: AnuraFD,
-		buffer: Uint8Array,
-		offset: number,
-		length: number,
-		position: number | null,
-		callback?: (
-			err: Error | null,
-			bytesRead: number,
-			buffer: Uint8Array,
-		) => void,
-	) {
-		callback ||= () => {};
-		const handle = this.fds[fd.fd];
-		if (handle === undefined) {
-			callback(
-				{
-					name: "EBADF",
-					code: "EBADF",
-					errno: 9,
-					message: "bad file descriptor",
-					stack: "Error: bad file descriptor",
-				} as Error,
-				0,
-				null!,
-			);
-			return;
-		}
-		if (handle.kind === "directory") {
-			callback(
-				{
-					name: "EISDIR",
-					code: "EISDIR",
-					errno: 28,
-					message: "Is a directory",
-					stack: "Error: Is a directory",
-				} as Error,
-				0,
-				null!,
-			);
-			return;
-		}
-		// Resolve symbolic link, if necessary
-
-		const fileHandle = handle as FileSystemFileHandle;
-		fileHandle.getFile().then((file) => {
-			const reader = new FileReader();
-			reader.onload = () => {
-				const data = new Uint8Array(reader.result as ArrayBuffer);
-				buffer.set(data.slice(offset, offset + length));
-				callback(null, data.length, buffer);
-			};
-			reader.onerror = (e) => {
-				callback(new Error("Failed to read file"), 0, null!);
-			};
-			reader.readAsArrayBuffer(
-				file.slice(position || 0, (position || 0) + length),
-			);
-		});
 	}
 
 	utimes(
@@ -1195,29 +939,6 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 			.catch(callback);
 	}
 
-	futimes(
-		fd: AnuraFD,
-		atime: Date,
-		mtime: Date,
-		callback?: (err: Error | null) => void,
-	) {
-		callback ||= () => {};
-		const handle = this.fds[fd.fd];
-		if (!handle) {
-			callback({
-				name: "EBADF",
-				code: "EBADF",
-				errno: 9,
-				message: "bad file descriptor",
-				stack: "Error: bad file descriptor",
-			} as Error);
-			return;
-		}
-
-		const path = (handle as any).path; // Retrieve the file path
-		this.utimes(path, atime, mtime, callback);
-	}
-
 	chown(
 		path: string,
 		uid: number,
@@ -1230,40 +951,5 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 			.chown(path, uid, gid)
 			.then(() => callback(null))
 			.catch(callback);
-	}
-
-	close(fd: AnuraFD, callback: (err: Error | null) => void) {
-		callback ||= () => {};
-		const handle = this.fds[fd.fd];
-		if (handle === undefined) {
-			callback({
-				name: "EBADF",
-				code: "EBADF",
-				errno: 9,
-				message: "bad file descriptor",
-				stack: "Error: bad file descriptor",
-			} as Error);
-			return;
-		}
-		delete this.fds[fd.fd];
-		callback(null);
-	}
-
-	open(
-		path: string,
-		flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
-		mode?: any,
-		callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
-	): void {
-		if (typeof mode === "function") {
-			callback = mode;
-		}
-		callback ||= () => {};
-		this.promises
-			.open(path, flags, mode)
-			.then((fd) => {
-				callback!(null, fd);
-			})
-			.catch((e) => callback!(e, { fd: -1, [AnuraFDSymbol]: this.domain }));
 	}
 }

@@ -18,29 +18,12 @@ class FilerAFSProvider extends AFSProvider<any> {
 		this.fs.rename(oldPath, newPath, callback);
 	}
 
-	ftruncate(
-		fd: AnuraFD,
-		len: number,
-		callback?: (err: Error | null, fd: AnuraFD) => void,
-	) {
-		this.fs.ftruncate(fd.fd, len, (err, fd) =>
-			callback!(err, { fd, [AnuraFDSymbol]: this.domain }),
-		);
-	}
-
 	truncate(path: string, len: number, callback?: (err: Error | null) => void) {
 		this.fs.truncate(path, len, callback);
 	}
 
 	stat(path: string, callback?: (err: Error | null, stats: any) => void) {
 		this.fs.stat(path, callback);
-	}
-
-	fstat(
-		fd: AnuraFD,
-		callback?: ((err: Error | null, stats: any) => void) | undefined,
-	): void {
-		this.fs.fstat(fd.fd, callback);
 	}
 
 	lstat(path: string, callback?: (err: Error | null, stats: any) => void) {
@@ -102,48 +85,6 @@ class FilerAFSProvider extends AFSProvider<any> {
 		this.fs.readdir(path, ...rest);
 	}
 
-	close(
-		fd: AnuraFD,
-		callback?: ((err: Error | null) => void) | undefined,
-	): void {
-		callback ||= () => {};
-		this.fs.close(fd.fd, callback);
-	}
-
-	open(
-		path: string,
-		flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
-		mode: number,
-		callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
-	): void;
-	open(
-		path: string,
-		flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
-		callback?: ((err: Error | null, fd: AnuraFD) => void) | undefined,
-	): void;
-	open(
-		path: string,
-		flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
-		mode?: unknown,
-		callback?: unknown,
-	): void {
-		if (typeof mode === "number") {
-			this.fs.open(path, flags, mode, (err, fd) =>
-				(callback as (err: Error | null, fd: AnuraFD) => void)!(err, {
-					fd,
-					[AnuraFDSymbol]: this.domain,
-				}),
-			);
-		} else {
-			this.fs.open(path, flags, (err, fd) =>
-				(mode as (err: Error | null, fd: AnuraFD) => void)!(err, {
-					fd,
-					[AnuraFDSymbol]: this.domain,
-				}),
-			);
-		}
-	}
-
 	utimes(
 		path: string,
 		atime: number | Date,
@@ -153,7 +94,7 @@ class FilerAFSProvider extends AFSProvider<any> {
 		this.fs.utimes(path, atime, mtime, callback);
 	}
 
-	futimes(fd: AnuraFD, ...rest: any[]) {
+	futimes(fd: number, ...rest: any[]) {
 		// @ts-ignore - Overloaded methods are scary
 		this.fs.futimes(fd.fd, ...rest);
 	}
@@ -167,7 +108,7 @@ class FilerAFSProvider extends AFSProvider<any> {
 		this.fs.chown(path, uid, gid, callback);
 	}
 
-	fchown(fd: AnuraFD, ...rest: any[]) {
+	fchown(fd: number, ...rest: any[]) {
 		// @ts-ignore - Overloaded methods are scary
 		this.fs.fchown(fd.fd, ...rest);
 	}
@@ -176,22 +117,22 @@ class FilerAFSProvider extends AFSProvider<any> {
 		this.fs.chmod(path, mode, callback);
 	}
 
-	fchmod(fd: AnuraFD, ...rest: any[]) {
+	fchmod(fd: number, ...rest: any[]) {
 		// @ts-ignore - Overloaded methods are scary
 		this.fs.fchmod(fd.fd, ...rest);
 	}
 
-	fsync(fd: AnuraFD, ...rest: any[]) {
+	fsync(fd: number, ...rest: any[]) {
 		// @ts-ignore - Overloaded methods are scary
 		this.fs.fsync(fd.fd, ...rest);
 	}
 
-	write(fd: AnuraFD, ...rest: any[]) {
+	write(fd: number, ...rest: any[]) {
 		// @ts-ignore - Overloaded methods are scary
 		this.fs.write(fd.fd, ...rest);
 	}
 
-	read(fd: AnuraFD, ...rest: any[]) {
+	read(fd: number, ...rest: any[]) {
 		// @ts-ignore - Overloaded methods are scary
 		this.fs.read(fd.fd, ...rest);
 	}
@@ -221,7 +162,7 @@ class FilerAFSProvider extends AFSProvider<any> {
 		this.fs.setxattr(path, ...rest);
 	}
 
-	fsetxattr(fd: AnuraFD, ...rest: any[]) {
+	fsetxattr(fd: number, ...rest: any[]) {
 		// @ts-ignore - Overloaded methods are scary
 		this.fs.fsetxattr(fd.fd, ...rest);
 	}
@@ -234,14 +175,6 @@ class FilerAFSProvider extends AFSProvider<any> {
 		this.fs.getxattr(path, name, callback);
 	}
 
-	fgetxattr(
-		fd: AnuraFD,
-		name: string,
-		callback?: (err: Error | null, value: string | object) => void,
-	) {
-		this.fs.fgetxattr(fd.fd, name, callback);
-	}
-
 	removexattr(
 		path: string,
 		name: string,
@@ -250,7 +183,7 @@ class FilerAFSProvider extends AFSProvider<any> {
 		this.fs.removexattr(path, name, callback);
 	}
 
-	fremovexattr(fd: AnuraFD, ...rest: any[]) {
+	fremovexattr(fd: number, ...rest: any[]) {
 		// @ts-ignore - Overloaded methods are scary
 		this.fs.fremovexattr(fd.fd, ...rest);
 	}
@@ -275,14 +208,6 @@ class FilerAFSProvider extends AFSProvider<any> {
 		mkdtemp: (prefix: string, options?: { encoding: string }) =>
 			this.fs.promises.mkdtemp(prefix, options),
 		mknod: (path: string, mode: number) => this.fs.promises.mknod(path, mode),
-		open: async (
-			path: string,
-			flags: "r" | "r+" | "w" | "w+" | "a" | "a+",
-			mode?: number,
-		) => ({
-			fd: await this.fs.promises.open(path, flags, mode),
-			[AnuraFDSymbol]: this.domain,
-		}),
 		readdir: (
 			path: string,
 			options?: { encoding: string; withFileTypes: boolean },
