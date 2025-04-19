@@ -936,24 +936,26 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 		mode?: unknown,
 		callback?: unknown,
 	): void {
-		let definedMode;
-		let definedCallback;
+		let definedMode: number = 0o644;
+		let definedCallback: any;
+		let definedFlags: string = "w+";
 		if (typeof flags !== "number" && typeof flags !== "string") {
 			definedCallback = flags;
 		} else {
 			if (typeof mode === "number") {
+				definedFlags = flags;
 				definedCallback = callback;
 				definedMode = mode;
 			} else {
 				definedCallback = mode;
-				definedMode = 0o644;
+				definedFlags = flags;
 			}
 		}
-
-		const assignedFd = this.lastFd++;
-		this.fds[assignedFd] = { path: path.replace(/^\/+/, "/") };
 		// @ts-ignore
-		definedCallback(null, assignedFd);
+		this.promises
+			.open(path, definedFlags as any, definedMode)
+			.then((res) => definedCallback(null, res))
+			.catch((e) => definedCallback(e, null));
 	}
 
 	utimes(
@@ -1192,6 +1194,10 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 				definedMode = mode;
 			} else {
 				definedMode = 0o644;
+			}
+
+			if (["a", "a+", "w", "w+"].includes(flags)) {
+				anura.fs.promises.writeFile(path, "");
 			}
 
 			const assignedFd = this.lastFd++;
