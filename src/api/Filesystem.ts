@@ -899,7 +899,7 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 		this.promises
 			.readdir(path, typeof rest[0] !== "function" ? rest[0] : undefined)
 			.then((res) => {
-				rest[rest.length - 1]!(null);
+				rest[rest.length - 1]!(null, res);
 			})
 			.catch((err) => {
 				rest[rest.length - 1]!(err);
@@ -1127,10 +1127,12 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 				typeof rest[0] !== "function" ? rest[0] : undefined,
 			)
 			.then((res) => {
-				rest[rest.length - 1]!(null, res);
+				if (typeof rest[rest.length - 1] === "function")
+					rest[rest.length - 1]!(null, res);
 			})
 			.catch((err) => {
-				rest[rest.length - 1]!(err);
+				if (typeof rest[rest.length - 1] === "function")
+					rest[rest.length - 1]!(err);
 			});
 	}
 
@@ -1145,10 +1147,12 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 				typeof rest[0] !== "function" ? rest[0] : undefined,
 			)
 			.then((res) => {
-				rest[rest.length - 1]!(null, res);
+				if (typeof rest[rest.length - 1] === "function")
+					rest[rest.length - 1]!(null, res);
 			})
 			.catch((err) => {
-				rest[rest.length - 1]!(err);
+				if (typeof rest[rest.length - 1] === "function")
+					rest[rest.length - 1]!(err);
 			});
 	}
 
