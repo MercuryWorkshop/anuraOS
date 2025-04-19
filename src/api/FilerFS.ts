@@ -21,8 +21,6 @@ class FilerAFSProvider extends AFSProvider<any> {
 		chown: (path: string, uid: number, gid: number) =>
 			this.fs.promises.chown(path, uid, gid),
 		chmod: (path: string, mode: number) => this.fs.promises.chmod(path, mode),
-		getxattr: (path: string, name: string) =>
-			this.fs.promises.getxattr(path, name),
 		link: (srcPath: string, dstPath: string) =>
 			this.fs.promises.link(srcPath, dstPath),
 		lstat: (path: string) => this.fs.promises.lstat(path),
@@ -41,12 +39,6 @@ class FilerAFSProvider extends AFSProvider<any> {
 		rename: (oldPath: string, newPath: string) =>
 			this.fs.promises.rename(oldPath, newPath),
 		rmdir: (path: string) => this.fs.promises.rmdir(path),
-		setxattr: (
-			path: string,
-			name: string,
-			value: string | object,
-			flag?: "CREATE" | "REPLACE",
-		) => this.fs.promises.setxattr(path, name, value, flag),
 		stat: (path: string) => this.fs.promises.stat(path),
 		symlink: (srcPath: string, dstPath: string, type?: string) =>
 			this.fs.promises.symlink(srcPath, dstPath, type),
