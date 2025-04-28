@@ -91,6 +91,7 @@ function App() {
                     <tbody>
                     </tbody>
             </div>
+			
         </div>
     `;
 }
@@ -124,10 +125,15 @@ self.loadPath = async (path) => {
 		}
 	}
 };
-document.body.appendChild(html`<${App} />`);
 
-if (filePicker) {
-	document.getElementById("app").appendChild(html`<${Selector}></${Selector}>`);
+const root = document.getElementById("app");
+try {
+	root.replaceWith(h(App));
+	if (filePicker) {
+		document.getElementById("app").appendChild(h(Selector));
+	}
+} catch (e) {
+	root.replaceWith(document.createTextNode("" + e));
+	throw e;
 }
-
 loadPath("/");

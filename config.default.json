@@ -9,7 +9,8 @@
 		"/apps/libfileview.lib",
 		"/apps/libfilepicker.lib",
 		"/apps/libstore.lib",
-		"/apps/libpersist.lib"
+		"/apps/libpersist.lib",
+		"/apps/libhterm.lib"
 	],
 	"bin": ["/bin/chimerix.ajs"],
 	"defaultsettings": {

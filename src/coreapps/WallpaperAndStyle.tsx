@@ -3,7 +3,7 @@ type WallpaperObject = {
 	url: string;
 };
 
-class WallpaperSelector extends App {
+class WallpaperAndStyle extends App {
 	name = "Wallpaper & Style";
 	package = "anura.wallpaper";
 	icon = "/assets/icons/wallpaper.png";

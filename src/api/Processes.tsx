@@ -91,19 +91,32 @@ class IframeProcess extends Process {
 	) {
 		super();
 		this.title = `Process ${pid}`;
-
-		this.frame = (
-			<iframe
-				id={`proc-${pid}`}
-				style="display: none;"
-				srcdoc={`<!DOCTYPE html>
+		console.log(
+			"/display?content=" +
+				encodeURIComponent(`<!DOCTYPE html>
 <html>
     <head>
         <script ${type === "module" ? 'type="module"' : ""}>
         ${script}
         </script>
     </head>
-</html>`}
+</html>`),
+		);
+		this.frame = (
+			<iframe
+				id={`proc-${pid}`}
+				style="display: none;"
+				src={
+					"/display?content=" +
+					encodeURIComponent(`<!DOCTYPE html>
+<html>
+    <head>
+        <script ${type === "module" ? 'type="module"' : ""}>
+        ${script}
+        </script>
+    </head>
+</html>`)
+				}
 			></iframe>
 		) as HTMLIFrameElement;
 

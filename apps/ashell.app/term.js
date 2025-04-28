@@ -1,4 +1,4 @@
-// const { create_shell } = await anura.import("anura.shell.phoenix");
+const hterm = (await anura.import("anura.hterm")).default;
 const shell = anura.settings.get("shell") || "/usr/bin/chimerix.ajs";
 anura.settings.set("shell", shell);
 

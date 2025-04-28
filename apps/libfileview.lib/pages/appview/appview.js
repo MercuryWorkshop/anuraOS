@@ -60,7 +60,7 @@ export async function createAppView(dataPath, type) {
 				try {
 					for (const [relativePath, content] of Object.entries(zip)) {
 						if (relativePath.endsWith("/")) {
-							anura.fs.mkdir(`${path}/${relativePath}`);
+							await anura.fs.promises.mkdir(`${path}/${relativePath}`);
 						} else {
 							anura.fs.writeFile(
 								`${path}/${relativePath}`,
@@ -244,7 +244,17 @@ export async function createAppViewFolder() {
 		iframe.contentDocument.head.appendChild(matter);
 	});
 }
+export async function getAppIcon(dataPath) {
+	let data = await anura.fs.promises.readFile(dataPath);
 
+	const zip = await unzip(new Uint8Array(data));
+	const manifest = JSON.parse(new TextDecoder().decode(zip["manifest.json"]));
+	const icon = new Blob([zip[manifest.icon]], {
+		type: mime.default.getType(manifest.icon),
+	});
+	let iconUrl = URL.createObjectURL(icon);
+	return iconUrl;
+}
 function localPathToURL(path) {
 	return (
 		import.meta.url.substring(0, import.meta.url.lastIndexOf("/")) + "/" + path

@@ -8,10 +8,10 @@ class AboutApp extends App {
 			<div class="aboutapp-logo">
 				<div
 					class="aboutapp-logo-img"
-					title="誰もが目を奪われていく君は完璧で究極のアイドル"
+					title="Look what you've done"
 					on:click={() => {
 						anura.apps["anura.browser"].open([
-							"https://www.youtube.com/embed/ZRtdQ81jPUQ",
+							"https://www.youtube.com/watch?v=34Na4j8AVgA",
 						]);
 					}}
 				></div>
@@ -40,6 +40,14 @@ class AboutApp extends App {
 						.
 					</p>,
 					<p>Anura x86 subsystem enabled.</p>,
+				)}
+
+				<br />
+
+				{$if(
+					anura.settings.get("bootFromOPFS"),
+					<p>Anura is booting from OPFS.</p>,
+					<p>Anura OPFS boot disabled.</p>,
 				)}
 
 				<br />

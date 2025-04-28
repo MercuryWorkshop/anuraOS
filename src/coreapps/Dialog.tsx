@@ -1,4 +1,9 @@
 // this has now been redone, nobody is getting sent to hell anymore
+type ProgressObject = {
+	title: string;
+	detail: string;
+	progress: number;
+};
 
 class Dialog extends App {
 	name = "Anura Dialog";
@@ -30,6 +35,10 @@ class Dialog extends App {
 		}
 		.confirm {
 			margin-left: 5px;
+		}
+
+		.matter-progress-linear {
+			width: 100%;
 		}
 	`;
 
@@ -201,5 +210,44 @@ class Dialog extends App {
 
 			win.content.appendChild(contents);
 		});
+	}
+	progress(title: string, detail?: string): Stateful<ProgressObject> {
+		const dialog = this as object;
+		(dialog as any).title = "";
+		(dialog as any).width = "350px";
+		const state = $state({
+			title: title || "",
+			detail: detail || "",
+			progress: 0,
+		});
+		const contents: HTMLElement = (
+			<div class={[this.css]}>
+				<h2 style="margin-bottom: 3px;">{use(state.title)}</h2>
+				<p style="margin-top: 4px; margin-bottom: 16px; font-size: 0.925rem;">
+					{use(state.detail)}
+				</p>
+				<progress
+					class="matter-progress-linear"
+					bind:value={use(state.progress)}
+				></progress>
+			</div>
+		);
+
+		(dialog as any).height = this.getFit(contents) + "px";
+		const win = anura.wm.create(this, dialog);
+
+		// MARK: The DAMN CSS
+		win.content.style.background = "var(--material-bg)";
+		win.content.style.color = "white";
+		useChange(state.progress, () => {
+			if (state.progress >= 1) win.close();
+		});
+		useChange([state.title, state.detail], () => {
+			// TODO: Implement size changing on title or detail change
+		});
+
+		win.content.appendChild(contents);
+
+		return state;
 	}
 }

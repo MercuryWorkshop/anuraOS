@@ -762,6 +762,28 @@ if (input) {
 }
 ```
 
+#### anura.dialog.progress: `object`
+
+This gives the user a dialog box showing the progress of a current applications activity. The message shown and the progress is returned to give the developer the option on what to show. When the progress on this dialog is greater than or equal to 1, the window will automatically close.
+
+**Usage:**
+
+```js
+const dialog = anura.dialog.progress("Initializing...");
+await sleep(100);
+dialog.detail = "Stage One";
+dialog.progress = 0.2;
+await sleep(100);
+dialog.detail = "Stage Two";
+dialog.progress = 0.4;
+await sleep(100);
+dialog.detail = "Stage Three";
+dialog.progress = 0.8;
+await sleep(100);
+dialog.detail = "Stage Four";
+dialog.progress = 1;
+```
+
 ## anura.systray
 
 ### Properties

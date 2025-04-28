@@ -101,22 +101,31 @@ window.addEventListener("load", async () => {
 	const comlink = await import(comlinksrc);
 
 	let conf, milestone, instancemilestone;
+	let bootStrapFs = Filer.fs;
 
+	if (await (window as any).idbKeyval.get("bootFromOPFS")) {
+		bootStrapFs = (await LocalFS.newSwOPFS()) as any;
+	}
 	try {
 		conf = await (await fetch("/config.json")).json();
 		milestone = await (await fetch("/MILESTONE")).text();
 
 		console.debug("writing config??");
-		Filer.fs.writeFile("/config_cached.json", JSON.stringify(conf));
+		bootStrapFs.writeFile("/config_cached.json", JSON.stringify(conf));
 	} catch (e) {
 		conf = JSON.parse(
 			new TextDecoder().decode(
-				await Filer.fs.promises.readFile("/config_cached.json"),
+				await bootStrapFs.promises.readFile("/config_cached.json"),
 			),
 		);
 	}
 
 	anura = await Anura.new(conf);
+	if (bootStrapFs instanceof LocalFS) {
+		anura.settings.cache["bootFromOPFS"] = true;
+	} else {
+		anura.settings.cache["bootFromOPFS"] = false;
+	}
 	LocalFS.newOPFS("/opfs"); // mount opfs on boot
 
 	if (anura.platform.type === "mobile" || anura.platform.type === "tablet") {
@@ -192,7 +201,7 @@ window.addEventListener("load", async () => {
 					tracker_br.style.display = "unset";
 					tracker.innerText = "Anura is updating your system...";
 					try {
-						await new Filer.fs.Shell().promises.rm("/anura_files", {
+						await new anura.fs.Shell().promises.rm("/anura_files", {
 							recursive: true,
 						});
 					} catch {
@@ -319,7 +328,7 @@ window.addEventListener("load", async () => {
 			await sh.promises.mkdirp(directories[k]);
 		} catch (e) {
 			if (e.code !== "EEXIST") {
-				console.error(e);
+				console.error(e, " for ", directories[k]);
 			}
 		}
 	});
@@ -476,7 +485,7 @@ document.addEventListener("anura-login-completed", async () => {
 	const about = new AboutApp();
 	anura.registerApp(about);
 
-	const wallpaper = new WallpaperSelector();
+	const wallpaper = new WallpaperAndStyle();
 	anura.registerApp(wallpaper);
 
 	// const themeEditor = new ThemeEditor();
@@ -713,6 +722,17 @@ async function bootUserCustomizations() {
 			timeout: "never",
 			callback: () => anura.apps["anura.recovery"].open(),
 		});
+
+		const safeMode = document.createElement("span");
+		safeMode.style.position = "absolute";
+		safeMode.style.bottom = "calc(48px + 1.5rem)";
+		safeMode.style.color = "#ff5533";
+		safeMode.style.fontWeight = "bold";
+		safeMode.style.fontSize = "1.25rem";
+		safeMode.style.right = "1.5rem";
+		safeMode.style.textAlign = "left";
+		safeMode.textContent = "Safe Mode";
+		document.body.appendChild(safeMode);
 	} else {
 		// Not in safe mode
 		// Load all user provided init scripts

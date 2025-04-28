@@ -33,8 +33,10 @@ window.saved = $state({
 		(await persistence.get("repos")) || {
 			"Anura App Repository":
 				"https://raw.githubusercontent.com/MercuryWorkshop/anura-repo/master/",
+			"Anura Developer Repository":
+				"https://raw.githubusercontent.com/MercuryWorkshop/anura-developer-repo/master/",
 			"Anura Games": "https://games.anura.pro/",
-			"BomberFish's Extras":
+			"Anura Extras":
 				"https://raw.githubusercontent.com/BomberFish/anura-repo/master/",
 		},
 	),
@@ -235,7 +237,7 @@ function App() {
 				<img src="./playstore.webp" />
 				<span>
 					<h1>Welcome to Marketplace</h1>
-					<p>Click a repository to view its contents.</p>
+					<p>Click on a repository to view its contents.</p>
 				</span>
 			</div>
 		</div>
@@ -328,4 +330,10 @@ function App() {
 	`;
 }
 
-document.body.appendChild(html`<${App} />`);
+const root = document.getElementById("app");
+try {
+	root.replaceWith(h(App));
+} catch (e) {
+	root.replaceWith(document.createTextNode("" + e));
+	throw e;
+}

@@ -1,6 +1,6 @@
 const fflate = await anura.import("npm:fflate");
 
-const fs = Filer.fs;
+const fs = anura.fs;
 const Buffer = Filer.Buffer;
 
 function unzip(zip) {
@@ -230,7 +230,7 @@ export class StoreRepo {
 		try {
 			for (const [relativePath, content] of Object.entries(zip)) {
 				if (relativePath.endsWith("/")) {
-					fs.mkdir(`${path}/${relativePath}`);
+					await fs.promises.mkdir(`${path}/${relativePath}`);
 				} else {
 					if (relativePath === "manifest.json") {
 						let manifest = new TextDecoder().decode(content);
@@ -243,16 +243,22 @@ export class StoreRepo {
 						if (app.dependencies) {
 							manifest.marketplace.dependencies = app.dependencies;
 						}
-						fs.writeFile(`${path}/${relativePath}`, JSON.stringify(manifest));
+						await fs.promises.writeFile(
+							`${path}/${relativePath}`,
+							JSON.stringify(manifest),
+						);
 						continue;
 					}
-					fs.writeFile(`${path}/${relativePath}`, await Buffer.from(content));
+					await fs.promises.writeFile(
+						`${path}/${relativePath}`,
+						await Buffer.from(content),
+					);
 				}
 			}
-			await sleep(500); // race condition because of manifest.json
 			await anura.registerExternalApp("/fs" + path);
 			if (installHook) window.top.eval(installHook);
 			this.hooks.onComplete(app.name);
+			return 200; // throw new Error is truthy so this is my solution
 		} catch (error) {
 			this.hooks.onError(app.name, error);
 		}
@@ -280,7 +286,7 @@ export class StoreRepo {
 		try {
 			for (const [relativePath, content] of Object.entries(zip)) {
 				if (relativePath.endsWith("/")) {
-					fs.mkdir(`${path}/${relativePath}`);
+					await fs.promises.mkdir(`${path}/${relativePath}`);
 				} else {
 					if (relativePath === "manifest.json") {
 						let manifest = new TextDecoder().decode(content);
@@ -302,6 +308,7 @@ export class StoreRepo {
 			await sleep(500); // race condition because of manifest.json
 			await anura.registerExternalLib("/fs" + path);
 			this.hooks.onComplete(lib.name);
+			return 200;
 		} catch (error) {
 			this.hooks.onError(lib.name, error);
 		}
@@ -441,7 +448,7 @@ export class StoreRepoLegacy {
 		try {
 			for (const [relativePath, content] of Object.entries(zip)) {
 				if (relativePath.endsWith("/")) {
-					fs.mkdir(`${path}/${relativePath}`);
+					await fs.promises.mkdir(`${path}/${relativePath}`);
 				} else {
 					if (relativePath == "post_install.js") {
 						let script = new TextDecoder().decode(content);
@@ -484,7 +491,7 @@ export class StoreRepoLegacy {
 		try {
 			for (const [relativePath, content] of Object.entries(zip)) {
 				if (relativePath.endsWith("/")) {
-					fs.mkdir(`${path}/${relativePath}`);
+					await fs.promises.mkdir(`${path}/${relativePath}`);
 				} else {
 					fs.writeFile(`${path}/${relativePath}`, await Buffer.from(content));
 				}

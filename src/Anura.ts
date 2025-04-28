@@ -2,11 +2,11 @@ class Anura {
 	version = {
 		semantic: {
 			major: "2",
-			minor: "0",
+			minor: "2",
 			patch: "0",
 		},
-		buildstate: "stable",
-		codename: "Idol",
+		buildstate: "alpha",
+		codename: "unknown",
 		get pretty() {
 			const semantic = anura.version.semantic;
 			return `${semantic.major}.${semantic.minor}.${semantic.patch}${anura.version.buildstate == "stable" ? "" : `-${anura.version.buildstate}`}`;
@@ -54,14 +54,16 @@ class Anura {
 
 	static async new(config: any): Promise<Anura> {
 		// File System Initialization //
-		const filerProvider = new FilerAFSProvider(
+		let fsProvider = new FilerAFSProvider(
 			new Filer.FileSystem({
 				name: "anura-mainContext",
 				provider: new Filer.FileSystem.providers.IndexedDB(),
 			}),
 		);
-
-		const fs = new AnuraFilesystem([filerProvider]);
+		if (await (window as any).idbKeyval.get("bootFromOPFS")) {
+			fsProvider = (await LocalFS.newSwOPFS()) as any;
+		}
+		const fs = new AnuraFilesystem([fsProvider]);
 
 		const settings = await Settings.new(fs, config.defaultsettings);
 

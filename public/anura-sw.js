@@ -15,7 +15,9 @@ importScripts("/libs/filer/filer.min.js");
 
 // Importing mime
 importScripts("/libs/mime/mime.iife.js");
-
+importScripts("/lib/api/Filesystem.js");
+importScripts("/lib/api/LocalFS.js");
+importScripts("/libs/idb-keyval/idb-keyval.js");
 // self.fs = new Filer.FileSystem({
 //     name: "anura-mainContext",
 //     provider: new Filer.FileSystem.providers.IndexedDB(),
@@ -25,10 +27,30 @@ const filerfs = new Filer.FileSystem({
 	name: "anura-mainContext",
 	provider: new Filer.FileSystem.providers.IndexedDB(),
 });
-
 const filersh = new filerfs.Shell();
 
+let opfs = undefined;
+let opfssh = undefined;
+
+const bootStrapFSReady = new Promise((res, rej) => {
+	console.log(globalThis);
+	globalThis.idbKeyval
+		.get("bootFromOPFS")
+		.then(async (res) => {
+			if (res) {
+				opfs = await LocalFS.newSwOPFS();
+				globalThis.anura = { fs: opfs }; // Stupid thing for AFSShell compat
+				opfssh = new AFSShell();
+			}
+			res(true);
+		})
+		.catch((e) => {
+			res(true);
+		});
+});
+
 async function currentFs() {
+	await bootStrapFSReady;
 	// isConnected will return true if the anura instance is running, and otherwise infinitely wait.
 	// it will never return false, but it may hang indefinitely if the anura instance is not running.
 	// here, we race the isConnected promise with a timeout to prevent hanging indefinitely.
@@ -37,8 +59,8 @@ async function currentFs() {
 		// An anura instance has not been started yet to populate the isConnected promise.
 		// We automatically know that the filesystem is not connected.
 		return {
-			fs: filerfs,
-			sh: filersh,
+			fs: opfs || filerfs,
+			sh: opfssh || filersh,
 		};
 	}
 
@@ -47,8 +69,8 @@ async function currentFs() {
 		new Promise((resolve) =>
 			setTimeout(() => {
 				resolve({
-					fs: filerfs,
-					sh: filersh,
+					fs: opfs || filerfs,
+					sh: opfssh || filersh,
 					fallback: true,
 				});
 			}, CONN_TIMEOUT),
@@ -129,50 +151,55 @@ async function handleDavRequest({ request, url }) {
 					const href = url.pathname;
 					let responses = "";
 
+					const renderEntry = async (entryPath, stat) => {
+						const isDir = stat.type === "DIRECTORY";
+						const contentLength = isDir
+							? ""
+							: `<a:getcontentlength b:dt="int">${stat.size}</a:getcontentlength>`;
+						const contentType = isDir
+							? ""
+							: `<a:getcontenttype>${mime.default.getType(entryPath) || "application/octet-stream"}</a:getcontenttype>`;
+						const creationDate = new Date(stat.ctime).toISOString();
+						const lastModified = new Date(stat.mtime).toUTCString();
+						const resourcetype = isDir ? "<a:collection/>" : "";
+
+						return `
+							<a:response>
+								<a:href>${entryPath}</a:href>
+								<a:propstat>
+									<a:status>HTTP/1.1 200 OK</a:status>
+									<a:prop>
+										<a:resourcetype>${resourcetype}</a:resourcetype>
+										${contentLength}
+										${contentType}
+										<a:creationdate>${creationDate}</a:creationdate>
+										<a:getlastmodified>${lastModified}</a:getlastmodified>
+									</a:prop>
+								</a:propstat>
+							</a:response>
+						`;
+					};
+
 					if (isDirectory) {
-						// List contents
+						responses = await renderEntry(
+							href.endsWith("/") ? href : href + "/",
+							stats,
+						);
+
 						const files = await fs.readdir(path);
-						responses = await Promise.all(
+						const fileResponses = await Promise.all(
 							files.map(async (file) => {
 								const fullPath = path.endsWith("/")
 									? path + file
 									: `${path}/${file}`;
 								const stat = await fs.stat(fullPath);
-								const entryPath = `${href.endsWith("/") ? href : href + "/"}${file}`;
-								const resourcetype =
-									stat.type === "DIRECTORY" ? "<a:collection/>" : "";
-
-								return `
-							  <a:response>
-								<a:href>${entryPath}</a:href>
-								<a:propstat>
-								  <a:status>HTTP/1.1 200 OK</a:status>
-								  <a:prop>
-									<a:resourcetype>${resourcetype}</a:resourcetype>
-								  </a:prop>
-								</a:propstat>
-							  </a:response>
-							`;
+								const entryHref = `${href.endsWith("/") ? href : href + "/"}${file}`;
+								return renderEntry(entryHref, stat);
 							}),
 						);
-						responses = responses.join("");
+						responses += fileResponses.join("");
 					} else {
-						// Single file info
-						const contentType = "application/octet-stream"; // Optional: infer from file extension
-						const contentLength = stats.size;
-
-						responses = `
-							<a:response>
-							<a:href>${href}</a:href>
-							<a:propstat>
-								<a:status>HTTP/1.1 200 OK</a:status>
-								<a:prop>
-								<a:getcontenttype>${contentType}</a:getcontenttype>
-								<a:getcontentlength b:dt="int">${contentLength}</a:getcontentlength>
-								</a:prop>
-							</a:propstat>
-							</a:response>
-						`;
+						responses = await renderEntry(href, stats);
 					}
 
 					const xml = `
@@ -180,15 +207,28 @@ async function handleDavRequest({ request, url }) {
 						<a:multistatus xmlns:a="DAV:" xmlns:b="urn:uuid:c2f41010-65b3-11d1-a29f-00aa00c14882/">
 							${responses}
 						</a:multistatus>
-						`.trim();
+					`.trim();
 
 					return new Response(xml, {
 						headers: { "Content-Type": "application/xml" },
 						status: 207,
 					});
 				} catch (err) {
-					console.error(err);
-					return new Response(null, { status: 404 });
+					console.error(path, err);
+					const xml = `
+					<?xml version="1.0"?>
+					<a:multistatus xmlns:a="DAV:">
+						<a:response>
+							<a:href>${url.pathname}</a:href>
+							<a:status>HTTP/1.1 404 Not Found</a:status>
+						</a:response>
+					</a:multistatus>
+				`.trim();
+
+					return new Response(xml, {
+						headers: { "Content-Type": "application/xml" },
+						status: 207, // multi-status
+					});
 				}
 			}
 
@@ -208,7 +248,10 @@ async function handleDavRequest({ request, url }) {
 				try {
 					const data = await fs.readFile(path);
 					return new Response(method === "HEAD" ? null : new Blob([data]), {
-						headers: { "Content-Type": "application/octet-stream" },
+						headers: {
+							"Content-Type":
+								mime.default.getType(path) || "application/octet-stream",
+						},
 						status: 200,
 					});
 				} catch {
@@ -219,7 +262,8 @@ async function handleDavRequest({ request, url }) {
 			case "PUT": {
 				const buffer = await getBuffer();
 				try {
-					await fs.writeFile(path, buffer);
+					console.log(buffer);
+					await fs.writeFile(path, Filer.Buffer.from(buffer));
 					return new Response(null, { status: 201 });
 				} catch {
 					return new Response(null, { status: 500 });
@@ -228,7 +272,7 @@ async function handleDavRequest({ request, url }) {
 
 			case "DELETE":
 				try {
-					await shell.promises.rm(path);
+					await shell.promises.rm(path, { recursive: true });
 					return new Response(null, { status: 204 });
 				} catch {
 					return new Response(null, { status: 404 });
@@ -237,12 +281,13 @@ async function handleDavRequest({ request, url }) {
 			case "COPY": {
 				// This is technically invalid -- Copy should handle full folders as well but filer doesn't have a convinient way to do this :/
 				// take this broken solution in the interim - Rafflesia
+
 				const dest = getDestPath();
 				try {
-					const data = await fs.readFile(path);
-					await fs.writeFile(dest, data);
+					await shell.promises.cpr(path, dest);
 					return new Response(null, { status: 201 });
-				} catch {
+				} catch (e) {
+					console.error(e);
 					return new Response(null, { status: 404 });
 				}
 			}
@@ -284,7 +329,7 @@ async function handleDavRequest({ request, url }) {
 
 for (const method of supportedWebDAVMethods) {
 	workbox.routing.registerRoute(
-		/\/dav\//,
+		/\/dav/,
 		async (event) => {
 			return await handleDavRequest(event);
 		},
@@ -295,14 +340,12 @@ for (const method of supportedWebDAVMethods) {
 workbox.core.skipWaiting();
 workbox.core.clientsClaim();
 
-importScripts("/libs/idb-keyval/idb-keyval.js");
-
 var cacheenabled;
 
 const callbacks = {};
 const filepickerCallbacks = {};
 
-addEventListener("message", (event) => {
+addEventListener("message", async (event) => {
 	if (event.data.anura_target === "anura.x86.proxy") {
 		let callback = callbacks[event.data.id];
 		callback(event.data.value);
@@ -310,6 +353,16 @@ addEventListener("message", (event) => {
 	if (event.data.anura_target === "anura.cache") {
 		cacheenabled = event.data.value;
 		idbKeyval.set("cacheenabled", event.data.value);
+	}
+	if (event.data.anura_target === "anura.bootFromOPFS") {
+		if (event.data.value) {
+			opfs = await LocalFS.newSwOPFS();
+			globalThis.anura = { fs: opfs }; // Stupid thing for AFSShell compat
+			opfssh = new AFSShell();
+		} else {
+			opfs = undefined;
+			opfssh = undefined;
+		}
 	}
 	if (event.data.anura_target === "anura.filepicker.result") {
 		let callback = filepickerCallbacks[event.data.id];
@@ -499,10 +552,10 @@ async function updateFile(path, data) {
 const fsRegex = /\/fs(\/.*)/;
 
 const corsheaders = {
-	"Cross-Origin-Embedder-Policy": "require-corp",
-	"Access-Control-Allow-Origin": "*",
-	"Cross-Origin-Opener-Policy": "same-origin",
-	"Cross-Origin-Resource-Policy": "same-site",
+	"cross-origin-embedder-policy": "require-corp",
+	"access-control-allow-origin": "*",
+	"cross-origin-opener-policy": "same-origin",
+	"cross-origin-resource-policy": "same-site",
 };
 
 workbox.routing.registerRoute(
@@ -547,8 +600,48 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
+	/\/blob/,
+	async (event) => {
+		console.log("Got blob req");
+		const blobURL = new URL(event.request.url).searchParams.get("url");
+		if (blobURL && blobURL.startsWith("blob:")) {
+			const fetchResponse = await fetch(blobURL);
+			const corsResponse = new Response(
+				await fetchResponse.clone().arrayBuffer(),
+				{
+					headers: {
+						...Object.fromEntries(fetchResponse.headers.entries()),
+						...corsheaders,
+					},
+				},
+			);
+			return corsResponse;
+		}
+	},
+	"GET",
+);
+workbox.routing.registerRoute(
+	/\/display/,
+	async (event) => {
+		const url = new URL(event.request.url);
+		const content = url.searchParams.get("content");
+
+		if (content) {
+			return new Response(content, {
+				headers: {
+					"content-type": url.searchParams.get("type") || "text/html",
+					...corsheaders,
+				},
+			});
+		}
+	},
+	"GET",
+);
+
+workbox.routing.registerRoute(
 	/^(?!.*(\/config.json|\/MILESTONE|\/x86images\/|\/service\/))/,
 	async ({ url }) => {
+		await bootStrapFSReady;
 		if (cacheenabled === undefined) {
 			console.debug("retrieving cache value");
 			let result = await idbKeyval.get("cacheenabled");
@@ -588,8 +681,8 @@ workbox.routing.registerRoute(
 		let path = decodeURI(url.pathname);
 
 		// Force Filer to be used in cache routes, as it does not require waiting for anura to be connected
-		const fs = filerfs;
-		const sh = filersh;
+		const fs = opfs || filerfs;
+		const sh = opfssh || filersh;
 
 		const response = await serveFile(`${basepath}${path}`, fs, sh);
 
@@ -626,6 +719,8 @@ workbox.routing.registerRoute(
 							Buffer.from(buffer),
 						);
 					}
+				}).catch((e) => {
+					console.error("I hate this bug: ", e);
 				});
 			} catch (e) {
 				return new Response(
@@ -658,7 +753,6 @@ methods.forEach((method) => {
 	workbox.routing.registerRoute(
 		/\/service\//,
 		async (event) => {
-			console.debug("Got UV req");
 			return await uv.fetch(event);
 		},
 		method,
