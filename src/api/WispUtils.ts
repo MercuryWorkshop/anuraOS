@@ -62,6 +62,8 @@ const wisp = {
 					ptr += 5 + extLength;
 				}
 				return { packetType, streamID, infoObj };
+			default:
+				throw new Error("Undefined packet type");
 		}
 	},
 	createWispPacket(instructions: any) {
