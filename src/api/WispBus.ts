@@ -2,9 +2,10 @@ class WispBus {
 	clientMappings = new Map();
 	serverMappings = new Map();
 	upstream: WebSocket | RTCDataChannel;
-	lastId: 1;
-	lastUpstreamId: 1;
+	lastGlobalID = 1;
+	lastUpstreamId = 1;
 	upstreamClients = new Map();
+	virtualServerMapping = new Map();
 
 	setUpstreamProvider(upstreamProvider: WebSocket | RTCDataChannel) {
 		// TODO: close all client mappings assigned to upstream first
@@ -12,10 +13,15 @@ class WispBus {
 		this.upstream = upstreamProvider;
 	}
 
-	handleOutgoingPacket(packet: Uint8Array, dataCallBack?: any) {
+	handleOutgoingPacket(
+		packet: Uint8Array,
+		virtualServerID: number,
+		packetCallBack?: any,
+	) {
 		const parsed = wisp.parseIncomingPacket(packet);
+
 		if (parsed?.packetType == wisp.CONNECT) {
-			if (!dataCallBack) {
+			if (!packetCallBack) {
 				throw new Error("Data callback required if sending connect packet");
 			}
 			let handleByUpstream = true;
@@ -26,21 +32,21 @@ class WispBus {
 					handleByUpstream = false;
 					assignedRemoteStreamId = serverMapping.lastId;
 					assignedHandler = serverMapping.handler;
-					serverMapping.clients.set(assignedRemoteStreamId, this.lastId);
+					serverMapping.clients.set(assignedRemoteStreamId, this.lastGlobalID);
 					serverMapping.lastId++;
 				}
 			}
 			if (handleByUpstream) {
 				assignedHandler = this.upstream;
 				assignedRemoteStreamId = this.lastUpstreamId;
-				this.upstreamClients.set(this.lastUpstreamId, this.lastId);
+				this.upstreamClients.set(this.lastUpstreamId, this.lastGlobalID);
 				this.lastUpstreamId++;
 			}
 
-			this.clientMappings.set(this.lastId, {
+			this.clientMappings.set(this.lastGlobalID, {
 				remoteId: assignedRemoteStreamId,
 				handler: assignedHandler,
-				dataCallBack,
+				packetCallBack,
 			});
 			assignedHandler.send(
 				wisp.createWispPacket({
@@ -52,22 +58,39 @@ class WispBus {
 				}),
 			);
 
-			this.lastId++;
+			this.virtualServerMapping
+				.get(virtualServerID)
+				.mappings.set(parsed.streamID, this.lastGlobalID++); // return which ID we actually mapped
 		}
 		if (parsed?.packetType == wisp.DATA || parsed?.packetType == wisp.CLOSE) {
-			const streamMetaData = this.clientMappings.get(parsed.streamID);
+			const streamMetaData = this.clientMappings.get(
+				this.virtualServerMapping
+					.get(virtualServerID)
+					.mappings.get(parsed.streamID),
+			);
 			const assignedHandler = streamMetaData.handler;
 			parsed.streamID = streamMetaData.remoteId; // modify the stream ID and then send it off
 			assignedHandler.send(wisp.createWispPacket(parsed));
+			return null;
 		}
+		return undefined;
 	}
 	handleIncomingPacket(packet: Uint8Array, sourceID: string) {
 		const parsed = wisp.parseIncomingPacket(packet)!;
-		parsed.streamID = this.serverMappings
-			.get(sourceID)
-			.clients.get(parsed?.streamID);
+		if (parsed.streamID === 0) return;
+
+		if (sourceID !== "upstream") {
+			parsed.streamID = this.serverMappings
+				.get(sourceID)
+				.clients?.get(parsed!.streamID);
+		} else {
+			parsed.streamID = this.upstreamClients.get(parsed!.streamID);
+		}
+
 		const reconstructedPacket = wisp.createWispPacket(parsed);
-		this.clientMappings.get(parsed.streamID).handler.send(reconstructedPacket);
+		this.clientMappings
+			.get(parsed.streamID)
+			.packetCallBack(reconstructedPacket);
 	}
 
 	registerServer(
@@ -83,9 +106,10 @@ class WispBus {
 		});
 		handler.binaryType = "arraybuffer";
 		handler.addEventListener("message", (e: MessageEvent) => {
-			this.handleIncomingPacket(e.data, id);
+			this.handleIncomingPacket(new Uint8Array(e.data), id);
 		});
 	}
+
 	getFakeWispProxySocket() {
 		// fake WispV1 socket impl
 	}
@@ -96,5 +120,34 @@ class WispBus {
 
 	constructor(upstreamProvider: WebSocket | RTCDataChannel) {
 		this.upstream = upstreamProvider;
+		this.upstream.binaryType = "arraybuffer";
+		this.upstream.addEventListener("message", (e: MessageEvent) => {
+			this.handleIncomingPacket(new Uint8Array(e.data), "upstream");
+		});
 	}
 }
+
+/*
+// my current test code
+const bus = new WispBus(new WebSocket("ws://localhost:8000"))
+
+await sleep(10)
+
+bus.virtualServerMapping.set(1, {mappings: new Map()});
+
+bus.handleOutgoingPacket(wisp.createWispPacket({
+			packetType: wisp.CONNECT,
+			streamType: wisp.TCP,
+			streamID: 2,
+			hostname: "example.com",
+			port: 80,
+		}), 1, (data) => {
+			console.log(new TextDecoder().decode(wisp.parseIncomingPacket(data).payload))
+        })
+bus.handleOutgoingPacket(wisp.createWispPacket({
+			packetType: wisp.DATA,
+			streamID: 2,
+			hostname: "example.com",
+            payload: new TextEncoder().encode("GET / HTTP/1.1\r\nHost: example.com\r\n\r\n")
+		}), 1)
+*/
