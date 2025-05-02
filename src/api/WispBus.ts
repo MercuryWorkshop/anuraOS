@@ -7,6 +7,11 @@ class WispBus {
 	upstreamClients = new Map();
 	virtualServerMapping = new Map();
 
+	static CONNECTING = 0;
+	static OPEN = 1;
+	static CLOSING = 2;
+	static CLOSED = 3;
+
 	setUpstreamProvider(upstreamProvider: WebSocket | RTCDataChannel) {
 		// TODO: close all client mappings assigned to upstream first
 
@@ -111,7 +116,84 @@ class WispBus {
 	}
 
 	getFakeWispProxySocket() {
-		// fake WispV1 socket impl
+		// eslint-disable-next-line @typescript-eslint/no-this-alias
+		const bus = this;
+		// 1) Pick a new virtualServerID and init its mappings
+		const virtualServerID = this.virtualServerMapping.size + 1;
+		this.virtualServerMapping.set(virtualServerID, { mappings: new Map() });
+
+		// 2) Define our FakeSocket
+		class FakeSocket extends EventTarget {
+			binaryType;
+			readyState;
+			bufferedAmount;
+			onopen = () => {};
+			onmessage = () => {};
+			onclose = () => {};
+			constructor() {
+				super();
+				this.binaryType = "arraybuffer";
+				this.readyState = WispBus.CONNECTING;
+				this.bufferedAmount = 0;
+
+				// Mirror .onopen/.onmessage/.onclose into EventTarget listeners
+				["open", "message", "close"].forEach((type) => {
+					this.addEventListener(type, (ev) => {
+						const handler = (this as any)["on" + type];
+						if (typeof handler === "function") handler.call(this, ev);
+					});
+				});
+
+				// Next tick: signal open, then send initial CONTINUE packet
+				setTimeout(() => {
+					this.readyState = WispBus.OPEN;
+					this.dispatchEvent(new Event("open"));
+
+					// initial CONTINUE packet (streamID=0, remainingBuffer=64)
+					const contPkt = wisp.createWispPacket({
+						packetType: wisp.CONTINUE,
+						streamID: 0,
+						remainingBuffer: 64,
+					});
+					this.dispatchEvent(
+						new MessageEvent("message", { data: contPkt.buffer }),
+					);
+				}, 0);
+			}
+
+			send(data: any) {
+				if (
+					this.readyState !== WispBus.OPEN &&
+					this.readyState !== WispBus.CONNECTING
+				) {
+					throw new Error("Socket is not open");
+				}
+				// ensure a Uint8Array
+				const pkt = data instanceof Uint8Array ? data : new Uint8Array(data);
+				bus.handleOutgoingPacket(pkt, virtualServerID, (response: any) => {
+					// route any incoming-from-server WISP data back as a message event
+					this.dispatchEvent(
+						new MessageEvent("message", { data: response.buffer }),
+					);
+				});
+			}
+
+			close(code = 1000, reason = "") {
+				if (
+					this.readyState === WispBus.CLOSING ||
+					this.readyState === WispBus.CLOSED
+				)
+					return;
+				this.readyState = WispBus.CLOSING;
+				// (Optionally: send CLOSE packets on each stream here)
+				this.readyState = WispBus.CLOSED;
+				this.dispatchEvent(
+					new CloseEvent("close", { code, reason, wasClean: true }),
+				);
+			}
+		}
+
+		return new FakeSocket();
 	}
 
 	getFakeWSProxySocket() {
