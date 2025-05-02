@@ -6,6 +6,7 @@ class WispBus {
 	lastUpstreamId = 1;
 	upstreamClients = new Map();
 	virtualServerMapping = new Map();
+	upstreamBuffer = 64;
 
 	static CONNECTING = 0;
 	static OPEN = 1;
@@ -38,6 +39,13 @@ class WispBus {
 					assignedRemoteStreamId = serverMapping.lastId;
 					assignedHandler = serverMapping.handler;
 					serverMapping.clients.set(assignedRemoteStreamId, this.lastGlobalID);
+					packetCallBack(
+						wisp.createWispPacket({
+							packetType: wisp.CONTINUE,
+							streamID: parsed.streamID,
+							remainingBuffer: serverMapping.defaultBuffer || 64,
+						}),
+					);
 					serverMapping.lastId++;
 				}
 			}
@@ -45,6 +53,13 @@ class WispBus {
 				assignedHandler = this.upstream;
 				assignedRemoteStreamId = this.lastUpstreamId;
 				this.upstreamClients.set(this.lastUpstreamId, this.lastGlobalID);
+				packetCallBack(
+					wisp.createWispPacket({
+						packetType: wisp.CONTINUE,
+						streamID: parsed.streamID,
+						remainingBuffer: this.upstreamBuffer,
+					}),
+				);
 				this.lastUpstreamId++;
 			}
 
@@ -82,13 +97,26 @@ class WispBus {
 	}
 	handleIncomingPacket(packet: Uint8Array, sourceID: string) {
 		const parsed = wisp.parseIncomingPacket(packet)!;
-		if (parsed.streamID === 0) return;
 
 		if (sourceID !== "upstream") {
+			if (parsed.streamID === 0) {
+				if (parsed.packetType === wisp.CONTINUE) {
+					this.serverMappings.get(sourceID).defaultBuffer =
+						parsed.remainingBuffer!;
+				}
+				return;
+			}
+
 			parsed.streamID = this.serverMappings
 				.get(sourceID)
 				.clients?.get(parsed!.streamID);
 		} else {
+			if (parsed.streamID === 0) {
+				if (parsed.packetType === wisp.CONTINUE) {
+					this.upstreamBuffer = parsed.remainingBuffer!;
+				}
+				return;
+			}
 			parsed.streamID = this.upstreamClients.get(parsed!.streamID);
 		}
 
@@ -118,20 +146,24 @@ class WispBus {
 	getFakeWispProxySocket() {
 		// eslint-disable-next-line @typescript-eslint/no-this-alias
 		const bus = this;
-		// 1) Pick a new virtualServerID and init its mappings
-		const virtualServerID = this.virtualServerMapping.size + 1;
-		this.virtualServerMapping.set(virtualServerID, { mappings: new Map() });
 
 		// 2) Define our FakeSocket
 		class FakeSocket extends EventTarget {
 			binaryType;
 			readyState;
 			bufferedAmount;
+			virtualServerID;
 			onopen = () => {};
 			onmessage = () => {};
 			onclose = () => {};
 			constructor() {
 				super();
+				// 1) Pick a new virtualServerID and init its mappings
+				this.virtualServerID = bus.virtualServerMapping.size + 1;
+				bus.virtualServerMapping.set(this.virtualServerID, {
+					mappings: new Map(),
+				});
+
 				this.binaryType = "arraybuffer";
 				this.readyState = WispBus.CONNECTING;
 				this.bufferedAmount = 0;
@@ -149,11 +181,11 @@ class WispBus {
 					this.readyState = WispBus.OPEN;
 					this.dispatchEvent(new Event("open"));
 
-					// initial CONTINUE packet (streamID=0, remainingBuffer=64)
+					// initial CONTINUE packet
 					const contPkt = wisp.createWispPacket({
 						packetType: wisp.CONTINUE,
 						streamID: 0,
-						remainingBuffer: 64,
+						remainingBuffer: bus.upstreamBuffer,
 					});
 					this.dispatchEvent(
 						new MessageEvent("message", { data: contPkt.buffer }),
@@ -170,7 +202,7 @@ class WispBus {
 				}
 				// ensure a Uint8Array
 				const pkt = data instanceof Uint8Array ? data : new Uint8Array(data);
-				bus.handleOutgoingPacket(pkt, virtualServerID, (response: any) => {
+				bus.handleOutgoingPacket(pkt, this.virtualServerID, (response: any) => {
 					// route any incoming-from-server WISP data back as a message event
 					this.dispatchEvent(
 						new MessageEvent("message", { data: response.buffer }),
@@ -193,7 +225,7 @@ class WispBus {
 			}
 		}
 
-		return new FakeSocket();
+		return FakeSocket;
 	}
 
 	getFakeWSProxySocket() {
@@ -210,7 +242,7 @@ class WispBus {
 }
 
 /*
-// my current test code
+// my current test code for bus
 const bus = new WispBus(new WebSocket("ws://localhost:8000"))
 
 await sleep(10)
@@ -232,4 +264,41 @@ bus.handleOutgoingPacket(wisp.createWispPacket({
 			hostname: "example.com",
             payload: new TextEncoder().encode("GET / HTTP/1.1\r\nHost: example.com\r\n\r\n")
 		}), 1)
+*/
+
+// current test code for emulated wisp socket
+/*
+const bus    = new WispBus(new WebSocket("ws://localhost:8000/"));
+await sleep(100);
+const socket = new (bus.getFakeWispProxySocket())();
+
+socket.onopen = () => {
+  // first, you'll already have gotten the CONTINUE packet
+  // now send CONNECT:
+  const connPkt = wisp.createWispPacket({
+    packetType:  wisp.CONNECT,
+    streamType:  wisp.TCP,
+    streamID:    1,
+    hostname:    "example.com",
+    port:        80,
+  });
+  socket.send(connPkt);
+  const dataPkt = wisp.createWispPacket({
+      packetType: wisp.DATA,
+      streamID: 1,
+      payload: new TextEncoder().encode("GET / HTTP/1.1\r\nHost: example.com\r\n\r\n")
+  })
+ socket.send(dataPkt)
+};
+
+socket.onmessage = (e) => {
+  const parsed = wisp.parseIncomingPacket(new Uint8Array(e.data));
+    if (parsed.packetType == wisp.DATA) {
+        console.log(new TextDecoder().decode(parsed.payload))
+    }
+    if (parsed.packetType == wisp.CONTINUE) {
+        console.log(parsed)
+    }
+  // handle DATA, CLOSE, etc.
+};
 */
