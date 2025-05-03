@@ -229,148 +229,187 @@ class WispBus {
 	}
 
 	getFakeWSProxySocket() {
-		// eslint-disable-next-line @typescript-eslint/no-this-alias
-		const bus = this;
-		const FakeWispProxy = bus.getFakeWispProxySocket();
+		const _wisp_connections: any = {};
 
-		return class FakeWS extends EventTarget {
-			url: string;
-			binaryType: "arraybuffer";
-			readyState = WispBus.CONNECTING;
-			onopen: (ev: Event) => any = () => {};
-			onmessage: (ev: MessageEvent) => any = () => {};
-			onclose: (ev: CloseEvent) => any = () => {};
-			_wispSocket: InstanceType<typeof FakeWispProxy>;
-			_streamID: number;
-			_hostname: string;
-			_port: number;
-			bufferedAmount = 0;
-			extensions = "";
-			protocol = "";
-
-			static CONNECTING = WispBus.CONNECTING;
-			static OPEN = WispBus.OPEN;
-			static CLOSING = WispBus.CLOSING;
-			static CLOSED = WispBus.CLOSED;
-
-			constructor(url: string) {
+		class WispWebSocket extends EventTarget {
+			url: any;
+			protocols: any;
+			binaryType: string;
+			stream: any;
+			event_listeners: any;
+			connection: any;
+			onopen: (event: Event) => void;
+			onerror: (event: Event) => void;
+			onmessage: (event: Event) => void;
+			onclose: (event: Event) => void;
+			CONNECTING: number;
+			OPEN: number;
+			CLOSING: number;
+			CLOSED: number;
+			host: any;
+			port: number;
+			real_url: string;
+			constructor(url: any, protocols: any) {
 				super();
-				console.log("Fake WSPROXY for " + url);
 				this.url = url;
-				this.binaryType = "arraybuffer";
-				this.readyState = WispBus.CONNECTING;
-				this._streamID = 1;
+				this.protocols = protocols;
+				this.binaryType = "blob";
+				this.stream = null;
+				this.event_listeners = {};
+				this.connection = null;
 
-				// wire up .onopen/.onmessage/.onclose
-				["open", "message", "close"].forEach((type) => {
-					this.addEventListener(type, (ev) => {
-						const handler = (this as any)["on" + type];
-						if (typeof handler === "function") handler.call(this, ev);
-					});
-				});
+				//legacy event handlers
+				this.onopen = () => {};
+				this.onerror = () => {};
+				this.onmessage = () => {};
+				this.onclose = () => {};
 
-				// parse host:port out of last path segment
-				const segments = url.split("/");
-				const lastSegment = segments.pop()!;
-				const [host, portStr] = lastSegment.split(":");
-				if (!host || !portStr) {
-					throw new Error("Invalid URL format; expected …/host:port");
-				}
-				const portNum = parseInt(portStr, 10);
-				if (isNaN(portNum)) {
-					throw new Error(`Invalid port: ${portStr}`);
-				}
-				this._hostname = host;
-				this._port = portNum;
+				this.CONNECTING = 0;
+				this.OPEN = 1;
+				this.CLOSING = 2;
+				this.CLOSED = 3;
 
-				this._wispSocket = new FakeWispProxy(); // this is bad and actually I should have one which is used by every FakeWS
+				//parse the wsproxy url
+				const url_split = this.url.split("/");
+				const wsproxy_path = url_split.pop().split(":");
+				this.host = wsproxy_path[0];
+				this.port = parseInt(wsproxy_path[1]);
+				this.real_url = url_split.join("/") + "/";
 
-				this._wispSocket.onopen = () => {
-					// handshake: open WISP stream
-					const connPkt = wisp.createWispPacket({
-						packetType: wisp.CONNECT,
-						streamType: wisp.TCP,
-						streamID: this._streamID,
-						hostname: this._hostname,
-						port: this._port,
-					});
-					this._wispSocket.send(connPkt);
-					// setTimeout(() => {
-					console.log("Marking as open");
-					this.readyState = WebSocket.OPEN;
-
-					this.dispatchEvent(new Event("open"));
-					console.log(this);
-					// }, 10);
-				};
-
-				this._wispSocket.addEventListener("message", (e: MessageEvent) => {
-					const parsed = wisp.parseIncomingPacket(new Uint8Array(e.data))!;
-					switch (parsed.packetType) {
-						case wisp.CONTINUE:
-							return;
-						case wisp.DATA: {
-							this.dispatchEvent(
-								new MessageEvent("message", { data: parsed.payload }),
-							);
-							break;
-						}
-						case wisp.CLOSE:
-							this.readyState = WispBus.CLOSED;
-							this.dispatchEvent(
-								new CloseEvent("close", {
-									code: 1000,
-									reason: "",
-									wasClean: true,
-								}),
-							);
-							break;
-					}
-				});
+				this.init_connection();
 			}
 
-			send(data: string | ArrayBuffer | Uint8Array) {
-				console.log("sent shit", data);
-				if (this.readyState !== WispBus.OPEN) {
-					throw new Error("Socket is not open");
+			on_conn_close() {
+				if (_wisp_connections[this.real_url]) {
+					this.dispatchEvent(new Event("error"));
 				}
-				let payload: Uint8Array;
-				if (typeof data === "string") {
-					payload = new TextEncoder().encode(data);
-				} else if (data instanceof ArrayBuffer) {
-					payload = new Uint8Array(data);
+				delete _wisp_connections[this.real_url];
+			}
+
+			init_connection() {
+				//create the stream
+				this.connection = _wisp_connections[this.real_url];
+
+				if (!this.connection) {
+					this.connection = new WispConnection(this.real_url);
+					this.connection.addEventListener("open", () => {
+						this.init_stream();
+					});
+					this.connection.addEventListener("close", () => {
+						this.on_conn_close();
+					});
+					this.connection.addEventListener("error", (event: CloseEvent) => {
+						this.on_conn_close();
+					});
+					_wisp_connections[this.real_url] = this.connection;
+				} else if (!this.connection.connected) {
+					this.connection.addEventListener("open", () => {
+						this.init_stream();
+					});
 				} else {
-					payload = data;
+					this.connection = _wisp_connections[this.real_url];
+					this.init_stream();
+				}
+			}
+
+			init_stream() {
+				this.stream = this.connection!.create_stream(this.host, this.port);
+				this.stream!.addEventListener("message", (event: MessageEvent) => {
+					let data;
+					if (this.binaryType == "blob") {
+						data = new Blob(event.data);
+					} else if (this.binaryType == "arraybuffer") {
+						data = event.data.buffer;
+					} else {
+						throw "invalid binaryType string";
+					}
+					const msg_event = new MessageEvent("message", { data: data });
+					this.onmessage(msg_event);
+					this.dispatchEvent(msg_event);
+				});
+				this.stream.addEventListener("close", (event: CloseEvent) => {
+					const close_event = new CloseEvent("close", { code: event.code });
+					this.onclose(close_event);
+					this.dispatchEvent(close_event);
+				});
+				const open_event = new Event("open");
+				this.onopen(open_event);
+				this.dispatchEvent(open_event);
+			}
+
+			send(data: any) {
+				let data_array;
+				if (typeof data === "string") {
+					data_array = new TextEncoder().encode(data);
+				} else if (data instanceof Blob) {
+					data.arrayBuffer().then((array_buffer) => {
+						data_array = new Uint8Array(array_buffer);
+						this.send(data_array);
+					});
+					return;
+				}
+				//any typedarray
+				else if (data instanceof ArrayBuffer) {
+					//dataview objects
+					if (ArrayBuffer.isView(data) && data instanceof DataView) {
+						data_array = new Uint8Array(data.buffer);
+					}
+					//regular arraybuffers
+					else {
+						data_array = new Uint8Array(data);
+					}
+				}
+				//regular typed arrays
+				else if (ArrayBuffer.isView(data)) {
+					data_array = Uint8Array.from(data as any);
+				} else {
+					throw "invalid data type";
 				}
 
-				const pkt = wisp.createWispPacket({
-					packetType: wisp.DATA,
-					streamID: this._streamID,
-					payload,
-				});
-				this._wispSocket.send(pkt);
+				if (!this.stream) {
+					throw "websocket is not ready";
+				}
+				this.stream.send(data_array);
 			}
 
-			close(code = 1000, reason = "") {
+			close() {
+				this.stream.close(0x02);
+			}
+
+			get bufferedAmount() {
+				let total = 0;
+				for (const msg of this.stream.send_buffer) {
+					total += msg.length;
+				}
+				return total;
+			}
+
+			get extensions() {
+				return "";
+			}
+
+			get protocol() {
+				return "binary";
+			}
+
+			get readyState() {
 				if (
-					this.readyState === WispBus.CLOSING ||
-					this.readyState === WispBus.CLOSED
-				)
-					return;
-				this.readyState = WispBus.CLOSING;
-
-				const pkt = wisp.createWispPacket({
-					packetType: wisp.CLOSE,
-					streamID: this._streamID,
-				});
-				this._wispSocket.send(pkt);
-
-				this.readyState = WispBus.CLOSED;
-				this.dispatchEvent(
-					new CloseEvent("close", { code, reason, wasClean: true }),
-				);
+					this.connection &&
+					!this.connection.connected &&
+					!this.connection.connecting
+				) {
+					return this.CLOSED;
+				}
+				if (!this.connection || !this.connection.connected) {
+					return this.CONNECTING;
+				}
+				if (this.stream!.open) {
+					return this.OPEN;
+				}
+				return this.CLOSED;
 			}
-		};
+		}
+		return WispWebSocket;
 	}
 
 	constructor(upstreamProvider: WebSocket | RTCDataChannel) {
