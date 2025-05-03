@@ -236,7 +236,7 @@ class WispBus {
 		return class FakeWS extends EventTarget {
 			url: string;
 			binaryType: "arraybuffer";
-			readyState: number;
+			readyState = WispBus.CONNECTING;
 			onopen: (ev: Event) => any = () => {};
 			onmessage: (ev: MessageEvent) => any = () => {};
 			onclose: (ev: CloseEvent) => any = () => {};
@@ -244,6 +244,9 @@ class WispBus {
 			_streamID: number;
 			_hostname: string;
 			_port: number;
+			bufferedAmount = 0;
+			extensions = "";
+			protocol = "";
 
 			static CONNECTING = WispBus.CONNECTING;
 			static OPEN = WispBus.OPEN;
@@ -252,6 +255,7 @@ class WispBus {
 
 			constructor(url: string) {
 				super();
+				console.log("Fake WSPROXY for " + url);
 				this.url = url;
 				this.binaryType = "arraybuffer";
 				this.readyState = WispBus.CONNECTING;
@@ -279,7 +283,7 @@ class WispBus {
 				this._hostname = host;
 				this._port = portNum;
 
-				this._wispSocket = new FakeWispProxy();
+				this._wispSocket = new FakeWispProxy(); // this is bad and actually I should have one which is used by every FakeWS
 
 				this._wispSocket.onopen = () => {
 					// handshake: open WISP stream
@@ -291,9 +295,13 @@ class WispBus {
 						port: this._port,
 					});
 					this._wispSocket.send(connPkt);
+					// setTimeout(() => {
+					console.log("Marking as open");
+					this.readyState = WebSocket.OPEN;
 
-					this.readyState = WispBus.OPEN;
 					this.dispatchEvent(new Event("open"));
+					console.log(this);
+					// }, 10);
 				};
 
 				this._wispSocket.addEventListener("message", (e: MessageEvent) => {
@@ -322,6 +330,7 @@ class WispBus {
 			}
 
 			send(data: string | ArrayBuffer | Uint8Array) {
+				console.log("sent shit", data);
 				if (this.readyState !== WispBus.OPEN) {
 					throw new Error("Socket is not open");
 				}
