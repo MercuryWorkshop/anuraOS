@@ -1,8 +1,8 @@
 class Anura {
 	version = {
 		semantic: {
-			major: "3",
-			minor: "0",
+			major: "2",
+			minor: "2",
 			patch: "0",
 		},
 		buildstate: "alpha",
