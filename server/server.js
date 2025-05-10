@@ -55,6 +55,7 @@ if (debugAppFolder) {
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/build"));
+app.use("/bin", express.static(__dirname + "/bin"));
 app.use("/apps", express.static(__dirname + "/apps"));
 app.use(express.static(__dirname + "/aboutproxy/static"));
 

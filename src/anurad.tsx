@@ -46,6 +46,7 @@ class AnuradInitScript implements Process {
 	frame: InitScriptFrame;
 	window: InitScriptFrame["contentWindow"];
 	info?: InitScriptExports;
+	#args: string[];
 
 	get title() {
 		return this.info?.name as string;
@@ -58,8 +59,11 @@ class AnuradInitScript implements Process {
 	constructor(
 		script: string,
 		public pid: number,
+		args: string[] = [],
 	) {
 		this.script = script;
+		this.#args = args;
+
 		this.frame = (
 			<iframe
 				id={`proc-${pid}`}
@@ -69,7 +73,7 @@ class AnuradInitScript implements Process {
             <html>
                 <head>
                     <script type="module">
-                        globalThis.initScript = await import("data:text/javascript;base64,${btoa(script)}");
+                        globalThis.initScript = await import("data:text/javascript;base64,${utoa(script)}");
                         window.postMessage({ type: "init" });
                     </script>
                 </head>
@@ -194,6 +198,10 @@ class AnuradInitScript implements Process {
 
 	get alive(): boolean {
 		return this.frame.isConnected;
+	}
+
+	get args(): string[] {
+		return this.#args;
 	}
 
 	kill(): void {

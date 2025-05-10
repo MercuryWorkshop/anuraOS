@@ -28,6 +28,7 @@ class WindowInformation {
 	minwidth: number;
 	minheight: number;
 	resizable: boolean;
+	args?: string[];
 }
 
 class WMWindow extends EventTarget implements Process {
@@ -81,6 +82,12 @@ class WMWindow extends EventTarget implements Process {
 		this.state.title = title;
 	}
 
+	#args: string[];
+
+	get args() {
+		return this.#args;
+	}
+
 	maximizeImg: HTMLOrSVGElement;
 	maximizeSvg: HTMLOrSVGElement;
 	restoreSvg: HTMLOrSVGElement;
@@ -89,6 +96,7 @@ class WMWindow extends EventTarget implements Process {
 		public app?: App,
 	) {
 		super();
+		this.#args = wininfo.args || [];
 		this.wininfo = wininfo;
 		this.state = $state({
 			title: wininfo.title,

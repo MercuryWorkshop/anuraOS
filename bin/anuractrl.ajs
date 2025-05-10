@@ -1,0 +1,91 @@
+#! {"lang":"module"}
+console.warn(`
+// AnuraCtrl - A command-line utility for controlling Anura apps
+// Eventually this should have more tightly knit integration with Anurad, 
+// instead of just the raw process API. For now, this is a good start.`)
+
+export async function main(args) {
+    const validArgs = new Set(["open", "close", "info", "pid", "pkg"]);
+    const argmap = {};
+
+    args.forEach((arg, i) => {
+        if (arg.startsWith("--")) {
+            const key = arg.slice(2);
+            if (!validArgs.has(key)) {
+                eprintln(`Unknown argument: --${key}`);
+                exit(1);
+            }
+            argmap[key] = ["open", "close", "info"].includes(key) ? true : args[i + 1] || "";
+        }
+    });
+
+    const commands = ["open", "close", "info"].filter((cmd) => argmap[cmd]);
+    if (commands.length !== 1) {
+        eprintln("Provide exactly one command: --open, --close, or --info.");
+        exit(1);
+    }
+
+    const {
+        open,
+        close,
+        info,
+        pid,
+        pkg
+    } = argmap;
+
+    if (open) {
+        await anura.apps[pkg].open();
+        println(`Opened app with package name: ${pkg}`);
+    } else if (close) {
+        if (pid) {
+            anura.processes.procs[pid].deref()?.kill();
+            println(`Closed process with PID: ${pid}`);
+        } else if (pkg) {
+            anura.processes.procs.forEach((p) => {
+                let proc = p?.deref();
+                if (proc?.app?.package === pkg) {
+                    proc.kill();
+                    println(`Closed process with PID: ${proc.pid} for app: ${pkg}`);
+                }
+            });
+        } else {
+            eprintln("Please provide either --pid or --pkg to close a process or an app's windows.");
+            exit(1);
+        }
+    } else if (info) {
+        if (pid) {
+            const proc = anura.processes.procs[pid]?.deref();
+            if (proc) {
+                const isApp = proc?.app
+                println(`Process info for PID ${pid}:`);
+                println(`  Title: ${proc.title}`);
+                println(`  Belongs to app: ${isApp}`);
+                if (isApp) {
+                println(`  Package: ${proc.app?.package}`);
+                }
+            } else {
+                eprintln(`No process found with PID: ${pid}`);
+            }
+        } else if (pkg) {
+            let found = false;
+            anura.processes.procs.forEach((p) => {
+                let proc = p?.deref();
+                if (proc?.app?.package === pkg) {
+                    found = true;
+                    println(`Process info for PID ${proc.pid}:`);
+                    println(`  Title: ${proc.title}`);
+                    println(`  Belongs to app: true`);
+                    println(`  Package: ${proc.app?.package}`);
+                }
+            });
+
+            if (!found) {
+                eprintln(`No process found for package: ${pkg}`);
+            }
+        } else {
+            eprintln("Please provide either --pid or --pkg to get process information.");
+            exit(1);
+        }
+    }
+    exit(0);
+}

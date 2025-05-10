@@ -125,11 +125,11 @@ build/assets/matter.css:
 apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 	cd apps/libfileview.lib; bash geticons.sh
 
-build/bin/chimerix.ajs: chimerix/src/*
+bin/chimerix.ajs: chimerix/src/*
 	mkdir -p build/bin
 	cd chimerix; npm i
 	cd chimerix; npx rollup -c rollup.config.js
-	cp chimerix/dist/chimerix.ajs build/bin/chimerix.ajs
+	cp chimerix/dist/chimerix.ajs bin/chimerix.ajs
 
 clean:
 	rm -rf build
@@ -193,6 +193,7 @@ static: all
 	mkdir -p static/
 	cp -r aboutproxy/static/* static/
 	cp -r apps/ static/apps/
+	cp -r bin/ static/bin/
 	cp -r build/* static/
 	cp -r public/* static/
 

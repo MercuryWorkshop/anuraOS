@@ -1,5 +1,7 @@
 import { createAppView, getAppIcon } from "./pages/appview/appview.js";
 
+const { ShortcutApp } = await anura.import("anura.globalscope");
+
 const icons = await (await fetch(localPathToURL("icons.json"))).json();
 
 export function openFile(path) {
@@ -118,6 +120,23 @@ export function openFile(path) {
 		iframe.srcdoc = data;
 		fileView.content.appendChild(iframe);
 	}
+
+	async function openApp(path) {
+		const stat = await fs.promises.stat(path);
+		if (stat.isDirectory()) {
+			console.error("TODO: Move special folder execution to libfileview");
+			anura.dialog.alert(
+				"Special folder execution is not yet implemented in libfileview. You should not be seeing this message unless you are a developer, if you are, please fix it. If you are not, please report this issue.",
+			);
+		} else {
+			// Shortcut file
+			const data = await fs.promises.readFile(path);
+			const app = new ShortcutApp(path, JSON.parse(data));
+			console.log(app);
+			await app.open();
+		}
+	}
+
 	switch (path.split(".").slice("-2").join(".")) {
 		case "app.zip":
 			createAppView(path, "app");
@@ -139,7 +158,10 @@ export function openFile(path) {
 			openText(path);
 			break;
 		case "ajs":
-			anura.processes.execute(path);
+			// anura.processes.execute(path);
+			const shell = anura.settings.get("shell") || "/usr/bin/chimerix.ajs";
+			anura.settings.set("shell", shell);
+			anura.processes.execute(shell, ["--cmd", path], true);
 			break;
 		case "mp3":
 			openAudio(path, "audio/mpeg");
@@ -181,13 +203,15 @@ export function openFile(path) {
 		case "html":
 			openHTML(path);
 			break;
+		case "app":
+			openApp(path);
+			break;
 		default:
 			openText(path);
-			break;
 	}
 }
 
-export function getIcon(path) {
+export async function getIcon(path) {
 	switch (path.split(".").slice("-2").join(".")) {
 		case "app.zip":
 			return getAppIcon(path);
@@ -197,10 +221,30 @@ export function getIcon(path) {
 			break;
 	}
 	let ext = path.split(".").slice("-1")[0];
+
+	if (ext === "app") {
+		const stat = await anura.fs.promises.stat(path);
+		if (stat.isDirectory()) {
+			console.error("TODO: Move special folder execution to libfileview");
+			anura.dialog.alert(
+				"Special folder execution is not yet implemented in libfileview. You should not be seeing this message unless you are a developer, if you are, please fix it. If you are not, please report this issue.",
+			);
+		} else {
+			// Shortcut file
+			const app = new ShortcutApp(
+				path,
+				JSON.parse(await anura.fs.promises.readFile(path)),
+			);
+
+			console.log(app);
+			return new URL(app.icon, top.location.href).href;
+		}
+	}
 	let iconObject = icons.files.find((icon) => icon.ext === ext);
 	if (iconObject) {
 		return localPathToURL(iconObject.icon);
 	}
+
 	return localPathToURL(icons.default);
 }
 
@@ -213,8 +257,10 @@ export function getFileType(path) {
 		default:
 			break;
 	}
-	let ext = path.split(".").slice("-1")[0];
-	let iconObject = icons.files.find((icon) => icon.ext === ext);
+
+	const ext = path.split(".").slice("-1")[0];
+
+	const iconObject = icons.files.find((icon) => icon.ext === ext);
 	if (iconObject) {
 		return iconObject.type;
 	}

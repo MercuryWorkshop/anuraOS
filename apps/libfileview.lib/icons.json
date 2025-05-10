@@ -131,6 +131,10 @@
 			"icon": "icons/css.svg",
 			"source": "papirus/Papirus/16x16/mimetypes/text-css.svg",
 			"type": "CSS Stylesheet"
+		},
+		{
+			"ext": "app",
+			"type": "Anura Shortcut"
 		}
 	],
 	"default": "icons/txt.svg",

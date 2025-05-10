@@ -12,7 +12,12 @@
 		"/apps/libpersist.lib",
 		"/apps/libhterm.lib"
 	],
-	"bin": ["/bin/chimerix.ajs"],
+	"bin": [
+		"/bin/chimerix.ajs",
+		"/bin/x86-run.ajs",
+		"/bin/vista.ajs",
+		"/bin/anuractrl.ajs"
+	],
 	"defaultsettings": {
 		"use-sw-cache": false,
 		"applist": ["anura.browser", "anura.settings", "anura.fsapp"],

@@ -1,0 +1,55 @@
+#! {"lang":"module"}
+
+export async function main(args) {
+    let cmd = args.slice(1).join(" ");
+
+    console.log(args, cmd);
+
+    if (!cmd || cmd === "") {
+        cmd = "/bin/bash --login";
+    }
+
+    if (anura.x86 === undefined) {
+        println(
+            "\u001b[33mThe Anura x86 subsystem is not enabled. Please enable it in Settings.\u001b[0m",
+        );
+        return;
+    }
+    if (!anura.x86.ready) {
+        println(
+            "\u001b[33mThe Anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m",
+        );
+        return;
+    }
+    println(
+        "Welcome to the Anura x86 subsystem.\nTo access your Anura files within Linux, use the /root directory.",
+    );
+    const pty = await anura.x86.openpty(
+        cmd,
+        80, 24,
+        (data) => {
+            print(data);
+        },
+    );
+
+    addEventListener("message", (event) => {
+        if (event.data.type === "ioctl.set") {
+            console.log(event.data.windowSize);
+            anura.x86.resizepty(pty, event.data.windowSize.cols, event.data.windowSize.rows);
+        }
+    });
+
+    addEventListener("message", (event) => {
+        if (event.data.type === "stdin") {
+            console.log(event.data.message);
+            anura.x86.writepty(pty, event.data.message);
+        }
+    });
+
+    const oldkill = env.process.kill.bind(env.process);
+
+    env.process.kill = (signal) => {
+        anura.x86.closepty(pty);
+        oldkill(signal);
+    };
+}

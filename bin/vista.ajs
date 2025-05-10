@@ -1,0 +1,46 @@
+#! {"lang":"module"}
+
+export async function main(args) {
+    const validArgs = new Set(["alert", "confirm", "prompt", "message", "title", "default"]);
+    const argmap = {};
+
+    args.forEach((arg, i) => {
+        if (arg.startsWith("--")) {
+            const key = arg.slice(2);
+            if (!validArgs.has(key)) {
+                eprintln(`Unknown argument: --${key}`);
+                exit(1);
+            }
+            argmap[key] = ["alert", "confirm", "prompt"].includes(key) ? true : args[i + 1] || "";
+        }
+    });
+
+    const commands = ["alert", "confirm", "prompt"].filter((cmd) => argmap[cmd]);
+    if (commands.length !== 1) {
+        eprintln("Provide exactly one command: --alert, --confirm, or --prompt.");
+        exit(1);
+    }
+
+    const {
+        alert,
+        confirm,
+        prompt,
+        message = "No message provided",
+        title = "Dialog",
+        default: defaultValue = null,
+    } = argmap;
+
+    if (alert) {
+        anura.dialog.alert(message, title);
+        println(title);
+        println(message);
+    } else if (confirm) {
+        const result = await anura.dialog.confirm(message, title);
+        println((!!result) + "");
+    } else if (prompt) {
+        const result = await anura.dialog.prompt(message, defaultValue);
+        println(result + "");
+    }
+
+    exit(0);
+}

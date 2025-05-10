@@ -354,6 +354,8 @@ window.addEventListener("load", async () => {
 		}
 	}
 
+	anura.registerLib(new AnuraGlobalsLib());
+
 	// Register built-in Node Polyfills
 	anura.registerLib(new NodeFS());
 	anura.registerLib(new NodePrelude());
@@ -788,12 +790,25 @@ async function bootUserCustomizations() {
 		const files = await anura.fs.promises.readdir(directories["apps"]);
 		if (files) {
 			for (const file of files) {
-				try {
-					await anura.registerExternalApp(
-						`/fs/${directories["apps"]}/${file}/`,
+				const { type } = await anura.fs.promises.stat(
+					`${directories["apps"]}/${file}`,
+				);
+				if (type === "DIRECTORY") {
+					try {
+						await anura.registerExternalApp(
+							`/fs/${directories["apps"]}/${file}/`,
+						);
+					} catch (e) {
+						anura.logger.error("Anura failed to load an app", e);
+					}
+				} else {
+					// This is a shortcut file
+					const shortcut = JSON.parse(
+						(
+							await anura.fs.promises.readFile(`${directories["apps"]}/${file}`)
+						).toString(),
 					);
-				} catch (e) {
-					anura.logger.error("Anura failed to load an app", e);
+					anura.registerApp(new ShortcutApp(file, shortcut));
 				}
 			}
 		}

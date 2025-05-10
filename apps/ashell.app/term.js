@@ -1,6 +1,66 @@
 const hterm = (await anura.import("anura.hterm")).default;
+const exit = env.process.kill.bind(env.process);
+
+const url = new URL(window.location.href);
+const argv = ExternalApp.deserializeArgs(url.searchParams.get("args"));
+
+let scan = "none";
+
+const argmap = {};
+
+console.log(argv);
+
+for (let i = 0; i < argv.length; i++) {
+	let arg = argv[i];
+
+	if (arg === "--" || arg === "") continue;
+
+	if (arg.startsWith("--")) {
+		scan = arg.slice(2);
+	} else if (scan !== "none") {
+		argmap[scan] = arg;
+		scan = "none";
+	} else {
+		console.error(`Unknown argument: ${arg}`);
+		window.postMessage({
+			type: "stderr",
+			message: "\x1b[31mUnknown argument: " + arg,
+		});
+		exit(1);
+	}
+}
+
+if (scan !== "none") {
+	console.error(`Expected argument after ${scan}`);
+	window.postMessage({
+		type: "stderr",
+		message: "\x1b[31mExpected argument after " + scan,
+	});
+	exit(1);
+}
+
+// detect if there are arguments that dont exist
+const validArgs = ["cmd"];
+for (let key in argmap) {
+	if (!validArgs.includes(key)) {
+		console.error(`Unknown argument: ${key}`);
+		window.postMessage({
+			type: "stderr",
+			message: "\x1b[31mUnknown argument: " + key,
+		});
+		exit(1);
+	}
+}
+
+console.log(argmap);
+
 const shell = anura.settings.get("shell") || "/usr/bin/chimerix.ajs";
 anura.settings.set("shell", shell);
+
+if (!argmap.cmd) {
+	// If no command is provided, default to the system shell
+	argmap.cmd = shell;
+}
 
 const config = anura.settings.get("anura-shell-config") || {};
 anura.settings.set("anura-shell-config", config);
@@ -35,7 +95,17 @@ term.onTerminalReady = async () => {
 
 	let io = term.io.push();
 
-	const proc = await anura.processes.execute(shell);
+	const cmdline = (argmap.cmd.match(/(?:[^\s"]+|"[^"]*")+/g) || []).map(
+		(arg) => {
+			// Remove surrounding quotes if they exist
+			if (arg.startsWith('"') && arg.endsWith('"')) {
+				return arg.slice(1, -1);
+			}
+			return arg;
+		},
+	);
+
+	const proc = await anura.processes.execute(cmdline[0], cmdline.slice(1));
 
 	const stdinWriter = proc.stdin.getWriter();
 
@@ -68,6 +138,9 @@ term.onTerminalReady = async () => {
 	proc.stdout.pipeTo(
 		new WritableStream({
 			write: (chunk) => {
+				if (typeof chunk === "string") {
+					chunk = encoder.encode(chunk);
+				}
 				io.writeUTF8(LF_to_CRLF(chunk));
 			},
 		}),
@@ -76,6 +149,9 @@ term.onTerminalReady = async () => {
 	proc.stderr.pipeTo(
 		new WritableStream({
 			write: (chunk) => {
+				if (typeof chunk === "string") {
+					chunk = encoder.encode(chunk);
+				}
 				io.writeUTF8(LF_to_CRLF(chunk));
 			},
 		}),
@@ -83,12 +159,12 @@ term.onTerminalReady = async () => {
 	const oldProcKill = proc.kill.bind(proc);
 
 	proc.kill = () => {
-		oldProcKill();
-		instanceWindow.close();
+		if (proc.alive) oldProcKill();
+		if (instanceWindow.alive) instanceWindow.close();
 	};
 
 	instanceWindow.addEventListener("close", () => {
-		proc.kill();
+		if (proc.alive) proc.kill();
 	});
 
 	proc.exit = proc.kill.bind(proc);
