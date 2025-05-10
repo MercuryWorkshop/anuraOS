@@ -175,8 +175,8 @@ class ExploreApp extends App {
 		</div>
 	);
 
-	v86 = (
-		<div id="body">
+	v86 = () => (
+		<div id="body" class="v86">
 			<h1>Using the x86 Subsystem</h1>
 			<p>
 				AnuraOS includes an x86 subsystem (based on{" "}
@@ -186,8 +186,7 @@ class ExploreApp extends App {
 					v86
 				</a>
 				), which lets you run real Linux within Anura.
-				{$if(
-					anura.x86 === undefined,
+				{anura.x86 === undefined && (
 					<p>
 						It seems like you dont have the subsystem enabled. You can install
 						it from{" "}
@@ -198,20 +197,19 @@ class ExploreApp extends App {
 							</a>
 						</span>
 						.
-					</p>,
+					</p>
 				)}
-				{$if(
-					anura.x86 !== undefined,
+				{anura.x86 !== undefined && (
 					<p>
 						You can open a terminal using the{" "}
 						<span>
 							<img src="/assets/icons/terminal.png" alt="v86 Terminal Icon" />
-							<a href="javascript:anura.apps['anura.term'].open();">
+							<a href="javascript:anura.apps['anura.ashell'].open(['--cmd', '/usr/bin/x86-run.ajs']);">
 								v86 Terminal
 							</a>
 						</span>{" "}
 						app.
-					</p>,
+					</p>
 				)}
 			</p>
 			<p>
@@ -313,9 +311,11 @@ class ExploreApp extends App {
 				</div>
 				<div
 					on:click={() => {
-						this.state.screen = this.v86;
+						this.state.screen = this.v86();
 					}}
-					class:selected={use(this.state.screen, (sc) => sc === this.v86)}
+					class:selected={use(this.state.screen, (sc: HTMLElement) =>
+						sc.classList.contains("v86"),
+					)}
 				>
 					<span class="material-symbols-outlined">memory</span>
 					x86 Subsystem

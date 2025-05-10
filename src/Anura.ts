@@ -125,7 +125,30 @@ class Anura {
 		}
 		return app;
 	}
-	async registerExternalApp(source: string): Promise<ExternalApp> {
+	async registerExternalApp(
+		source: string,
+	): Promise<ExternalApp | ShortcutApp> {
+		try {
+			const shortcut = await fetch(source);
+			if (shortcut.status === 200) {
+				const shortcutData = await shortcut.json();
+				if (shortcutData instanceof Array) {
+					throw null;
+				}
+
+				const app = new ShortcutApp(
+					new URL(source, location.href).href,
+					shortcutData,
+				);
+
+				await anura.registerApp(app); // This will let us capture error messages
+
+				return app;
+			}
+		} catch (_) {
+			// Ignore errors, its not a shortcut
+		}
+
 		const resp = await fetch(`${source}/manifest.json`);
 		const manifest = (await resp.json()) as AppManifest;
 		if (

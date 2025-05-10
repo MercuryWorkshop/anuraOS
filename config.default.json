@@ -1,6 +1,6 @@
 {
 	"apps": [
-		"apps/term.app",
+		"apps/v86-terminal.app",
 		"apps/fsapp.app",
 		"apps/marketplace.app",
 		"apps/ashell.app"
