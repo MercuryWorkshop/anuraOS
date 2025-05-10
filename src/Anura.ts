@@ -81,8 +81,34 @@ class Anura {
 	logger = {
 		log: console.log.bind(console, "anuraOS:"),
 		debug: console.debug.bind(console, "anuraOS:"),
+		info: console.info.bind(console, "anuraOS:"),
 		warn: console.warn.bind(console, "anuraOS:"),
 		error: console.error.bind(console, "anuraOS:"),
+
+		// Create a set of streams for stdio to pipe to, useful for debugging
+		createStreams: (prefix?: string) => {
+			const de = new TextEncoder();
+
+			return {
+				stdout: new WritableStream({
+					write: (message) => {
+						if (typeof message !== "string") {
+							message = new TextDecoder().decode(message);
+						}
+						console.log(`anuraOS: ${prefix ? `[${prefix}] ` : ""}${message}`);
+					},
+				}),
+
+				stderr: new WritableStream({
+					write: (message) => {
+						if (typeof message !== "string") {
+							message = new TextDecoder().decode(message);
+						}
+						console.error(`anuraOS: ${prefix ? `[${prefix}] ` : ""}${message}`);
+					},
+				}),
+			};
+		},
 	};
 	async registerApp(app: App) {
 		if (app.package in this.apps) {

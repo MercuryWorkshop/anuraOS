@@ -234,7 +234,9 @@ class RegEdit extends App {
 							})
 							.map((item: any) => (
 								<tr>
-									<td class="name">{item[0]}</td>
+									<td class="name" title={item[0]}>
+										{item[0]}
+									</td>
 									<td class="type">{typeof item[1]}</td>
 									<td class="value">
 										{typeof item[1] === "boolean" ? (
@@ -243,10 +245,9 @@ class RegEdit extends App {
 													type="checkbox"
 													checked={item[1]}
 													on:change={function (e: any) {
-														const elements =
-															e.srcElement.parentElement.children;
 														console.log(item[0], e.srcElement.srcchecked);
-														anura.settings.set(item[0], e.srcElement.checked);
+														sel[item[0]] = e.srcElement.checked;
+														anura.settings.save();
 													}}
 												/>
 												<span></span>
@@ -262,14 +263,8 @@ class RegEdit extends App {
 														try {
 															const parsed = JSON.parse(event.srcElement.value);
 
-															anura.settings.set(elements[0].innerText, parsed);
-
-															// anura.settings.cache[
-															//     elements[0].innerText
-															// ] = JSON.parse(
-															//     elements[2].value,
-															// );
-															// anura.settings.save();
+															sel[item[0]] = parsed;
+															anura.settings.save();
 														} catch (e) {
 															elements[2].value = anura.settings.get(item[0]);
 															anura.notifications.add({
@@ -297,35 +292,26 @@ class RegEdit extends App {
 	);
 
 	async open(): Promise<WMWindow | undefined> {
-		let win: WMWindow | undefined;
-		if (!anura.settings.get("disable-regedit-warning")) {
-			anura.dialog
-				.confirm(
-					"Are you sure you want to continue?",
-					"Editing the registry can cause irreparable damage to your system!",
-				)
-				.then(async (value) => {
-					if (value === true) {
-						win = anura.wm.create(this, {
-							title: "Registry Editor",
-							width: "910px",
-							height: `${(720 * window.innerHeight) / 1080}px`,
-							resizable: true,
-						});
-
-						win.content.appendChild(await this.page());
-					}
-				});
-		} else {
-			win = anura.wm.create(this, {
-				title: "Registry Editor",
-				width: "910px",
-				height: `${(720 * window.innerHeight) / 1080}px`,
-				resizable: true,
-			});
-
-			win.content.appendChild(await this.page());
+		if (
+			!anura.settings.get("disable-regedit-warning") &&
+			!(await anura.dialog.confirm(
+				"Are you sure you want to continue?",
+				"Editing the registry can cause irreparable damage to your system!",
+			))
+		) {
+			return;
 		}
+
+		anura.settings.set("disable-regedit-warning", true);
+
+		const win = anura.wm.create(this, {
+			title: "Registry Editor",
+			width: "910px",
+			height: `${(720 * window.innerHeight) / 1080}px`,
+			resizable: true,
+		});
+
+		win.content.appendChild(await this.page());
 
 		return win;
 	}

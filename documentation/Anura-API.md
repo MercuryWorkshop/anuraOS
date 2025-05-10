@@ -314,6 +314,39 @@ let win = anura.wm.createGeneric("Example Window");
 // do stuff with the window that gets returned
 ```
 
+## anura.logger
+
+This API provides a logger for Anura, which just wraps the console object.
+
+### Functions
+
+#### Wrapper Functions
+
+| Function             | Description           |
+| -------------------- | --------------------- |
+| `anura.logger.log`   | Wraps `console.log`   |
+| `anura.logger.debug` | Wraps `console.debug` |
+| `anura.logger.info`  | Wraps `console.info`  |
+| `anura.logger.warn`  | Wraps `console.warn`  |
+| `anura.logger.error` | Wraps `console.error` |
+
+#### anura.logger.createStreams(prefix?: string): `{stdout: WritableStream, stderr: WritableStream}`
+
+This function creates a pair of writable streams that processes can be piped to
+for console output. The prefix argument is optional and will be prepended to all
+log messages.
+
+**Usage:**
+
+```js
+const { stdout, stderr } = anura.logger.createStreams("my-process: ");
+
+const proc = await anura.processes.execute("/path/to/script.ajs");
+
+proc.stdout.pipeTo(stdout);
+proc.stderr.pipeTo(stderr);
+```
+
 ## anura.net
 
 This API provides access to Anura's networking backend, for routing your requests through a [Wisp](https://github.com/MercuryWorkshop/wisp-protocol) compatible backend using [libcurl.js](https://github.com/ading2210/libcurl.js).\
