@@ -1,10 +1,5 @@
 {
-	"apps": [
-		"apps/v86-terminal.app",
-		"apps/fsapp.app",
-		"apps/marketplace.app",
-		"apps/ashell.app"
-	],
+	"apps": ["apps/fsapp.app", "apps/marketplace.app", "apps/ashell.app"],
 	"libs": [
 		"/apps/libfileview.lib",
 		"/apps/libfilepicker.lib",
