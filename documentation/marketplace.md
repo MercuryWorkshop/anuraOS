@@ -151,10 +151,10 @@ marketplace = new libstore.Store(anura.net, {
 			timeout: 5000,
 		});
 	},
-	onDownloadStart: (appName) => {
+	onDownloadStart: (appName, packageId) => {
 		anura.notifications.add({
 			title: "libstore",
-			description: `libstore started downloading ${appName}`,
+			description: `libstore started downloading ${appName} (${packageId})`,
 			timeout: 5000,
 		});
 	},
