@@ -24,8 +24,8 @@ export class Store {
 			onError: (appName, error) => {
 				console.error(error);
 			},
-			onDownloadStart: (appName) => {
-				console.log("Download started");
+			onDownloadStart: (appName, packageId) => {
+				console.log(`Download started for ${appName} (${packageId})`);
 			},
 			onDepInstallStart: (appName, libName) => {
 				console.log("Dependency install started");
@@ -191,7 +191,7 @@ export class StoreRepo {
 		if (!app) {
 			throw new Error("App not found");
 		}
-		this.hooks.onDownloadStart(app.name);
+		this.hooks.onDownloadStart(app.name, app.package);
 
 		if (app.dependencies) {
 			for (const lib of app.dependencies) {
@@ -269,7 +269,7 @@ export class StoreRepo {
 		if (!lib) {
 			throw new Error("Lib not found");
 		}
-		this.hooks.onDownloadStart(lib.name);
+		this.hooks.onDownloadStart(lib.name, lib.package);
 		const zipFile = new Uint8Array(
 			await (await this.client.fetch(lib.baseUrl + lib.data)).arrayBuffer(),
 		);
@@ -415,7 +415,7 @@ export class StoreRepoLegacy {
 		if (!app) {
 			throw new Error("App not found");
 		}
-		this.hooks.onDownloadStart(appName);
+		this.hooks.onDownloadStart(appName, appName);
 
 		if (app.dependencies) {
 			for (const lib of app.dependencies) {
@@ -472,7 +472,7 @@ export class StoreRepoLegacy {
 		if (!lib) {
 			throw new Error("Lib not found");
 		}
-		this.hooks.onDownloadStart(libName);
+		this.hooks.onDownloadStart(libName, libName);
 		const zipFile = new Uint8Array(
 			await (
 				await this.client.fetch(encodeURI(this.baseUrl + lib.data))
