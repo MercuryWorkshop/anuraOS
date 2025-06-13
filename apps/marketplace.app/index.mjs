@@ -62,10 +62,10 @@ window.marketplace = new Store(anura.net, {
 			timeout: 5000,
 		});
 	},
-	onDownloadStart: (appName) => {
+	onDownloadStart: (appName, packageId) => {
 		anura.notifications.add({
 			title: "Marketplace",
-			description: `Marketplace started downloading ${appName}`,
+			description: `Marketplace started downloading ${appName} (${packageId})`,
 			timeout: 5000,
 		});
 	},
