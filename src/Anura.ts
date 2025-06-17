@@ -61,7 +61,7 @@ class Anura {
 			}),
 		);
 		if (await (window as any).idbKeyval.get("bootFromOPFS")) {
-			fsProvider = (await LocalFS.newSwOPFS()) as any;
+			fsProvider = (await LocalFS.newRootOPFS()) as any;
 		}
 		const fs = new AnuraFilesystem([fsProvider]);
 

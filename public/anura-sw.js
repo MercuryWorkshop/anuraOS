@@ -38,7 +38,7 @@ const bootStrapFSReady = new Promise((res, rej) => {
 		.get("bootFromOPFS")
 		.then(async (res) => {
 			if (res) {
-				opfs = await LocalFS.newSwOPFS();
+				opfs = await LocalFS.newRootOPFS();
 				globalThis.anura = { fs: opfs }; // Stupid thing for AFSShell compat
 				opfssh = new AFSShell();
 			}
@@ -640,107 +640,100 @@ workbox.routing.registerRoute(
 
 workbox.routing.registerRoute(
 	/^(?!.*(\/config.json|\/MILESTONE|\/x86images\/|\/service\/))/,
-	({ url }) => {
-		if (new URL(url).origin !== self.location.origin) return false;
-		return (async () => {
-			await bootStrapFSReady;
-			if (cacheenabled === undefined) {
-				console.debug("retrieving cache value");
-				let result = await idbKeyval.get("cacheenabled");
-				if (result !== undefined || result !== null) {
-					cacheenabled = result;
-				}
-			}
-			if (
-				(!cacheenabled && url.pathname === "/" && !navigator.onLine) ||
-				(!cacheenabled && url.pathname === "/index.html" && !navigator.onLine)
-			) {
-				return new Response(offlineError(), {
-					status: 500,
-					headers: { "content-type": "text/html" },
-				});
-			}
-			if (!cacheenabled) {
-				const fetchResponse = await fetch(url);
-				return new Response(await fetchResponse.arrayBuffer(), {
-					headers: {
-						...Object.fromEntries(fetchResponse.headers.entries()),
-						...corsheaders,
-					},
-				});
+	async (event) => {
+		if (new URL(event.url).origin !== self.location.origin) return false;
+		await bootStrapFSReady;
+		if (cacheenabled === undefined) {
+			console.debug("retrieving cache value");
+			cacheenabled = await idbKeyval.get("cacheenabled");
+		}
+		if (
+			(!cacheenabled && event.url.pathname === "/" && !navigator.onLine) ||
+			(!cacheenabled &&
+				event.url.pathname === "/index.html" &&
+				!navigator.onLine)
+		) {
+			return new Response(offlineError(), {
+				status: 500,
+				headers: { "content-type": "text/html" },
+			});
+		}
+		if (!cacheenabled) {
+			const fetchResponse = await fetch(event.request);
+			return new Response(await fetchResponse.arrayBuffer(), {
+				headers: {
+					...Object.fromEntries(fetchResponse.headers.entries()),
+					...corsheaders,
+				},
+			});
+		}
+		if (event.url.pathname === "/") event.url.pathname = "/index.html";
+		if (event.url.password)
+			return new Response(
+				"<script>window.location.href = window.location.href</script>",
+				{ headers: { "content-type": "text/html" } },
+			);
+		const basepath = "/anura_files";
+		let path = decodeURI(event.url.pathname);
 
-				return fetchResponse;
-			}
-			if (url.pathname === "/") {
-				url.pathname = "/index.html";
-			}
-			if (url.password)
-				return new Response(
-					"<script>window.location.href = window.location.href</script>",
-					{ headers: { "content-type": "text/html" } },
-				);
-			const basepath = "/anura_files";
-			let path = decodeURI(url.pathname);
+		// Force Filer to be used in cache routes, as it does not require waiting for anura to be connected
+		const fs = opfs || filerfs;
+		const sh = opfssh || filersh;
 
-			// Force Filer to be used in cache routes, as it does not require waiting for anura to be connected
-			const fs = opfs || filerfs;
-			const sh = opfssh || filersh;
+		const response = await serveFile(`${basepath}${path}`, fs, sh);
 
-			const response = await serveFile(`${basepath}${path}`, fs, sh);
-
-			if (response.ok) {
-				return response;
-			} else {
-				try {
-					const fetchResponse = await fetch(url);
-					// Promise so that we can return the response before we cache it, for faster response times
-					return new Promise(async (resolve) => {
-						const corsResponse = new Response(
-							await fetchResponse.clone().arrayBuffer(),
-							{
-								headers: {
-									...Object.fromEntries(fetchResponse.headers.entries()),
-									...corsheaders,
-								},
-							},
-						);
-
-						resolve(corsResponse);
-
-						if (fetchResponse.ok) {
-							const buffer = await fetchResponse.clone().arrayBuffer();
-							await sh.promises.mkdirp(
-								`${basepath}${path.replace(/[^/]*$/g, "")}`,
-							);
-							// Explicitly use Filer's fs here, as
-							// Buffers lose their inheritance when passed
-							// to anura's fs, causing them to be treated as
-							// strings
-							await fs.promises.writeFile(
-								`${basepath}${path}`,
-								Buffer.from(buffer),
-							);
-						}
-					}).catch((e) => {
-						console.error("I hate this bug: ", e);
-					});
-				} catch (e) {
-					return new Response(
-						JSON.stringify({
-							error: e.message,
-							status: 500,
-						}),
+		if (response.ok) {
+			return response;
+		} else {
+			try {
+				const fetchResponse = await fetch(event.request);
+				// Promise so that we can return the response before we cache it, for faster response times
+				return new Promise(async (resolve) => {
+					const corsResponse = new Response(
+						await fetchResponse.clone().arrayBuffer(),
 						{
-							status: 500,
 							headers: {
-								"Content-Type": "application/json",
+								...Object.fromEntries(fetchResponse.headers.entries()),
 								...corsheaders,
 							},
 						},
 					);
-				}
+
+					resolve(corsResponse);
+
+					if (fetchResponse.ok) {
+						const buffer = await fetchResponse.clone().arrayBuffer();
+						await sh.promises.mkdirp(
+							`${basepath}${path.replace(/[^/]*$/g, "")}`,
+						);
+						// Explicitly use Filer's fs here, as
+						// Buffers lose their inheritance when passed
+						// to anura's fs, causing them to be treated as
+						// strings
+						await fs.promises.writeFile(
+							`${basepath}${path}`,
+							Buffer.from(buffer),
+						);
+					}
+				}).catch((e) => {
+					console.error("I hate this bug: ", e);
+				});
+			} catch (e) {
+				return new Response(
+					JSON.stringify({
+						error: e.message,
+						status: 500,
+					}),
+					{
+						status: 500,
+						headers: {
+							"Content-Type": "application/json",
+							...corsheaders,
+						},
+					},
+				);
 			}
-		})();
+		}
 	},
 );
 

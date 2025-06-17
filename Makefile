@@ -34,6 +34,7 @@ submodules: .gitmodules
 
 external-libs: build/libs/filer/filer.min.js build/libs/mime/mime.iife.js build/libs/nfsadapter/nfsadapter.js build/libs/comlink/comlink.min.mjs build/libs/workbox/version build/libs/idb-keyval/idb-keyval.js build/libs/fflate/browser.js bin/chimerix.ajs build/libs/libcurl/version build/libs/bare-mux/bare.cjs build/uv/uv.bundle.js build/libs/dreamland/all.js
 	mkdir -p build/libs/
+	
 build/libs/libcurl/version: build/bootstrap
 	mkdir -p build/libs/libcurl
 	cp node_modules/libcurl.js/libcurl.mjs build/libs/libcurl/libcurl.mjs

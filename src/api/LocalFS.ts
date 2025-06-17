@@ -193,7 +193,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 
 		return fs;
 	}
-	static async newSwOPFS() {
+	static async newRootOPFS() {
 		const anuraPath = "/";
 		const dirHandle = await navigator.storage.getDirectory();
 
