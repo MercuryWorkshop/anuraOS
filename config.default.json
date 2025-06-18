@@ -5,7 +5,8 @@
 		"/apps/libfilepicker.lib",
 		"/apps/libstore.lib",
 		"/apps/libpersist.lib",
-		"/apps/libhterm.lib"
+		"/apps/libhterm.lib",
+		"apps/v86-terminal.app"
 	],
 	"bin": [
 		"/bin/chimerix.ajs",
