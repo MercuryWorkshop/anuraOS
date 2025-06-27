@@ -356,7 +356,7 @@ addEventListener("message", async (event) => {
 	}
 	if (event.data.anura_target === "anura.bootFromOPFS") {
 		if (event.data.value) {
-			opfs = await LocalFS.newSwOPFS();
+			opfs = await LocalFS.newRootOPFS();
 			globalThis.anura = { fs: opfs }; // Stupid thing for AFSShell compat
 			opfssh = new AFSShell();
 		} else {

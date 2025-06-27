@@ -104,7 +104,7 @@ window.addEventListener("load", async () => {
 	let bootStrapFs = Filer.fs;
 
 	if (await (window as any).idbKeyval.get("bootFromOPFS")) {
-		bootStrapFs = (await LocalFS.newSwOPFS()) as any;
+		bootStrapFs = (await LocalFS.newRootOPFS()) as any;
 	}
 	try {
 		conf = await (await fetch("/config.json")).json();
