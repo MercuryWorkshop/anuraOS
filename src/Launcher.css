@@ -46,6 +46,12 @@ body.blur-disable #launcher {
 	-webkit-backdrop-filter: none;
 }
 
+body.platform-mobile #launcher,
+body.platform-tablet #launcher {
+	border-left: none;
+	border-right: none;
+}
+
 .app-shortcut-name {
 	text-align: center;
 }
