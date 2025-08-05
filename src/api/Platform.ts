@@ -9,7 +9,7 @@ class Platform {
 		fullscreen: false,
 	});
 
-	constructor() {
+	constructor(anura: Anura) {
 		let platform = "desktop";
 
 		const mobileRE =
@@ -37,11 +37,19 @@ class Platform {
 				platform = "mobile";
 			}
 		}
+
 		this.type = platform;
 		this.touchInput =
 			platform === "mobile" ||
 			platform === "tablet" ||
 			navigator.maxTouchPoints > 1;
+
+		if (anura.settings.get("forcePlatform") !== undefined) {
+			this.type = anura.settings.get("forcePlatform");
+		}
+		if (anura.settings.get("forceTouchInput") !== undefined) {
+			this.touchInput = anura.settings.get("forceTouchInput");
+		}
 
 		document.documentElement.addEventListener("fullscreenchange", () => {
 			this.state.fullscreen = !!document.fullscreenElement;

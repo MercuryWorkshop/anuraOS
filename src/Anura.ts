@@ -37,18 +37,17 @@ class Anura {
 		settings: Settings,
 		config: any,
 		hdd: FakeFile,
-		platform: Platform,
 		net: Networking,
 	) {
 		this.fs = fs;
 		this.settings = settings;
 		this.config = config;
 		this.x86hdd = hdd;
-		this.platform = platform;
 		this.net = net;
 
 		this.notifications = new NotificationService();
 		this.processes = new Processes();
+		this.platform = new Platform(this);
 		document.body.appendChild(this.notifications.element);
 	}
 
@@ -69,10 +68,8 @@ class Anura {
 
 		const hdd = await InitV86Hdd();
 
-		const platform = new Platform();
-
 		const net = new Networking(settings.get("wisp-url"));
-		const anuraPartial = new Anura(fs, settings, config, hdd, platform, net);
+		const anuraPartial = new Anura(fs, settings, config, hdd, net);
 		return anuraPartial;
 	}
 
