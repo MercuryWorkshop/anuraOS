@@ -226,7 +226,7 @@ class Launcher {
 							? "calc(100% - 75px)"
 							: "min(80%, 40em)"
 						: anura.platform.type == "mobile" || anura.platform.type == "tablet"
-							? "100%"
+							? "calc(100% - 75px)"
 							: "min(30%, 20em)",
 				)}
 				class={[
