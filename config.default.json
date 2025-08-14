@@ -1,12 +1,11 @@
 {
-	"apps": ["apps/fsapp.app", "apps/marketplace.app", "apps/ashell.app"],
+	"apps": ["apps/fsapp.app", "apps/marketplace.app", "apps/ashell.app", "apps/v86-terminal.app"],
 	"libs": [
 		"/apps/libfileview.lib",
 		"/apps/libfilepicker.lib",
 		"/apps/libstore.lib",
 		"/apps/libpersist.lib",
-		"/apps/libhterm.lib",
-		"apps/v86-terminal.app"
+		"/apps/libhterm.lib"
 	],
 	"bin": [
 		"/bin/chimerix.ajs",
