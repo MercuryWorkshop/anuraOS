@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euxo pipefail
 
 #fix the uuidgen command not found error
 sudo apt update
