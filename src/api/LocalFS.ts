@@ -270,7 +270,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 				fileStats.ctimeMs = Date.now();
 				this.stats.set(realPath, fileStats);
 			}
-			writer.write(data);
+			writer.write(data as any);
 			writer.close();
 		},
 		readFile: async (path: string) => {

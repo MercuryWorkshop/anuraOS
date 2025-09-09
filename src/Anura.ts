@@ -252,7 +252,9 @@ class Anura {
 			const file = await anura.fs.promises.readFile(
 				`${searchPath}/${scope}/${name}/${filename}`,
 			);
-			const blob = new Blob([file], { type: "application/javascript" });
+			const blob = new Blob([file as any], {
+				type: "application/javascript",
+			});
 			const url = URL.createObjectURL(blob);
 			return await import(url);
 		}

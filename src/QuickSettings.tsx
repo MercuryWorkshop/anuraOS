@@ -431,7 +431,7 @@ class QuickSettings {
 			</Panel>
 		);
 
-		(this.state.pinnedSettings = anura.settings.get("pinnedSettings") || [
+		((this.state.pinnedSettings = anura.settings.get("pinnedSettings") || [
 			{
 				registry: "disable-animation",
 				type: "boolean",
@@ -471,7 +471,7 @@ class QuickSettings {
 				(show) => {
 					this.notificationCenterElement.style.display = show ? "flex" : "none";
 				},
-			);
+			));
 		// useChange(use(this.state.pinnedSettings), (pinnedSettings) => {
 		//     anura.settings.set("pinnedSettings", pinnedSettings);
 		//     pinnedSettings.forEach((setting) => {

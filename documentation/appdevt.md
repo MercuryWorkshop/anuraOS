@@ -23,7 +23,6 @@ Each app contains a `manifest.json`, which defines the functionality of the app.
 - `handler`: `String` - Path (from app directory) to a file containing JavaScript to execute at the top-level document. Required if `type` is `"manual"`, ignored otherwise - the top-level document will execute this file as JavaScript.
 - `useIdbWrapper`: `Boolean` - Use the IndexedDB wrapper, which prevents the app from making accidental modifications to other app's indexeddb stores or anura's own stores. Defaults to `false`. Optional.
 - `wininfo`: `Object {title, width, height, resizable}` - Required if `type` is `"auto"`.
-
   - `wininfo.title`: `String` - The title of the program. Defaults to "". Optional.
   - `wininfo.width`: `String` - The default width, in pixels, of the program. Defaults to "1000px". Optional.
   - `wininfo.height`: `String` - The default height, in pixels, of the program. Defaults to "500px". Optional.
@@ -225,6 +224,7 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
 ### Manifest
 
 - You write a library that consists of a `manifest.json` file and an ES module. An example of the manifest file is below.
+
   ```json
   {
   	"name": "Example Library",
@@ -238,6 +238,7 @@ AnuraOS libraries are just like apps but contain utilities or functionality that
   	"currentVersion": "1.0.0"
   }
   ```
+
   - `name` is the name of the library.
   - `icon` is the icon of the library (for use in Marketplace).
   - `package` is the package name of the library.

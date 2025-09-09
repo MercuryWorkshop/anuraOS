@@ -7,14 +7,45 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  version-check:
+    name: Check Version
+    runs-on: ubuntu-latest
+    outputs:
+      version_changed: ${{ steps.check.outputs.exit_code }}
+      new_version: ${{ steps.check.outputs.exit_code }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Check the version
+        id: check
+        run: |
+          CURRENT_VERSION=$(jq -r .version package.json)
+          echo "Current version: $CURRENT_VERSION"
+          LATEST_VERSION=$(npm view @mercuryworkshop/anuraos-types versions --json | jq -r '.[-1]' || echo "0.0.0")
+          echo "Latest NPM version: $LATEST_VERSION"
+
+          if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ];
+          then
+            echo "Version changed"
+            echo "version_changed=true" >> $GITHUB_OUTPUT
+            echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Version not changed"
+            echo "version_changed=false" >> $GITHUB_OUTPUT
+          fi
+
   build:
     name: Build Anura
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -23,14 +54,8 @@ jobs:
       - name: Install dependencies
         run: sudo apt update && sudo apt install -y git build-essential clang default-jre
 
-      - name: Pull submodules
-        run: git submodule update --init
-
-      - name: Install Rust
-        run: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-
       - name: Pack Anura
-        run: source "$HOME/.cargo/env" && make static
+        run: make static
 
       - name: Upload Anura Static Artifact
         uses: actions/upload-artifact@v4
@@ -70,7 +95,7 @@ jobs:
       - name: Zip anura Release
         run: cd static && zip -r ../anura.zip . && cd ..
 
-      - name: Release to GitHub
+      - name: Release unstable build to GitHub
         uses: ncipollo/release-action@v1
         with:
           name: Continuous Build
@@ -80,14 +105,26 @@ jobs:
           artifacts: "anura.zip"
           prerelease: true
 
+      - name: Release tagged version to GitHub
+        if: needs.version-check.outputs.version_changed == 'true'
+        uses: ncipollo/release-action@v1
+        with:
+          name: "${{ needs.version-check.outputs.new_version }}"
+          tag: "v${{ needs.version-check.outputs.new_version }}"
+          commit: main
+          body: "${{ github.event.head_commit.url }} ${{ github.event.head_commit.message }}"
+          artifacts: "anura.zip"
+
   publish:
     name: Publish anura-types to NPM
     runs-on: ubuntu-latest
-    needs: build
+    needs: [version-check, build]
     permissions: write-all
+    if: ${{ (needs.version-check.outputs.version_changed == 'true') && (github.ref == 'refs/heads/main') }}
+
     steps:
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: "22"
           registry-url: "https://registry.npmjs.org"
@@ -98,29 +135,9 @@ jobs:
           name: anura-types
           path: .
 
-      - name: Check the version
-        id: check
-        run: |
-          CURRENT_VERSION=$(jq -r .version package.json)
-          echo "Current version: $CURRENT_VERSION"
-          LATEST_VERSION=$(npm view @mercuryworkshop/anuraos-types version || echo "0.0.0")
-          echo "Latest NPM version: $LATEST_VERSION"
-
-          if [ "$LATEST_VERSION" != "$CURRENT_VERSION" ]; 
-          then
-            echo "Version changed"
-            echo "version_changed=true" >> $GITHUB_OUTPUT
-            echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-          else
-            echo "Version not changed"
-            echo "version_changed=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Publish
         if: steps.check.outputs.version_changed == 'true'
         run: npm publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   pages:
     name: Upload to Github Pages
