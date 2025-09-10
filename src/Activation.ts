@@ -36,7 +36,6 @@ class Activation {
 
         // The sum of the digits should be divisible by 7
         const res = sum % 7 === 0;
-        console.log(res);
         return res;
     }
 
