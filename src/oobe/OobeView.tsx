@@ -267,7 +267,7 @@ class OobeView {
                                             );
                                             this.nextStep();
                                         } else {
-                                            throw "Invalid key!";
+                                            throw new Error("Invalid key!");
                                         }
                                     } catch (e) {
                                         console.error(e);
