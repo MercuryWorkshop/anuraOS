@@ -111,7 +111,10 @@ window.addEventListener("load", async () => {
 		milestone = await (await fetch("/MILESTONE")).text();
 
 		console.debug("writing config??");
-		bootStrapFs.writeFile("/config_cached.json", JSON.stringify(conf));
+		await bootStrapFs.promises.writeFile(
+			"/config_cached.json",
+			JSON.stringify(conf),
+		);
 	} catch (e) {
 		conf = JSON.parse(
 			new TextDecoder().decode(
@@ -125,8 +128,8 @@ window.addEventListener("load", async () => {
 		anura.settings.cache["bootFromOPFS"] = true;
 	} else {
 		anura.settings.cache["bootFromOPFS"] = false;
+		LocalFS.newOPFS("/opfs"); // mount opfs on boot
 	}
-	LocalFS.newOPFS("/opfs"); // mount opfs on boot
 
 	if (anura.platform.type === "mobile" || anura.platform.type === "tablet") {
 		splashToRemove = bootsplashMobile;
