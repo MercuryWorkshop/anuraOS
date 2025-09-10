@@ -31,7 +31,7 @@ class Activation {
         // Calculate sum of digits in the suffix
         let sum = 0;
         for (let i = 0; i < suffix.length; i++) {
-            sum += parseInt(suffix![i]!, 10);
+            sum += parseInt(suffix[i], 10);
         }
 
         // The sum of the digits should be divisible by 7
