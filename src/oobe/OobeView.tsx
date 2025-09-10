@@ -112,7 +112,6 @@ class OobeView {
             background-color: transparent;
             border: 1px solid rgb(26, 115, 232);
             border-radius: 16px;
-            border-style: none;
             color: white;
             height: 2em;
             padding-left: 1em;
