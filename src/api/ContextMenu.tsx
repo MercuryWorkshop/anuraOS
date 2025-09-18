@@ -1,8 +1,10 @@
 class ContextMenu {
 	large = false;
+	#isShown = false;
 	#element = (
 		<div class={`custom-menu${this.large ? " large" : ""}`} style=""></div>
 	);
+
 	item(text: string, callback: VoidFunction, icon?: string) {
 		return (
 			<div class="custom-menu-item" on:click={callback.bind(this)}>
@@ -11,7 +13,6 @@ class ContextMenu {
 			</div>
 		);
 	}
-	#isShown = false;
 	constructor(large = false) {
 		this.large = large;
 		if (this.large) {

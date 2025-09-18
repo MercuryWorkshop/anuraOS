@@ -4,8 +4,8 @@ if [ "$1" = "pre-commit" ]; then
     echo Running with anura integration
 elif [ "$1" = "post-commit" ]; then
     echo Updating linux bzimage and initrd on anura fs...
-    cp /boot/vmlinuz-virt /root/bzimage
-    cp /boot/initramfs-virt /root/initrd.img
+    cp /boot/vmlinuz-virt /root/boot/bzimage
+    cp /boot/initramfs-virt /root/boot/initrd.img
     echo Queuing virtual hda save...
     echo -ne "anura.x86.virt_hda.save();\0" > /dev/hvc1
 fi

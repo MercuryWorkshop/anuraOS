@@ -274,10 +274,10 @@ class V86Backend {
 			vga_memory_size: 8 * 1024 * 1024,
 			screen_container: this.screen_container,
 			initrd: {
-				url: "/fs/initrd.img",
+				url: "/fs/boot/initrd.img",
 			},
 			bzimage: {
-				url: "/fs/bzimage",
+				url: "/fs/boot/bzimage",
 				async: false,
 			},
 
@@ -315,6 +315,7 @@ class V86Backend {
 			event.preventDefault();
 			await this.virt_hda.save();
 		});
+
 		let data = "";
 		this.emulator.add_listener("serial0-output-byte", function (byte: number) {
 			const char = String.fromCharCode(byte);
@@ -324,6 +325,20 @@ class V86Backend {
 				data = "";
 			}
 		});
+
+		let evalBuffer = "";
+		this.emulator.add_listener(
+			"virtio-console1-output-bytes",
+			async (data: Uint8Array) => {
+				evalBuffer += decoder.decode(data);
+				if (evalBuffer.endsWith("\0")) {
+					const jsrun = evalBuffer.slice(0, -1);
+					evalBuffer = "";
+					window.eval(jsrun);
+				}
+			},
+		);
+
 		this.twispinit();
 	}
 
@@ -667,18 +682,6 @@ class V86Backend {
 			},
 		);
 
-		let evalBuffer = "";
-		this.emulator.add_listener(
-			"virtio-console1-output-bytes",
-			async (data: Uint8Array) => {
-				evalBuffer += decoder.decode(data);
-				if (evalBuffer.endsWith("\0")) {
-					const jsrun = evalBuffer.slice(0, -1);
-					evalBuffer = "";
-					window.eval(jsrun);
-				}
-			},
-		);
 		function processIncomingWispFrame(frame: Uint8Array) {
 			//console.log(frame);
 			const view = new DataView(frame.buffer);

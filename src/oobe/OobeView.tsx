@@ -331,13 +331,20 @@ class OobeView {
 
 async function installx86(tracker = document.getElementById("tracker")) {
 	console.debug("installing x86");
+	await anura.fs.mkdir("/boot");
 	const x86image = anura.settings.get("x86-image");
 	tracker!.innerText = "Downloading x86 kernel";
 	const bzimage = await fetch(anura.config.x86[x86image].bzimage);
-	anura.fs.writeFile("/bzimage", Filer.Buffer(await bzimage.arrayBuffer()));
+	anura.fs.writeFile(
+		"/boot/bzimage",
+		Filer.Buffer(await bzimage.arrayBuffer()),
+	);
 	tracker!.innerText = "Downloading x86 initrd";
 	const initrd = await fetch(anura.config.x86[x86image].initrd);
-	anura.fs.writeFile("/initrd.img", Filer.Buffer(await initrd.arrayBuffer()));
+	anura.fs.writeFile(
+		"/boot/initrd.img",
+		Filer.Buffer(await initrd.arrayBuffer()),
+	);
 
 	if (typeof anura.config.x86[x86image].rootfs === "string") {
 		const rootfs = await fetch(anura.config.x86[x86image].rootfs);

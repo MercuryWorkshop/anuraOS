@@ -10,13 +10,6 @@ interface ThemeProps {
 }
 
 class Theme implements ThemeProps {
-	// foreground: string;
-	// secondaryForeground: string;
-	// border: string;
-	// background: string;
-	// secondaryBackground: string;
-	// darkBackground: string;
-	// accent: string;
 	get foreground() {
 		return this.state.foreground;
 	}

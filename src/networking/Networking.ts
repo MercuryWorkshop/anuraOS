@@ -152,7 +152,4 @@ class Networking {
 			return this.external.fetch(url, methods); // just pass through
 		}
 	};
-	setWispServer = function (wisp_server: string) {
-		this.libcurl.set_websocket(wisp_server);
-	};
 }
