@@ -11,8 +11,8 @@ jobs:
     name: Check Version
     runs-on: ubuntu-latest
     outputs:
-      version_changed: ${{ steps.check.outputs.exit_code }}
-      new_version: ${{ steps.check.outputs.exit_code }}
+      version_changed: ${{ steps.check.outputs.version_changed }}
+      new_version: ${{ steps.check.outputs.new_version }}
 
     steps:
       - name: Checkout Code
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [version-check, build]
     permissions: write-all
-    if: ${{ (needs.version-check.outputs.version_changed == 'true') && (github.ref == 'refs/heads/main') }}
+    if: ${{ github.ref == 'refs/heads/main' }} && ${{ needs.version-check.outputs.version_changed == 'true' }}
 
     steps:
       - name: Setup Node.js
@@ -136,7 +136,6 @@ jobs:
           path: .
 
       - name: Publish
-        if: steps.check.outputs.version_changed == 'true'
         run: npm publish --access public --no-git-checks
 
   pages:
