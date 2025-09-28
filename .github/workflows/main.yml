@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [version-check, build]
     permissions: write-all
-    if: ${{ github.ref == 'refs/heads/main' }} && ${{ needs.version-check.outputs.version_changed == 'true' }}
+    if: github.ref == 'refs/heads/main' && needs.version-check.outputs.version_changed == 'true'
 
     steps:
       - name: Setup Node.js
