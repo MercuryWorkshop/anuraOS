@@ -25,9 +25,9 @@ class WindowInformation {
 	title: string;
 	height: string;
 	width: string;
-	minwidth: number;
-	minheight: number;
-	resizable: boolean;
+	minwidth?: number;
+	minheight?: number;
+	resizable?: boolean;
 	args?: string[];
 }
 
@@ -101,11 +101,7 @@ class WMWindow extends EventTarget implements Process {
 		this.state = $state({
 			title: wininfo.title,
 		});
-		this.resizable = wininfo.resizable;
-		if (this.resizable === undefined) {
-			// This happens when resizable isn't passed in.
-			this.resizable = true;
-		}
+		this.resizable = wininfo.resizable || true;
 		this.clampWindows = !!anura.settings.get("clampWindows");
 
 		this.maximizeSvg = (

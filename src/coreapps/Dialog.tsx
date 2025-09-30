@@ -72,10 +72,6 @@ class Dialog extends App {
 	}
 
 	alert(message: string, title = "Alert") {
-		const dialog = this as object;
-		(dialog as any).title = "";
-		(dialog as any).width = "350px";
-
 		const contents: HTMLElement = (
 			<div class={[this.css]}>
 				<h2>{title}</h2>
@@ -93,8 +89,11 @@ class Dialog extends App {
 			</div>
 		);
 
-		(dialog as any).height = this.getFit(contents) + "px";
-		const win = anura.wm.create(this, dialog);
+		const win = anura.wm.create(this, {
+			title: title,
+			width: "350px",
+			height: this.getFit(contents) + "px",
+		});
 
 		// MARK: The DAMN CSS
 		win.content.style.background = "var(--material-bg)";
@@ -109,10 +108,6 @@ class Dialog extends App {
 	}
 	async confirm(message: string, title = "Confirmation"): Promise<boolean> {
 		return new Promise((resolve, reject) => {
-			const dialog = this as object;
-			(dialog as any).title = "";
-			(dialog as any).width = "350px";
-
 			const contents: HTMLElement = (
 				<div class={[this.css]}>
 					<h2>{title}</h2>
@@ -140,8 +135,11 @@ class Dialog extends App {
 				</div>
 			);
 
-			(dialog as any).height = this.getFit(contents) + "px";
-			const win = anura.wm.create(this, dialog);
+			const win = anura.wm.create(this, {
+				title: title,
+				width: "350px",
+				height: this.getFit(contents) + "px",
+			});
 
 			win.onclose = () => {
 				resolve(false);
@@ -155,10 +153,6 @@ class Dialog extends App {
 	}
 	async prompt(message: string, defaultValue?: any): Promise<any> {
 		return new Promise((resolve, reject) => {
-			const dialog = this as object;
-			(dialog as any).title = "";
-			(dialog as any).width = "350px";
-
 			let input: HTMLInputElement;
 
 			const contents: HTMLElement = (
@@ -198,8 +192,11 @@ class Dialog extends App {
 				</div>
 			);
 
-			(dialog as any).height = this.getFit(contents, 200) + "px";
-			const win = anura.wm.create(this, dialog);
+			const win = anura.wm.create(this, {
+				title: message,
+				width: "350px",
+				height: this.getFit(contents) + "px",
+			});
 
 			win.onclose = () => {
 				resolve(null);
@@ -212,9 +209,6 @@ class Dialog extends App {
 		});
 	}
 	progress(title: string, detail?: string): Stateful<ProgressObject> {
-		const dialog = this as object;
-		(dialog as any).title = "";
-		(dialog as any).width = "350px";
 		const state = $state({
 			title: title || "",
 			detail: detail || "",
@@ -233,8 +227,11 @@ class Dialog extends App {
 			</div>
 		);
 
-		(dialog as any).height = this.getFit(contents) + "px";
-		const win = anura.wm.create(this, dialog);
+		const win = anura.wm.create(this, {
+			title: title,
+			width: "350px",
+			height: this.getFit(contents) + "px",
+		});
 
 		// MARK: The DAMN CSS
 		win.content.style.background = "var(--material-bg)";

@@ -98,7 +98,7 @@ class ExternalApp extends App {
 	//@ts-expect-error manual apps exist
 	async open(args: string[] = []): Promise<WMWindow | undefined> {
 		if (this.manifest.type === "auto") {
-			const win = anura.wm.create(this, this.manifest.wininfo as object);
+			const win = anura.wm.create(this, this.manifest.wininfo);
 
 			const iframe = document.createElement("iframe");
 			// CSS injection here but it's no big deal
@@ -285,7 +285,7 @@ class ExternalApp extends App {
 			return;
 		} else if (this.manifest.type === "webview") {
 			// FOR INTERNAL USE ONLY
-			const win = anura.wm.create(this, this.manifest.wininfo as object);
+			const win = anura.wm.create(this, this.manifest.wininfo);
 
 			const iframe = document.createElement("iframe");
 			// CSS injection here but it's no big deal

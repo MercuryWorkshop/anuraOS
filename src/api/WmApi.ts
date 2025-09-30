@@ -1,7 +1,7 @@
 class WMAPI {
 	windows: WeakRef<WMWindow>[] = [];
 	hasFullscreenWindow = false;
-	create(ctx: App, info: object): WMWindow {
+	create(ctx: App, info: WindowInformation | string): WMWindow {
 		const win = AliceWM.create(info as unknown as any, ctx);
 		win.focus();
 
@@ -42,6 +42,8 @@ class WMAPI {
 		alttab.update();
 		return win;
 	}
-	createGeneric: (info: WindowInformation | string) => WMWindow =
-		this.create.bind(this, anura.apps["anura.generic"]);
+
+	createGeneric(info: WindowInformation | string): WMWindow {
+		return this.create.call(this, anura.apps["anura.generic"], info);
+	}
 }
