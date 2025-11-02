@@ -57,7 +57,10 @@ app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/build"));
 app.use("/bin", express.static(__dirname + "/bin"));
 app.use("/apps", express.static(__dirname + "/apps"));
-app.use(express.static(__dirname + "/aboutproxy/static"));
+app.use(
+	"/browserjs",
+	express.static(__dirname + "/anura-browserjs/packages/chrome/dist"),
+);
 
 const server = app.listen(port, () => console.log("Listening on port: ", port));
 

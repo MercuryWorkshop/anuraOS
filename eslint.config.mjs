@@ -21,7 +21,7 @@ export default [
 			"**/build/",
 			"**/anuraos-types/",
 			"**/bin/",
-			"**/aboutproxy/",
+			"**/anura-browserjs/",
 			"**/v86/",
 			"**/apps/",
 			"**/.eslintrc.js",

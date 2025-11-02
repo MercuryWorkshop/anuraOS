@@ -1,9 +1,6 @@
 [submodule "v86"]
 	path = v86
 	url = https://github.com/MercuryWorkshop/v86
-[submodule "aboutproxy"]
-	path = aboutproxy
-	url = https://github.com/MercuryWorkshop/aboutproxy
 [submodule "dreamlandjs"]
 	path = dreamlandjs
 	url = https://github.com/mercuryworkshop/dreamlandjs
