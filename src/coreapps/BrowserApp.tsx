@@ -101,6 +101,9 @@ class BrowserApp extends App {
 
 		browser.content.appendChild(iframe);
 
+		//@ts-expect-error
+		iframe.contentWindow.anurainstance = browser;
+
 		if (anura.settings.get("borderless-aboutbrowser")) {
 			// make borderless
 			browser.content.style.position = "absolute";
@@ -111,6 +114,10 @@ class BrowserApp extends App {
 
 			(container!.querySelector(".title") as any).style["background-color"] =
 				"rgba(0, 0, 0, 0)";
+			const titleBar = container!.querySelector(".title") as HTMLElement;
+			titleBar.style.position = "absolute";
+			titleBar.style.top = "0";
+			titleBar.style.right = "0";
 		}
 
 		return browser;

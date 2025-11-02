@@ -96,6 +96,8 @@ class WMWindow extends EventTarget implements Process {
 		public app?: App,
 	) {
 		super();
+		//@ts-expect-error
+		this.deactivateFrames = deactivateFrames;
 		this.#args = wininfo.args || [];
 		this.wininfo = wininfo;
 		this.state = $state({
