@@ -44,11 +44,11 @@ class Platform {
 			platform === "tablet" ||
 			navigator.maxTouchPoints > 1;
 
-		if (anura.settings.get("forcePlatform") !== undefined) {
-			this.type = anura.settings.get("forcePlatform");
+		if (anura.settings.get("force-platform") !== undefined) {
+			this.type = anura.settings.get("force-platform");
 		}
-		if (anura.settings.get("forceTouchInput") !== undefined) {
-			this.touchInput = anura.settings.get("forceTouchInput");
+		if (anura.settings.get("force-touch-input") !== undefined) {
+			this.touchInput = anura.settings.get("force-touch-input");
 		}
 
 		document.documentElement.addEventListener("fullscreenchange", () => {

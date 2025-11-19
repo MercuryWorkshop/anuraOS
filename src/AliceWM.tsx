@@ -146,7 +146,7 @@ class WMWindow extends EventTarget implements Process {
 				style={`
                     width: ${wininfo.width};
                     height: ${wininfo.height};
-                    ${anura.platform.type === "mobile" || anura.platform.type === "tablet" ? "top: 5px!important; left: 5px!important;" : ""}
+                    ${anura.platform.type === "mobile" ? "top: 5px!important; left: 5px!important;" : ""}
                 `}
 				on:pointerover={() => {
 					this.mouseover = true;
@@ -175,10 +175,7 @@ class WMWindow extends EventTarget implements Process {
 					on:pointerdown={(evt: PointerEvent) => {
 						deactivateFrames();
 
-						if (
-							anura.platform.type !== "mobile" &&
-							anura.platform.type !== "tablet"
-						) {
+						if (anura.platform.type !== "mobile") {
 							this.dragging = true;
 							this.originalLeft = this.element.offsetLeft;
 							this.originalTop = this.element.offsetTop;
@@ -345,11 +342,7 @@ class WMWindow extends EventTarget implements Process {
 			const currentResizer = resizers[i];
 			currentResizer.addEventListener("pointerdown", (e: PointerEvent) => {
 				e.preventDefault();
-				if (
-					anura.platform.type === "mobile" ||
-					anura.platform.type === "tablet"
-				)
-					return;
+				if (anura.platform.type === "mobile") return;
 				original_width = parseFloat(
 					getComputedStyle(this.element, null)
 						.getPropertyValue("width")
@@ -502,7 +495,7 @@ class WMWindow extends EventTarget implements Process {
 		if (!anura.settings.get("disable-animation"))
 			this.element.classList.add("scaletransition");
 
-		if (anura.platform.type === "mobile" || anura.platform.type === "tablet") {
+		if (anura.platform.type === "mobile") {
 			this.maximize();
 		}
 
@@ -1222,7 +1215,7 @@ let AliceWM = {
 		const win = new WMWindow(wininfo, app);
 		document.body.appendChild(win.element);
 		win.focus();
-		if (anura.platform.type !== "mobile" && anura.platform.type !== "tablet") {
+		if (anura.platform.type !== "mobile") {
 			center(win.element);
 		}
 		return win;

@@ -28,6 +28,10 @@
 	height: 12px;
 }
 
+body.platform-tablet .aliceWMwin svg {
+	height: 12px;
+}
+
 .scaletransition {
 	transition:
 		visibility 0s,
@@ -119,7 +123,7 @@ body.platform-mobile .aliceWMwin .title {
 	height: 21px; /* just big enough to hide behind taskbar */
 }
 body.platform-tablet .aliceWMwin .title {
-	height: 21px; /* just big enough to hide behind taskbar */
+	height: 40px;
 }
 
 .aliceWMwin .titleContent {
@@ -157,6 +161,14 @@ body.platform-tablet .aliceWMwin .title {
 	flex-shrink: 0;
 	transition: background-color 0.2s ease-in-out;
 	z-index: 2;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+body.platform-tablet .aliceWMwin .windowButton {
+	margin: 4px;
 }
 
 body.platform-mobile .aliceWMwin .windowButton.maximize {
