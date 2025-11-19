@@ -28,6 +28,7 @@
 	height: 12px;
 }
 
+body.display-touch .aliceWMwin svg,
 body.platform-tablet .aliceWMwin svg {
 	height: 12px;
 }
@@ -122,6 +123,7 @@ body.platform-mobile .aliceWMwin {
 body.platform-mobile .aliceWMwin .title {
 	height: 21px; /* just big enough to hide behind taskbar */
 }
+body.display-touch .aliceWMwin .title,
 body.platform-tablet .aliceWMwin .title {
 	height: 40px;
 }
@@ -167,6 +169,7 @@ body.platform-tablet .aliceWMwin .title {
 	justify-content: center;
 }
 
+body.display-touch .aliceWMwin .windowButton,
 body.platform-tablet .aliceWMwin .windowButton {
 	margin: 4px;
 }
@@ -179,6 +182,7 @@ body.platform-mobile .aliceWMwin .windowButton.maximize {
 	font-size: 16px;
 }
 
+body.display-touch .aliceWMwin .windowButton > span,
 body.platform-mobile .aliceWMwin .windowButton > span,
 body.platform-tablet .aliceWMwin .windowButton > span {
 	font-size: 18px;
