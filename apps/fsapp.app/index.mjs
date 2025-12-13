@@ -107,11 +107,11 @@ self.loadPath = async (path) => {
 	table.innerHTML = "";
 	for (const file of files) {
 		const stats = await fs.promises.stat(`${path}/${file}`);
+		const ext = file.split("/").pop().split(".").pop();
 		let element;
 		if (stats.isDirectory()) {
-			element = html`<${Item} type="dir" path=${path} file=${file} stats=${stats}></${Item}>`;
+			element = html`<${Item} type="dir" path=${path} file=${file} stats=${stats} ext=${ext}></${Item}>`;
 		} else {
-			const ext = file.split("/").pop().split(".").pop();
 			if (
 				self.filePicker &&
 				self.filePicker.type !== "dir" &&
@@ -119,7 +119,7 @@ self.loadPath = async (path) => {
 			) {
 				continue;
 			}
-			element = html`<${Item} type="file" path=${path} file=${file} stats=${stats}></${Item}>`;
+			element = html`<${Item} type="file" path=${path} file=${file} stats=${stats} ext=${ext}></${Item}>`;
 		}
 		// oh my god this is horrid
 		table.appendChild(element.children[1].children[0]);

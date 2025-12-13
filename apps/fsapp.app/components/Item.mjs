@@ -76,9 +76,15 @@ function onClick(e) {
 
 export function Item() {
 	this.absolutePath = `${this.path}/${this.file}`.replace("//", "/");
-	this.icon = anura.files.fallbackIcon;
-	this.description = "Anura File";
+	if (this.type === "file") {
+		this.icon = anura.files.fallbackIcon;
+		this.description = "Anura File";
+	} else {
+		this.icon = anura.files.folderIcon;
+		this.description = "Folder"
+	}
 	this.mount = async () => {
+		if (this.type === "dir" && (this.ext !== "app" && this.ext !== "lib")) return;
 		try {
 			const iconURL = await anura.files.getIcon(this.absolutePath);
 			this.icon = iconURL;
@@ -108,7 +114,7 @@ export function Item() {
                     <img class="icon" src=${use(this.icon)}></img>
                 </td>
                 <td id="name">${this.file}</td>
-                <td id="size">${formatBytes(this.stats.size)}</td>
+                <td id="size">${this.type === "file" ? formatBytes(this.stats.size) : "N/A"}</td>
                 <td id="description">${use(this.description)}</td>
                 <td id="date">${new Date(this.stats.mtime).toLocaleString()}</td>
             </tr>
