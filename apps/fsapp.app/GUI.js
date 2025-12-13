@@ -38,14 +38,6 @@ newcontextmenu.addItem("Download", function () {
 	download();
 });
 
-appcontextmenu.addItem("Install (Session)", function () {
-	installSession();
-});
-
-appcontextmenu.addItem("Install (Permanent)", function () {
-	installPermanent();
-});
-
 appcontextmenu.addItem("Navigate", function () {
 	navigate();
 });

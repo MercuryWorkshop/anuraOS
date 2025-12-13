@@ -1,14 +1,36 @@
-import { createAppView, getAppIcon } from "./pages/appview/appview.js";
+import {
+	createArchiveAppView,
+	createFolderAppView,
+	getArchiveAppIcon,
+	getFolderAppIcon,
+} from "./appHandler.js";
 
 const { ShortcutApp } = await anura.import("anura.globalscope");
 
 const icons = await (await fetch(localPathToURL("icons.json"))).json();
 
 export function openFile(path) {
-	const fs = anura.fs || Filer.fs;
-	// let AliceWM = AliceWM || window.parent.AliceWM
+	async function openApp(path) {
+		const stat = await anura.fs.promises.stat(path);
+		if (stat.isDirectory()) {
+			let manifest = await anura.fs.promises.readFile(`${path}/manifest.json`);
+			manifest = JSON.parse(manifest);
+			if (anura.apps[manifest.package]) {
+				anura.apps[manifest.package].open();
+				return;
+			}
+			createFolderAppView(path, "app");
+		} else {
+			// Shortcut file
+			const data = await anura.fs.promises.readFile(path);
+			const app = new ShortcutApp(path, JSON.parse(data));
+			console.log(app);
+			await app.open();
+		}
+	}
+
 	async function openImage(path, mimetype) {
-		const data = await fs.promises.readFile(path);
+		const data = await anura.fs.promises.readFile(path);
 		let fileView = anura.wm.createGeneric("Image File");
 		fileView.content.style.overflow = "auto";
 		fileView.content.style.background = "black";
@@ -31,7 +53,7 @@ export function openFile(path) {
 	}
 
 	async function openPDF(path) {
-		const data = await fs.promises.readFile(path);
+		const data = await anura.fs.promises.readFile(path);
 		let fileView = anura.wm.createGeneric("PDF File");
 		fileView.content.style.overflow = "auto";
 		let bloburl = URL.createObjectURL(
@@ -48,7 +70,7 @@ export function openFile(path) {
 	}
 
 	async function openAudio(path, mimetype) {
-		const data = await fs.promises.readFile(path);
+		const data = await anura.fs.promises.readFile(path);
 		let fileView = anura.wm.createGeneric("Audio File");
 		fileView.content.parentElement.style.width = "300px";
 		fileView.content.parentElement.style.height = "83px";
@@ -64,7 +86,7 @@ export function openFile(path) {
 	}
 
 	async function openVideo(path, mimetype) {
-		const data = await fs.promises.readFile(path);
+		const data = await anura.fs.promises.readFile(path);
 		let fileView = anura.wm.createGeneric("Video File");
 		fileView.content.style.overflow = "hidden";
 		fileView.content.style.backgroundColor = "black";
@@ -84,7 +106,7 @@ export function openFile(path) {
 	}
 
 	async function openText(path) {
-		const data = await fs.promises.readFile(path);
+		const data = await anura.fs.promises.readFile(path);
 		let fileView = anura.wm.createGeneric("Simple Text Editor");
 		fileView.content.style.overflow = "auto";
 		fileView.content.style.backgroundColor = "var(--material-bg)";
@@ -110,7 +132,7 @@ export function openFile(path) {
 	}
 
 	async function openHTML(path) {
-		const data = await fs.promises.readFile(path);
+		const data = await anura.fs.promises.readFile(path);
 		let fileView = anura.wm.createGeneric("HTML Viewer");
 		let iframe = document.createElement("iframe");
 		iframe.setAttribute(
@@ -121,34 +143,23 @@ export function openFile(path) {
 		fileView.content.appendChild(iframe);
 	}
 
-	async function openApp(path) {
-		const stat = await fs.promises.stat(path);
-		if (stat.isDirectory()) {
-			console.error("TODO: Move special folder execution to libfileview");
-			anura.dialog.alert(
-				"Special folder execution is not yet implemented in libfileview. You should not be seeing this message unless you are a developer, if you are, please fix it. If you are not, please report this issue.",
-			);
-		} else {
-			// Shortcut file
-			const data = await fs.promises.readFile(path);
-			const app = new ShortcutApp(path, JSON.parse(data));
-			console.log(app);
-			await app.open();
-		}
-	}
-
 	switch (path.split(".").slice("-2").join(".")) {
 		case "app.zip":
-			createAppView(path, "app");
+			createArchiveAppView(path, "app");
 			return;
 		case "lib.zip":
-			createAppView(path, "lib");
+			createArchiveAppView(path, "lib");
 			return;
 		default:
 			break;
 	}
 	let ext = path.split(".").slice("-1")[0];
 	switch (ext) {
+		case "app":
+			openApp(path);
+			break;
+		case "lib":
+			break;
 		case "txt":
 		case "js":
 		case "mjs":
@@ -203,9 +214,6 @@ export function openFile(path) {
 		case "html":
 			openHTML(path);
 			break;
-		case "app":
-			openApp(path);
-			break;
 		default:
 			openText(path);
 	}
@@ -214,21 +222,18 @@ export function openFile(path) {
 export async function getIcon(path) {
 	switch (path.split(".").slice("-2").join(".")) {
 		case "app.zip":
-			return getAppIcon(path);
 		case "lib.zip":
-			return getAppIcon(path);
+			return getArchiveAppIcon(path);
 		default:
 			break;
 	}
+
 	let ext = path.split(".").slice("-1")[0];
 
 	if (ext === "app") {
 		const stat = await anura.fs.promises.stat(path);
 		if (stat.isDirectory()) {
-			console.error("TODO: Move special folder execution to libfileview");
-			anura.dialog.alert(
-				"Special folder execution is not yet implemented in libfileview. You should not be seeing this message unless you are a developer, if you are, please fix it. If you are not, please report this issue.",
-			);
+			return await getFolderAppIcon(path);
 		} else {
 			// Shortcut file
 			const app = new ShortcutApp(
@@ -240,6 +245,11 @@ export async function getIcon(path) {
 			return new URL(app.icon, top.location.href).href;
 		}
 	}
+
+	if (ext === "lib") {
+		return await getFolderAppIcon(path);
+	}
+
 	let iconObject = icons.files.find((icon) => icon.ext === ext);
 	if (iconObject) {
 		return localPathToURL(iconObject.icon);
@@ -248,7 +258,7 @@ export async function getIcon(path) {
 	return localPathToURL(icons.default);
 }
 
-export function getFileType(path) {
+export async function getFileType(path) {
 	switch (path.split(".").slice("-2").join(".")) {
 		case "app.zip":
 			return "Anura App Archive";
@@ -259,6 +269,11 @@ export function getFileType(path) {
 	}
 
 	const ext = path.split(".").slice("-1")[0];
+
+	if (ext === "app" || ext === "lib") {
+		// TODO: dont assume application or library by file extension, actually check
+		return `Anura ${ext == "app" ? "Application" : "Library"}`;
+	}
 
 	const iconObject = icons.files.find((icon) => icon.ext === ext);
 	if (iconObject) {

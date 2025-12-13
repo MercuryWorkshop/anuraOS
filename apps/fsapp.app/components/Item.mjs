@@ -74,17 +74,17 @@ function onClick(e) {
 	}
 }
 
-export function File() {
+export function Item() {
+	this.absolutePath = `${this.path}/${this.file}`.replace("//", "/");
+	this.icon = anura.files.fallbackIcon;
+	this.description = "Anura File";
 	this.mount = async () => {
-		this.absolutePath = `${this.path}/${this.file}`;
-		this.icon = anura.files.fallbackIcon;
 		try {
 			const iconURL = await anura.files.getIcon(this.absolutePath);
 			this.icon = iconURL;
 		} catch (e) {
 			console.error(e);
 		}
-		this.description = "Anura File";
 		try {
 			const fileType = await anura.files.getFileType(this.absolutePath);
 			this.description = fileType;
@@ -101,7 +101,7 @@ export function File() {
                 on:mouseleave=${(e) => onMouseLeave(e)}
                 on:contextmenu=${(e) => onContextMenu(e)}
                 on:click=${(e) => onClick(e)}
-                data-type="file"
+                data-type=${this.type}
                 data-path=${use(this.absolutePath)}
             >
                 <td id="iconContainer">
@@ -109,53 +109,6 @@ export function File() {
                 </td>
                 <td id="name">${this.file}</td>
                 <td id="size">${formatBytes(this.stats.size)}</td>
-                <td id="description">${use(this.description)}</td>
-                <td id="date">${new Date(this.stats.mtime).toLocaleString()}</td>
-            </tr>
-        </tbody>
-        </table>
-    `;
-}
-
-export function Folder() {
-	this.mount = async () => {
-		this.absolutePath = `${this.path}/${this.file}`;
-		this.description = "Folder";
-		this.iconElement.src = anura.files.folderIcon;
-		try {
-			let manifestPath = `${this.absolutePath}/manifest.json`;
-
-			const data = await fs.promises.readFile(manifestPath);
-			let manifest = JSON.parse(data);
-			let folderExt = this.file.split(".").slice("-1")[0];
-
-			this.iconElement.src = `/fs${this.absolutePath}/${manifest.icon}`;
-			this.iconElement.onerror = () => {
-				this.iconElement.src = anura.files.folderIcon;
-				this.description = "Folder";
-			};
-			this.description = `Anura ${folderExt == "app" ? "Application" : "Library"}`;
-		} catch (error) {
-			this.iconElement.src = anura.files.folderIcon;
-		}
-	};
-	return html`
-        <table>
-        <thead></thead>
-        <tbody>
-            <tr
-                on:mouseenter=${(e) => onMouseEnter(e)}
-                on:mouseleave=${(e) => onMouseLeave(e)}
-                on:contextmenu=${(e) => onContextMenu(e)}
-                on:click=${(e) => onClick(e)}
-                data-type="dir"
-                data-path=${use(this.absolutePath)}
-            >
-                <td id="iconContainer">
-                    <img class="icon" bind:this=${use(this.iconElement)}></img>
-                </td>
-                <td id="name">${this.file}/</td>
-                <td id="size">N/A</td>
                 <td id="description">${use(this.description)}</td>
                 <td id="date">${new Date(this.stats.mtime).toLocaleString()}</td>
             </tr>

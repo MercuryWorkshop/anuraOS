@@ -2,6 +2,7 @@
 self.fflate = await anura.import("npm:fflate");
 self.mime = await anura.import("npm:mime");
 
+// globals
 self.currentlySelected = [];
 self.clipboard = [];
 self.removeAfterPaste = false;
@@ -11,7 +12,7 @@ self.Buffer = Filer.Buffer;
 self.sh = new anura.fs.Shell();
 
 // components
-import { File, Folder } from "./components/File.mjs";
+import { Item } from "./components/Item.mjs";
 import { TopBar } from "./components/TopBar.mjs";
 import { SideBar } from "./components/SideBar.mjs";
 import { Selector } from "./components/Selector.mjs";
@@ -106,23 +107,22 @@ self.loadPath = async (path) => {
 	table.innerHTML = "";
 	for (const file of files) {
 		const stats = await fs.promises.stat(`${path}/${file}`);
+		let element;
 		if (stats.isDirectory()) {
-			const element = html`<${Folder} path=${path} file=${file} stats=${stats}></${File}>`;
-			// oh my god this is horrid
-			table.appendChild(element.children[1].children[0]);
+			element = html`<${Item} type="dir" path=${path} file=${file} stats=${stats}></${Item}>`;
 		} else {
 			const ext = file.split("/").pop().split(".").pop();
-			const element = html`<${File} path=${path} file=${file} stats=${stats}></${File}>`;
 			if (
 				self.filePicker &&
 				self.filePicker.type !== "dir" &&
 				self.filePicker.regex.test(ext)
 			) {
-				table.appendChild(element.children[1].children[0]);
-			} else if (!self.filePicker) {
-				table.appendChild(element.children[1].children[0]);
+				continue;
 			}
+			element = html`<${Item} type="file" path=${path} file=${file} stats=${stats}></${Item}>`;
 		}
+		// oh my god this is horrid
+		table.appendChild(element.children[1].children[0]);
 	}
 };
 
