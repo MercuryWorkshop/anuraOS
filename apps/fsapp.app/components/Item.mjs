@@ -81,10 +81,10 @@ export function Item() {
 		this.description = "Anura File";
 	} else {
 		this.icon = anura.files.folderIcon;
-		this.description = "Folder"
+		this.description = "Folder";
 	}
 	this.mount = async () => {
-		if (this.type === "dir" && (this.ext !== "app" && this.ext !== "lib")) return;
+		if (this.type === "dir" && this.ext !== "app" && this.ext !== "lib") return;
 		try {
 			const iconURL = await anura.files.getIcon(this.absolutePath);
 			this.icon = iconURL;
