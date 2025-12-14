@@ -8,6 +8,7 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link rel="stylesheet" href="/assets/materialsymbols.css" />
 		<link rel="stylesheet" href="/assets/matter.css" />
+		<link rel="manifest" href="/manifest.json" />
 		<title>AnuraOS</title>
 		<meta name="title" content="AnuraOS" />
 		<meta
@@ -31,101 +32,109 @@
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 		<meta name="darkreader-lock" />
 
-		<link rel="apple-touch-icon" href="pwa_icon.png" />
-		<link rel="apple-touch-icon-precomposed" href="pwa_icon.png" />
-		<link rel="shortcut icon" type="image/png" href="icon.png" />
+		<link rel="apple-touch-icon" href="/pwa_icon.png" />
+		<link rel="apple-touch-icon-precomposed" href="/pwa_icon.png" />
+		<link rel="shortcut icon" type="image/png" href="/icon.png" />
 		<script src="/libs/idb-keyval/idb-keyval.js"></script>
 		<script type="text/javascript" src="/libs/dreamland/all.js"></script>
-		<!-- Store is replaced internally -->
-		<!-- <script type="text/javascript" src="dreamland/store.js"></script> -->
+		<!-- filesystem -->
+		<script src="/libs/filer/filer.min.js" crossorigin></script>
 		<script
 			type="text/javascript"
-			src="lib/networking/wisp-client-js/wisp.js"
-		></script>
-		<script type="text/javascript" src="lib/networking/WispUtils.js"></script>
-		<script type="text/javascript" src="lib/networking/WispBus.js"></script>
-		<script type="text/javascript" src="lib/api/Filesystem.js"></script>
-		<script type="text/javascript" src="lib/api/FilerFS.js"></script>
-		<script type="text/javascript" src="lib/api/LocalFS.js"></script>
-		<script type="text/javascript" src="lib/api/Platform.js"></script>
-		<script type="text/javascript" src="lib/api/Processes.js"></script>
-		<script type="text/javascript" src="lib/anurad.js"></script>
-		<script type="text/javascript" src="lib/api/Theme.js"></script>
-		<script type="text/javascript" src="lib/libv86.js"></script>
-		<script src="libs/filer/filer.min.js" crossorigin></script>
-
-		<script type="text/javascript" src="lib/libs/Lib.js"></script>
-		<script type="text/javascript" src="lib/libs/ExternalLib.js"></script>
-		<script type="text/javascript" src="lib/libs/BrowserLib.js"></script>
-		<script type="text/javascript" src="lib/libs/AnuradHelpersLib.js"></script>
-
-		<script type="text/javascript" src="lib/coreapps/App.js"></script>
-		<script type="text/javascript" src="lib/coreapps/ShortcutApp.js"></script>
-
-		<script type="text/javascript" src="lib/coreapps/XAppStub.js"></script>
-		<script type="text/javascript" src="lib/coreapps/XFrogApp.js"></script>
-		<!-- <script
-            type="text/javascript"
-            src="lib/coreapps/ThemeEditor.js"
-        ></script> -->
-		<script type="text/javascript" src="lib/coreapps/ExploreApp.js"></script>
-		<script type="text/javascript" src="lib/coreapps/GenericApp.js"></script>
-		<script type="text/javascript" src="lib/coreapps/ExternalApp.js"></script>
-		<script type="text/javascript" src="lib/coreapps/x86MgrApp.js"></script>
-		<script type="text/javascript" src="lib/coreapps/RecoveryApp.js"></script>
-		<script type="text/javascript" src="lib/networking/Networking.js"></script>
-		<script type="text/javascript" src="lib/coreapps/SettingsApp.js"></script>
-		<script type="text/javascript" src="lib/coreapps/TaskManager.js"></script>
-		<script
-			type="text/javascript"
-			src="lib/coreapps/WallpaperAndStyle.js"
-		></script>
-		<script type="text/javascript" src="lib/coreapps/BrowserApp.js"></script>
-		<script type="text/javascript" src="lib/coreapps/AboutApp.js"></script>
-		<script type="text/javascript" src="lib/coreapps/Dialog.js"></script>
-		<script type="text/javascript" src="lib/coreapps/RegEdit.js"></script>
-		<script
-			type="text/javascript"
-			src="lib/libs/NodePolyfills/NodeFS.js"
+			src="/lib/api/filesystem/Filesystem.js"
 		></script>
 		<script
 			type="text/javascript"
-			src="lib/libs/NodePolyfills/NodePrelude.js"
+			src="/lib/api/filesystem/FilerFS.js"
 		></script>
-		<script type="text/javascript" src="lib/libs/Vendored/Comlink.js"></script>
-		<script type="text/javascript" src="lib/libs/Vendored/Mime.js"></script>
-		<script type="text/javascript" src="lib/libs/Vendored/Fflate.js"></script>
-		<script type="text/javascript" src="lib/v86.js"></script>
-		<script type="text/javascript" src="lib/api/WmApi.js"></script>
-		<script type="text/javascript" src="lib/AliceWM.js"></script>
-		<script type="text/javascript" src="lib/Taskbar.js"></script>
-		<script type="text/javascript" src="lib/api/ContextMenu.js"></script>
-		<script type="text/javascript" src="lib/Launcher.js"></script>
-		<script type="text/javascript" src="lib/QuickSettings.js"></script>
-		<script type="text/javascript" src="lib/Calendar.js"></script>
-		<script type="text/javascript" src="lib/Bootsplash.js"></script>
-		<script type="text/javascript" src="lib/oobe/OobeView.js"></script>
-
-		<script type="text/javascript" src="lib/Utils.js"></script>
-		<script type="text/javascript" src="lib/api/URIHandler.js"></script>
-		<script type="text/javascript" src="lib/api/Files.js"></script>
-		<script type="text/javascript" src="lib/api/UI.js"></script>
-		<script type="text/javascript" src="lib/Anura.js"></script>
-		<script type="text/javascript" src="lib/api/Settings.js"></script>
 		<script
 			type="text/javascript"
-			src="lib/api/NotificationService.js"
+			src="/lib/api/filesystem/LocalFS.js"
 		></script>
-		<script type="text/javascript" src="lib/AltTabView.js"></script>
-		<script type="text/javascript" src="lib/api/Systray.js"></script>
+		<!-- networking -->
+		<script
+			type="text/javascript"
+			src="/lib/api/net/wisp-client-js/wisp.js"
+		></script>
+		<script type="text/javascript" src="/libs/bare-mux/bare.cjs"></script>
 		<!-- <script type="text/javascript" src="libs/bare-mux/index.js"></script> -->
-		<script type="text/javascript" src="libs/bare-mux/bare.cjs"></script>
-		<script type="text/javascript" src="lib/libs/AnuraGlobalsLib.js"></script>
-		<script type="text/javascript" src="lib/Boot.js"></script>
-		<script type="module" src="lib/bcc.js"></script>
+		<script type="module" src="/lib/bcc.js"></script>
+		<script type="text/javascript" src="/lib/api/net/Networking.js"></script>
+		<script type="text/javascript" src="/lib/api/net/WispUtils.js"></script>
+		<script type="text/javascript" src="/lib/api/net/WispBus.js"></script>
+		<!-- apis -->
+		<script type="text/javascript" src="/lib/api/ContextMenu.js"></script>
+		<script type="text/javascript" src="/lib/api/Files.js"></script>
+		<script
+			type="text/javascript"
+			src="/lib/api/NotificationService.js"
+		></script>
+		<script type="text/javascript" src="/lib/api/Platform.js"></script>
+		<script type="text/javascript" src="/lib/api/Processes.js"></script>
+		<script type="text/javascript" src="/lib/api/Settings.js"></script>
+		<script type="text/javascript" src="/lib/api/Systray.js"></script>
+		<script type="text/javascript" src="/lib/api/Theme.js"></script>
+		<script type="text/javascript" src="/lib/api/UI.js"></script>
+		<script type="text/javascript" src="/lib/api/URI.js"></script>
+		<script type="text/javascript" src="/lib/libv86.js"></script>
+		<script type="text/javascript" src="/lib/api/v86.js"></script>
+		<script type="text/javascript" src="/lib/api/WM.js"></script>
+		<script type="text/javascript" src="/lib/anurad.js"></script>
+		<!-- base libs -->
+		<script type="text/javascript" src="/lib/libs/Lib.js"></script>
+		<script type="text/javascript" src="/lib/libs/ExternalLib.js"></script>
+		<!-- built in libs -->
+		<script type="text/javascript" src="/lib/libs/AnuraGlobalsLib.js"></script>
+		<script type="text/javascript" src="/lib/libs/BrowserLib.js"></script>
+		<script type="text/javascript" src="/lib/libs/AnuradHelpersLib.js"></script>
+		<!-- vendored libs -->
+		<script type="text/javascript" src="/lib/libs/Vendored/Comlink.js"></script>
+		<script type="text/javascript" src="/lib/libs/Vendored/Mime.js"></script>
+		<script type="text/javascript" src="/lib/libs/Vendored/Fflate.js"></script>
+		<!-- node polyfills -->
+		<script
+			type="text/javascript"
+			src="/lib/libs/NodePolyfills/NodeFS.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="/lib/libs/NodePolyfills/NodePrelude.js"
+		></script>
+		<!-- Base Apps -->
+		<script type="text/javascript" src="/lib/coreapps/App.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/ShortcutApp.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/GenericApp.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/ExternalApp.js"></script>
 
-		<link rel="manifest" href="manifest.json" />
+		<script type="text/javascript" src="/lib/coreapps/ExploreApp.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/RecoveryApp.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/SettingsApp.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/TaskManager.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/BrowserApp.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/Dialog.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/AboutApp.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/RegEdit.js"></script>
+		<script
+			type="text/javascript"
+			src="/lib/coreapps/WallpaperAndStyle.js"
+		></script>
+		<script type="text/javascript" src="/lib/coreapps/x86MgrApp.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/XAppStub.js"></script>
+		<script type="text/javascript" src="/lib/coreapps/XFrogApp.js"></script>
+		<!-- desktop things -->
+		<script type="text/javascript" src="/lib/AliceWM.js"></script>
+		<script type="text/javascript" src="/lib/Taskbar.js"></script>
+		<script type="text/javascript" src="/lib/Launcher.js"></script>
+		<script type="text/javascript" src="/lib/QuickSettings.js"></script>
+		<script type="text/javascript" src="/lib/Calendar.js"></script>
+		<script type="text/javascript" src="/lib/Bootsplash.js"></script>
+		<script type="text/javascript" src="/lib/oobe/OobeView.js"></script>
 
+		<script type="text/javascript" src="/lib/Utils.js"></script>
+		<script type="text/javascript" src="/lib/AltTabView.js"></script>
+		<!-- entrypoint -->
+		<script type="text/javascript" src="/lib/Anura.js"></script>
+		<script type="text/javascript" src="/lib/Boot.js"></script>
 		<!-- <script type="text/javascript" src="/dist.js"></script> -->
 		<!-- prod only ^ -->
 	</head>
