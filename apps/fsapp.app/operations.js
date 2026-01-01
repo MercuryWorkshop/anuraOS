@@ -346,15 +346,6 @@ async function rename() {
 	}
 }
 
-// Context menu version of the loadPath function
-// Used to enter app and lib folders, as double
-// clicking on them will install them.
-function navigate() {
-	if (currentlySelected.length == 1) {
-		loadPath(currentlySelected[0].getAttribute("data-path"));
-	}
-}
-
 function unzip(zip) {
 	return new Promise((res, rej) => {
 		fflate.unzip(zip, (err, unzipped) => {

@@ -177,7 +177,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 			// Ignore, the directory already exists so we don't need to create it
 		}
 		const fs = new LocalFS(dirHandle, anuraPath);
-		anura.fs.installProvider(fs);
+		anura?.fs.installProvider(fs);
 		const textde = new TextDecoder();
 		try {
 			fs.stats = new Map(
