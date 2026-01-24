@@ -1,6 +1,6 @@
 class WMAPI {
 	windows: WeakRef<WMWindow>[] = [];
-	hasFullscreenWindow = false;
+
 	create(ctx: App, info: WindowInformation | string): WMWindow {
 		const win = AliceWM.create(info as unknown as any, ctx);
 		win.focus();

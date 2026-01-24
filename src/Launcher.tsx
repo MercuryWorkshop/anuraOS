@@ -214,18 +214,13 @@ class Launcher {
 		this.element = (
 			<Panel
 				id="launcher"
-				width={
-					anura.platform.type === "mobile" || anura.platform.type === "tablet"
-						? "100%"
-						: "min(70%, 35em)"
-				}
+				width={anura.platform.type === "mobile" ? "100%" : "min(70%, 35em)"}
 				height={use(this.state.active, (active) =>
 					active
-						? anura.platform.type === "mobile" ||
-							anura.platform.type === "tablet"
+						? anura.platform.type === "mobile"
 							? "calc(100% - 75px)"
 							: "min(80%, 40em)"
-						: anura.platform.type == "mobile" || anura.platform.type == "tablet"
+						: anura.platform.type == "mobile"
 							? "calc(100% - 75px)"
 							: "min(30%, 20em)",
 				)}

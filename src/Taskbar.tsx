@@ -23,10 +23,7 @@ class Taskbar {
 		pinnedApps: [],
 		activeApps: [],
 		showBar: false,
-		rounded:
-			anura.platform.type === "mobile" || anura.platform.type === "tablet"
-				? false
-				: true,
+		rounded: anura.platform.type !== "mobile",
 		time: "",
 		date: "",
 		bat_icon: "battery_0_bar",

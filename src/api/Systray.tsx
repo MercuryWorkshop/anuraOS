@@ -1,8 +1,14 @@
+interface SystrayInit {
+	onclick: (event: MouseEvent) => void;
+	onrightclick: (event: MouseEvent) => void;
+	icon: string;
+	tooltip: string;
+}
 class SystrayIcon {
 	element: HTMLImageElement = document.createElement("img");
 	onclick = (event: MouseEvent) => {};
 	onrightclick = (event: MouseEvent) => {};
-	constructor(template: any) {
+	constructor(init?: SystrayInit) {
 		this.element.onclick = (event) => {
 			event.preventDefault();
 			if (this.onclick) {
@@ -26,18 +32,18 @@ class SystrayIcon {
 			event.stopPropagation();
 		};
 		this.element.style.height = "1.5em";
-		if (template) {
-			if (template.onclick) {
-				this.onclick = template.onclick;
+		if (init) {
+			if (init.onclick) {
+				this.onclick = init.onclick;
 			}
-			if (template.onrightclick) {
-				this.onrightclick = template.onrightclick;
+			if (init.onrightclick) {
+				this.onrightclick = init.onrightclick;
 			}
-			if (template.icon) {
-				this.icon = template.icon;
+			if (init.icon) {
+				this.icon = init.icon;
 			}
-			if (template.tooltip) {
-				this.tooltip = template.tooltip;
+			if (init.tooltip) {
+				this.tooltip = init.tooltip;
 			}
 		}
 	}
@@ -65,8 +71,9 @@ class Systray {
 			"systray",
 		)[0]! as HTMLSpanElement;
 	}
-	create = (template?: any) => {
-		const systrayIcon = new SystrayIcon(template);
+
+	create(init?: SystrayInit) {
+		const systrayIcon = new SystrayIcon(init);
 		this.icons.push(systrayIcon);
 		systrayIcon.destroy = () => {
 			delete this.icons[this.icons.indexOf(systrayIcon)];
@@ -74,5 +81,5 @@ class Systray {
 		};
 		this.element.appendChild(systrayIcon.element);
 		return systrayIcon;
-	};
+	}
 }

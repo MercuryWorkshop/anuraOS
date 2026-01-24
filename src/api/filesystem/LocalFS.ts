@@ -177,7 +177,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 			// Ignore, the directory already exists so we don't need to create it
 		}
 		const fs = new LocalFS(dirHandle, anuraPath);
-		anura.fs.installProvider(fs);
+		anura?.fs.installProvider(fs);
 		const textde = new TextDecoder();
 		try {
 			fs.stats = new Map(
@@ -194,24 +194,7 @@ class LocalFS extends AFSProvider<LocalFSStats> {
 		return fs;
 	}
 	static async newRootOPFS() {
-		const anuraPath = "/";
-		const dirHandle = await navigator.storage.getDirectory();
-
-		const fs = new LocalFS(dirHandle, anuraPath);
-		const textde = new TextDecoder();
-		try {
-			fs.stats = new Map(
-				JSON.parse(
-					textde.decode(
-						await fs.promises.readFile(anuraPath + "/.anura_stats"),
-					),
-				),
-			);
-		} catch (e: any) {
-			console.log("Error on mount, probably first mount ", e);
-		}
-
-		return fs;
+		return this.newOPFS("/");
 	}
 	static async new(anuraPath: string) {
 		let dirHandle;

@@ -1,9 +1,7 @@
 class ContextMenu {
-	large = false;
-	#isShown = false;
-	#element = (
-		<div class={`custom-menu${this.large ? " large" : ""}`} style=""></div>
-	);
+	large: boolean;
+	private isShown = false;
+	private element = (<div class={["custom-menu"]} style=""></div>);
 
 	item(text: string, callback: VoidFunction, icon?: string) {
 		return (
@@ -13,31 +11,29 @@ class ContextMenu {
 			</div>
 		);
 	}
+
 	constructor(large = false) {
 		this.large = large;
 		if (this.large) {
-			this.#element.classList.add("large"); // why
+			this.element.classList.add("large");
 		}
 		setTimeout(
 			() =>
 				document.addEventListener("click", (event) => {
-					const withinBoundaries = event.composedPath().includes(this.#element);
+					const withinBoundaries = event.composedPath().includes(this.element);
 
 					if (!withinBoundaries) {
-						this.#element.remove();
+						this.element.remove();
 					}
 				}),
 			100,
 		);
 	}
-	removeAllItems() {
-		this.#element.innerHTML = "";
-	}
 	addItem(text: string, callback: VoidFunction, icon?: string) {
-		this.#element.appendChild(
+		this.element.appendChild(
 			this.item(
 				text,
-				function () {
+				() => {
 					this.hide();
 					callback();
 				},
@@ -45,6 +41,11 @@ class ContextMenu {
 			),
 		);
 	}
+
+	removeAllItems() {
+		this.element.innerHTML = "";
+	}
+
 	show(x: number, y: number) {
 		// remove any existing context menus. i will admit this is a bit of a quick n dirty hack
 		if (document.querySelector(".custom-menu")) {
@@ -57,36 +58,35 @@ class ContextMenu {
 		}
 
 		// Reset out of bound fixes
-		this.#element.style.bottom = "";
-		this.#element.style.right = "";
+		this.element.style.bottom = "";
+		this.element.style.right = "";
 
-		this.#element.style.top = y.toString() + "px";
-		this.#element.style.left = x.toString() + "px";
-		document.body.appendChild(this.#element);
-		this.#isShown = true;
-		this.#element.focus();
-
+		this.element.style.top = y.toString() + "px";
+		this.element.style.left = x.toString() + "px";
+		document.body.appendChild(this.element);
+		this.isShown = true;
+		this.element.focus();
 		if (
-			this.#element.getBoundingClientRect().bottom >=
+			this.element.getBoundingClientRect().bottom >=
 			document.body.getBoundingClientRect().bottom
 		) {
-			this.#element.style.top = "";
-			this.#element.style.bottom = "0px";
+			this.element.style.top = "";
+			this.element.style.bottom = "0px";
 		}
 		if (
-			this.#element.getBoundingClientRect().right >=
+			this.element.getBoundingClientRect().right >=
 			document.body.getBoundingClientRect().right
 		) {
-			this.#element.style.left = "";
-			this.#element.style.right = "0px";
+			this.element.style.left = "";
+			this.element.style.right = "0px";
 		}
 
-		return this.#element;
+		return this.element;
 	}
 	hide() {
-		if (this.#isShown) {
-			document.body.removeChild(this.#element);
-			this.#isShown = false;
+		if (this.isShown) {
+			document.body.removeChild(this.element);
+			this.isShown = false;
 		}
 	}
 }

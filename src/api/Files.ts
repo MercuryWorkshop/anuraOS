@@ -152,7 +152,36 @@ class FilesAPI {
 				); // here, JSON.stringify is used to properly escape the string
 			}
 		}
-		// If no handler is found, return "Anura File"
+		// If no handler is found, try the default handler
+		return await this.defaultFileType(path);
+	}
+
+	async defaultFileType(path: string): Promise<string> {
+		const extHandlers = anura.settings.get("FileExts") || {};
+		if (extHandlers["default"]) {
+			const handler = extHandlers["default"];
+			if (handler.handler_type === "module") {
+				const handlerModule = await anura.import(handler.id);
+				if (!handlerModule) {
+					return "Anura File";
+				}
+				if (!handlerModule.getFileType) {
+					return "Anura File";
+				}
+				return handlerModule.getFileType(path);
+			}
+			if (handler.handler_type === "cjs") {
+				// Legacy handler, eval it
+				return eval(
+					(await (await fetch(handler.path)).text()) +
+						`if (getIcon) {
+                            getIcon(${JSON.stringify(path)})
+                        } else {
+                            ${JSON.stringify(this.fallbackIcon)}
+                        }`,
+				); // here, JSON.stringify is used to properly escape the string
+			}
+		}
 		return "Anura File";
 	}
 
