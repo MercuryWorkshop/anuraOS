@@ -13,3 +13,6 @@
 [submodule "x86_image_wizard/epoxy"]
 	path = x86_image_wizard/epoxy
 	url = https://github.com/MercuryWorkshop/epoxy-tls
+[submodule "anura-browserjs"]
+	path = anura-browserjs
+	url = https://github.com/MercuryWorkshop/anura-browserjs
