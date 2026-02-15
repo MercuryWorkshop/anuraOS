@@ -629,6 +629,7 @@ document.addEventListener("anura-login-completed", async () => {
 			alttab.onComboPress();
 		}
 		if (
+			!navigator.platform.toUpperCase().includes("MAC") &&
 			e.key.toLowerCase() === "meta" &&
 			anura.settings.get("launcher-keybind")
 		) {
