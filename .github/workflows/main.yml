@@ -52,7 +52,7 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: sudo apt update && sudo apt install -y git build-essential clang default-jre
+        run: sudo apt update && sudo apt install -y git build-essential clang default-jre gcc-multilib
 
       - name: Pack Anura
         run: make static
