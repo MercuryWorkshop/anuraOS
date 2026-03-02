@@ -139,10 +139,6 @@ window.addEventListener("load", async () => {
 		if (anura.settings.get("i-am-a-true-gangsta")) {
 			splashToRemove = gangstaBootsplash;
 			document.body.appendChild(gangstaBootsplash);
-		} else if (anura.config.tnbranding === true) {
-			splashToRemove = TNBootSplash;
-			document.body.appendChild(TNBootSplash);
-			setupTNBootsplash();
 		} else {
 			splashToRemove = bootsplash;
 			document.body.appendChild(bootsplash);
@@ -794,17 +790,4 @@ async function bootUserCustomizations() {
 	}
 
 	AnuradHelpers.setStage("anura.bootUserCustomizations");
-}
-
-function setupTNBootsplash() {
-	const TNMark = document.createElement("span");
-	TNMark.setAttribute("style", "position: absolute; bottom: 70px; right: 10px");
-	TNMark.innerHTML =
-		"Instance hosted by Titanium Network.<br>More mirrors at discord.gg/unblock";
-	TNMark.onclick = () => {
-		anura.apps["anura.browser"].open([
-			"https://discord.com/invite/unblock/login",
-		]);
-	};
-	document.body.appendChild(TNMark);
 }
