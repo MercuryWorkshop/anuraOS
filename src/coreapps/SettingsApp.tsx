@@ -304,7 +304,7 @@ class SettingsApp extends App {
 											"This will restart Anura. Are you sure?",
 										)
 									) {
-										anura.settings.set("milestone", "INVALID");
+										anura.settings.set("milestone", "__INVALID");
 										window.location.reload();
 									} else {
 										anura.settings.set(

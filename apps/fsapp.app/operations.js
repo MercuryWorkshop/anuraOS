@@ -62,6 +62,13 @@ async function fileAction(selected) {
 		var fileSelected = selected[0];
 		if (fileSelected.getAttribute("data-type") === "file") {
 			console.debug("Clicked on file");
+			if (
+				fileSelected.getAttribute("data-path").endsWith(".app.zip") ||
+				fileSelected.getAttribute("data-path").endsWith(".lib.zip")
+			) {
+				anura.files.open(fileSelected.getAttribute("data-path"));
+				return;
+			}
 			if (fileSelected.getAttribute("data-path").endsWith(".zip")) {
 				const data = await unzip(
 					await anura.fs.promises.readFile(

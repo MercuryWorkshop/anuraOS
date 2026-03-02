@@ -194,8 +194,9 @@ window.addEventListener("load", async () => {
 		}
 		if (isValidUUID(milestone.split("\n")[0]!)) {
 			const stored = anura.settings.get("milestone");
-			if (!stored) await anura.settings.set("milestone", milestone);
-			else if (stored !== milestone) {
+			if (!stored) {
+				await anura.settings.set("milestone", milestone);
+			} else if (stored !== milestone) {
 				await anura.settings.set("milestone", milestone);
 				if (anura.settings.get("use-sw-cache")) {
 					const tracker = document.getElementById("systemstatus")!;
