@@ -100,7 +100,7 @@ window.addEventListener("load", async () => {
 	const comlinksrc = "/libs/comlink/comlink.min.mjs";
 	const comlink = await import(comlinksrc);
 
-	let conf, milestone, instancemilestone;
+	let conf, milestone, commit;
 	let bootStrapFs = Filer.fs;
 
 	if (await (window as any).idbKeyval.get("bootFromOPFS")) {
@@ -109,6 +109,7 @@ window.addEventListener("load", async () => {
 	try {
 		conf = await (await fetch("/config.json")).json();
 		milestone = await (await fetch("/MILESTONE")).text();
+		commit = await (await fetch("/COMMIT")).text();
 
 		console.debug("writing config??");
 		await bootStrapFs.promises.writeFile(
@@ -187,11 +188,10 @@ window.addEventListener("load", async () => {
 	anura.processes.register(swProcess);
 
 	if (milestone) {
-		function isValidUUID(uuid: string) {
-			const regex =
-				/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-			return regex.test(uuid);
-		}
+		const isValidUUID = (uuid: string) =>
+			/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/.test(
+				uuid,
+			);
 		if (isValidUUID(milestone.split("\n")[0]!)) {
 			const stored = anura.settings.get("milestone");
 			if (!stored) {
@@ -222,7 +222,14 @@ window.addEventListener("load", async () => {
 			console.log("Anura update poisoning detected...");
 		}
 	}
-
+	const isGitRev = (hash: string) => /^[0-9a-f]{7,40}$/i.test(hash);
+	if (commit) {
+		if (isGitRev(commit.split("\n")[0]!)) {
+			await anura.settings.set("commit", commit);
+		} else {
+			console.warn("invalid commit hash from server, ignoring...");
+		}
+	}
 	// Register requirements for anurad
 	anura.registerLib(new AnuradHelpersLib());
 

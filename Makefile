@@ -160,9 +160,9 @@ public/config.json:
 	cp config.default.json public/config.json
 
 watch: bundle FORCE
-	npx tsc-watch --onSuccess "make css build/cache-load.json milestone" 
+	npx tsc-watch --onSuccess "make css build/cache-load.json milestone commit" 
 
-bundle: tsc css lint milestone
+bundle: tsc css lint milestone commit
 	mkdir -p build/artifacts
 
 ANURA_VERSION = $(shell jq -r '.version' package.json)
@@ -187,6 +187,8 @@ lint:
 	npx eslint . --fix
 milestone:
 	uuidgen > build/MILESTONE
+commit:
+	git rev-parse HEAD > build/COMMIT
 
 # prod: all
 #	npx google-closure-compiler --js build/lib/libv86.js build/assets/libs/filer.min.js build/lib/coreapps/ExternalApp.js build/lib/coreapps/x86MgrApp.js build/lib/coreapps/SettingsApp.js build/lib/coreapps/BrowserApp.js build/lib/v86.js build/lib/AliceWM.js build/lib/AliceJS.js build/lib/Taskbar.js build/lib/ContextMenu.js build/lib/api/ContextMenuAPI.js build/lib/Launcher.js build/lib/Bootsplash.js build/lib/oobe/OobeView.js build/lib/oobe/OobeWelcomeStep.js build/lib/oobe/OobeAssetsStep.js build/lib/Utils.js build/lib/Anura.js build/lib/api/Settings.js build/lib/api/NotificationService.js build/lib/Boot.js --js_output_file public/dist.js

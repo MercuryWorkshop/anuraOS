@@ -21,7 +21,17 @@ class AboutApp extends App {
 				<p>AnuraOS</p>
 				<p>
 					Version {anura.version.codename} ({anura.version.pretty}) (OS build{" "}
-					{this.getOSBuild()})
+					<button
+						on:click={() => {
+							anura.apps["anura.browser"].open([
+								`https://github.com/MercuryWorkshop/anuraOS/commit/${this.getOSBuild()}`,
+							]);
+						}}
+						class="aboutapp-link-button"
+					>
+						{this.getOSBuild()}
+					</button>
+					)
 				</p>
 				<p>© Mercury Workshop. All rights reserved.</p>
 				<br />
@@ -137,6 +147,8 @@ class AboutApp extends App {
 	}
 
 	getOSBuild(): string {
-		return anura.settings.get("milestone").slice(0, 7);
+		const commit = anura.settings.get("commit");
+		if (!commit) return "unknown";
+		return commit.slice(0, 7);
 	}
 }
