@@ -5,9 +5,9 @@ const Buffer = Filer.Buffer;
 const localPathToURL = (path) =>
 	import.meta.url.substring(0, import.meta.url.lastIndexOf("/")) + "/" + path;
 
-function unzip(zip) {
+function unzip(zip, filter) {
 	return new Promise((res, rej) => {
-		fflate.unzip(zip, (err, unzipped) => {
+		fflate.unzip(zip, filter, (err, unzipped) => {
 			if (err) rej(err);
 			else res(unzipped);
 		});
@@ -74,11 +74,24 @@ async function createArchiveAppView(path, type) {
 
 	path = path.split(".").slice(0, -1).join(".");
 
-	const zip = await unzip(new Uint8Array(data));
-	const manifest = JSON.parse(new TextDecoder().decode(zip["manifest.json"]));
-	const iconData = zip[manifest.icon];
+	const manifestZip = await unzip(
+		new Uint8Array(data),
+		(file) => file.name === "manifest.json",
+	);
+	const manifest = JSON.parse(
+		new TextDecoder().decode(manifestZip["manifest.json"]),
+	);
+	const iconZip = await unzip(
+		new Uint8Array(data),
+		(file) => file.name === manifest.icon,
+	);
+	const iconData = iconZip[manifest.icon];
 
 	const sessionCallback = async () => {
+		const zip = await unzip(
+			new Uint8Array(data),
+			(file) => file.name === "manifest.json",
+		);
 		anura.notifications.add({
 			title: "Installing for Session",
 			description: `${path.replace("//", "/")} is being installed, please wait`,
@@ -110,6 +123,10 @@ async function createArchiveAppView(path, type) {
 		}
 	};
 	const permanentCallback = async () => {
+		const zip = await unzip(
+			new Uint8Array(data),
+			(file) => file.name === "manifest.json",
+		);
 		anura.notifications.add({
 			title: "Installing",
 			description: `${path.replace("//", "/")} is being installed, please wait`,
@@ -204,9 +221,16 @@ async function createFolderAppView(path, type) {
 async function getArchiveAppIcon(path) {
 	let data = await anura.fs.promises.readFile(path);
 
-	const zip = await unzip(new Uint8Array(data));
+	const zip = await unzip(
+		new Uint8Array(data),
+		(file) => file.name === "manifest.json",
+	);
 	const manifest = JSON.parse(new TextDecoder().decode(zip["manifest.json"]));
-	const icon = new Blob([zip[manifest.icon]], {
+	const iconZip = await unzip(
+		new Uint8Array(data),
+		(file) => file.name === manifest.icon,
+	);
+	const icon = new Blob([iconZip[manifest.icon]], {
 		type: mime.default.getType(manifest.icon),
 	});
 	let iconUrl = URL.createObjectURL(icon);

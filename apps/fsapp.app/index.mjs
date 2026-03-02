@@ -3,13 +3,13 @@ self.fflate = await anura.import("npm:fflate");
 self.mime = await anura.import("npm:mime");
 
 // globals
+self.filePicker = false;
+self.fs = anura.fs;
+self.sh = new anura.fs.Shell();
+self.Buffer = Filer.Buffer;
 self.currentlySelected = [];
 self.clipboard = [];
 self.removeAfterPaste = false;
-self.filePicker = false;
-self.fs = anura.fs;
-self.Buffer = Filer.Buffer;
-self.sh = new anura.fs.Shell();
 
 // components
 import { Item } from "./components/Item.mjs";
