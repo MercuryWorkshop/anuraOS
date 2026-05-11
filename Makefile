@@ -14,8 +14,9 @@ full: all rootfs-alpine
 
 build/bootstrap: package.json server/package.json
 	mkdir -p build/lib
-	npm i
-	cd server; npm i
+	pnpm i
+	cd server
+	pnpm i
 	make hooks
 	>build/bootstrap
 
@@ -58,13 +59,13 @@ build/libs/comlink/comlink.min.mjs: build/bootstrap
 
 build/libs/workbox/version: build/bootstrap
 	mkdir -p build/libs/workbox
-	npx workbox-cli copyLibraries build/libs/workbox/
+	pnpx workbox-cli copyLibraries build/libs/workbox/
 	jq '.version' node_modules/workbox-build/package.json > build/libs/workbox/version
 
 build/libs/mime/mime.iife.js: build/bootstrap
 	mkdir -p build/libs/mime
 	cp -r node_modules/mime/dist/* build/libs/mime 
-	npx rollup -f iife build/libs/mime/src/index.js -o build/libs/mime/mime.iife.js -n mime --exports named
+	pnpx rollup -f iife build/libs/mime/src/index.js -o build/libs/mime/mime.iife.js -n mime --exports named
 	jq '.version' node_modules/mime/package.json > build/libs/mime/version
 
 build/libs/idb-keyval/idb-keyval.js: build/bootstrap
@@ -105,7 +106,7 @@ build/libs/fflate/browser.js: build/bootstrap
 
 build/libs/dreamland/all.js: dreamlandjs/src/*
 	mkdir -p build/libs/dreamland
-	cd dreamlandjs; npm i --no-package-lock --legacy-peer-deps; npm run build
+	cd dreamlandjs; npm i --no-package-lock --legacy-peer-deps; pnpm run build
 	cp dreamlandjs/dist/all.js build/libs/dreamland/all.js
 	cp dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
 	jq '.version' dreamlandjs/package.json > build/libs/dreamland/version
@@ -128,8 +129,10 @@ apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 
 bin/chimerix.ajs: chimerix/src/*
 	mkdir -p build/bin
-	cd chimerix; npm i
-	cd chimerix; npx rollup -c rollup.config.js
+	cd chimerix
+	pnpm i
+	cd chimerix
+	pnpx rollup -c rollup.config.js
 	cp chimerix/dist/chimerix.ajs bin/chimerix.ajs
 
 clean:
@@ -160,7 +163,7 @@ public/config.json:
 	cp config.default.json public/config.json
 
 watch: bundle FORCE
-	npx tsc-watch --onSuccess "make css build/cache-load.json milestone commit" 
+	pnpx tsc-watch --onSuccess "make css build/cache-load.json milestone commit" 
 
 bundle: tsc css lint milestone commit
 	mkdir -p build/artifacts
@@ -170,7 +173,7 @@ ANURA_VERSION = $(shell jq -r '.version' package.json)
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
-	npx tsc
+	pnpx tsc
 	mkdir -p anuraos-types
 	cd anuraos-types/; \
 	mkdir -p lib/
@@ -183,15 +186,15 @@ css: src/*.css
 	# shopt -s globstar; cat src/**/*.css | npx postcss --use autoprefixer -o build/bundle.css
 	shopt -s globstar; cat src/**/*.css > build/bundle.css
 lint:
-	npx prettier -w --log-level error .
-	npx eslint . --fix
+	pnpx prettier -w --log-level error .
+	pnpx eslint . --fix
 milestone:
 	uuidgen > build/MILESTONE
 commit:
 	git rev-parse HEAD > build/COMMIT
 
 # prod: all
-#	npx google-closure-compiler --js build/lib/libv86.js build/assets/libs/filer.min.js build/lib/coreapps/ExternalApp.js build/lib/coreapps/x86MgrApp.js build/lib/coreapps/SettingsApp.js build/lib/coreapps/BrowserApp.js build/lib/v86.js build/lib/AliceWM.js build/lib/AliceJS.js build/lib/Taskbar.js build/lib/ContextMenu.js build/lib/api/ContextMenuAPI.js build/lib/Launcher.js build/lib/Bootsplash.js build/lib/oobe/OobeView.js build/lib/oobe/OobeWelcomeStep.js build/lib/oobe/OobeAssetsStep.js build/lib/Utils.js build/lib/Anura.js build/lib/api/Settings.js build/lib/api/NotificationService.js build/lib/Boot.js --js_output_file public/dist.js
+#	pnpx google-closure-compiler --js build/lib/libv86.js build/assets/libs/filer.min.js build/lib/coreapps/ExternalApp.js build/lib/coreapps/x86MgrApp.js build/lib/coreapps/SettingsApp.js build/lib/coreapps/BrowserApp.js build/lib/v86.js build/lib/AliceWM.js build/lib/AliceJS.js build/lib/Taskbar.js build/lib/ContextMenu.js build/lib/api/ContextMenuAPI.js build/lib/Launcher.js build/lib/Bootsplash.js build/lib/oobe/OobeView.js build/lib/oobe/OobeWelcomeStep.js build/lib/oobe/OobeAssetsStep.js build/lib/Utils.js build/lib/Anura.js build/lib/api/Settings.js build/lib/api/NotificationService.js build/lib/Boot.js --js_output_file public/dist.js
 static: all
 	mkdir -p static/
 	cp -r aboutproxy/static/* static/
