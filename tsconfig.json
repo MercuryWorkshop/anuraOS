@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"module": "none",
+		"rootDir": "./src",
 		// project options
 		"lib": ["ESNext", "dom"], // specifies which default set of type definitions to use ("DOM", "ES6", etc)
 		"outDir": "build/lib", // .js (as well as .d.ts, .js.map, etc.) files will be emitted into this directory.,
