@@ -1,18 +1,18 @@
 [submodule "v86"]
-	path = v86
+	path = external/v86
 	url = https://github.com/MercuryWorkshop/v86
 [submodule "dreamlandjs"]
-	path = dreamlandjs
+	path = external/dreamlandjs
 	url = https://github.com/mercuryworkshop/dreamlandjs
 [submodule "chimerix"]
-	path = chimerix
+	path = external/chimerix
 	url = https://github.com/MercuryWorkshop/chimerix.git
 [submodule "native-file-system-adapter"]
-	path = native-file-system-adapter
+	path = external/native-file-system-adapter
 	url = https://github.com/MercuryWorkshop/native-file-system-adapter/
 [submodule "x86_image_wizard/epoxy"]
 	path = x86_image_wizard/epoxy
 	url = https://github.com/MercuryWorkshop/epoxy-tls
 [submodule "anura-browserjs"]
-	path = anura-browserjs
+	path = external/anura-browserjs
 	url = https://github.com/mercuryworkshop/anura-browserjs

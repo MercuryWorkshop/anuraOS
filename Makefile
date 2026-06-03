@@ -1,13 +1,13 @@
 SHELL := bash
 
-RUST_FILES=$(shell find v86/src/rust/ -name '*.rs') \
-	   v86/src/rust/gen/interpreter.rs v86/src/rust/gen/interpreter0f.rs \
-	   v86/src/rust/gen/jit.rs v86/src/rust/gen/jit0f.rs \
-	   v86/src/rust/gen/analyzer.rs v86/src/rust/gen/analyzer0f.rs
+RUST_FILES=$(shell find external/v86/src/rust/ -name '*.rs') \
+	   external/v86/src/rust/gen/interpreter.rs external/v86/src/rust/gen/interpreter0f.rs \
+	   external/v86/src/rust/gen/jit.rs external/v86/src/rust/gen/jit0f.rs \
+	   external/v86/src/rust/gen/analyzer.rs external/v86/src/rust/gen/analyzer0f.rs
 
 all: submodules build/bootstrap \
 		external-libs v86 \
-	 	bin/chimerix.ajs anura-browserjs/packages/chrome/dist/index.html apps/libfileview.lib/icons \
+	 	bin/chimerix.ajs external/anura-browserjs/packages/chrome/dist/index.html apps/libfileview.lib/icons \
 		bundle \
 		public/config.json \
 
@@ -65,12 +65,12 @@ build/assets/matter.css:
 	mkdir -p build/assets
 	curl https://github.com/finnhvman/matter/releases/latest/download/matter.css -L -o build/assets/matter.css
 
-build/libs/dreamland/all.js: dreamlandjs/src/*
+build/libs/dreamland/all.js: external/dreamlandjs/src/*
 	mkdir -p build/libs/dreamland
-	cd dreamlandjs; npm i --no-package-lock --legacy-peer-deps; npm run build
-	cp dreamlandjs/dist/all.js build/libs/dreamland/all.js
-	cp dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
-	jq '.version' dreamlandjs/package.json > build/libs/dreamland/version
+	cd external/dreamlandjs; npm i --no-package-lock --legacy-peer-deps; npm run build
+	cp external/dreamlandjs/dist/all.js build/libs/dreamland/all.js
+	cp external/dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
+	jq '.version' external/dreamlandjs/package.json > build/libs/dreamland/version
 
 build/libs/filer/filer.min.js: build/bootstrap
 	mkdir -p build/libs/filer
@@ -78,14 +78,14 @@ build/libs/filer/filer.min.js: build/bootstrap
 	cp node_modules/filer/dist/filer.min.js.map build/libs/filer/filer.min.js.map
 	jq '.version' node_modules/filer/package.json > build/libs/filer/version
 
-build/libs/nfsadapter/nfsadapter.js: native-file-system-adapter/src/es6.js native-file-system-adapter/src/adapters/filer.js
-	cd native-file-system-adapter; npm i; npm run build
+build/libs/nfsadapter/nfsadapter.js: external/native-file-system-adapter/src/es6.js external/native-file-system-adapter/src/adapters/filer.js
+	cd external/native-file-system-adapter; npm i; npm run build
 	mkdir -p build/libs/nfsadapter
 	mkdir -p build/libs/nfsadapter/adapters
-	cp native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
-	cp native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/adapters/anuraadapter.js
-	cp native-file-system-adapter/src/util.js build/libs/nfsadapter/
-	cp native-file-system-adapter/src/config.js build/libs/nfsadapter/	
+	cp external/native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
+	cp external/native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/adapters/anuraadapter.js
+	cp external/native-file-system-adapter/src/util.js build/libs/nfsadapter/
+	cp external/native-file-system-adapter/src/config.js build/libs/nfsadapter/	
 
 build/libs/fflate/browser.js: build/bootstrap
 	mkdir -p build/libs/fflate
@@ -99,51 +99,48 @@ build/libs/libcurl/version: build/bootstrap
 	jq '.version' node_modules/libcurl.js/package.json > build/libs/libcurl/version
 	
 # v86 imports
-v86/src/rust/gen/jit.rs: 
-	cd v86; make src/rust/gen/jit.rs
-v86/src/rust/gen/jit0f.rs: 
-	cd v86; make src/rust/gen/jit0f.rs
-v86/src/rust/gen/interpreter.rs: 
-	cd v86; make src/rust/gen/interpreter.rs
-v86/src/rust/gen/interpreter0f.rs: 
-	cd v86; make src/rust/gen/interpreter0f.rs
-v86/src/rust/gen/analyzer.rs:
-	cd v86; make src/rust/gen/analyzer.rs
-v86/src/rust/gen/analyzer0f.rs: 
-	cd v86; make src/rust/gen/analyzer0f.rs
-v86/build/softfloat.o:
-	cd v86; make build/softfloat.o
-v86/build/zstddeclib.o:
-	cd v86; make build/zstddeclib.o
+external/v86/src/rust/gen/jit.rs: 
+	cd external/v86; make src/rust/gen/jit.rs
+external/v86/src/rust/gen/jit0f.rs: 
+	cd external/v86; make src/rust/gen/jit0f.rs
+external/v86/src/rust/gen/interpreter.rs: 
+	cd external/v86; make src/rust/gen/interpreter.rs
+external/v86/src/rust/gen/interpreter0f.rs: 
+	cd external/v86; make src/rust/gen/interpreter0f.rs
+external/v86/src/rust/gen/analyzer.rs:
+	cd external/v86; make src/rust/gen/analyzer.rs
+external/v86/src/rust/gen/analyzer0f.rs: 
+	cd external/v86; make src/rust/gen/analyzer0f.rs
+external/v86/build/softfloat.o:
+	cd external/v86; make build/softfloat.o
+external/v86/build/zstddeclib.o:
+	cd external/v86; make build/zstddeclib.o
 
-libv86.js: v86/src/*.js v86/lib/*.js v86/src/browser/*.js
-	cd v86; make build/libv86.js
-	cp v86/build/libv86.js build/lib/libv86.js
+libv86.js: external/v86/src/*.js external/v86/lib/*.js external/v86/src/browser/*.js
+	cd external/v86; make build/libv86.js
+	cp external/v86/build/libv86.js build/lib/libv86.js
 
-build/lib/v86.wasm: $(RUST_FILES) v86/build/softfloat.o v86/build/zstddeclib.o v86/Cargo.toml
-	cd v86; make build/v86.wasm
-	cp v86/build/v86.wasm build/lib/v86.wasm
+build/lib/v86.wasm: $(RUST_FILES) external/v86/build/softfloat.o external/v86/build/zstddeclib.o external/v86/Cargo.toml
+	cd external/v86; make build/v86.wasm
+	cp external/v86/build/v86.wasm build/lib/v86.wasm
 	
 v86: libv86.js build/lib/v86.wasm
-	cp -r v86/bios public
+	cp -r external/v86/bios public
 
-bin/chimerix.ajs: chimerix/src/*
+bin/chimerix.ajs: external/chimerix/src/*
 	mkdir -p build/bin
-	cd chimerix; npm i
-	cd chimerix; npx rollup -c rollup.config.js
-	cp chimerix/dist/chimerix.ajs bin/chimerix.ajs
+	cd external/chimerix; npm i
+	cd external/chimerix; npx rollup -c rollup.config.js
+	cp external/chimerix/dist/chimerix.ajs bin/chimerix.ajs
 
-anura-browserjs/packages/chrome/dist/index.html: anura-browserjs/packages/chrome/package.json anura-browserjs/packages/chrome/src/*.ts anura-browserjs/packages/chrome/src/*.tsx anura-browserjs/packages/scramjet/package.json anura-browserjs/packages/scramjet/packages/core/src/*.ts
-	cd anura-browserjs; pnpm i
-	cd anura-browserjs/packages/scramjet/packages/core; pnpm rewriter:build
-	cd anura-browserjs; pnpm build && pnpm build:dreamland
-	cd anura-browserjs/packages/chrome; pnpm build
+external/anura-browserjs/packages/chrome/dist/index.html: external/anura-browserjs/packages/chrome/package.json external/anura-browserjs/packages/chrome/src/*.ts external/anura-browserjs/packages/chrome/src/*.tsx external/anura-browserjs/packages/scramjet/package.json external/anura-browserjs/packages/scramjet/packages/core/src/*.ts
+	cd external/anura-browserjs; pnpm i
+	cd external/anura-browserjs/packages/scramjet/packages/core; pnpm rewriter:build
+	cd external/anura-browserjs; pnpm build && pnpm build:dreamland
+	cd external/anura-browserjs/packages/chrome; pnpm build
 
 apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 	cd apps/libfileview.lib; bash geticons.sh
-
-public/config.json:
-	cp config.default.json public/config.json
 
 ANURA_VERSION = $(shell jq -r '.version' package.json)
 
@@ -187,7 +184,7 @@ static: all
 	cp -r build/* static/
 	cp -r bin/* static/bin/
 	cp -r apps/* static/apps/
-	cp -r anura-browserjs/packages/chrome/dist/* static/browser/
+	cp -r external/anura-browserjs/packages/chrome/dist/* static/browser/
 
 server: FORCE
 	cd server; node server.js
@@ -197,5 +194,8 @@ rootfs: FORCE
 
 rootfs-alpine: FORCE
 	cd x86_image_wizard/alpine; sh build-alpine-bin.sh
+
+public/config.json:
+	cp config.default.json public/config.json
 
 FORCE: ;
