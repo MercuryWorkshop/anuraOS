@@ -12,8 +12,8 @@
 	},
 	"homepage": "https://github.com/MercuryWorkshop/AnuraOS#readme",
 	"dependencies": {
-		"@mercuryworkshop/wisp-js": "^0.4.0",
+		"@mercuryworkshop/wisp-js": "^0.4.1",
 		"express": "^4.21.0",
-		"ws": "^8.18.0"
+		"ws": "^8.21.0"
 	}
 }

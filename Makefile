@@ -65,12 +65,11 @@ build/assets/matter.css:
 	mkdir -p build/assets
 	curl https://github.com/finnhvman/matter/releases/latest/download/matter.css -L -o build/assets/matter.css
 
-build/libs/dreamland/all.js: external/dreamlandjs/src/*
+build/libs/dreamland/all.js: build/bootstrap
 	mkdir -p build/libs/dreamland
-	cd external/dreamlandjs; npm i --no-package-lock --legacy-peer-deps; npm run build
-	cp external/dreamlandjs/dist/all.js build/libs/dreamland/all.js
-	cp external/dreamlandjs/dist/all.js.map build/libs/dreamland/all.js.map
-	jq '.version' external/dreamlandjs/package.json > build/libs/dreamland/version
+	cp node_modules/dreamland/dist/all.js build/libs/dreamland/all.js
+	cp node_modules/dreamland/dist/all.js.map build/libs/dreamland/all.js.map
+	jq '.version' node_modules/dreamland/package.json > build/libs/dreamland/version
 
 build/libs/filer/filer.min.js: build/bootstrap
 	mkdir -p build/libs/filer
