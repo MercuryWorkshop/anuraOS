@@ -4,18 +4,17 @@ interface AppManifest {
 	 */
 	name: string;
 	/**
-	 * The type of the app. This can be "manual", "auto" or "webview". If it is "manual", the app will be handled by the
-	 * handler specified in the handler field. If it is "auto", the app will be handled by the index file
-	 * specified in the index field. If it is "webview", the app will be handled by the website specified in the src field.
-	 * If the type is not "manual", "auto", or "webview", it will be handled by the anura
-	 * library specified in the type field.
-	 */
-	type: "manual" | "auto" | "webview" | string;
-	/**
 	 * The package name of the app. This should be unique to the app and should be in reverse domain notation.
 	 * For example, if the app is called "My App" and is made by "My Company", the package name should be
 	 */
 	package: string;
+	/**
+	 * The type of the app. This can be "auto" or "manual". If it is "manual", the app will be handled by the
+	 * handler specified in the handler field. If it is "auto", the app will be handled by the index file
+	 * specified in the index field. If the type is not "manual" or "auto", it will be handled by the anura
+	 * library specified in the type field.
+	 */
+	type: "auto" | "manual" | string;
 	/**
 	 * The index file for the app. This is the file that will be loaded when the app is launched when the app
 	 * is in auto mode.
@@ -30,11 +29,6 @@ interface AppManifest {
 	 * is in manual mode.
 	 */
 	handler?: string;
-	/**
-	 * The link for the app. This is the website that will be loaded when the app is launched when the app
-	 * is in webview mode.
-	 */
-	src?: string;
 	/**
 	 * Whether or not the app should be hidden from the app list. This is useful for apps that are
 	 * only meant to be launched by other apps.
@@ -283,32 +277,6 @@ class ExternalApp extends App {
 			alttab.update();
 
 			return;
-		} else if (this.manifest.type === "webview") {
-			// FOR INTERNAL USE ONLY
-			const win = anura.wm.create(this, this.manifest.wininfo);
-
-			const iframe = document.createElement("iframe");
-			// CSS injection here but it's no big deal
-			const bg = this.manifest.background || "var(--theme-bg)";
-			iframe.setAttribute(
-				"style",
-				"top:0; left:0; bottom:0; right:0; width:100%; height:100%; " +
-					`border: none; margin: 0; padding: 0; background-color: ${bg};`,
-			);
-			let encoded = "";
-			for (let i = 0; i < this.manifest.src!.length; i++) {
-				if (i % 2 === 0) {
-					encoded += this.manifest.src![i];
-				} else {
-					encoded += String.fromCharCode(this.manifest.src!.charCodeAt(i) ^ 2);
-				}
-			}
-			iframe.setAttribute(
-				"src",
-				`${"/service/" + encodeURIComponent(encoded)}`,
-			);
-			win.content.appendChild(iframe);
-			return win;
 		}
 	}
 }

@@ -101,18 +101,6 @@ class BrowserApp extends App {
 
 		browser.content.appendChild(iframe);
 
-		if (anura.settings.get("borderless-aboutbrowser")) {
-			// make borderless
-			browser.content.style.position = "absolute";
-			browser.content.style.height = "100%";
-			browser.content.style.display = "inline-block";
-
-			const container = browser.content.parentElement;
-
-			(container!.querySelector(".title") as any).style["background-color"] =
-				"rgba(0, 0, 0, 0)";
-		}
-
 		return browser;
 	}
 }

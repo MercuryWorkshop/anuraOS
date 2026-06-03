@@ -337,10 +337,6 @@ class SettingsApp extends App {
 								}}
 							/>
 							<SettingSwitch title="24-hour time" setting="sir-yes-sir" />
-							<SettingSwitch
-								title="Borderless AboutBrowser"
-								setting="borderless-aboutbrowser"
-							/>
 							<SettingSwitch title="Performance mode" setting="blur-disable" />
 							<SettingSwitch
 								title="Reduce motion"

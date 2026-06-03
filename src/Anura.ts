@@ -148,11 +148,7 @@ class Anura {
 
 		const resp = await fetch(`${source}/manifest.json`);
 		const manifest = (await resp.json()) as AppManifest;
-		if (
-			manifest.type === "auto" ||
-			manifest.type === "manual" ||
-			manifest.type === "webview"
-		) {
+		if (manifest.type === "auto" || manifest.type === "manual") {
 			const app = new ExternalApp(manifest, source);
 			await anura.registerApp(app); // This will let us capture error messages
 			return app;
