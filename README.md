@@ -33,18 +33,19 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 
 ### Dependencies
 
-- Recent versions of `node.js` and `npm`
-- `wget`
-- A recent version of `java` (11+)
-- `inotifytools`
-- `rustup`
-- `wasm-opt`
 - `make`
+- Node.js (24+)
+- PNPM
+- `jq`
+- `uuid-runtime`
+- `rustup`
+- `wasm-bindgen` (v0.2.105)
+- `wasm-opt`
+- A recent version of `java` (11+)
+- `wget`
+- `clang`
 - `gcc` (`gcc-multilib` on Debian and Ubuntu x86_64)
 - 32 bit version of `glibc` (needed for building rootfs, `lib32-glibc` on Arch Linux)
-- `clang`
-- `uuid-runtime`
-- `jq`
 - `docker`
 - An x86(-64) Linux PC (`make rootfs-alpine` build depends on x86 specific tools)
 

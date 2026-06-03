@@ -337,6 +337,18 @@ for (const method of supportedWebDAVMethods) {
 	);
 }
 
+importScripts("/browser/controller.sw.js");
+const methods = ["GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS", "PATCH"];
+for (const method of methods) {
+	workbox.routing.registerRoute(
+		({ event }) => $scramjetController.shouldRoute(event),
+		async ({ event }) => {
+			return await $scramjetController.route(event);
+		},
+		method,
+	);
+}
+
 workbox.core.skipWaiting();
 workbox.core.clientsClaim();
 
@@ -736,24 +748,6 @@ workbox.routing.registerRoute(
 		}
 	},
 );
-
-importScripts("./uv/uv.bundle.js");
-importScripts("./uv/uv.config.js");
-importScripts("./uv/uv.sw.js");
-
-const uv = new UVServiceWorker();
-
-const methods = ["GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS", "PATCH"];
-
-methods.forEach((method) => {
-	workbox.routing.registerRoute(
-		/\/service\//,
-		async (event) => {
-			return await uv.fetch(event);
-		},
-		method,
-	);
-});
 
 // have to put this here because no cache
 function offlineError() {

@@ -14,9 +14,7 @@
 	},
 	"homepage": "https://github.com/MercuryWorkshop/AnuraOS#readme",
 	"dependencies": {
-		"@mercuryworkshop/bare-mux": "^1.1.4",
 		"@mercuryworkshop/wisp-js": "^0.4.1",
-		"@titaniumnetwork-dev/ultraviolet": "3.1.5",
 		"autoprefixer": "^10.4.22",
 		"comlink": "^4.4.2",
 		"fflate": "^0.8.2",
