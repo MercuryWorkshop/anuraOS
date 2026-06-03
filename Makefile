@@ -181,9 +181,9 @@ static: all
 	mkdir -p static/
 	cp -r public/* static/
 	cp -r build/* static/
-	cp -r bin/* static/bin/
-	cp -r apps/* static/apps/
-	cp -r external/anura-browserjs/packages/chrome/dist/* static/browser/
+	cp -r bin static/
+	cp -r apps static/
+	cp -r external/anura-browserjs/packages/chrome/dist static/browser
 
 server: FORCE
 	cd server; node server.js
