@@ -1,5 +1,12 @@
 /* global Filer, LocalFS, AFSShell, idbKeyval, mime */
+// Due to anura's filesystem only being available once an anura instance is running,
+// we need a temporary filesystem to store files that are requested for caching.
+// As the anura filesystem is a wrapper around Filer, we can use default Filer here.
+importScripts("/libs/filer/filer.min.js");
+importScripts("/lib/api/Filesystem.js");
+importScripts("/lib/api/LocalFS.js");
 
+self.Buffer = Filer.Buffer;
 const filerfs = new Filer.FileSystem({
 	name: "anura-mainContext",
 	provider: new Filer.FileSystem.providers.IndexedDB(),
@@ -66,5 +73,3 @@ async function currentFs() {
 
 	return winner;
 }
-
-self.Buffer = Filer.Buffer;

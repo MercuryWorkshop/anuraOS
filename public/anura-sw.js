@@ -8,20 +8,11 @@ Object.defineProperty(globalThis, "crossOriginIsolated", {
 	writable: false,
 });
 
-// Due to anura's filesystem only being available once an anura instance is running,
-// we need a temporary filesystem to store files that are requested for caching.
-// As the anura filesystem is a wrapper around Filer, we can use default Filer here.
-importScripts("/libs/filer/filer.min.js");
-
 // Importing mime
 importScripts("/libs/mime/mime.iife.js");
-importScripts("/lib/api/Filesystem.js");
-importScripts("/lib/api/LocalFS.js");
 importScripts("/libs/idb-keyval/idb-keyval.js");
 importScripts("/libs/comlink/comlink.min.umd.js");
 importScripts("/libs/workbox/workbox-v7.4.0/workbox-sw.js");
-
-/* global workbox */
 
 workbox.setConfig({
 	debug: false,
