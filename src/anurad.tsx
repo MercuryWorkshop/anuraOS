@@ -11,7 +11,23 @@ type InitScriptFrame = HTMLIFrameElement & {
 	contentWindow: Window & { initScript: InitScriptExports };
 };
 
+/**
+ * The Anura daemon process. Claims PID 1 and manages all Anura init scripts.
+ *
+ * Available globally as `anura.anurad`.
+ *
+ * Init scripts must have the `.init.ajs` extension and contain a shebang-like
+ * header such as:
+ *
+ * ```
+ * #! {"lang":"module"}
+ * ```
+ */
 class Anurad extends Process {
+	/**
+	 * The currently running init scripts. Unlike {@link Processes.procs} this
+	 * array is not stateful and direct mutations are allowed.
+	 */
 	initScripts: AnuradInitScript[] = [];
 	title = "anurad";
 
@@ -20,6 +36,27 @@ class Anurad extends Process {
 		AnuradHelpers.setStage("anurad");
 	}
 
+	/**
+	 * Register and start a new init script under the anura daemon.
+	 *
+	 * @param script - The JavaScript module source for the init script. The
+	 *   module may export `name`, `description`, `provides`, `depend`,
+	 *   `start` and `stop`.
+	 *
+	 * @example
+	 * ```js
+	 * const script = `
+	 * export name = "example";
+	 * export description = "This is an example init script";
+	 *
+	 * export start = async () => {
+	 *     console.log("Hello, World!");
+	 * };
+	 * `;
+	 *
+	 * await anura.anurad.addInitScript(script);
+	 * ```
+	 */
 	async addInitScript(script: string) {
 		const initScript = new AnuradInitScript(
 			script,
@@ -33,6 +70,14 @@ class Anurad extends Process {
 		return this.initScripts[0]!.alive;
 	}
 
+	/**
+	 * Kill the anura daemon and every init script it has spawned.
+	 *
+	 * @example
+	 * ```js
+	 * anura.anurad.kill();
+	 * ```
+	 */
 	async kill() {
 		for (const initScript of this.initScripts) {
 			initScript.kill();

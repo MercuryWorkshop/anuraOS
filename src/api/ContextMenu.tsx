@@ -1,3 +1,25 @@
+/**
+ * Anura-styled context menu you can use in your apps. Exposed on the global
+ * `anura` object as `anura.ContextMenu` and used as a constructor.
+ *
+ * @example
+ * ```js
+ * const contextmenu = new anura.ContextMenu();
+ * contextmenu.addItem("Log to console", function () {
+ *     console.log("hello world!");
+ * });
+ * element.addEventListener("contextmenu", (e) => {
+ *     e.preventDefault();
+ *     const boundingRect = window.frameElement.getBoundingClientRect();
+ *     contextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+ *     document.onclick = (e) => {
+ *         document.onclick = null;
+ *         contextmenu.hide();
+ *         e.preventDefault();
+ *     };
+ * });
+ * ```
+ */
 class ContextMenu {
 	large: boolean;
 	private isShown = false;
@@ -29,6 +51,24 @@ class ContextMenu {
 			100,
 		);
 	}
+	/**
+	 * Add an item to the context menu. The callback is invoked when the user
+	 * selects the item; the menu is hidden automatically before the callback
+	 * runs.
+	 *
+	 * @param text - The label to display for the menu item.
+	 * @param callback - Function invoked when the item is selected.
+	 * @param icon - Optional Material Symbols icon name to display next to the
+	 *   label.
+	 *
+	 * @example
+	 * ```js
+	 * const contextmenu = new anura.ContextMenu();
+	 * contextmenu.addItem("Log to console", function () {
+	 *     console.log("hello world!");
+	 * });
+	 * ```
+	 */
 	addItem(text: string, callback: VoidFunction, icon?: string) {
 		this.element.appendChild(
 			this.item(
@@ -46,6 +86,19 @@ class ContextMenu {
 		this.element.innerHTML = "";
 	}
 
+	/**
+	 * Make the context menu visible at the given page coordinates. If the menu
+	 * overflows the body bounds it will be repositioned to remain visible.
+	 *
+	 * @param x - The page x coordinate to place the menu at.
+	 * @param y - The page y coordinate to place the menu at.
+	 * @returns The menu's root element.
+	 *
+	 * @example
+	 * ```js
+	 * contextmenu.show(e.pageX + boundingRect.x, e.pageY + boundingRect.y);
+	 * ```
+	 */
 	show(x: number, y: number) {
 		// remove any existing context menus. i will admit this is a bit of a quick n dirty hack
 		if (document.querySelector(".custom-menu")) {
@@ -83,6 +136,14 @@ class ContextMenu {
 
 		return this.element;
 	}
+	/**
+	 * Hide the context menu if it is currently visible.
+	 *
+	 * @example
+	 * ```js
+	 * contextmenu.hide();
+	 * ```
+	 */
 	hide() {
 		if (this.isShown) {
 			document.body.removeChild(this.element);

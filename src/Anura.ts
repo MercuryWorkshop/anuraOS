@@ -1,3 +1,11 @@
+/**
+ * The main Anura runtime object. Every public Anura API hangs off an instance
+ * of this class.
+ *
+ * The constructor is private — instances are created internally by
+ * {@link Anura.new} and exposed to the rest of the system as the global
+ * `anura` variable.
+ */
 class Anura {
 	version = {
 		semantic: {
@@ -75,6 +83,30 @@ class Anura {
 
 	apps: any = {};
 	libs: any = {};
+	/**
+	 * Anura's logger. Wraps the console object and provides a way to create
+	 * stdio streams that pipe to the dev console.
+	 *
+	 * Available globally as `anura.logger`.
+	 *
+	 * | Function             | Description           |
+	 * | -------------------- | --------------------- |
+	 * | `anura.logger.log`   | Wraps `console.log`   |
+	 * | `anura.logger.debug` | Wraps `console.debug` |
+	 * | `anura.logger.info`  | Wraps `console.info`  |
+	 * | `anura.logger.warn`  | Wraps `console.warn`  |
+	 * | `anura.logger.error` | Wraps `console.error` |
+	 *
+	 * @example
+	 * ```js
+	 * const { stdout, stderr } = anura.logger.createStreams("my-process: ");
+	 *
+	 * const proc = await anura.processes.execute("/path/to/script.ajs");
+	 *
+	 * proc.stdout.pipeTo(stdout);
+	 * proc.stderr.pipeTo(stderr);
+	 * ```
+	 */
 	logger = {
 		log: console.log.bind(console, "anuraOS:"),
 		debug: console.debug.bind(console, "anuraOS:"),
@@ -215,6 +247,29 @@ class Anura {
 		taskbar.updateTaskbar();
 		alttab.update();
 	}
+	/**
+	 * Import a library into the current scope. Libraries are similar to apps
+	 * and can be installed from the Marketplace, sideloaded through the File
+	 * Manager, or registered programmatically.
+	 *
+	 * If `searchPath` is supplied, node-style module resolution is used to
+	 * load the package from the Anura filesystem under that path.
+	 * Otherwise the package is resolved from the registered Anura libs
+	 * (`anura.libs`).
+	 *
+	 * @param packageName - The library's package name. May optionally include
+	 *   a version suffix like `pkg@1.0.0`.
+	 * @param searchPath - Optional. Filesystem path to use as the npm-style
+	 *   `node_modules` root for resolving the package.
+	 * @returns The library's exported module.
+	 *
+	 * @example
+	 * ```js
+	 * const browser = await anura.import("anura.libbrowser");
+	 *
+	 * browser.openTab("https://google.com/");
+	 * ```
+	 */
 	async import(packageName: string, searchPath?: string) {
 		if (searchPath) {
 			// Using node-style module resolution
@@ -259,11 +314,37 @@ class Anura {
 		const version = splitName[1] || null;
 		return await this.libs[pkg].getImport(version);
 	}
+	/**
+	 * A usable wsproxy URL for any TCP application — this is the URL of the
+	 * currently configured Wisp server.
+	 *
+	 * @example
+	 * ```js
+	 * let webSocket = new WebSocket(anura.wsproxyURL + "alicesworld.tech:80", [
+	 *     "binary",
+	 * ]);
+	 *
+	 * webSocket.onmessage = async (event) => {
+	 *     const text = await (await event.data).text();
+	 *     console.log(text);
+	 * };
+	 *
+	 * webSocket.onopen = (event) => {
+	 *     webSocket.send("GET / HTTP/1.1\r\nHost: alicesworld.tech\r\n\r\n");
+	 * };
+	 * ```
+	 */
 	get wsproxyURL() {
 		return this.settings.get("wisp-url");
 	}
 }
 
+/**
+ * A special process that wraps the Anura service worker.
+ *
+ * Available globally as `anura.sw`. This process claims PID 0 — when it is
+ * killed, it unregisters the service worker and reloads the page.
+ */
 class SWProcess extends Process {
 	pid = 0;
 	title = "Service Worker";

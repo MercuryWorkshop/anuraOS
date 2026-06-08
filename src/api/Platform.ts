@@ -1,5 +1,26 @@
+/**
+ * Provides information about the platform that Anura is running on.
+ *
+ * Available globally as `anura.platform`.
+ */
 class Platform {
-	type: string;
+	/**
+	 * The type of platform that Anura is running on. Detected from the user
+	 * agent at construction time and overridable via the `force-platform`
+	 * setting.
+	 *
+	 * Possible values:
+	 * - `"desktop"` — Anura is running on a desktop.
+	 * - `"mobile"` — Anura is running on a mobile phone.
+	 * - `"tablet"` — Anura is running on a tablet.
+	 */
+	type: "desktop" | "mobile" | "tablet";
+
+	/**
+	 * Whether the platform supports touch input. Detected from the user agent
+	 * and `navigator.maxTouchPoints`, and overridable via the
+	 * `force-touch-input` setting.
+	 */
 	touchInput: boolean;
 
 	// Provides a stateful object that can be used to track any platform features and information that are expected to change during the lifecycle of anura.
@@ -10,7 +31,7 @@ class Platform {
 	});
 
 	constructor(anura: Anura) {
-		let platform = "desktop";
+		let platform: "desktop" | "mobile" | "tablet" = "desktop";
 
 		const mobileRE =
 			/(android|bb\d+|meego).+mobile|armv7l|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series[46]0|samsungbrowser.*mobile|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i;

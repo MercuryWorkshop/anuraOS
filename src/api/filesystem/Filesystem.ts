@@ -717,6 +717,23 @@ class AnuraFilesystem implements AnuraFSOperations<any> {
 		this.providerCache = {};
 	}
 
+	/**
+	 * Register a virtual filesystem. The provider must extend
+	 * {@link AFSProvider} and implement all of the filesystem methods.
+	 *
+	 * @param provider - The filesystem provider to install. Mounted at
+	 *   `provider.domain`.
+	 *
+	 * @example
+	 * ```js
+	 * await anura.fs.promises.mkdir("/local-mnt");
+	 *
+	 * const dirHandle = await window.showDirectoryPicker();
+	 * dirHandle.requestPermission({ mode: "readwrite" });
+	 *
+	 * anura.fs.installProvider(new LocalFS(dirHandle, anuraPath));
+	 * ```
+	 */
 	installProvider(provider: AFSProvider<any>) {
 		this.providers.set(provider.domain, provider);
 		this.clearCache();

@@ -1,10 +1,39 @@
+/**
+ * Provides access to Anura's networking backend, for routing requests through
+ * a {@link https://github.com/MercuryWorkshop/wisp-protocol Wisp} compatible
+ * backend using {@link https://github.com/ading2210/libcurl.js libcurl.js}.
+ *
+ * Available globally as `anura.net`.
+ */
 class Networking {
+	/**
+	 * Full access to the libcurl.js APIs directly.
+	 *
+	 * See the {@link https://github.com/ading2210/libcurl.js?tab=readme-ov-file#javascript-api libcurl.js JavaScript API}
+	 * for details on what's available.
+	 */
 	libcurl: any;
 	libcurl_src = "/libs/libcurl/libcurl.mjs";
 	libcurl_wasm = "/libs/libcurl/libcurl.wasm";
 	external = {
 		fetch: window.fetch, // Default until another thing is registered ig
 	};
+	/**
+	 * A drop-in replacement for the built-in `WebSocket` constructor that
+	 * routes traffic through the configured Wisp backend.
+	 *
+	 * @example
+	 * ```js
+	 * let ws = new anura.net.WebSocket("wss://echo.websocket.in/");
+	 * ws.addEventListener("open", () => {
+	 *     console.log("ws connected!");
+	 *     ws.send("hello".repeat(128));
+	 * });
+	 * ws.addEventListener("message", (event) => {
+	 *     console.log(event.data);
+	 * });
+	 * ```
+	 */
 	WebSocket: typeof WebSocket;
 	Socket: any;
 	TLSSocket: any;
@@ -37,13 +66,25 @@ class Networking {
 		call: async (port: number, request: Request) => {
 			return await this.loopback.addressMap.get(port)(request);
 		},
-		set: async (port: number, handler: () => Response) => {
+		set: async (port: number, handler: (request: Request) => Response) => {
 			this.loopback.addressMap.set(port, handler);
 		},
 		deregister: async (port: number) => {
 			this.loopback.addressMap.delete(port);
 		},
 	};
+	/**
+	 * Same functionality as the DOM `fetch` function. Returns a `Response` and
+	 * accepts either a URL with options or a `Request` object. Requests to
+	 * `localhost` are routed to local handlers (or the x86 backend) when
+	 * available; all other requests pass through libcurl.js.
+	 *
+	 * @example
+	 * ```js
+	 * let response = await anura.net.fetch("https://anura.pro/MILESTONE");
+	 * console.log(await response.text());
+	 * ```
+	 */
 	fetch = async (url: any, methods: any) => {
 		// these are any because they can be multiple things and I dont feel like typing them
 		let requestObj: Request;

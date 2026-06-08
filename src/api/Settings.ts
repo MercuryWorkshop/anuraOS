@@ -1,3 +1,10 @@
+/**
+ * Defines system settings in Anura as a key-value store of JS objects.
+ *
+ * Available globally as `anura.settings`.
+ *
+ * Settings are persisted to `/anura_settings.json` in the Anura filesystem.
+ */
 class Settings {
 	cache: { [key: string]: any } = {};
 	fs: AnuraFilesystem;
@@ -74,12 +81,45 @@ class Settings {
 		return new Settings(fs, initial);
 	}
 
+	/**
+	 * Get a value from the settings key-value store.
+	 *
+	 * @param prop - The setting key to read.
+	 * @returns The stored value, or `undefined` if the key is not set.
+	 *
+	 * @example
+	 * ```js
+	 * anura.settings.get("applist"); // Get pinned apps in anura's taskbar
+	 * ```
+	 */
 	get(prop: string): any {
 		return this.cache[prop];
 	}
+
+	/**
+	 * Check whether a key exists in the settings store.
+	 *
+	 * @param prop - The setting key to test for.
+	 * @returns `true` if the key has been set, otherwise `false`.
+	 */
 	has(prop: string): boolean {
 		return prop in this.cache;
 	}
+
+	/**
+	 * Set a value in the settings key-value store. The change is persisted to
+	 * disk by automatically calling {@link Settings.save}.
+	 *
+	 * @param prop - The top-level setting key to write.
+	 * @param val - The new value to assign.
+	 * @param subprop - Optional. If provided, the value is assigned to
+	 *   `cache[prop][subprop]` instead of `cache[prop]`.
+	 *
+	 * @example
+	 * ```js
+	 * anura.settings.set("launcher-keybind", false); // Disables the launcher keybind.
+	 * ```
+	 */
 	async set(prop: string, val: any, subprop?: string) {
 		console.debug("Setting " + prop + " to " + val);
 		if (subprop) {

@@ -9,7 +9,14 @@ interface ThemeProps {
 	accent: string;
 }
 
+/**
+ * Anura UI theme. Holds the color values and applies them to the document via
+ * CSS custom properties.
+ *
+ * Available globally as `anura.ui.theme`.
+ */
 class Theme implements ThemeProps {
+	/** The foreground / primary text color of the theme in hex. */
 	get foreground() {
 		return this.state.foreground;
 	}
@@ -19,6 +26,7 @@ class Theme implements ThemeProps {
 		this.apply();
 	}
 
+	/** The secondary foreground color of the theme in hex. */
 	get secondaryForeground() {
 		return this.state.secondaryForeground;
 	}
@@ -28,6 +36,7 @@ class Theme implements ThemeProps {
 		this.apply();
 	}
 
+	/** The border color of the theme in hex. */
 	get border() {
 		return this.state.border;
 	}
@@ -37,6 +46,7 @@ class Theme implements ThemeProps {
 		this.apply();
 	}
 
+	/** The dark border color of the theme in hex. */
 	get darkBorder() {
 		return this.state.darkBorder;
 	}
@@ -46,6 +56,7 @@ class Theme implements ThemeProps {
 		this.apply();
 	}
 
+	/** The background color of the theme in hex. */
 	get background() {
 		return this.state.background;
 	}
@@ -55,6 +66,7 @@ class Theme implements ThemeProps {
 		this.apply();
 	}
 
+	/** The secondary background color of the theme in hex. */
 	get secondaryBackground() {
 		return this.state.secondaryBackground;
 	}
@@ -64,6 +76,7 @@ class Theme implements ThemeProps {
 		this.apply();
 	}
 
+	/** The dark background color of the theme in hex. */
 	get darkBackground() {
 		return this.state.darkBackground;
 	}
@@ -73,6 +86,7 @@ class Theme implements ThemeProps {
 		this.apply();
 	}
 
+	/** The accent color of the theme in hex. */
 	get accent() {
 		return this.state.accent;
 	}
@@ -170,6 +184,44 @@ class Theme implements ThemeProps {
 		});
 	}
 
+	/**
+	 * Returns a CSS `:root { ... }` style string defining the theme's CSS
+	 * custom properties. Append it to your document's `<head>` to provide
+	 * the theme variables for your application.
+	 *
+	 * The following CSS variables are exposed (corresponding to the theme
+	 * properties):
+	 *
+	 * - `--theme-fg`
+	 * - `--theme-secondary-fg`
+	 * - `--theme-border`
+	 * - `--theme-dark-border`
+	 * - `--theme-bg`
+	 * - `--theme-secondary-bg`
+	 * - `--theme-dark-bg`
+	 * - `--theme-accent`
+	 *
+	 * @returns CSS source containing the theme variable declarations.
+	 *
+	 * @example
+	 * ```js
+	 * // Append theme css element (with dreamland)
+	 * document.head.appendChild(
+	 *     html`<><style data-id="anura-theme">${anura.ui.theme.css()}</style></>`,
+	 * );
+	 *
+	 * // Append theme css element (without dreamland)
+	 * const style = document.createElement("style");
+	 * style.dataset.id = "anura-theme";
+	 * style.innerHTML = anura.ui.theme.css();
+	 * document.head.appendChild(style);
+	 *
+	 * document.addEventListener("anura-theme-change", () => {
+	 *     document.head.querySelector('style[data-id="anura-theme"]').innerHTML =
+	 *         anura.ui.theme.css();
+	 * });
+	 * ```
+	 */
 	css(): string {
 		const lines = [];
 		lines.push(":root {");

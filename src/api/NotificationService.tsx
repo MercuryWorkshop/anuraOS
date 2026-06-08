@@ -1,3 +1,8 @@
+/**
+ * Anura's notification service. Useful for displaying alerts to the user.
+ *
+ * Available globally as `anura.notifications`.
+ */
 class NotificationService {
 	state: Stateful<{
 		notifications: AnuraNotification[];
@@ -43,6 +48,26 @@ class NotificationService {
 
 	constructor() {}
 
+	/**
+	 * Add a notification to the notification service. An optional `callback`
+	 * fires when the user clicks the notification and an optional `timeout`
+	 * removes the notification automatically after the given number of
+	 * milliseconds.
+	 *
+	 * @param params - The notification parameters. See {@link NotifParams}.
+	 *
+	 * @example
+	 * ```js
+	 * anura.notifications.add({
+	 *     title: "Test Notification",
+	 *     description: `This is a test notification`,
+	 *     callback: function () {
+	 *         console.log("hi");
+	 *     },
+	 *     timeout: 2000,
+	 * }); // Show a notification, says "hi" in console on click, lasts 2s.
+	 * ```
+	 */
 	add(params: NotifParams) {
 		const notif = new AnuraNotification(params, () => {
 			this.remove(notif);

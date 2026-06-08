@@ -6,12 +6,25 @@ type ModuleProcessFrame = HTMLIFrameElement & {
 	contentWindow: Window & { moduleProcess: ModuleProcessExports };
 };
 
+/**
+ * Process manager for Anura. Tracks running processes and exposes APIs to
+ * create, register and remove them.
+ *
+ * Available globally as `anura.processes`.
+ */
 class Processes {
 	processesDiv = (<div id="processes"></div>);
 	constructor() {
 		document.body.appendChild(this.processesDiv);
 	}
 
+	/**
+	 * A list of all running processes in Anura, as a dreamland stateful array
+	 * of `WeakRef`s to {@link Process} instances.
+	 *
+	 * Note: You should never mutate this array directly — use the provided
+	 * APIs ({@link Processes.register}, {@link Processes.remove}) instead.
+	 */
 	get procs() {
 		return this.state.procs;
 	}
@@ -24,18 +37,61 @@ class Processes {
 		procs: $state([] as WeakRef<Process>[]),
 	});
 
+	/**
+	 * Remove a process from the process list. Typically called as the last
+	 * step of a process's `kill` implementation.
+	 *
+	 * @param pid - The PID of the process to remove.
+	 *
+	 * @example
+	 * ```js
+	 * function kill() {
+	 *     anura.processes.remove(this.pid);
+	 * }
+	 * ```
+	 */
 	remove(pid: number) {
 		delete this.state.procs[pid];
 		// eslint-disable-next-line no-self-assign
 		this.state.procs = this.state.procs;
 	}
 
+	/**
+	 * Register a process with the process list. Typically called by a
+	 * process's constructor.
+	 *
+	 * @param proc - The process to register.
+	 *
+	 * @example
+	 * ```js
+	 * // SpecialProcess extends Process
+	 * const process = new SpecialProcess();
+	 *
+	 * anura.processes.register(process);
+	 * ```
+	 */
 	register(proc: Process) {
 		this.state.procs.push(new WeakRef(proc));
 		// eslint-disable-next-line no-self-assign
 		this.state.procs = this.state.procs;
 	}
 
+	/**
+	 * Create and register a new {@link IframeProcess} from a script source.
+	 *
+	 * @param script - JavaScript source code to execute inside the process
+	 *   iframe.
+	 * @param type - Either `"common"` (classic script) or `"module"` (ES
+	 *   module). Defaults to `"common"`.
+	 * @param args - Arguments to expose to the process's `main` function (for
+	 *   module-type processes).
+	 * @returns The created process.
+	 *
+	 * @example
+	 * ```js
+	 * anura.processes.create("print('Hello, ' + await readln())", "module");
+	 * ```
+	 */
 	create(
 		script: string,
 		type: "common" | "module" = "common",
@@ -46,6 +102,22 @@ class Processes {
 		return proc;
 	}
 
+	/**
+	 * Read a script file from the Anura filesystem and execute it as a
+	 * process. The file's first line is parsed as a shebang-like header that
+	 * may declare options such as `lang`.
+	 *
+	 * @param path - Absolute path of the script file to execute.
+	 * @param args - Arguments to pass to the process.
+	 * @param useLogger - If `true`, the process's stdout/stderr are piped
+	 *   into the built-in {@link Anura.logger} streams.
+	 * @returns The created process.
+	 *
+	 * @example
+	 * ```js
+	 * await anura.processes.execute("/path/to/script.ajs");
+	 * ```
+	 */
 	async execute(path: string, args: string[] = [], useLogger: boolean = false) {
 		const data = await anura.fs.promises.readFile(path);
 		// Read the file until the first newline

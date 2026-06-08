@@ -1,5 +1,11 @@
 // Depends on Settings.ts, must be loaded AFTER
 
+/**
+ * Provides access to Anura's file service. Useful for handling the opening of
+ * files and registering file handlers.
+ *
+ * Available globally as `anura.files`.
+ */
 class FilesAPI {
 	// This is the fallback icon that will be used if no handler is found and no default handler is set.
 	// This should almost never be used, as it is a fallback for the fallback. It is here just in case.
@@ -8,6 +14,17 @@ class FilesAPI {
 	// Folder icon
 	folderIcon = "/assets/icons/missing_icon.svg";
 
+	/**
+	 * Open a file using the registered handler for its extension, falling back
+	 * to the default handler if none has been registered.
+	 *
+	 * @param path - Absolute path to the file to open.
+	 *
+	 * @example
+	 * ```js
+	 * anura.files.open("/config_cached.json"); // uses file handler to open json
+	 * ```
+	 */
 	async open(path: string): Promise<void> {
 		const ext = path.split("/").pop()!.split(".").pop();
 		const extHandlers = anura.settings.get("FileExts") || {};
@@ -65,6 +82,18 @@ class FilesAPI {
 		}
 	}
 
+	/**
+	 * Returns an icon URL for the given path based on its file extension,
+	 * resolved through the registered file handler (with a default fallback).
+	 *
+	 * @param path - The file path to resolve an icon for.
+	 * @returns The icon URL/path string.
+	 *
+	 * @example
+	 * ```js
+	 * anura.files.getIcon("/config_cached.json"); // returns icon for json
+	 * ```
+	 */
 	async getIcon(path: string): Promise<string> {
 		const ext = path.split("/").pop()!.split(".").pop();
 		const extHandlers = anura.settings.get("FileExts") || {};
@@ -125,6 +154,18 @@ class FilesAPI {
 		return this.fallbackIcon;
 	}
 
+	/**
+	 * Returns a human readable file type string for the given path, resolved
+	 * through the registered file handler (with a default fallback).
+	 *
+	 * @param path - The file path to inspect.
+	 * @returns The human readable file type string.
+	 *
+	 * @example
+	 * ```js
+	 * anura.files.getFileType("/config_cached.json"); // returns type for json
+	 * ```
+	 */
 	async getFileType(path: string): Promise<string> {
 		const ext = path.split("/").pop()!.split(".").pop();
 		const extHandlers = anura.settings.get("FileExts") || {};
@@ -198,6 +239,21 @@ class FilesAPI {
 		anura.settings.set("FileExts", extHandlers);
 	}
 
+	/**
+	 * Register an Anura library as the handler for a file extension. The
+	 * library should export an `openFile(path)` function (and optionally
+	 * `getIcon` / `getFileType`).
+	 *
+	 * @param id - The package id of the library to use as a handler.
+	 * @param extension - The file extension (without the leading dot) to bind
+	 *   the handler to.
+	 *
+	 * @example
+	 * ```js
+	 * // Set anura.fileviewer library as default handler for png
+	 * anura.files.setModule("anura.fileviewer", "png");
+	 * ```
+	 */
 	setModule(id: string, extension: string) {
 		const extHandlers = anura.settings.get("FileExts") || {};
 		extHandlers[extension] = {

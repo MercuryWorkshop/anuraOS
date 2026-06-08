@@ -9,11 +9,51 @@ V86.prototype.serial1_send = function (a: string) {
 const SLICE_SIZE = 2 ** 17 * 32;
 const BUF_SIZE = 256;
 
+/**
+ * Represents the v86 virtual hard disk that backs the x86 subsystem.
+ *
+ * Available globally as `anura.x86hdd`. Returned by {@link InitV86Hdd}.
+ *
+ * The "file" is stored in IndexedDB as fixed-size slices and exposed to v86
+ * through an API compatible with the parts of `File` it expects.
+ */
 interface FakeFile {
 	slice: (start: number, end: number) => Promise<Blob>;
+	/**
+	 * Persist any cached writes from the v86 emulator's `block_cache` back to
+	 * IndexedDB. Also displays a notification to the user when it finishes.
+	 *
+	 * @param emulator - The v86 emulator instance whose disk should be
+	 *   flushed. Defaults to `anura.x86?.emulator`.
+	 *
+	 * @example
+	 * ```js
+	 * console.log("saving hard disk");
+	 * await anura.x86hdd.save();
+	 * ```
+	 */
 	save: (emulator?: any) => Promise<void>;
+	/**
+	 * Delete the entire x86 hard disk image from IndexedDB and reload the
+	 * page. This is a destructive action!
+	 *
+	 * @example
+	 * ```js
+	 * console.log("deleting hard disk");
+	 * await anura.x86hdd.delete();
+	 * ```
+	 */
 	delete: () => Promise<void>;
+	/**
+	 * Grow the x86 hard disk to a new size by appending empty bytes to the
+	 * stored image. The OS will need to be restarted (or otherwise made aware
+	 * of the new geometry) before it can use the additional space — see the
+	 * Anura API doc for an example using `resizefs.img`.
+	 *
+	 * @param size - The new total size of the disk in bytes.
+	 */
 	resize: (size: number) => Promise<void>;
+	/** The size of the v86 hard disk in bytes. */
 	size: number;
 }
 
@@ -91,6 +131,29 @@ async function InitV86Hdd(): Promise<FakeFile> {
 			}
 			return new Blob([buf!]);
 		},
+		/**
+		 * Load a file (blob) into the x86 hard disk, replacing its current
+		 * contents. The image is split into `SLICE_SIZE`-sized parts and
+		 * stored in IndexedDB.
+		 *
+		 * @param f - The blob (or `File`) containing the disk image.
+		 *
+		 * @example
+		 * ```js
+		 * // single file
+		 * const rootfs = await fetch(anura.config.x86[x86image].rootfs);
+		 * const blob = await rootfs.blob();
+		 * await anura.x86hdd.loadfile(blob);
+		 *
+		 * // split into multiple files
+		 * const files = [];
+		 * let file_1 = await fetch(anura.config.x86[x86image].rootfs[0]);
+		 * files[0] = await file_1.blob();
+		 * let file_2 = await fetch(anura.config.x86[x86image].rootfs[1]);
+		 * files[1] = await file_2.blob();
+		 * await anura.x86hdd.loadfile(new Blob(files));
+		 * ```
+		 */
 		loadfile: async (f: File) => {
 			const trn = db.transaction("parts", "readwrite").objectStore("parts");
 			trn.put(f.size, "size");
@@ -227,12 +290,22 @@ async function InitV86Hdd(): Promise<FakeFile> {
 	return fakefile;
 }
 
+/**
+ * Provides access to Anura's x86 backend, used to create PTYs, write directly
+ * to serial terminals (not recommended), or access the v86 emulator itself.
+ *
+ * Available globally as `anura.x86` (or `null` if x86 has not been started).
+ */
 class V86Backend {
 	ptyNum = 1;
 	ready = false;
 
 	vgacanvas: HTMLCanvasElement = null!;
 
+	/**
+	 * A `<div>` containing the canvas with the emulated v86 screen. Mount
+	 * this element somewhere in the DOM to display the x86 desktop.
+	 */
 	screen_container = (
 		<div
 			id="screen_container"
@@ -254,6 +327,12 @@ class V86Backend {
 	xpty: number;
 	runpty: number;
 
+	/**
+	 * The underlying v86 emulator object.
+	 *
+	 * See the {@link https://github.com/copy/v86 v86 documentation} for
+	 * details on its API.
+	 */
 	emulator;
 	saveinterval;
 	sendWispFrame: any;
@@ -375,6 +454,30 @@ class V86Backend {
 		});
 	}
 
+	/**
+	 * Open a PTY in the x86 subsystem and run a command inside it.
+	 *
+	 * @param command - The shell command to run inside the PTY.
+	 * @param cols - Initial number of columns to size the PTY to.
+	 * @param rows - Initial number of rows to size the PTY to.
+	 * @param onData - Callback fired every time the PTY emits data. The
+	 *   chunk is decoded as UTF-8 text.
+	 * @returns A promise resolving to the PTY's id, which is needed for
+	 *   subsequent {@link V86Backend.writepty} / {@link V86Backend.resizepty}
+	 *   / {@link V86Backend.closepty} calls.
+	 *
+	 * @example
+	 * ```js
+	 * const pty = await anura.x86.openpty(
+	 *     "/bin/bash",
+	 *     screenSize.width,
+	 *     screenSize.height,
+	 *     (data) => {
+	 *         // callback gets called every time the PTY returns data
+	 *     },
+	 * );
+	 * ```
+	 */
 	openpty(
 		command: string,
 		cols: number,
@@ -478,6 +581,24 @@ class V86Backend {
 		}
 	}
 
+	/**
+	 * Send data to a PTY.
+	 *
+	 * @param TTYn - The id returned from {@link V86Backend.openpty}.
+	 * @param data - Text to write to the PTY. Encoded as UTF-8 before being
+	 *   sent.
+	 *
+	 * @example
+	 * ```js
+	 * const pty = await anura.x86.openpty(
+	 *     "/bin/bash",
+	 *     screenSize.width,
+	 *     screenSize.height,
+	 *     (data) => { console.log(data); },
+	 * );
+	 * anura.x86.writepty(pty, "Hello World!");
+	 * ```
+	 */
 	writepty(TTYn: number, data: string) {
 		if (TTYn === -1) {
 			return;
@@ -490,6 +611,24 @@ class V86Backend {
 		});
 	}
 
+	/**
+	 * Resize a PTY.
+	 *
+	 * @param TTYn - The id returned from {@link V86Backend.openpty}.
+	 * @param cols - New number of columns.
+	 * @param rows - New number of rows.
+	 *
+	 * @example
+	 * ```js
+	 * const pty = await anura.x86.openpty(
+	 *     "TERM=xterm DISPLAY=:0 bash",
+	 *     screenSize.width,
+	 *     screenSize.height,
+	 *     (data) => { console.log(data); },
+	 * );
+	 * anura.x86.resizepty(pty, screenSize.height, screenSize.width);
+	 * ```
+	 */
 	resizepty(TTYn: number, cols: number, rows: number) {
 		if (TTYn === -1) {
 			return;

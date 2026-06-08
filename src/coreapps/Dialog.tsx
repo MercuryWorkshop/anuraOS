@@ -5,6 +5,14 @@ type ProgressObject = {
 	progress: number;
 };
 
+/**
+ * Provides themed dialog windows for Anura. App developers should prefer these
+ * over the native browser dialogs (`alert`, `confirm`, `prompt`) so that
+ * dialogs render inside the desktop environment and integrate visually with
+ * Anura.
+ *
+ * Available globally as `anura.dialog`.
+ */
 class Dialog extends App {
 	name = "Anura Dialog";
 	package = "anura.dialog";
@@ -71,6 +79,18 @@ class Dialog extends App {
 		return Math.max(height + 50, minHeight || 170);
 	}
 
+	/**
+	 * Show an alert dialog window with an OK button.
+	 *
+	 * @param message - The message to display in the dialog body.
+	 * @param title - Title displayed at the top of the dialog. Defaults to
+	 *   `"Alert"`.
+	 *
+	 * @example
+	 * ```js
+	 * anura.dialog.alert("Hello World!");
+	 * ```
+	 */
 	alert(message: string, title = "Alert") {
 		const contents: HTMLElement = (
 			<div class={[this.css]}>
@@ -106,6 +126,23 @@ class Dialog extends App {
 
 		win.content.appendChild(contents);
 	}
+	/**
+	 * Show a confirmation dialog with OK and Cancel buttons.
+	 *
+	 * @param message - The message to display in the dialog body.
+	 * @param title - Title displayed at the top of the dialog. Defaults to
+	 *   `"Confirmation"`.
+	 * @returns A promise that resolves to `true` if the user confirmed and
+	 *   `false` if they cancelled or closed the dialog.
+	 *
+	 * @example
+	 * ```js
+	 * let confirm = await anura.dialog.confirm("Are you sure?");
+	 * if (confirm) {
+	 *     console.log("They were sure.");
+	 * }
+	 * ```
+	 */
 	async confirm(message: string, title = "Confirmation"): Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			const contents: HTMLElement = (
@@ -151,6 +188,28 @@ class Dialog extends App {
 			win.content.appendChild(contents);
 		});
 	}
+	/**
+	 * Show a prompt dialog asking the user to enter text.
+	 *
+	 * @param message - The prompt message to display.
+	 * @param defaultValue - Value returned if the user submits an empty input.
+	 * @returns A promise resolving to the user's input, the `defaultValue`
+	 *   if the input is empty, or `null` if the user cancels.
+	 *
+	 * @example
+	 * ```js
+	 * let input = await anura.dialog.prompt("What is your favorite number?");
+	 * if (input) {
+	 *     console.log(input);
+	 * }
+	 *
+	 * // default value mode
+	 * let input = await anura.dialog.prompt("What is your favorite number?", "3");
+	 * if (input) {
+	 *     console.log(input);
+	 * }
+	 * ```
+	 */
 	async prompt(message: string, defaultValue?: any): Promise<any> {
 		return new Promise((resolve, reject) => {
 			let input: HTMLInputElement;
@@ -208,6 +267,35 @@ class Dialog extends App {
 			win.content.appendChild(contents);
 		});
 	}
+	/**
+	 * Open a progress dialog that displays a title, a detail string and a
+	 * progress bar. The returned stateful object lets you update the
+	 * displayed `title`, `detail` and `progress` values reactively.
+	 *
+	 * The window automatically closes when `progress` becomes `>= 1`.
+	 *
+	 * @param title - The initial dialog title (also the window title).
+	 * @param detail - Optional initial detail / status line.
+	 * @returns A stateful object with `title`, `detail` and `progress`
+	 *   properties.
+	 *
+	 * @example
+	 * ```js
+	 * const dialog = anura.dialog.progress("Initializing...");
+	 * await sleep(100);
+	 * dialog.detail = "Stage One";
+	 * dialog.progress = 0.2;
+	 * await sleep(100);
+	 * dialog.detail = "Stage Two";
+	 * dialog.progress = 0.4;
+	 * await sleep(100);
+	 * dialog.detail = "Stage Three";
+	 * dialog.progress = 0.8;
+	 * await sleep(100);
+	 * dialog.detail = "Stage Four";
+	 * dialog.progress = 1;
+	 * ```
+	 */
 	progress(title: string, detail?: string): Stateful<ProgressObject> {
 		const state = $state({
 			title: title || "",
