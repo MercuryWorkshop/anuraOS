@@ -148,7 +148,7 @@ bundle: tsc css lint milestone commit build/cache-load.json
 	
 clean:
 	rm -rf build
-	cd v86 && make clean || true
+	cd external/v86 && make clean || true
 
 watch: FORCE
 	npx tsc-watch --onSuccess "make css milestone commit build/cache-load.json" 
