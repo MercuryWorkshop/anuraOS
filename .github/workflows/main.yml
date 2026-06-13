@@ -2,6 +2,9 @@ name: CI
 
 on: [push, pull_request, workflow_dispatch]
 
+env:
+  WASM_BINDGEN_VERSION: "0.2.105"
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -58,6 +61,13 @@ jobs:
 
       - name: Install dependencies
         run: sudo apt update && sudo apt install -y git build-essential clang default-jre gcc-multilib
+
+      - name: Setup Rewriter Toolchain
+        uses: ./external/anura-browserjs/packages/scramjet/.github/actions/setup-rewriter-toolchain
+        with:
+          wasm-bindgen-version: ${{ env.WASM_BINDGEN_VERSION }}
+          rewriter-path: external/anura-browserjs/packages/scramjet/packages/core/rewriter
+          github-token: ${{ github.token }}
 
       - name: Pack Anura
         run: make static

@@ -41,6 +41,7 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 - `rustup`
 - `wasm-bindgen` (v0.2.105)
 - `wasm-opt`
+- [this `wasm-snip` fork](https://github.com/r58Playz/wasm-snip)
 - A recent version of `java` (11+)
 - `wget`
 - `clang`
