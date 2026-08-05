@@ -6,7 +6,10 @@ type WispClientMapping = {
 
 type WispServerMapping = {
 	regex: RegExp;
-	handler: WebSocket | RTCDataChannel;
+	handler:
+		| ((data: any) => WebSocket | RTCDataChannel)
+		| WebSocket
+		| RTCDataChannel;
 	lastId: number;
 	clients: Map<number, number>;
 	defaultBuffer?: number;
@@ -29,8 +32,11 @@ class WispBus {
 	constructor(upstreamProvider: WebSocket | RTCDataChannel) {
 		this.upstream = upstreamProvider;
 		this.upstream.binaryType = "arraybuffer";
-		this.upstream.addEventListener("message", (e: MessageEvent) => {
-			this.handleIncomingPacket("upstream", new Uint8Array(e.data));
+		this.upstream.addEventListener("message", (e) => {
+			this.handleIncomingPacket(
+				"upstream",
+				new Uint8Array((e as MessageEvent).data),
+			);
 		});
 	}
 
@@ -54,12 +60,22 @@ class WispBus {
 		}
 
 		this.upstream = upstreamProvider;
+		this.upstream.binaryType = "arraybuffer";
+		this.upstream.addEventListener("message", (e) => {
+			this.handleIncomingPacket(
+				"upstream",
+				new Uint8Array((e as MessageEvent).data),
+			);
+		});
 	}
 
 	registerServer(
 		id: string,
 		regex: RegExp,
-		handler: WebSocket | RTCDataChannel,
+		handler:
+			| ((data: any) => WebSocket | RTCDataChannel)
+			| WebSocket
+			| RTCDataChannel,
 	) {
 		this.serverMappings.set(id, {
 			regex,
@@ -67,10 +83,12 @@ class WispBus {
 			lastId: 0,
 			clients: new Map(),
 		});
-		handler.binaryType = "arraybuffer";
-		handler.addEventListener("message", (e: MessageEvent) => {
-			this.handleIncomingPacket(id, new Uint8Array(e.data));
-		});
+		if (typeof handler === "object") {
+			handler.binaryType = "arraybuffer";
+			handler.addEventListener("message", (e) => {
+				this.handleIncomingPacket(id, new Uint8Array((e as MessageEvent).data));
+			});
+		}
 	}
 
 	handleIncomingPacket(sourceID: string, packet: Uint8Array) {
@@ -79,14 +97,15 @@ class WispBus {
 		if (sourceID !== "upstream") {
 			if (parsed.streamID === 0) {
 				if (parsed.packetType === wisp.CONTINUE) {
-					this.serverMappings.get(sourceID).defaultBuffer =
+					this.serverMappings.get(sourceID)!.defaultBuffer =
 						parsed.remainingBuffer!;
 				}
 				return;
 			}
 
+			//@ts-expect-error
 			parsed.streamID = this.serverMappings
-				.get(sourceID)
+				.get(sourceID)!
 				.clients?.get(parsed!.streamID);
 		} else {
 			if (parsed.streamID === 0) {
@@ -95,12 +114,12 @@ class WispBus {
 				}
 				return;
 			}
-			parsed.streamID = this.upstreamClients.get(parsed!.streamID);
+			parsed.streamID = this.upstreamClients.get(parsed!.streamID)!;
 		}
 
 		const reconstructedPacket = wisp.createWispPacket(parsed);
 		this.clientMappings
-			.get(parsed.streamID)
+			.get(parsed.streamID)!
 			.packetCallBack(reconstructedPacket);
 	}
 
@@ -121,8 +140,25 @@ class WispBus {
 			for (const [id, serverMapping] of this.serverMappings.entries()) {
 				if (serverMapping.regex.test(parsed.hostname!)) {
 					handleByUpstream = false;
-					assignedHandler = serverMapping.handler;
-					assignedRemoteStreamId = serverMapping.lastId;
+					assignedHandler =
+						typeof serverMapping.handler === "function"
+							? serverMapping.handler(parsed)
+							: serverMapping.handler;
+					if (typeof serverMapping.handler === "function") {
+						assignedHandler.binaryType = "arraybuffer";
+						assignedHandler.addEventListener("message", (e) => {
+							this.handleIncomingPacket(
+								id,
+								new Uint8Array((e as MessageEvent).data),
+							);
+						});
+					}
+					assignedRemoteStreamId =
+						//@ts-expect-error test
+						typeof assignedHandler.getNextStreamId === "function"
+							? //@ts-expect-error test
+								assignedHandler.getNextStreamId()
+							: serverMapping.lastId;
 					serverMapping.clients.set(assignedRemoteStreamId, this.lastGlobalID);
 					packetCallBack(
 						wisp.createWispPacket({
@@ -149,11 +185,11 @@ class WispBus {
 			}
 
 			this.clientMappings.set(this.lastGlobalID, {
-				remoteId: assignedRemoteStreamId,
-				handler: assignedHandler,
+				remoteId: assignedRemoteStreamId!,
+				handler: assignedHandler!,
 				packetCallBack,
 			});
-			assignedHandler.send(
+			assignedHandler!.send(
 				wisp.createWispPacket({
 					packetType: parsed.packetType,
 					streamType: parsed.streamType,
@@ -173,8 +209,8 @@ class WispBus {
 					.get(virtualServerID)
 					.mappings.get(parsed.streamID),
 			);
-			const assignedHandler = streamMetaData.handler;
-			parsed.streamID = streamMetaData.remoteId; // modify the stream ID and then send it off
+			const assignedHandler = streamMetaData!.handler;
+			parsed.streamID = streamMetaData!.remoteId; // modify the stream ID and then send it off
 			assignedHandler.send(wisp.createWispPacket(parsed));
 			return null;
 		}
