@@ -228,11 +228,15 @@ async function InitV86Hdd(): Promise<FakeFile> {
 }
 
 class V86Backend {
-	ptyNum = 1;
+	emulator;
+	virt_hda: FakeFile;
+	saveinterval;
 	ready = false;
-
-	vgacanvas: HTMLCanvasElement = null!;
-
+	ptyNum = 1;
+	sendWispFrame: any;
+	xpty: number = -1;
+	runpty: number = -1;
+	vgacanvas: HTMLCanvasElement = document.createElement("canvas");
 	screen_container = (
 		<div
 			id="screen_container"
@@ -245,19 +249,9 @@ class V86Backend {
 			`}
 		>
 			<div style="white-space: pre; font: 14px monospace; line-height: 14px"></div>
-			{(this.vgacanvas = (<canvas></canvas>) as HTMLCanvasElement)}
+			{this.vgacanvas}
 		</div>
 	);
-
-	virt_hda: FakeFile;
-	netpty: number;
-	xpty: number;
-	runpty: number;
-
-	emulator;
-	saveinterval;
-	sendWispFrame: any;
-	//
 
 	constructor(virt_hda: FakeFile) {
 		console.log(virt_hda);
@@ -373,6 +367,14 @@ class V86Backend {
 		this.runpty = await this.openpty("/bin/bash --login", 1, 1, (data) => {
 			console.debug("RUNPTY" + data);
 		});
+
+		anura.net.bus.registerServer(
+			"v86-localhost",
+			/^(localhost|127(?:\.\d{1,3}){3})$/,
+			//@ts-expect-error this is close enough to the shape that itll work
+			(parsed) =>
+				new this.v86InternalTCPSocket(parsed.hostname, parsed.port, true),
+		);
 	}
 
 	openpty(
@@ -381,7 +383,7 @@ class V86Backend {
 		rows: number,
 		onData: (string: string) => void,
 	): Promise<number> {
-		if (!anura.x86!.ready) {
+		if (!this.ready) {
 			onData(
 				"\u001b[33mThe anura x86 subsystem has not yet booted. Please wait for the notification that it has booted and try again.\u001b[0m",
 			);
@@ -419,7 +421,7 @@ class V86Backend {
 		rows: number,
 		onData: (data: Uint8Array) => void,
 	): Promise<number> {
-		if (!anura.x86!.ready) {
+		if (!this.ready) {
 			throw new Error("PTY driver has not started");
 		}
 
@@ -520,26 +522,27 @@ class V86Backend {
 	}
 	v86InternalTCPSocket = class v86InternalTCPSocket extends EventTarget {
 		pty = -1;
+		raw: boolean = false;
 		readyState = "open";
 		binaryType = "arraybuffer";
-		constructor(hostname: string, port: string) {
+		constructor(hostname: string, port: string, raw?: boolean) {
 			super();
 			console.log("creating socket: " + hostname);
-
 			(async () => {
 				this.pty = anura.x86!.ptyNum++;
+				this.raw = Boolean(raw);
 				await anura.x86!.sendWispFrame({
 					type: "CONNECT",
 					streamType: 0x01,
 					streamID: this.pty,
 					port: port,
 					command: hostname,
+					raw: this.raw,
 					dataCallback: (data: Uint8Array) => {
 						this.onmessage({ data: data.buffer });
 
 						this.dispatchEvent(
-							//@ts-expect-error idk why?
-							new CustomEvent("message", { data: data.buffer }),
+							new MessageEvent("message", { data: data.buffer }),
 						);
 					},
 					closeCallback: (data: number) => {
@@ -555,14 +558,23 @@ class V86Backend {
 				}
 			})();
 		}
-
 		protocol = "";
 
 		close() {
 			anura.x86!.closepty(this.pty);
 		}
 
+		getNextStreamId() {
+			return this.pty;
+		}
+
 		send(data: any) {
+			if (this.raw) {
+				const packet = wisp.parseIncomingPacket(data);
+				if (packet.packetType === 4) return this.close();
+				if (packet.packetType !== 2) return;
+				data = packet.payload;
+			}
 			anura.x86!.writeBinaryPTY(this.pty, data);
 		}
 
@@ -651,7 +663,7 @@ class V86Backend {
 					const length = view.getUint32(0, true);
 
 					if (length + 4 > data.length) {
-						// Length does not match actual packet size
+						// Length does not match actual packet sizelocalhost:3000
 
 						console.log("Packet overloaded, more in next virtio frame");
 						remaniningLength = length + 4 - data.length;
@@ -691,13 +703,15 @@ class V86Backend {
 					// The server should never send this actually
 					throw new Error("Server sent client only frame: CONNECT 0x01");
 				case 2: // DATA
-					if (connections[streamID])
-						connections[streamID].dataCallback(frame.slice(5));
-					else
+					if (connections[streamID]) {
+						connections[streamID].raw
+							? connections[streamID].dataCallback(frame)
+							: connections[streamID].dataCallback(frame.slice(5));
+					} else {
 						throw new Error(
 							"Got a DATA packet but stream not registered. ID: " + streamID,
 						);
-
+					}
 					break;
 				case 3: // CONTINUE
 					if (connections[streamID]) {
@@ -776,6 +790,7 @@ class V86Backend {
 					fullPacket.set(commandBuffer, 12); // command
 					// Setting callbacks
 					connections[frameObj.streamID] = {
+						raw: frameObj.raw,
 						dataCallback: frameObj.dataCallback,
 						closeCallback: frameObj.closeCallback,
 						congestion: connections[0].congestion,
