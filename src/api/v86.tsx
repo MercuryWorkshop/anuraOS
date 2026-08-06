@@ -663,7 +663,7 @@ class V86Backend {
 					const length = view.getUint32(0, true);
 
 					if (length + 4 > data.length) {
-						// Length does not match actual packet sizelocalhost:3000
+						// Length does not match actual packet size
 
 						console.log("Packet overloaded, more in next virtio frame");
 						remaniningLength = length + 4 - data.length;
