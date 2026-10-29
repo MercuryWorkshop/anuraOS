@@ -7,7 +7,7 @@ RUST_FILES=$(shell find external/v86/src/rust/ -name '*.rs') \
 
 all: submodules build/bootstrap \
 		external-libs v86 \
-	 	bin/chimerix.ajs external/anura-browserjs/packages/chrome/dist/index.html apps/libfileview.lib/icons \
+	 	bin/chimerix.ajs external/hypertabs/packages/chrome/dist/index.html apps/libfileview.lib/icons \
 		bundle \
 		public/config.json \
 
@@ -137,12 +137,11 @@ bin/chimerix.ajs: external/chimerix/src/*
 	cd external/chimerix; npx rollup -c rollup.config.js
 	cp external/chimerix/dist/chimerix.ajs bin/chimerix.ajs
 
-external/anura-browserjs/packages/chrome/dist/index.html: external/anura-browserjs/packages/chrome/package.json external/anura-browserjs/packages/chrome/src/*.ts external/anura-browserjs/packages/chrome/src/*.tsx external/anura-browserjs/packages/scramjet/package.json external/anura-browserjs/packages/scramjet/packages/core/src/*.ts
-	cd external/anura-browserjs; pnpm i
-	cd external/anura-browserjs/packages/scramjet/packages/core; pnpm rewriter:build
-	cd external/anura-browserjs; pnpm build
-	cd external/anura-browserjs; pnpm build:dreamland
-	cd external/anura-browserjs/packages/chrome; pnpm build
+external/hypertabs/packages/chrome/dist/index.html: external/hypertabs/packages/chrome/package.json external/hypertabs/packages/chrome/src/*.ts external/hypertabs/packages/chrome/src/*.tsx
+	cd external/hypertabs; pnpm i
+	cd external/hypertabs; pnpm build
+	cd external/hypertabs; pnpm build:dreamland
+	cd external/hypertabs/packages/chrome; VITE_ISOLATION_ORIGIN=none VITE_RELATIVE_PATH=1 pnpm build:chrome
 
 apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 	cd apps/libfileview.lib; bash geticons.sh
@@ -189,7 +188,7 @@ static: all
 	cp -r build/* static/
 	cp -r bin static/
 	cp -r apps static/
-	cp -r external/anura-browserjs/packages/chrome/dist static/browser
+	cp -r external/hypertabs/packages/chrome/dist static/browser
 
 server: FORCE
 	cd server; node server.js

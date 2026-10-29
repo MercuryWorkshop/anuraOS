@@ -28,7 +28,6 @@ importScripts(
 	"/sw/routes/display.js",
 	"/sw/routes/dav.js",
 	"/sw/routes/filepicker.js",
-	"/sw/routes/proxy.js",
 	"/sw/routes/main.js",
 );
 

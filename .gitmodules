@@ -10,6 +10,6 @@
 [submodule "x86_image_wizard/epoxy"]
 	path = x86_image_wizard/epoxy
 	url = https://github.com/MercuryWorkshop/epoxy-tls
-[submodule "anura-browserjs"]
-	path = external/anura-browserjs
-	url = https://github.com/mercuryworkshop/anura-browserjs
+[submodule "external/hypertabs"]
+	path = external/hypertabs
+	url = https://github.com/titaniumnetwork-dev/hypertabs
