@@ -141,7 +141,7 @@ external/hypertabs/packages/chrome/dist/index.html: external/hypertabs/packages/
 	cd external/hypertabs; pnpm i
 	cd external/hypertabs; pnpm build
 	cd external/hypertabs; pnpm build:dreamland
-	cd external/hypertabs/packages/chrome; VITE_ISOLATION_ORIGIN=none VITE_RELATIVE_PATH=1 pnpm build:chrome
+	cd external/hypertabs; VITE_ISOLATION_ORIGIN=none VITE_RELATIVE_PATH=1 pnpm build:chrome
 
 apps/libfileview.lib/icons: apps/libfileview.lib/icons.json
 	cd apps/libfileview.lib; bash geticons.sh
