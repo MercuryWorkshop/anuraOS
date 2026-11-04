@@ -201,8 +201,7 @@ type FilerFS = {
 		path: string,
 		data: Uint8Array | string,
 		options:
-			| { encoding: string; flag: "r" | "r+" | "w" | "w+" | "a" | "a+" }
-			| string,
+			{ encoding: string; flag: "r" | "r+" | "w" | "w+" | "a" | "a+" } | string,
 		callback?: (err: Error | null) => void,
 	): void;
 

@@ -7,9 +7,7 @@ type WispClientMapping = {
 type WispServerMapping = {
 	regex: RegExp;
 	handler:
-		| ((data: any) => WebSocket | RTCDataChannel)
-		| WebSocket
-		| RTCDataChannel;
+		((data: any) => WebSocket | RTCDataChannel) | WebSocket | RTCDataChannel;
 	lastId: number;
 	clients: Map<number, number>;
 	defaultBuffer?: number;
@@ -73,9 +71,7 @@ class WispBus {
 		id: string,
 		regex: RegExp,
 		handler:
-			| ((data: any) => WebSocket | RTCDataChannel)
-			| WebSocket
-			| RTCDataChannel,
+			((data: any) => WebSocket | RTCDataChannel) | WebSocket | RTCDataChannel,
 	) {
 		this.serverMappings.set(id, {
 			regex,
