@@ -11251,16 +11251,14 @@ hterm.Screen.prototype.insertString = function (str, wcwidth = undefined) {
 		// This whitespace should be completely unstyled.  Underline, background
 		// color, and strikethrough would be visible on whitespace, so we can't use
 		// one of those spans to hold the text.
-		if (
-			!(
-				this.textAttributes.underline ||
-				this.textAttributes.strikethrough ||
-				this.textAttributes.background ||
-				this.textAttributes.wcNode ||
-				!this.textAttributes.asciiNode ||
-				this.textAttributes.tileData != null
-			)
-		) {
+		if (!(
+			this.textAttributes.underline ||
+			this.textAttributes.strikethrough ||
+			this.textAttributes.background ||
+			this.textAttributes.wcNode ||
+			!this.textAttributes.asciiNode ||
+			this.textAttributes.tileData != null
+		)) {
 			// Best case scenario, we can just pretend the spaces were part of the
 			// original string.
 			str = ws + str;
@@ -24462,7 +24460,7 @@ hterm.wc.charWidthRegardAmbiguous = function (ucs) {
 hterm.wc.strWidth = function (str) {
 	let rv = 0;
 
-	for (let i = 0; i < str.length; ) {
+	for (let i = 0; i < str.length;) {
 		const codePoint = str.codePointAt(i);
 		const width = hterm.wc.charWidth(codePoint);
 		if (width < 0) {
@@ -24493,7 +24491,7 @@ hterm.wc.substr = function (str, start, subwidth = undefined) {
 	// in the result.  This also makes for a simple optimization for a common
 	// request.
 	if (start) {
-		for (let width = 0; startIndex < str.length; ) {
+		for (let width = 0; startIndex < str.length;) {
 			const codePoint = str.codePointAt(startIndex);
 			width += hterm.wc.charWidth(codePoint);
 			if (width > start) {
@@ -24505,7 +24503,7 @@ hterm.wc.substr = function (str, start, subwidth = undefined) {
 
 	if (subwidth !== undefined) {
 		let endIndex = startIndex;
-		for (let width = 0; endIndex < str.length; ) {
+		for (let width = 0; endIndex < str.length;) {
 			const codePoint = str.codePointAt(endIndex);
 			width += hterm.wc.charWidth(codePoint);
 			if (width > subwidth) {
