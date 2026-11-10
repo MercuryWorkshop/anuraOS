@@ -1,0 +1,60 @@
+{
+	"name": "@gex/runtime",
+	"version": "1.0.0",
+	"description": "Linux programs in the browser: a kernel, the programs it runs, and their files",
+	"license": "AGPL-3.0-only",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./index.d.ts",
+			"default": "./index.mjs"
+		},
+		"./fs": {
+			"types": "./fs.d.ts",
+			"default": "./fs.mjs"
+		},
+		"./windows/host": {
+			"types": "./windows-host.d.ts",
+			"default": "./windows-host.mjs"
+		},
+		"./windows/single": {
+			"types": "./windows-single.d.ts",
+			"default": "./windows-single.mjs"
+		},
+		"./windows/compositor": {
+			"types": "./windows-compositor.d.ts",
+			"default": "./windows-compositor.mjs"
+		},
+		"./persist": {
+			"types": "./persist.d.ts",
+			"default": "./persist.mjs"
+		},
+		"./persist/idb": {
+			"types": "./persist-idb.d.ts",
+			"default": "./persist-idb.mjs"
+		},
+		"./net": {
+			"types": "./net.d.ts",
+			"default": "./net.mjs"
+		},
+		"./net/wisp": {
+			"types": "./net-wisp.d.ts",
+			"default": "./net-wisp.mjs"
+		},
+		"./audio": {
+			"types": "./audio.d.ts",
+			"default": "./audio.mjs"
+		},
+		"./gl": {
+			"types": "./gl.d.ts",
+			"default": "./gl.mjs"
+		},
+		"./input": {
+			"types": "./input.d.ts",
+			"default": "./input.mjs"
+		},
+		"./package.json": "./package.json"
+	},
+	"types": "./index.d.ts",
+	"sideEffects": false
+}

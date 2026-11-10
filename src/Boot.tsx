@@ -595,7 +595,8 @@ document.addEventListener("anura-login-completed", async () => {
 	await bootUserCustomizations();
 
 	if (!anura.settings.get("x86-disabled")) {
-		await bootx86();
+		// await bootx86();
+		await bootgex();
 	}
 
 	if (anura.settings.get("kiosk-mode")) {

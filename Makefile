@@ -1,17 +1,12 @@
 SHELL := bash
 
-RUST_FILES=$(shell find external/v86/src/rust/ -name '*.rs') \
-	   external/v86/src/rust/gen/interpreter.rs external/v86/src/rust/gen/interpreter0f.rs \
-	   external/v86/src/rust/gen/jit.rs external/v86/src/rust/gen/jit0f.rs \
-	   external/v86/src/rust/gen/analyzer.rs external/v86/src/rust/gen/analyzer0f.rs
-
 all: submodules build/bootstrap \
-		external-libs v86 \
+		external-libs \
 	 	bin/chimerix.ajs external/anura-browserjs/packages/chrome/dist/index.html apps/libfileview.lib/icons \
 		bundle \
 		public/config.json \
 
-full: all rootfs-alpine
+full: all
 
 hooks: FORCE
 	mkdir -p .git/hooks
@@ -35,7 +30,7 @@ build/bootstrap: package.json server/package.json
 
 external-libs: build/libs/webdav/version build/libs/workbox/version build/libs/mime/mime.iife.js build/libs/idb-keyval/idb-keyval.js build/libs/comlink/comlink.min.mjs build/assets/matter.css build/libs/dreamland/all.js build/libs/filer/filer.min.js build/libs/nfsadapter/nfsadapter.js build/libs/fflate/browser.js build/libs/libcurl/version bin/chimerix.ajs
 	mkdir -p build/libs/
-	
+
 build/libs/workbox/version: build/bootstrap
 	mkdir -p build/libs/workbox
 	npx workbox-cli copyLibraries build/libs/workbox/
@@ -48,7 +43,7 @@ build/libs/webdav/version: build/bootstrap
 
 build/libs/mime/mime.iife.js: build/bootstrap
 	mkdir -p build/libs/mime
-	cp -r node_modules/mime/dist/* build/libs/mime 
+	cp -r node_modules/mime/dist/* build/libs/mime
 	npx rollup -f iife build/libs/mime/src/index.js -o build/libs/mime/mime.iife.js -n mime --exports named
 	jq '.version' node_modules/mime/package.json > build/libs/mime/version
 
@@ -89,7 +84,7 @@ build/libs/nfsadapter/nfsadapter.js: external/native-file-system-adapter/src/es6
 	cp external/native-file-system-adapter/dist/output.js build/libs/nfsadapter/nfsadapter.js
 	cp external/native-file-system-adapter/src/adapters/filer.js build/libs/nfsadapter/adapters/anuraadapter.js
 	cp external/native-file-system-adapter/src/util.js build/libs/nfsadapter/
-	cp external/native-file-system-adapter/src/config.js build/libs/nfsadapter/	
+	cp external/native-file-system-adapter/src/config.js build/libs/nfsadapter/
 
 build/libs/fflate/browser.js: build/bootstrap
 	mkdir -p build/libs/fflate
@@ -101,35 +96,6 @@ build/libs/libcurl/version: build/bootstrap
 	cp node_modules/libcurl.js/libcurl.mjs build/libs/libcurl/libcurl.mjs
 	cp node_modules/libcurl.js/libcurl.wasm build/libs/libcurl/libcurl.wasm
 	jq '.version' node_modules/libcurl.js/package.json > build/libs/libcurl/version
-	
-# v86 imports
-external/v86/src/rust/gen/jit.rs: 
-	cd external/v86; make src/rust/gen/jit.rs
-external/v86/src/rust/gen/jit0f.rs: 
-	cd external/v86; make src/rust/gen/jit0f.rs
-external/v86/src/rust/gen/interpreter.rs: 
-	cd external/v86; make src/rust/gen/interpreter.rs
-external/v86/src/rust/gen/interpreter0f.rs: 
-	cd external/v86; make src/rust/gen/interpreter0f.rs
-external/v86/src/rust/gen/analyzer.rs:
-	cd external/v86; make src/rust/gen/analyzer.rs
-external/v86/src/rust/gen/analyzer0f.rs: 
-	cd external/v86; make src/rust/gen/analyzer0f.rs
-external/v86/build/softfloat.o:
-	cd external/v86; make build/softfloat.o
-external/v86/build/zstddeclib.o:
-	cd external/v86; make build/zstddeclib.o
-
-libv86.js: external/v86/src/*.js external/v86/lib/*.js external/v86/src/browser/*.js
-	cd external/v86; make build/libv86.js
-	cp external/v86/build/libv86.js build/lib/libv86.js
-
-build/lib/v86.wasm: $(RUST_FILES) external/v86/build/softfloat.o external/v86/build/zstddeclib.o external/v86/Cargo.toml
-	cd external/v86; make build/v86.wasm
-	cp external/v86/build/v86.wasm build/lib/v86.wasm
-	
-v86: libv86.js build/lib/v86.wasm
-	cp -r external/v86/bios public
 
 bin/chimerix.ajs: external/chimerix/src/*
 	mkdir -p build/bin
@@ -151,14 +117,13 @@ ANURA_VERSION = $(shell jq -r '.version' package.json)
 
 bundle: tsc css lint milestone commit build/cache-load.json
 	mkdir -p build/artifacts
-	
+
 watch: FORCE
 	npx tsc-watch --onSuccess "make css milestone commit build/cache-load.json"
-	
+
 clean:
 	rm -rf build
-	cd external/v86 && make clean || true 
-	
+
 tsc:
 	mkdir -p build/artifacts
 	cp -r src/* build/artifacts
@@ -182,7 +147,7 @@ commit:
 	git rev-parse HEAD > build/COMMIT
 build/cache-load.json: FORCE
 	(find apps/ -type f && cd build/ && find lib/ -type f && find libs/ -type f && find assets/ -type f && find bundle.css -type f && cd ../public/ && find . -type f)| grep -v -e node_modules -e \.map -e \.d\.ts -e "/\." -e "workbox/" | jq -Rnc '[inputs]' > build/cache-load.json
-	
+
 static: all
 	mkdir -p static/
 	cp -r public/* static/
@@ -193,12 +158,6 @@ static: all
 
 server: FORCE
 	cd server; node server.js
-
-rootfs: FORCE
-	cd x86_image_wizard; sh x86_image_wizard.sh
-
-rootfs-alpine: FORCE
-	cd x86_image_wizard/alpine; sh build-alpine-bin.sh
 
 public/config.json:
 	cp config.default.json public/config.json

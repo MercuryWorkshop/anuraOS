@@ -26,6 +26,7 @@ export default [
 			"**/anuraos-types/",
 			"public/anura-sw.js",
 			"public/sw/**",
+			"public/gex/**",
 			"**/server/",
 			"documentation/templates",
 		],
