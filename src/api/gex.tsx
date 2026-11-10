@@ -6,7 +6,7 @@ async function bootgex() {
 	const { Wisp } = await import("/gex/net-wisp.mjs");
 	const { HostWindows } = await import("/gex/windows-host.mjs");
 	const { IdbPersist } = await import("/gex/persist-idb.mjs");
-	window.gex = { System, Filesystem, Wisp, HostWindows };
+	window.gex = { System, Filesystem, Wisp, HostWindows, IdbPersist };
 	anura.gex = new GexBackend();
 
 	const frogland = new FrogLandApp();
@@ -23,7 +23,7 @@ class GexBackend {
 		width: window.innerWidth,
 		height: window.innerHeight,
 	});
-	persist = new IdbPersist(this.fs, { db: "anura-gex" });
+	persist = new gex.IdbPersist(this.fs, { db: "anura-gex" });
 
 	async boot() {
 		this.fs.addTar("/debian-slim.tar.zst");

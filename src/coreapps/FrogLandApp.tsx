@@ -4,6 +4,7 @@ class FrogLandApp extends App {
 	icon = "/assets/icons/xfrog.png";
 
 	async startup() {
+		//@ts-ignore idgaf
 		anura.gex.windows.addEventListener("window", (event) => {
 			const wl = event.window;
 			const win = anura.wm.create(this, {

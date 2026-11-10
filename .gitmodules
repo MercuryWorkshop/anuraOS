@@ -7,9 +7,6 @@
 [submodule "native-file-system-adapter"]
 	path = external/native-file-system-adapter
 	url = https://github.com/MercuryWorkshop/native-file-system-adapter/
-[submodule "x86_image_wizard/epoxy"]
-	path = x86_image_wizard/epoxy
-	url = https://github.com/MercuryWorkshop/epoxy-tls
 [submodule "anura-browserjs"]
 	path = external/anura-browserjs
 	url = https://github.com/mercuryworkshop/anura-browserjs
