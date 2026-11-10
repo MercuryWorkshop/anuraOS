@@ -18,7 +18,7 @@ async function bootgex() {
 class GexBackend {
 	sys = new gex.System({});
 	fs = new gex.Filesystem(this.sys);
-	wisp = new gex.Wisp(this.sys, { url: "wss://anura.pro" });
+	wisp = new gex.Wisp(this.sys, { url: anura.wsproxyURL });
 	windows = new gex.HostWindows(this.sys, {
 		width: window.innerWidth,
 		height: window.innerHeight,
