@@ -594,8 +594,7 @@ document.addEventListener("anura-login-completed", async () => {
 	// Initializes apps and libs from userApps/ and userLibs/ and runs any user specified init scripts
 	await bootUserCustomizations();
 
-	if (!anura.settings.get("x86-disabled")) {
-		// await bootx86();
+	if (anura.settings.get("gex-enabled")) {
 		await bootgex();
 	}
 
@@ -662,27 +661,6 @@ document.addEventListener("anura-login-completed", async () => {
 		anura.settings.set("explore-shown", true);
 	}
 });
-async function bootx86() {
-	const mgr = new x86MgrApp();
-	await anura.registerApp(mgr);
-
-	await anura.registerApp(new XFrogApp());
-
-	await anura.registerApp(
-		new XAppStub("X Calculator", "anura.xcalc", "", "xcalc"),
-	);
-	await anura.registerApp(new XAppStub("XTerm", "anura.xterm", "", "xterm"));
-	anura.x86 = new V86Backend(anura.x86hdd);
-	AnuradHelpers.setReady("anura.x86");
-
-	anura.settings
-		.get("user-xapps")
-		.forEach((stub: { name: string; cmd: string; id: string }) => {
-			console.debug("registering user xapp", stub);
-			anura.registerApp(new XAppStub(stub.name, stub.id, "", stub.cmd));
-		});
-	AnuradHelpers.setStage("anura.bootx86");
-}
 async function bootUserCustomizations() {
 	const directories = anura.settings.get("directories");
 	console.debug("directories", directories);

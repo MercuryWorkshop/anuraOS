@@ -175,18 +175,16 @@ class ExploreApp extends App {
 		</div>
 	);
 
-	v86 = () => (
-		<div id="body" class="v86">
-			<h1>Using the x86 Subsystem</h1>
+	linux = () => (
+		<div id="body" class="gex">
+			<h1>Using the Linux Subsystem</h1>
 			<p>
-				AnuraOS includes an x86 subsystem (based on{" "}
-				<a
-					href="javascript:anura.apps['anura.browser'].open(['https://github.com/copy/v86']);" // using dreamland on:click or html onclick makes the link not blue
-				>
-					v86
+				AnuraOS includes an Linux subsystem (based on{" "}
+				<a href="javascript:anura.apps['anura.browser'].open(['https://github.com/HeyPuter/gex']);">
+					gex
 				</a>
 				), which lets you run real Linux within Anura.
-				{anura.x86 === undefined && (
+				{anura.gex === undefined && (
 					<p>
 						It seems like you dont have the subsystem enabled. You can install
 						it from{" "}
@@ -199,13 +197,13 @@ class ExploreApp extends App {
 						.
 					</p>
 				)}
-				{anura.x86 !== undefined && (
+				{anura.gex !== undefined && (
 					<p>
 						You can open a terminal using the{" "}
 						<span>
-							<img src="/assets/icons/terminal.png" alt="v86 Terminal Icon" />
-							<a href="javascript:anura.apps['anura.ashell'].open(['--cmd', '/usr/bin/x86-run.ajs']);">
-								v86 Terminal
+							<img src="/assets/icons/terminal.png" alt="Linux Terminal Icon" />
+							<a href="javascript:anura.apps['anura.ashell'].open(['--cmd', '/usr/bin/linux-run.ajs']);">
+								Linux Terminal
 							</a>
 						</span>{" "}
 						app.
@@ -311,10 +309,10 @@ class ExploreApp extends App {
 				</div>
 				<div
 					on:click={() => {
-						this.state.screen = this.v86();
+						this.state.screen = this.linux();
 					}}
 					class:selected={use(this.state.screen, (sc: HTMLElement) =>
-						sc.classList.contains("v86"),
+						sc.classList.contains("gex"),
 					)}
 				>
 					<span class="material-symbols-outlined">memory</span>

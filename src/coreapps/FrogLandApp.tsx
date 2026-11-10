@@ -2,6 +2,7 @@ class FrogLandApp extends App {
 	name = "FrogLand";
 	package = "anura.frogland";
 	icon = "/assets/icons/xfrog.png";
+	hidden = true;
 
 	async startup() {
 		//@ts-ignore idgaf
@@ -28,7 +29,6 @@ class FrogLandApp extends App {
 				wl.setStates({ maximized: false });
 			};
 			wl.canvas.style = "width: 100%; height: 100%";
-			wl.addEventListener("");
 			win.content.appendChild(wl.canvas);
 			console.log(wl, win);
 		});

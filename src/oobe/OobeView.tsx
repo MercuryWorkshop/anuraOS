@@ -4,20 +4,20 @@ class OobeView {
 		text: "#202124",
 		step: 0,
 		offlineEnabled: true,
-		v86Enabled: false,
+		gexEnabled: false,
 		localfsdriver: false,
 		dlsize: "0MB",
 	});
 
 	constructor() {
-		useChange([this.state.offlineEnabled, this.state.v86Enabled], () => {
+		useChange([this.state.offlineEnabled, this.state.gexEnabled], () => {
 			this.state.dlsize = "0MB";
 
 			if (this.state.offlineEnabled) {
 				this.state.dlsize = "~25MB";
 			}
 
-			if (this.state.v86Enabled) {
+			if (this.state.gexEnabled) {
 				this.state.dlsize = "1GB";
 
 				if (this.state.offlineEnabled) {
@@ -181,7 +181,7 @@ class OobeView {
 					</div>
 					<br></br>
 					<label class="matter-checkbox">
-						<input type="checkbox" bind:checked={use(this.state.v86Enabled)} />
+						<input type="checkbox" bind:checked={use(this.state.gexEnabled)} />
 						<span>Linux Emulation</span>
 					</label>
 					<div class="sub">
@@ -215,11 +215,11 @@ class OobeView {
 						<div id="bottomButtons">
 							<button
 								on:click={async () => {
-									anura.settings.set("x86-disabled", !this.state.v86Enabled);
 									anura.settings.set("use-sw-cache", this.state.offlineEnabled);
+									anura.settings.set("gex-enabled", this.state.gexEnabled);
 									anura.settings.set("applist", [
 										...anura.settings.get("applist"),
-										this.state.v86Enabled ? "anura.term" : "anura.ashell",
+										this.state.gexEnabled ? "anura.term" : "anura.ashell",
 									]);
 
 									if (this.state.localfsdriver) {
@@ -241,7 +241,7 @@ class OobeView {
 									}}
 								>
 									{$if(
-										use(this.state.v86Enabled),
+										use(this.state.gexEnabled),
 										<span>Next</span>,
 										<span>
 											<span>Finish</span>
@@ -249,7 +249,7 @@ class OobeView {
 									)}
 
 									{$if(
-										use(this.state.v86Enabled),
+										use(this.state.gexEnabled),
 										<span class="material-symbols-outlined">
 											chevron_right
 										</span>,
@@ -282,9 +282,8 @@ class OobeView {
 				});
 				this.state.color = "var(--material-bg)";
 				this.state.text = "whitesmoke";
-				if (!anura.settings.get("x86-disabled")) {
-					await anura.settings.set("x86-image", "alpine");
-					await installx86();
+				if (anura.settings.get("gex-enabled")) {
+					await anura.settings.set("gex-image", "debian-slim");
 				}
 				if (anura.settings.get("use-sw-cache")) await preloadFiles();
 				console.debug("Cached important files");
@@ -327,109 +326,6 @@ class OobeView {
 		document.dispatchEvent(new Event("anura-login-completed"));
 		this.element.remove();
 	}
-}
-
-async function installx86(tracker = document.getElementById("tracker")) {
-	console.debug("installing x86");
-	await anura.fs.mkdir("/boot");
-	const x86image = anura.settings.get("x86-image");
-	tracker!.innerText = "Downloading x86 kernel";
-	const bzimage = await fetch(anura.config.x86[x86image].bzimage);
-	anura.fs.writeFile(
-		"/boot/bzimage",
-		Filer.Buffer(await bzimage.arrayBuffer()),
-	);
-	tracker!.innerText = "Downloading x86 initrd";
-	const initrd = await fetch(anura.config.x86[x86image].initrd);
-	anura.fs.writeFile(
-		"/boot/initrd.img",
-		Filer.Buffer(await initrd.arrayBuffer()),
-	);
-
-	if (typeof anura.config.x86[x86image].rootfs === "string") {
-		const rootfs = await fetch(anura.config.x86[x86image].rootfs);
-		const blob = await rootfs.blob();
-		//@ts-ignore
-		await anura.x86hdd.loadfile(blob);
-	} else if (anura.config.x86[x86image].rootfs) {
-		// TODO: add batching, this will bottleneck and OOM if the rootfs is too large
-
-		console.debug("fetching");
-		// const files = await Promise.all(
-		//     anura.config.x86[x86image].rootfs.map((part: string) => fetch(part)),
-		// );
-
-		const files: Blob[] = [];
-		let limit = 4;
-		let i = 0;
-		let done = false;
-		let doneSoFar = 0;
-		const doWhenAvail = function () {
-			if (limit === 0) return;
-			limit--;
-			const assigned = i;
-			i++;
-
-			fetch(anura.config.x86[x86image].rootfs[assigned])
-				.then(async (response) => {
-					if (response.status !== 200) {
-						console.error("Status code bad on chunk " + assigned);
-						console.error(anura.config.x86[x86image].rootfs[assigned]);
-						console.error("Finished " + doneSoFar + " chunks before error");
-						anura.notifications.add({
-							title: "bad chunk on x86 download",
-							description: `Chunk ${assigned} gave status code ${response.status}\nClick me to reload`,
-							timeout: 50000,
-							callback: () => {
-								location.reload();
-							},
-						});
-						return;
-					}
-					files[assigned] = await response.blob();
-					limit++;
-					doneSoFar++;
-					tracker!.innerHTML = `Downloading x86 rootfs. Chunk ${doneSoFar}/${anura.config.x86[x86image].rootfs.length} done`;
-					if (i < anura.config.x86[x86image].rootfs.length) {
-						doWhenAvail();
-					}
-					if (doneSoFar === anura.config.x86[x86image].rootfs.length) {
-						done = true;
-					}
-					console.debug(
-						anura.config.x86[x86image].rootfs.length -
-							doneSoFar +
-							" chunks to go",
-					);
-				})
-
-				.catch((e) => {
-					console.error("Error on chunk " + assigned);
-					anura.notifications.add({
-						title: "bad chunk on x86 download",
-						description: `Chunk ${assigned} had a download error ${e}\nClick me to reload`,
-						timeout: 50000,
-						callback: () => {
-							location.reload();
-						},
-					});
-				}); // Peak error handling right there
-		};
-		doWhenAvail();
-		doWhenAvail();
-		doWhenAvail();
-		doWhenAvail();
-		while (!done) {
-			await sleep(200);
-		}
-
-		console.debug("constructing blobs...");
-		tracker!.innerText = "Concatenating and installing x86 rootfs";
-		//@ts-ignore
-		await anura.x86hdd.loadfile(new Blob(files));
-	}
-
-	console.debug("done");
 }
 
 async function preloadFiles(tracker = document.getElementById("tracker")) {

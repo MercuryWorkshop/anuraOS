@@ -231,10 +231,8 @@ class SettingsApp extends App {
 	}
 
 	state = $state({
-		show_x86_install: anura.settings.get("x86-disabled"),
-		x86_installing: false,
-		resizing: false,
 		settingsBody: undefined as unknown as HTMLDivElement,
+		show_linux_install: anura.settings.get("gex-enabled"),
 	});
 
 	page = async () => (
@@ -358,156 +356,8 @@ class SettingsApp extends App {
 							<SettingText title="Custom Power Off URL" setting="exitUrl" />
 						</div>
 					</div>
-					<div id="v86" class="v86 settings-category">
-						<h3 class="settings-category-name">Anura x86</h3>
-						<div class="settings-group">
-							{this.state.show_x86_install ? (
-								<div>
-									<button
-										on:click={async () => {
-											this.state.x86_installing = true;
-											anura.settings.set("x86-image", "alpine");
-											await installx86();
-											anura.settings.set("x86-disabled", false);
-											anura.notifications.add({
-												title: "x86 Subsystem Installed",
-												description:
-													"x86 OS has sucessfully installed. Reload the page to use it!",
-												timeout: 5000,
-											});
-
-											this.state.x86_installing = false;
-											this.state.show_x86_install = true;
-
-											if (document.getElementById("tracker")) {
-												document.getElementById("tracker")!.innerText =
-													"Installed!";
-											}
-										}}
-										class="matter-button-contained"
-									>
-										Install x86 Subsystem
-									</button>
-									<div id="tracker"></div>
-								</div>
-							) : (
-								<div className="x86-container">
-									<div class="settings-item">
-										<span>
-											<span style="margin-left: 10px; margin-right: 10px;">
-												Create launcher shortcut
-											</span>
-											<input
-												type="text"
-												name="xappstub-name"
-												id="xappstub-name"
-												class="settings-item-text-input"
-												placeholder="Enter display name"
-											/>
-											<input
-												type="text"
-												name="xappstub-name"
-												id="xappstub-cmd"
-												class="settings-item-text-input"
-												placeholder="Enter command"
-											/>
-										</span>
-										<button
-											class="settings-button"
-											on:click={async () => {
-												const name = (
-													document.getElementById(
-														"xappstub-name",
-													) as HTMLInputElement
-												).value;
-												const cmd = (
-													document.getElementById(
-														"xappstub-cmd",
-													) as HTMLInputElement
-												).value;
-												if (name && cmd) {
-													const stub = new XAppStub(
-														name,
-														`anura.user.${cmd}`,
-														"",
-														cmd,
-													);
-													await anura.registerApp(stub);
-													anura.settings.set("user-xapps", [
-														...anura.settings.get("user-xapps"),
-														{
-															name: name,
-															cmd: cmd,
-															id: stub.package,
-														},
-													]);
-													anura.notifications.add({
-														title: "Shortcut Created",
-														description:
-															"You can now launch your app from the launcher!",
-														timeout: 5000,
-													});
-												} else {
-													anura.dialog.alert("Please fill out both fields!");
-												}
-											}}
-										>
-											Register
-										</button>
-									</div>
-									<div class="settings-button-group">
-										<button
-											on:click={() => {
-												this.state.show_x86_install = false;
-												anura.settings.set("x86-disabled", true);
-												setTimeout(() => {
-													anura.x86hdd.delete();
-												}, 200);
-											}}
-											class="settings-button grouped-btn"
-										>
-											Disable x86 Subsystem
-										</button>
-										<button
-											on:click={async () => {
-												if (
-													await anura.dialog.confirm(
-														"Custom RootFSes are in beta and may not work properly. Continue?",
-													)
-												) {
-													const inp = document.createElement("input");
-													inp.type = "file";
-													inp.addEventListener("change", async () => {
-														if (inp.files) {
-															if (inp.files[0]) {
-																try {
-																	// @ts-ignore
-																	await anura.x86hdd.loadfile(inp.files[0]);
-																	anura.notifications.add({
-																		title: "Custom RootFS Loaded",
-																		description:
-																			"Custom RootFS has sucessfully loaded!",
-																		timeout: 5000,
-																	});
-																} catch (e) {
-																	anura.dialog.alert(
-																		"Error loading file: " + e,
-																	);
-																}
-															}
-														}
-													});
-													inp.click();
-												}
-											}}
-											class="settings-button grouped-btn"
-										>
-											Upload Custom RootFS
-										</button>
-									</div>
-								</div>
-							)}
-						</div>
+					<div id="gex" class="gex settings-category">
+						<h3 class="settings-category-name">Anura Linux</h3>
 					</div>
 					<div id="reset" class="settings-category">
 						<h3 class="settings-category-name">Reset Anura</h3>

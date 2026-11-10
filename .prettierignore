@@ -4,5 +4,4 @@
 /bin/
 /build/**/*
 /external/**/*
-/x86_image_wizard/epoxy/**/*
 /static/

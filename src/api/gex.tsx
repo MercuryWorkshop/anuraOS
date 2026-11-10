@@ -8,11 +8,13 @@ async function bootgex() {
 	const { IdbPersist } = await import("/gex/persist-idb.mjs");
 	window.gex = { System, Filesystem, Wisp, HostWindows, IdbPersist };
 	anura.gex = new GexBackend();
+	AnuradHelpers.setReady("anura.gex");
 
 	const frogland = new FrogLandApp();
 	anura.registerApp(frogland);
 	await frogland.startup();
 	await anura.gex.boot();
+	AnuradHelpers.setStage("anura.bootgex");
 }
 
 class GexBackend {

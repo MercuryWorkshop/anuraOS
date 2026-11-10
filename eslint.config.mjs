@@ -21,7 +21,6 @@ export default [
 			"**/bin/",
 			"**/build/",
 			"**/external/**",
-			"x86_image_wizard/epoxy/",
 			"**/static/",
 			"**/anuraos-types/",
 			"public/anura-sw.js",

@@ -42,16 +42,6 @@ Anura shows as more of a proof-of-concept with what's possible on the modern web
 - `wasm-bindgen` (v0.2.105)
 - `wasm-opt`
 - [this `wasm-snip` fork](https://github.com/r58Playz/wasm-snip)
-- A recent version of `java` (11+)
-- `wget`
-- `clang`
-- `gcc` (`gcc-multilib` on Debian and Ubuntu x86_64)
-- 32 bit version of `glibc` (needed for building rootfs, `lib32-glibc` on Arch Linux)
-- `docker`
-- An x86(-64) Linux PC (`make rootfs-alpine` build depends on x86 specific tools)
-
-> [!NOTE]
-> You will have to install the required Rust toolchain by running `rustup target add wasm32-unknown-unknown` and also `rustup target add i686-unknown-linux-gnu` if you are planning to build v86 images.
 
 #### Building
 
@@ -93,6 +83,6 @@ See [SECURITY.md](./SECURITY.md) for reporting instructions.
 
 ## Credits
 
-AnuraOS is created by [Mercury Workshop](https://mercurywork.shop). Linux emulation is based off of the [v86](https://github.com/copy/v86) project. For more credits, see [CREDITS.MD](./CREDITS.md).
+AnuraOS is created by [Mercury Workshop](https://mercurywork.shop). Linux emulation is based off of the [gex](https://github.com/HeyPuter/gex) project. For more credits, see [CREDITS.MD](./CREDITS.md).
 
 (p.s. for hackers: the entrypoint to anura is [src/Boot.tsx](./src/Boot.tsx))

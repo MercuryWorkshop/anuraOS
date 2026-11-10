@@ -23,15 +23,16 @@
   - Anura Shell is a heavily modified version of [Puter's Phoenix Shell](https://github.com/HeyPuter/phoenix)
     - This shell was implemented so that Anura users could have a more traditional shell experience, and if they had experience with Puter's Phoenix Shell, they could easily transfer that knowledge to Anura.
     - Replaces the original Anura Shell, which was a modified eval-based shell.
+  - Linux Emulation - [gex](https://github.com/HeyPuter/gex)
   - JS Framework - [dreamland.js](https://github.com/MercuryWorkshop/dreamlandjs)
-  - TCP Networking support [wisp-server-node](https://github.com/MercuryWorkshop/wisp-server-node)
-  - x86 Emulation - [v86](https://copy.sh/v86/)
-  - Service worker web proxy - [Ultraviolet](https://github.com/titaniumnetwork-dev/Ultraviolet)
+  - TCP Networking support [wisp-js](https://github.com/MercuryWorkshop/wisp-js)
   - Material Components - [Matter CSS](https://github.com/finnhvman/matter)
-  - Default networking stack- [libcurl.js with WolfSSL](https://github.com/ading2210/libcurl.js)
+  - Default networking stack- [libcurl.js](https://github.com/ading2210/libcurl.js)
   - A full list of dependencies can be found [here](https://github.com/MercuryWorkshop/anuraOS/network/dependencies)
 
 - Retired Libraries and applications sources
+  - x86 Emulation - [v86](https://copy.sh/v86/)
+  - Service worker web proxy - [Ultraviolet](https://github.com/titaniumnetwork-dev/Ultraviolet)
   - Old Websocket to TCP Bridge - [WSProxy](https://github.com/herenow/wsProxy)
   - Old Filesystem HTTP bridge - [MercuryWorkshop Nohost](https://github.com/MercuryWorkshop/nohost) (Fork of [Humphd Nohost](https://github.com/humphd/nohost))
     - Now the functionality is provided by a fully rewritten version of the original code, using the Anura Filesystem API

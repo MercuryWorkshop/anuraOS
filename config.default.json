@@ -14,7 +14,7 @@
 	],
 	"bin": [
 		"/bin/chimerix.ajs",
-		"/bin/x86-run.ajs",
+		"/bin/linux-run.ajs",
 		"/bin/vista.ajs",
 		"/bin/anuractrl.ajs"
 	],

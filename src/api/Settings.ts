@@ -23,10 +23,6 @@ class Settings {
 	) {
 		const initial = defaultsettings;
 
-		if (!initial["i-am-a-true-gangsta"]) {
-			initial["i-am-a-true-gangsta"] = false;
-		}
-
 		if (!initial["wisp-url"]) {
 			let url = "";
 			if (location.protocol == "https:") {
@@ -39,8 +35,8 @@ class Settings {
 			initial["wisp-url"] = url;
 		}
 
-		if (!initial["x86-memory"]) {
-			initial["x86-memory"] = 512;
+		if (!initial["i-am-a-true-gangsta"]) {
+			initial["i-am-a-true-gangsta"] = false;
 		}
 
 		if (!initial["wallpaper-fit"]) {
@@ -61,6 +57,15 @@ class Settings {
 
 		if (!initial["disable-regedit-warning"]) {
 			initial["disable-regedit-warning"] = false;
+		}
+
+		if (initial["x86-memory"]) {
+			delete initial["x86-memory"];
+		}
+
+		if (!initial["x86-disabled"]) {
+			delete initial["x86-disabled"];
+			initial["gex-enabled"] = true;
 		}
 
 		try {

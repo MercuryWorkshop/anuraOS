@@ -13,12 +13,11 @@ class Anura {
 		},
 	};
 	initComplete = false;
-	x86: null | V86Backend;
+	gex: null | GexBackend;
 	settings: Settings;
 	fs: AnuraFilesystem;
 	config: any;
 	notifications: NotificationService;
-	x86hdd: FakeFile;
 	net: Networking;
 	platform: Platform;
 	ui = new AnuraUI();
@@ -63,8 +62,6 @@ class Anura {
 		const fs = new AnuraFilesystem([fsProvider]);
 
 		const settings = await Settings.new(fs, config.defaultsettings);
-
-		// const hdd = await InitV86Hdd();
 
 		const net = new Networking(settings.get("wisp-url"));
 		const anuraPartial = new Anura(fs, settings, config, net);

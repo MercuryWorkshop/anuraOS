@@ -1,6 +1,3 @@
-[submodule "v86"]
-	path = external/v86
-	url = https://github.com/MercuryWorkshop/v86
 [submodule "chimerix"]
 	path = external/chimerix
 	url = https://github.com/MercuryWorkshop/chimerix.git
